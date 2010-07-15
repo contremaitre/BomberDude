@@ -1,6 +1,6 @@
-#include "plateau.h"
+#include "Board.h"
 
-plateau::plateau()
+Board::Board()
 {
     scene = new QGraphicsScene;
     scene->addItem(caseItem.rectItem);

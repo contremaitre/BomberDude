@@ -1,10 +1,10 @@
 #include <QApplication>
-#include "plateau.h" 
+#include "Board.h" 
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    plateau pl;
+    Board pl;
     return app.exec();
 }
 

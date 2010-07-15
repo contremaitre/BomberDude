@@ -3,7 +3,7 @@
 #include <QGraphicsView>
 #include "QGraphicsCaseItem.h"
 
-class plateau : public QObject
+class Board : public QObject
 {
   Q_OBJECT
 
@@ -12,7 +12,7 @@ private:
     QGraphicsView *view;
     QGraphicsScene *scene;
 public:
-    plateau();
+    Board();
 };
 
 #endif
