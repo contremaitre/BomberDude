@@ -1,0 +1,11 @@
+I'd like to create a good open source bomberman, because I couldn't find one.
+My reference is Bomberman95 which is unmaintained, closed source, and run only under Windows.
+
+I will use QT.
+Anyone can join the project, just contact me.
+
+INSTALL :
+qmake -project
+qmake
+make
+
