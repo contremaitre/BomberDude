@@ -1,18 +1,17 @@
 #ifndef PLATEAU_H
 #define PLATEAU_H
 #include <QGraphicsView>
-#include "QGraphicsCaseItem.h"
-
+#include "CasesList.h"
 class Board : public QObject
 {
   Q_OBJECT
 
 private:
-    QGraphicsCaseItem caseItem;
     QGraphicsView *view;
     QGraphicsScene *scene;
+    CasesList caseList;
 public:
-    Board();
+    Board(int,int);
 };
 
 #endif
