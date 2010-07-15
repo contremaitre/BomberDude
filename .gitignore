@@ -1,0 +1,6 @@
+*.o
+*.pro
+Makefile
+bomb
+moc_*
+
