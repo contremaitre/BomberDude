@@ -2,15 +2,26 @@
 #define QGRAPHICSCASEITEM_H
 #include <QGraphicsRectItem>
 
-class QGraphicsCaseItem : public QGraphicsRectItem
+enum caseType
+{
+    VOID,
+    BOMBERMAN,
+    BOMB,
+    
+};
+
+class QGraphicsCaseItem : public QGraphicsPixmapItem
 {
 private:
-    QGraphicsPixmapItem pixItem;
+    int x,y,size;
 public:
     QGraphicsCaseItem();
-    QGraphicsCaseItem(int, int, int, int);
-    void setPos(int, int, int, int);
-    QGraphicsRectItem *rectItem;
+    QGraphicsCaseItem(int,int,int);
+    void setPos(int, int, int);
+    void setItem(caseType);
+    void setItem(const QPixmap &);
+    QGraphicsPixmapItem *getItem();
+    //QGraphicsPixmapItem pixItem;
 };
 
 #endif

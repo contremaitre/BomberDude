@@ -9,7 +9,7 @@ Board::Board(int nb_x, int nb_y)
         for(int j = 0; j < nb_y; j++)
         {
             QGraphicsCaseItem *m_case = caseList.getCase(i,j);
-            scene->addItem(m_case->rectItem);
+            scene->addItem(m_case->getItem());
         }
     }
     view = new QGraphicsView(scene);

@@ -5,6 +5,7 @@ CasesList::CasesList()
     width = height = 0;
     caseSize = 20;
     casesItem = NULL;
+    loadPixMaps();
 }
 
 void CasesList::init(int w, int h)
@@ -17,9 +18,15 @@ void CasesList::init(int w, int h)
         for(int j = 0; j < h; j++)
         {
             initCase(i,j);
+            //getCase(i,j)->setItem(bombermans[0]);
         }
     }
+}
 
+void CasesList::loadPixMaps()
+{
+    QPixmap p("pictures/tux.png");
+    bombermans[0] = p.scaled(QSizeF(caseSize,caseSize).toSize());
 }
 
 void CasesList::initCase(int i, int j)
@@ -28,8 +35,9 @@ void CasesList::initCase(int i, int j)
     int y_a = j*caseSize;
     //casesItem[j*width+i] = new QGraphicsCaseItem;
     //casesItem[j*width+i]->setPos(x_a,y_a,x_a+caseSize,y_a+caseSize);
-    casesItem[j*width+i] = new QGraphicsCaseItem(x_a,y_a,caseSize,caseSize);
+    casesItem[j*width+i] = new QGraphicsCaseItem(x_a,y_a,caseSize);
 }
+
 
 QGraphicsCaseItem *CasesList::getCase(int i, int j)
 {

@@ -1,16 +1,49 @@
 #include "QGraphicsCaseItem.h"
+#include <QPainter>
 
 QGraphicsCaseItem::QGraphicsCaseItem()
 {
-    rectItem = new QGraphicsRectItem();
+    x = 0;
+    y = 0;
+    size = 0;
 }
 
-QGraphicsCaseItem::QGraphicsCaseItem(int x_a, int y_a, int x_b, int y_b)
+QGraphicsCaseItem::QGraphicsCaseItem(int x, int y, int size)
 {
-    rectItem = new QGraphicsRectItem(QRectF(x_a, y_a, x_b, y_b));
+    setPos(x,y,size);
 }
 
-void QGraphicsCaseItem::setPos(int x_a, int y_a, int x_b, int y_b)
+void QGraphicsCaseItem::setPos(int x, int y, int size)
 {
-    rectItem->setRect(QRectF(x_a, y_a, x_b, y_b));
+    this->x = x;
+    this->y = y;
+    this->size = size;
+    setOffset(QPointF(x, y));
 }
+
+QGraphicsPixmapItem *QGraphicsCaseItem::getItem()
+{
+    return this;
+}
+
+void QGraphicsCaseItem::setItem(const QPixmap &p)
+{
+    setPixmap(p);
+}
+
+void QGraphicsCaseItem::setItem(caseType t)
+{
+    switch(t)
+    {
+        case BOMBERMAN:
+            //QPixmap p("pictures/tux.png");
+            //QPixmap ps = p.scaled(QSizeF(size,size).toSize());
+            //QPainter painter(&p);
+            // Scale QGraphicsPixmapItem to wanted 'size' and keep the aspect ratio
+            //QSize pixmapSize = p.size();
+            //setPixmap(bomberman);
+            //scaled(QSizeF(size,size).toSize(), Qt::KeepAspectRatio);
+        break;
+    }
+}
+
