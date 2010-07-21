@@ -18,15 +18,20 @@ void CasesList::init(int w, int h)
         for(int j = 0; j < h; j++)
         {
             initCase(i,j);
-            //getCase(i,j)->setItem(bombermans[0]);
+            getCase(i,j)->setItem(brique);
         }
     }
+    getCase(0,0)->setItem(bombermans[0]);
+    getCase(w-1,h-1)->setItem(bombermans[0]);
 }
 
 void CasesList::loadPixMaps()
 {
     QPixmap p("pictures/tux.png");
     bombermans[0] = p.scaled(QSizeF(caseSize,caseSize).toSize());
+    QPixmap p2("pictures/brique.jpg");
+    //p.load("pictures/brique.jpg");
+    brique = p2.scaled(QSizeF(caseSize,caseSize).toSize());
 }
 
 void CasesList::initCase(int i, int j)

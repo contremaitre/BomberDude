@@ -9,6 +9,7 @@ class CasesList
 private:
     QGraphicsCaseItem **casesItem;
     QPixmap bombermans[MAX_NB_PLAYER];
+    QPixmap brique;
     void initCase(int, int);
     void loadPixMaps();
     int width;
