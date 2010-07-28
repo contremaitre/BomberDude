@@ -1,6 +1,7 @@
 #ifndef QGRAPHICSCASEITEM_H
 #define QGRAPHICSCASEITEM_H
-#include <QGraphicsRectItem>
+
+#include <QGraphicsPixmapItem>
 
 enum caseType
 {

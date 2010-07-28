@@ -1,15 +1,15 @@
 #ifndef CASELIST_H
 #define CASELIST_H
 #include "QGraphicsCaseItem.h"
-
-#define MAX_NB_PLAYER 4
+#include "Map.h"
+#include "PixmapsItems.h"
 
 class CasesList
 {
 private:
+    Map map;
+    PixmapsItems pixmaps;
     QGraphicsCaseItem **casesItem;
-    QPixmap bombermans[MAX_NB_PLAYER];
-    QPixmap brique;
     void initCase(int, int);
     void loadPixMaps();
     int width;
@@ -23,3 +23,4 @@ public:
 };
 
 #endif
+

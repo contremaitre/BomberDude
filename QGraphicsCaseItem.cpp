@@ -1,5 +1,4 @@
 #include "QGraphicsCaseItem.h"
-#include <QPainter>
 
 QGraphicsCaseItem::QGraphicsCaseItem()
 {
