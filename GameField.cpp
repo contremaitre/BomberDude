@@ -1,6 +1,6 @@
-#include "Board.h"
+#include "GameField.h"
 
-Board::Board(int nb_x, int nb_y, int s)
+GameField::GameField(int nb_x, int nb_y, int s)
 {
     scene = new QGraphicsScene;
     caseList.init(nb_x,nb_y,s);
@@ -17,7 +17,7 @@ Board::Board(int nb_x, int nb_y, int s)
     view->show();
 }
 
-Board::~Board()
+GameField::~GameField()
 {
     delete view;
 }

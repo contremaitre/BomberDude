@@ -3,7 +3,7 @@
 #include <QGraphicsView>
 #include "CasesList.h"
 
-class Board : public QObject
+class GameField : public QObject
 {
   Q_OBJECT
 
@@ -13,8 +13,8 @@ private:
     CasesList caseList;
 
 public:
-    Board(int,int,int);
-    ~Board();
+    GameField(int,int,int);
+    ~GameField();
 };
 
 #endif
