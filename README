@@ -9,3 +9,12 @@ qmake -project
 qmake
 make
 
+----------------------------------------------------------------------------------
+STATUS :
+done :
+- map creation
+- pixmaps loading
+
+next step :
+- ability to move players and change pixmaps on the fly
+----------------------------------------------------------------------------------
