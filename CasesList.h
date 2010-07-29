@@ -19,7 +19,7 @@ public:
     CasesList();
     ~CasesList();
     QGraphicsCaseItem *getCase(int, int);
-    void init(int,int);
+    void init(int,int,int);
 };
 
 #endif

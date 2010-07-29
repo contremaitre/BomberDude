@@ -13,7 +13,8 @@ private:
     CasesList caseList;
 
 public:
-    Board(int,int);
+    Board(int,int,int);
+    ~Board();
 };
 
 #endif

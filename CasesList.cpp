@@ -5,7 +5,6 @@ CasesList::CasesList()
     width = height = 0;
     caseSize = 20;
     casesItem = NULL;
-    loadPixMaps();
 }
 
 void CasesList::loadPixMaps()
@@ -13,10 +12,12 @@ void CasesList::loadPixMaps()
     pixmaps.init(caseSize, caseSize);
 }
 
-void CasesList::init(int w, int h)
+void CasesList::init(int w, int h, int s)
 {
     width = w;
     height = h;
+    caseSize = s;
+    loadPixMaps();
     map.setDim(w,h);
     map.loadRandom();
     casesItem = new QGraphicsCaseItem*[w * h];
@@ -28,6 +29,8 @@ void CasesList::init(int w, int h)
             getCase(i,j)->setItem(pixmaps.getPixmap(map.getType(i,j)));
         }
     }
+    getCase(1,1)->setItem(pixmaps.getPixmap(0));
+    getCase(w-2,h-2)->setItem(pixmaps.getPixmap(0));
 }
 
 void CasesList::initCase(int i, int j)
