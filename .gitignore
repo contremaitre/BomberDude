@@ -3,4 +3,5 @@
 Makefile
 bomb
 moc_*
+core*
 
