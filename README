@@ -12,9 +12,14 @@ make
 ----------------------------------------------------------------------------------
 STATUS :
 done :
-- map creation
+- random map creation
 - pixmaps loading
 
-next step :
+started :
 - ability to move players and change pixmaps on the fly
+
+todo :
+- networking
+- custom map creation (with xml files)
+- graphics
 ----------------------------------------------------------------------------------
