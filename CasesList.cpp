@@ -29,8 +29,21 @@ void CasesList::init(int w, int h, int s)
             getCase(i,j)->setItem(pixmaps.getPixmap(map.getType(i,j)));
         }
     }
-    getCase(1,1)->setItem(pixmaps.getPixmap(0));
-    getCase(w-2,h-2)->setItem(pixmaps.getPixmap(0));
+    //getCase(1,1)->setItem(pixmaps.getPixmap(0));
+    //getCase(w-2,h-2)->setItem(pixmaps.getPixmap(0));
+}
+
+bool CasesList::movePlayer(int id, int x, int y)
+{
+    if(x < 0 || x >= width || y < 0 || y >= height)
+        return false;
+    BlockMapProperty::BlockType type = map.getType(x,y);
+    if( type == BlockMapProperty::player || type == BlockMapProperty::empty )
+    {
+        map.setPlayerPosition(id,y*width+x);
+        return true;
+    }
+    return false;
 }
 
 void CasesList::initCase(int i, int j)
@@ -42,6 +55,22 @@ void CasesList::initCase(int i, int j)
     casesItem[j*width+i] = new QGraphicsCaseItem(x_a,y_a,caseSize);
 }
 
+void CasesList::getPlayerPosition(int pl, int &x, int &y)
+{
+    int *plPos = map.getPlayersPosition();
+    x = plPos[pl] % width;
+    y = plPos[pl] / width;
+}
+
+int CasesList::getWidth()
+{
+    return width;
+}
+
+int CasesList::getHeight()
+{
+    return height;
+}
 
 QGraphicsCaseItem *CasesList::getCase(int i, int j)
 {

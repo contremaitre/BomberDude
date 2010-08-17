@@ -2,6 +2,7 @@
 #define MAP_H
 
 #include "BlockMapProperty.h"
+#include <QObject>
 
 /**
  * This class represent a bomberman game map
@@ -9,12 +10,14 @@
  * Todo : add a load function, so we can load a map from a file
  */
 
-class Map
+class Map : public QObject
 {
+    Q_OBJECT
 private:
     int width;
     int height;
     BlockMapProperty *block_list;
+    int players_positions[MAX_NB_PLAYER];
     void Init();
 public:
     Map();
@@ -25,6 +28,10 @@ public:
     int getWidth();
     int getHeight();
     BlockMapProperty::BlockType getType(int,int);
+    int *getPlayersPosition();
+    void setPlayerPosition(int, int);
+signals:
+     void pixmapChanged(int pos);
 };
 
 #endif

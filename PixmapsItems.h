@@ -4,8 +4,6 @@
 #include <QPixmap>
 #include "BlockMapProperty.h"
 
-#define MAX_NB_PLAYER 4
-
 /**
  * For now, we load one picture for each block type. And this is done manualy
  * In the future, we will have something like a xml file with an association of block type and pictures

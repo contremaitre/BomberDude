@@ -24,11 +24,44 @@ GameField::~GameField()
     delete view;
 }
 
+/**
+ *      1
+ *      |
+ *  0 <- -> 2
+ *      |
+ *      3
+ */
+bool GameField::move(int id, int direction)
+{
+    int x,y;
+    caseList.getPlayerPosition(id,x,y);
+    bool ok = false;
+    qDebug("player %d, direction %d, pos (%d,%d)",id,direction,x,y);
+    switch(direction)
+    {
+        case 0:
+            ok = caseList.movePlayer(id,x-1,y);
+            break;
+
+        case 1:
+            ok = caseList.movePlayer(id,x,y-1);        
+            break;
+
+        case 2:
+            ok = caseList.movePlayer(id,x+1,y);        
+            break;
+        case 3:
+            ok = caseList.movePlayer(id,x,y+1);        
+            break;
+    }
+    qDebug("move %s",ok?"ok":"failed");
+    return ok;
+}
+
 bool GameField::eventFilter(QObject *obj, QEvent *event)
 {
     if(event->type() == QEvent::KeyRelease)
     {
-        qDebug("gamefield eventFilter key press event");
         QKeyEvent *c = ( QKeyEvent * )event;
         if(c->key() == Qt::Key_Escape)
         {
@@ -36,19 +69,19 @@ bool GameField::eventFilter(QObject *obj, QEvent *event)
         }
         else if(c->key() == Qt::Key_Left)
         {
-            qDebug("left");
+            move(0,0);
         }
         else if(c->key() == Qt::Key_Up)
         {
-            qDebug("up");
-        }
-        else if(c->key() == Qt::Key_Down)
-        {
-            qDebug("down");
+            move(0,1);
         }
         else if(c->key() == Qt::Key_Right)
         {
-            qDebug("right");
+            move(0,2);
+        }
+        else if(c->key() == Qt::Key_Down)
+        {
+            move(0,3);
         }
     }
     return false;

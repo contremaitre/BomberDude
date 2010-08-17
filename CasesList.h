@@ -20,6 +20,10 @@ public:
     ~CasesList();
     QGraphicsCaseItem *getCase(int, int);
     void init(int,int,int);
+    void getPlayerPosition(int, int &, int &);
+    bool movePlayer(int, int, int);
+    int getWidth();
+    int getHeight();
 };
 
 #endif
