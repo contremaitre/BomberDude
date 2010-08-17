@@ -75,6 +75,11 @@ BlockMapProperty::BlockType Map::getType(int w,int h)
     return block_list[h*width+w].getType();
 }
 
+BlockMapProperty::BlockType Map::getType(int pos)
+{
+    return block_list[pos].getType();
+}
+
 void Map::setPlayerPosition(int id, int pos)
 {
     int old_pos = players_positions[id];
@@ -96,8 +101,9 @@ void Map::setPlayerPosition(int id, int pos)
     else
     {
         block_list[old_pos].setType(BlockMapProperty::empty);
-        //todo : update the pixmap
-        emit pixmapChanged(old_pos);
+        emit blockChanged(old_pos);
+        block_list[pos].setType(BlockMapProperty::player);
+        emit blockChanged(pos);
     }
 }
 

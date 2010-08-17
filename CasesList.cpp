@@ -5,6 +5,7 @@ CasesList::CasesList()
     width = height = 0;
     caseSize = 20;
     casesItem = NULL;
+    connect(&map,SIGNAL(blockChanged(int)),this,SLOT(blockChanged(int)));
 }
 
 void CasesList::loadPixMaps()
@@ -62,6 +63,12 @@ void CasesList::getPlayerPosition(int pl, int &x, int &y)
     y = plPos[pl] / width;
 }
 
+void CasesList::blockChanged(int pos)
+{
+    getCase(pos)->setItem(pixmaps.getPixmap(map.getType(pos)));
+    emit pixmapChanged(pos);
+}
+
 int CasesList::getWidth()
 {
     return width;
@@ -75,6 +82,11 @@ int CasesList::getHeight()
 QGraphicsCaseItem *CasesList::getCase(int i, int j)
 {
     return casesItem[j*width+i];
+}
+
+QGraphicsCaseItem *CasesList::getCase(int pos)
+{
+    return casesItem[pos];
 }
 
 CasesList::~CasesList()

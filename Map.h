@@ -28,10 +28,12 @@ public:
     int getWidth();
     int getHeight();
     BlockMapProperty::BlockType getType(int,int);
+    BlockMapProperty::BlockType getType(int);
     int *getPlayersPosition();
     void setPlayerPosition(int, int);
+
 signals:
-     void pixmapChanged(int pos);
+     void blockChanged(int pos);
 };
 
 #endif

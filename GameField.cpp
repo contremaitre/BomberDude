@@ -5,6 +5,7 @@ GameField::GameField(int nb_x, int nb_y, int s)
 {
     scene = new QGraphicsScene;
     caseList.init(nb_x,nb_y,s);
+    connect(&caseList, SIGNAL(pixmapChanged(int)),this, SLOT(pixmapChanged(int)));
     for(int i = 0; i < nb_x; i++)
     {
         for(int j = 0; j < nb_y; j++)
@@ -56,6 +57,11 @@ bool GameField::move(int id, int direction)
     }
     qDebug("move %s",ok?"ok":"failed");
     return ok;
+}
+
+void GameField::pixmapChanged(int pos)
+{
+    qDebug("GameField pixmapChanged %d",pos);
 }
 
 bool GameField::eventFilter(QObject *obj, QEvent *event)

@@ -2,6 +2,7 @@
 #define PLATEAU_H
 #include <QGraphicsView>
 #include "CasesList.h"
+#include <QObject>
 
 class GameField : public QObject
 {
@@ -18,6 +19,9 @@ private:
      * \param direction
      */
     bool move(int,int);
+
+private slots:
+    void pixmapChanged(int);
 
 public:
     GameField(int,int,int);
