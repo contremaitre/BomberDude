@@ -62,7 +62,7 @@ bool GameField::move(int id, int direction)
 void GameField::pixmapChanged(int pos)
 {
     qDebug("GameField pixmapChanged %d",pos);
-    QGraphicsCaseItem *m_case = caseList.getCase(i,j);
+    QGraphicsCaseItem *m_case = caseList.getCase(pos);
     scene->addItem(m_case->getItem());
 }
 
