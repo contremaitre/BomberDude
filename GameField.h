@@ -1,8 +1,9 @@
 #ifndef PLATEAU_H
 #define PLATEAU_H
+#include <QObject>
 #include <QGraphicsView>
 #include "CasesList.h"
-#include <QObject>
+#include "Bomb.h"
 
 class GameField : public QObject
 {
@@ -12,6 +13,7 @@ private:
     QGraphicsView *view;
     QGraphicsScene *scene;
     CasesList caseList;
+    QList <Bomb> bombList;
     bool eventFilter(QObject *obj, QEvent *event);
     /**
      * Move a player 
@@ -19,6 +21,11 @@ private:
      * \param direction
      */
     bool move(int,int);
+
+    /**
+     * A player is dropping a bomb
+     */
+    void dropBomb(int plId);
 
 private slots:
     void pixmapChanged(int);

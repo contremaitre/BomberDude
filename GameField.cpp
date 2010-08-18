@@ -66,6 +66,11 @@ void GameField::pixmapChanged(int pos)
     //scene->addItem(m_case->getItem());
 }
 
+void GameField::dropBomb(int plId)
+{
+    Bomb b(DEFAULT_BOMB_RANGE,plId,DEFAULT_BOMB_DURATION);
+}
+
 bool GameField::eventFilter(QObject *obj, QEvent *event)
 {
     if(event->type() == QEvent::KeyRelease)
@@ -74,6 +79,11 @@ bool GameField::eventFilter(QObject *obj, QEvent *event)
         if(c->key() == Qt::Key_Escape)
         {
             qDebug("escape");
+        }
+        else if(c->key() == Qt::Key_Space)
+        {
+            qDebug("space");
+            dropBomb(0);
         }
         else if(c->key() == Qt::Key_Left)
         {

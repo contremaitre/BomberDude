@@ -3,6 +3,7 @@
 
 #include "BlockMapProperty.h"
 #include <QObject>
+#include "constant.h"
 
 /**
  * This class represent a bomberman game map

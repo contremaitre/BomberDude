@@ -1,14 +1,12 @@
 #ifndef BLOCKMAPPROPERTY_H
 #define BLOCKMAPPROPERTY_H
 
-#define MAX_NB_PLAYER 4
-
 class BlockMapProperty
 {
 public:
     //must be kept in sync in PixmapsItem
-    enum BlockType {wall,brick,player,empty};
-    enum Option {none,bomb};
+    enum BlockType {wall,brick,bomb,player,empty};
+    enum Option {none,o_bomb};
 
     BlockMapProperty();
     ~BlockMapProperty();

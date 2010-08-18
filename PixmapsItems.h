@@ -3,7 +3,7 @@
 
 #include <QPixmap>
 #include "BlockMapProperty.h"
-
+#include "constant.h"
 /**
  * For now, we load one picture for each block type. And this is done manualy
  * In the future, we will have something like a xml file with an association of block type and pictures
