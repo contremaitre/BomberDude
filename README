@@ -14,12 +14,18 @@ STATUS :
 done :
 - random map creation
 - pixmaps loading
+- player one movement with arrow keys
 
 started :
-- ability to move players and change pixmaps on the fly
+- client/server model
 
 todo :
+- players more sophisticated (create a class with attributes like speed, bomb capacity etc...)
+- drop bombs and break bricks
 - networking
+- menu
+- options
+- bonus
 - custom map creation (with xml files)
 - graphics
 ----------------------------------------------------------------------------------
