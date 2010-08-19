@@ -16,7 +16,7 @@ done :
 - player one movement with arrow keys
 
 started :
-- client/server model
+- client/server model (next steps : the server must know the map / comminucation between GamePlay - NetClient - NetServer)
 
 todo :
 - players more sophisticated (create a class with attributes like speed, bomb capacity etc...)

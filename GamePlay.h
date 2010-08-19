@@ -15,18 +15,45 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QApplication>
-#include "GamePlay.h" 
-#include "constant.h"
+/**
+ *
+ * This is where the Network server, maps and graphic can interact
+ * Player input keys from the scene are captured here
+ */
 
-int main(int argc, char *argv[])
+
+#ifndef GAMEPLAY_H
+#define GAMEPLAY_H
+
+#include <QObject>
+
+class GameField;
+class NetClient;
+class NetServer;
+
+class GamePlay : public QObject
 {
-    QApplication app(argc, argv);
+  Q_OBJECT
 
-    GamePlay gp;    
+public:
+    GamePlay();
+    ~GamePlay();
 
-    app.exec();
+private:
+    GameField *gameField;
+    NetClient *client;
+    NetServer *server;
 
-    return 0;
-}
+    bool eventFilter(QObject *obj, QEvent *event);
+
+    /**
+     * Request a move
+     * \param id player index
+     * \param direction
+     */
+    bool move(int,int);
+
+};
+
+#endif
 

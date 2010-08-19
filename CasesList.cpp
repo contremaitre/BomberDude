@@ -83,7 +83,6 @@ void CasesList::getPlayerPosition(int pl, int &x, int &y)
 void CasesList::blockChanged(int pos)
 {
     getCase(pos)->setItem(pixmaps.getPixmap(map.getType(pos)));
-    emit pixmapChanged(pos);
 }
 
 int CasesList::getWidth()

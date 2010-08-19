@@ -15,12 +15,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PLATEAU_H
-#define PLATEAU_H
+/**
+ *
+ * This is the main graphic class
+ * It will draw objects and animations
+ *
+ */
+
+#ifndef GAMEFIELD_H
+#define GAMEFIELD_H
 #include <QObject>
 #include <QGraphicsView>
 #include "CasesList.h"
-#include "Bomb.h"
 
 class GameField : public QObject
 {
@@ -30,26 +36,11 @@ private:
     QGraphicsView *view;
     QGraphicsScene *scene;
     CasesList caseList;
-    QList <Bomb> bombList;
-    bool eventFilter(QObject *obj, QEvent *event);
-    /**
-     * Move a player 
-     * \param id player index
-     * \param direction
-     */
-    bool move(int,int);
-
-    /**
-     * A player is dropping a bomb
-     */
-    void dropBomb(int plId);
-
-private slots:
-    void pixmapChanged(int);
 
 public:
     GameField(int,int,int);
     ~GameField();
+    void getEventFilter(QObject *obj);
 };
 
 #endif
