@@ -1,11 +1,10 @@
-I'd like to create a good open source bomberman, because I couldn't find one.
+I am trying to create a good open source bomberman, because I couldn't find one.
 My reference is Atomic Bomberman which is very fun but unmaintained, closed source, and run only under Windows.
-
-I will use QT.
+I am using QT.
 Anyone can join the project, just contact me.
 
 INSTALL :
-qmake -project
+qmake -project "QT += network"
 qmake
 make
 
@@ -22,10 +21,12 @@ started :
 todo :
 - players more sophisticated (create a class with attributes like speed, bomb capacity etc...)
 - drop bombs and break bricks
+- auto configuration scripts to build the project
 - networking
 - menu
-- options
+- configuration screen (to change the gameplay, keys, connect or launch a server) etc...
 - bonus
 - custom map creation (with xml files)
 - graphics
+- find another name for the game
 ----------------------------------------------------------------------------------
