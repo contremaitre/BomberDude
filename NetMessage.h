@@ -17,32 +17,36 @@
 
 /**
  *
- * This is the main graphic class
- * It will draw objects and animations
+ * Define the message structures between NetClient and NetServer
  *
  */
 
-#ifndef GAMEFIELD_H
-#define GAMEFIELD_H
-#include <QObject>
-#include <QGraphicsView>
-#include "CasesList.h"
+#ifndef NETMESSAGE_H
+#define NETMESSAGE_H
 
-class GameField : public QObject
+enum NetMsgType
 {
-  Q_OBJECT
+   msg_move = 0,
+   msg_moved,
+};
 
-private:
-    QGraphicsView *view;
-    QGraphicsScene *scene;
-    CasesList caseList;
+struct NetHeader
+{
+   int length;
+   NetMsgType type;
+};
 
-public:
-    GameField(int,int,int);
-    ~GameField();
-    void getEventFilter(QObject *obj);
-    void movePlayer(int player, int position);
-    const Map *getMap();
+struct NetMsgMove : NetHeader
+{
+    //Client->Server send the direction of the move
+    int direction;
+};
+
+struct NetMsgMoved : NetHeader
+{
+    //Server->Clients send the new postition on the map
+    int player;
+    int position;
 };
 
 #endif

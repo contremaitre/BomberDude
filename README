@@ -4,7 +4,7 @@ I am using QT.
 Anyone can join the project, just contact me.
 
 INSTALL :
-qmake -project "QT += network"
+qmake -project "QT += network" "CONFIG += debug"
 qmake
 make
 
@@ -14,15 +14,14 @@ done :
 - random map creation
 - pixmaps loading
 - player one movement with arrow keys
+- client/server model
 
 started :
-- client/server model (next steps : the server must know the map / comminucation between GamePlay - NetClient - NetServer)
 
 todo :
 - players more sophisticated (create a class with attributes like speed, bomb capacity etc...)
 - drop bombs and break bricks
 - auto configuration scripts to build the project
-- networking
 - menu
 - configuration screen (to change the gameplay, keys, connect or launch a server) etc...
 - bonus
@@ -30,3 +29,4 @@ todo :
 - graphics
 - find another name for the game
 ----------------------------------------------------------------------------------
+

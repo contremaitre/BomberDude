@@ -16,12 +16,17 @@
 */
 
 #include "NetServer.h"
-#include <QtNetwork>
 #include "constant.h"
 #include "NetServerClient.h"
+#include "Map.h"
+#include <QtNetwork>
 
-NetServer::NetServer() : QThread()
+NetServer::NetServer(const Map *map) : QThread()
 {
+    this->map = new Map;
+    *this->map = *map;
+    maxNbPlayer = map->getMaxPlayer();
+    playerIdIncrement = 0;
 }
 
 void NetServer::run()
@@ -41,11 +46,61 @@ void NetServer::incomingClient()
     QTcpSocket *clientConnection = tcpServer->nextPendingConnection();
     connect(clientConnection, SIGNAL(disconnected()),
             clientConnection, SLOT(deleteLater()));
-    //clientConnection->write(block);
     //clientConnection->disconnectFromHost();
 
-    NetServerClient *client = new NetServerClient;
-    clients << client;
+    NetServerClient *client = new NetServerClient(clientConnection,playerIdIncrement++,this);
+    clients.append(client);
+    qDebug() << "new client " << clients.size();
+    emit newPlayer();
+}
+
+/**
+ *      1
+ *      |
+ *  0 <- -> 2
+ *      |
+ *      3
+ */
+void NetServer::move(int plId, int direction)
+{
+    int x,y;
+    bool ok = false;
+    map->getPlayerPosition(plId,x,y);
+
+    //qDebug() << "player " << plId << " direction " << direction <<  " pos (" << x << "," << y << ")";
+
+    switch(direction)
+    {
+        case 0:
+            ok = map->movePlayer(plId,x-1,y);
+            break;
+
+        case 1:
+            ok = map->movePlayer(plId,x,y-1);        
+            break;
+
+        case 2:
+            ok = map->movePlayer(plId,x+1,y);        
+            break;
+        case 3:
+            ok = map->movePlayer(plId,x,y+1);        
+            break;
+    }
+    if(ok)
+    {
+        //send the move to the clients
+        foreach (NetServerClient *client, clients) {
+            client->playerMoved(plId,map->getPlayersPosition()[plId]);;
+        }
+    }
+}
+
+void NetServer::assignNumberToPlayers()
+{
+    int id = 0;
+    foreach (NetServerClient *client, clients) {
+        client->setPlayerNumber(id++);
+    }
 }
 
 NetServer::~NetServer()
@@ -55,5 +110,6 @@ NetServer::~NetServer()
     }
     clients.clear();
     delete tcpServer;
+    delete map;
 }
 

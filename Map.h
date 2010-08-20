@@ -37,6 +37,7 @@ private:
     BlockMapProperty *block_list;
     int players_positions[MAX_NB_PLAYER];
     void Init();
+
 public:
     Map();
     Map(int, int);
@@ -45,10 +46,14 @@ public:
     void loadRandom();
     int getWidth();
     int getHeight();
-    BlockMapProperty::BlockType getType(int,int);
-    BlockMapProperty::BlockType getType(int);
+    BlockMapProperty::BlockType getType(int,int) const;
+    BlockMapProperty::BlockType getType(int) const ;
     int *getPlayersPosition();
-    void setPlayerPosition(int, int);
+    void getPlayerPosition(int, int &, int &);
+    void setPlayerPosition(int id, int pos);
+    int getMaxPlayer() const;
+    bool movePlayer(int, int, int);
+    Map & operator=(const Map &);
 
 signals:
      void blockChanged(int pos);

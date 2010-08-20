@@ -35,9 +35,19 @@ GameField::GameField(int nb_x, int nb_y, int s)
 
 }
 
+void GameField::movePlayer(int player, int position)
+{
+    caseList.movePlayer(player,position);
+}
+
 void GameField::getEventFilter(QObject *obj)
 {
     scene->installEventFilter(obj);
+}
+
+const Map *GameField::getMap()
+{
+    return caseList.getMap();
 }
 
 GameField::~GameField()

@@ -24,11 +24,33 @@
 #ifndef NETSERVERCLIENT_H
 #define NETSERVERCLIENT_H
 
-class NetServerClient
+#include <QObject>
+
+class QTcpSocket;
+class NetServer;
+
+typedef struct NetHeader NetHeader;
+
+class NetServerClient : public QObject
 {
+    Q_OBJECT
+
 public:
-    NetServerClient();
+    NetServerClient(QTcpSocket *, int id, NetServer *);
     ~NetServerClient();
+    void setPlayerNumber(int);
+    void playerMoved(int plId, int position);
+
+private:
+    QTcpSocket *tcpSocket;
+    NetServer *server;
+    void handleMsg(NetHeader *msg);
+    int playerId;
+    int playerNumber;
+
+private slots:
+    void incomingData();
 };
 
 #endif
+

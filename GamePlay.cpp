@@ -22,19 +22,24 @@
 #include "constant.h"
 
 #include <QKeyEvent>
+#include <QDebug>
 
 GamePlay::GamePlay()
 {
 
-    client = new NetClient;
-    server = new NetServer;
-
     gameField = new GameField(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
     gameField->getEventFilter(this);
+    const Map *m = gameField->getMap();
+
+    client = new NetClient;
+    server = new NetServer(m);
 
     server->start();
     client->connectToServer("localhost", SERVER_PORT);
-
+    //We start the game as soon as a player is connecter to the server (ourselves actualy)
+    //the way the game is launched will be changed later.
+    connect(server,SIGNAL(newPlayer()),this,SLOT(slotStart()),Qt::QueuedConnection);
+    connect(client,SIGNAL(moveReceived(int,int)),this,SLOT(moveReceived(int,int)));
 }
 
 GamePlay::~GamePlay()
@@ -49,45 +54,24 @@ GamePlay::~GamePlay()
     delete client;
 }
 
-/**
- *      1
- *      |
- *  0 <- -> 2
- *      |
- *      3
- */
-bool GamePlay::move(int id, int direction)
+void GamePlay::slotStart()
 {
-    int x,y;
-    bool ok = false;
-/*
-    caseList.getPlayerPosition(id,x,y);
-    qDebug("player %d, direction %d, pos (%d,%d)",id,direction,x,y);
-    switch(direction)
-    {
-        case 0:
-            ok = caseList.movePlayer(id,x-1,y);
-            break;
+    server->assignNumberToPlayers();
+}
 
-        case 1:
-            ok = caseList.movePlayer(id,x,y-1);        
-            break;
+void GamePlay::move(int direction)
+{
+    client->sendMove(direction);
+}
 
-        case 2:
-            ok = caseList.movePlayer(id,x+1,y);        
-            break;
-        case 3:
-            ok = caseList.movePlayer(id,x,y+1);        
-            break;
-    }
-*/
-    qDebug("move %s",ok?"ok":"failed");
-    return ok;
+void GamePlay::moveReceived(int plId, int position)
+{
+    gameField->movePlayer(plId,position);
 }
 
 bool GamePlay::eventFilter(QObject *obj, QEvent *event)
 {
-    if(event->type() == QEvent::KeyRelease)
+    if(event->type() == QEvent::KeyPress)
     {
         QKeyEvent *c = ( QKeyEvent * )event;
         if(c->key() == Qt::Key_Escape)
@@ -101,19 +85,19 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
         }
         else if(c->key() == Qt::Key_Left)
         {
-            move(0,0);
+            move(0);
         }
         else if(c->key() == Qt::Key_Up)
         {
-            move(0,1);
+            move(1);
         }
         else if(c->key() == Qt::Key_Right)
         {
-            move(0,2);
+            move(2);
         }
         else if(c->key() == Qt::Key_Down)
         {
-            move(0,3);
+            move(3);
         }
         return true;
     }

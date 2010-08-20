@@ -29,6 +29,7 @@
 
 #include <QThread>
 
+class Map;
 class QTcpServer;
 class NetServerClient;
 
@@ -36,20 +37,26 @@ class NetServer : public QThread
 {
     Q_OBJECT
 public:
-    NetServer();
+    NetServer(const Map *);
     ~NetServer();
     void run();
     void close();
+    void move(int plId, int direction);
+    //call this function when the game is launched
+    void assignNumberToPlayers();
 
 private:
+    Map *map;
+    int maxNbPlayer;
+    int playerIdIncrement;
     QTcpServer *tcpServer;
     QList<NetServerClient *> clients;
-
 
 private slots:
     void incomingClient();
 
 signals:
+    void newPlayer();
 };
 
 #endif

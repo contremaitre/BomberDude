@@ -16,6 +16,9 @@
 */
 
 #include "NetClient.h"
+#include "NetMessage.h"
+
+#include <QTcpSocket>
 
 NetClient::NetClient()
 {
@@ -29,9 +32,39 @@ void NetClient::connectToServer(QString ip, int port)
     tcpSocket->connectToHost(ip,port);
 }
 
+void NetClient::sendMove(int direction)
+{
+    NetMsgMove msg;
+    msg.type = msg_move;
+    msg.length = sizeof(msg);
+    msg.direction = direction;
+    tcpSocket->write((const char*)&msg, sizeof(msg));
+}
+
 void NetClient::readMsgFromServer()
 {
-    qDebug("NetClient incomming message");
+    char buff[1000];
+    NetHeader *nh = (NetHeader*)buff;
+    quint64 ret = tcpSocket->read(buff, sizeof(NetHeader));
+    if(ret == sizeof(NetHeader))
+    {
+        ret = tcpSocket->read(buff + sizeof(NetHeader), nh->length - sizeof(NetHeader));
+        if(ret == (nh->length - sizeof(NetHeader)))
+            handleMsg(nh);
+    }
+}
+
+void NetClient::handleMsg(NetHeader *msg)
+{
+    //qDebug() << "NetClient::handleMsg, type = " << msg->type;
+    switch(msg->type)
+    {
+        case msg_moved:
+        {
+            //qDebug("netclient move received");
+            emit moveReceived( ((NetMsgMoved*)msg)->player,((NetMsgMoved*)msg)->position );
+        }
+    }
 }
 
 NetClient::~NetClient()

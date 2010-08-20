@@ -38,21 +38,24 @@ class GamePlay : public QObject
 public:
     GamePlay();
     ~GamePlay();
+    void startGame();
 
 private:
     GameField *gameField;
     NetClient *client;
-    NetServer *server;
+    NetServer *server; //instanciated if we are the server
 
     bool eventFilter(QObject *obj, QEvent *event);
 
     /**
      * Request a move
-     * \param id player index
      * \param direction
      */
-    bool move(int,int);
+    void move(int);
 
+private slots:
+    void slotStart();
+    void moveReceived(int plId, int position);
 };
 
 #endif

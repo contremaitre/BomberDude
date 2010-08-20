@@ -87,12 +87,12 @@ void Map::loadRandom()
     block_list[players_positions[1]].setType(BlockMapProperty::player);
 }
 
-BlockMapProperty::BlockType Map::getType(int w,int h)
+BlockMapProperty::BlockType Map::getType(int w,int h) const
 {
     return block_list[h*width+w].getType();
 }
 
-BlockMapProperty::BlockType Map::getType(int pos)
+BlockMapProperty::BlockType Map::getType(int pos) const
 {
     return block_list[pos].getType();
 }
@@ -124,6 +124,21 @@ void Map::setPlayerPosition(int id, int pos)
     }
 }
 
+bool Map::movePlayer(int id, int x, int y)
+{
+    if(x < 0 || x >= width || y < 0 || y >= height)
+        return false;
+    BlockMapProperty::BlockType type = getType(x,y);
+    if( type == BlockMapProperty::player || type == BlockMapProperty::empty )
+    {
+        setPlayerPosition(id,y*width+x);
+        return true;
+    }
+    return false;
+}
+
+
+
 int Map::getWidth()
 {
     return width;
@@ -134,14 +149,34 @@ int Map::getHeight()
     return height;
 }
 
+void Map::getPlayerPosition(int pl, int &x, int &y)
+{
+    x = players_positions[pl] % width;
+    y = players_positions[pl] / width;
+}
 
 int *Map::getPlayersPosition()
 {
     return players_positions;
 }
 
+int Map::getMaxPlayer() const
+{
+    return MAX_NB_PLAYER;
+}
+
 Map::~Map()
 {
     delete[] block_list;
+}
+
+Map & Map::operator=(const Map &oldMap)
+{
+    if(this == &oldMap)
+        return *this;
+    setDim(oldMap.width, oldMap.height);
+    memcpy(block_list,oldMap.block_list,sizeof(*block_list)*width*height);
+    memcpy(players_positions, oldMap.players_positions, sizeof(players_positions));
+    return *this;
 }
 

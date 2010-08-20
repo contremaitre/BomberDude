@@ -16,13 +16,61 @@
 */
 
 #include "NetServerClient.h"
-#include <QDebug>
+#include "NetServer.h"
+#include "NetMessage.h"
+#include <QTcpSocket>
 
-NetServerClient::NetServerClient()
+NetServerClient::NetServerClient(QTcpSocket *t, int id, NetServer *s) 
 {
-    qDebug("new NetServerClient");
+    tcpSocket = t;
+    //Had to add DirectConnection, to avoid a Qobject / qthread parenting error.
+    //need to check this (cf http://forum.qtfr.org/viewtopic.php?id=10104)
+    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(incomingData()), Qt::DirectConnection);
+    playerId = id;
+    playerNumber = -1;
+    server = s;
+    qDebug() << "new NetServerClient " << id;
 }
 
+void NetServerClient::setPlayerNumber(int n)
+{
+    playerNumber = n;
+}
+
+void NetServerClient::incomingData()
+{
+    char buff[1000];
+    NetHeader *nh = (NetHeader*)buff;
+    quint64 ret = tcpSocket->read(buff, sizeof(NetHeader));
+    if(ret == sizeof(NetHeader))
+    {
+        ret = tcpSocket->read(buff + sizeof(NetHeader), nh->length - sizeof(NetHeader));
+        if(ret == (nh->length - sizeof(NetHeader)))
+            handleMsg(nh);
+    }
+}
+
+void NetServerClient::handleMsg(NetHeader *msg)
+{
+    //qDebug() << "NetServerClient::handleMsg, type = " << msg->type;
+    switch(msg->type)
+    {
+        case msg_move:
+            server->move(playerNumber, ((NetMsgMove*)msg)->direction);
+    }
+}
+
+void NetServerClient::playerMoved(int plId, int position)
+{
+    qDebug("NetServerClient player moved");
+    NetMsgMoved msg;
+    msg.type = msg_moved;
+    msg.length = sizeof(msg);
+    msg.position = position;
+    msg.player = plId;
+    tcpSocket->write((const char*)&msg, sizeof(msg));
+    qDebug("NetServerClient player moved ok");
+}
 
 NetServerClient::~NetServerClient()
 {

@@ -24,7 +24,6 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     GamePlay gp;    
-
     app.exec();
 
     return 0;

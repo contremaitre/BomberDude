@@ -26,8 +26,10 @@
 #ifndef NETCLIENT_H
 #define NETCLIENT_H
 
-//#include <QObject>
-#include <QTcpSocket>
+#include <QObject>
+
+class QTcpSocket;
+typedef struct NetHeader NetHeader;
 
 class NetClient : public QObject
 {
@@ -36,12 +38,17 @@ public:
     NetClient();
     ~NetClient();
     void connectToServer(QString ip, int port);
+    void sendMove(int direction);
 
 private:
     QTcpSocket *tcpSocket;
+    void handleMsg(NetHeader *msg);
 
 private slots:
     void readMsgFromServer();
+
+signals:
+    void moveReceived(int plId,int pos);
 };
 
 #endif
