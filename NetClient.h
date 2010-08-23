@@ -29,6 +29,8 @@
 #include <QObject>
 
 class QTcpSocket;
+class Map;
+
 typedef struct NetHeader NetHeader;
 
 class NetClient : public QObject
@@ -42,13 +44,16 @@ public:
 
 private:
     QTcpSocket *tcpSocket;
-    void handleMsg(NetHeader *msg);
+    void handleMsg(QDataStream &);
+    quint16 blockSize; //size of the current message
+    Map *map; //store the map when the server sends it;
 
 private slots:
     void readMsgFromServer();
 
 signals:
     void moveReceived(int plId,int pos);
+    void mapReceived(const Map *);
 };
 
 #endif

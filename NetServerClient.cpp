@@ -18,6 +18,7 @@
 #include "NetServerClient.h"
 #include "NetServer.h"
 #include "NetMessage.h"
+#include "Map.h"
 #include <QTcpSocket>
 
 NetServerClient::NetServerClient(QTcpSocket *t, int id, NetServer *s) 
@@ -28,6 +29,7 @@ NetServerClient::NetServerClient(QTcpSocket *t, int id, NetServer *s)
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(incomingData()), Qt::DirectConnection);
     playerId = id;
     playerNumber = -1;
+    blockSize = 0;
     server = s;
     qDebug() << "new NetServerClient " << id;
 }
@@ -39,37 +41,67 @@ void NetServerClient::setPlayerNumber(int n)
 
 void NetServerClient::incomingData()
 {
-    char buff[1000];
-    NetHeader *nh = (NetHeader*)buff;
-    quint64 ret = tcpSocket->read(buff, sizeof(NetHeader));
-    if(ret == sizeof(NetHeader))
-    {
-        ret = tcpSocket->read(buff + sizeof(NetHeader), nh->length - sizeof(NetHeader));
-        if(ret == (nh->length - sizeof(NetHeader)))
-            handleMsg(nh);
+    QDataStream in(tcpSocket);
+    in.setVersion(QDataStream::Qt_4_0);
+    if (blockSize == 0) {
+        if (tcpSocket->bytesAvailable() < (int)sizeof(quint16))
+            return;
+        in >> blockSize;
     }
+
+    if (tcpSocket->bytesAvailable() < blockSize)
+        return;
+    handleMsg(in);
+    blockSize = 0;
 }
 
-void NetServerClient::handleMsg(NetHeader *msg)
+void NetServerClient::handleMsg(QDataStream &in)
 {
+    qint16 msg_type;
+    in >> msg_type;
     //qDebug() << "NetServerClient::handleMsg, type = " << msg->type;
-    switch(msg->type)
+    switch(msg_type)
     {
         case msg_move:
-            server->move(playerNumber, ((NetMsgMove*)msg)->direction);
+        {
+            qint16 direction;
+            in >> direction;
+            server->move(playerNumber, direction);
+        }
+        break;
+        default:
+            //trash the message
+            in.skipRawData(blockSize);
+        break;
+
     }
 }
 
 void NetServerClient::playerMoved(int plId, int position)
 {
-    qDebug("NetServerClient player moved");
-    NetMsgMoved msg;
-    msg.type = msg_moved;
-    msg.length = sizeof(msg);
-    msg.position = position;
-    msg.player = plId;
-    tcpSocket->write((const char*)&msg, sizeof(msg));
-    qDebug("NetServerClient player moved ok");
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_moved;
+    out << (qint16)plId;
+    out << (qint16)position;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    tcpSocket->write(block);
+}
+
+void NetServerClient::sendMap(const Map &map)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_map;
+    out << map;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    tcpSocket->write(block);
 }
 
 NetServerClient::~NetServerClient()

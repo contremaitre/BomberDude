@@ -17,13 +17,21 @@
 
 #include "GameField.h"
 
-GameField::GameField(int nb_x, int nb_y, int s)
+GameField::GameField(int s) : caseList(s)
 {
     scene = new QGraphicsScene;
-    caseList.init(nb_x,nb_y,s);
-    for(int i = 0; i < nb_x; i++)
+}
+
+void GameField::createRandomMap(int width, int height)
+{
+    caseList.createRandomMap(width, height);
+}
+
+void GameField::createGraphics()
+{
+    for(int i = 0; i < caseList.getWidth(); i++)
     {
-        for(int j = 0; j < nb_y; j++)
+        for(int j = 0; j < caseList.getHeight(); j++)
         {
             QGraphicsCaseItem *m_case = caseList.getCase(i,j);
             scene->addItem(m_case->getItem());
@@ -32,7 +40,6 @@ GameField::GameField(int nb_x, int nb_y, int s)
     view = new QGraphicsView(scene);
     view->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     view->show();
-
 }
 
 void GameField::movePlayer(int player, int position)
@@ -43,6 +50,11 @@ void GameField::movePlayer(int player, int position)
 void GameField::getEventFilter(QObject *obj)
 {
     scene->installEventFilter(obj);
+}
+
+void GameField::setMap(const Map* map)
+{
+    caseList.setMap(map);
 }
 
 const Map *GameField::getMap()

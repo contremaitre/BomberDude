@@ -1,0 +1,21 @@
+Message format between the server and the clients
+using QByteArray
+
+General format :
+quint16 length
+quint16 type (see NetMsgType in NetMessage.h)
+
+List of possible messages
+
+- client -> server
+    - msg_move
+        qint16 direction
+
+- server -> client
+    - msg_moved
+        qint16 player;
+        qint16 position;
+
+    - msg_map
+        QByteArray map;
+

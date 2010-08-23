@@ -15,43 +15,57 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QKeyEvent>
+#include <QDebug>
+
 #include "GamePlay.h"
 #include "GameField.h"
 #include "NetClient.h"
 #include "NetServer.h"
 #include "constant.h"
-
-#include <QKeyEvent>
-#include <QDebug>
+#include "Map.h"
 
 GamePlay::GamePlay()
 {
 
-    gameField = new GameField(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
+    gameField = new GameField(BLOCK_SIZE);
     gameField->getEventFilter(this);
-    const Map *m = gameField->getMap();
-
+    //MAP_SIZE
     client = new NetClient;
-    server = new NetServer(m);
 
-    server->start();
-    client->connectToServer("localhost", SERVER_PORT);
-    //We start the game as soon as a player is connecter to the server (ourselves actualy)
-    //the way the game is launched will be changed later.
-    connect(server,SIGNAL(newPlayer()),this,SLOT(slotStart()),Qt::QueuedConnection);
+    /**
+     * If we act as a server we must create the map
+     * If we act as a client we must wait to receive the map from the server
+     */
+    if(QString(SERVER_ADRESS) == QString("localhost"))
+    {
+        //we are the server
+        gameField->createRandomMap(MAP_SIZE,MAP_SIZE);
+        const Map *m = gameField->getMap();
+        server = new NetServer(m);
+        server->start();
+        //We start the game as soon as a player is connecter to the server (ourselves actualy)
+        //others players can join later (but they may miss movement me can make before they join
+        //the way the game is launched will be changed later.
+        connect(server,SIGNAL(newPlayer()),this,SLOT(slotStart()),Qt::QueuedConnection);
+        gameField->createGraphics();
+    }
+    else
+    {
+        server = NULL;
+        //we will need the map before we can start
+        connect(client,SIGNAL(mapReceived(const Map*)),this,SLOT(mapReceived(const Map*)));
+    }
+    client->connectToServer(SERVER_ADRESS, SERVER_PORT);
     connect(client,SIGNAL(moveReceived(int,int)),this,SLOT(moveReceived(int,int)));
+    
 }
 
-GamePlay::~GamePlay()
+void GamePlay::mapReceived(const Map *map)
 {
-    delete gameField;
-    if(server)
-    {
-        server->quit();
-        server->wait();
-        delete server;
-    }
-    delete client;
+    //todo doesnt work yet
+    gameField->setMap(map);
+    gameField->createGraphics();
 }
 
 void GamePlay::slotStart()
@@ -105,5 +119,17 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
         // standard event processing
         return QObject::eventFilter(obj, event);
     }
+}
+
+GamePlay::~GamePlay()
+{
+    delete gameField;
+    if(server)
+    {
+        server->quit();
+        server->wait();
+        delete server;
+    }
+    delete client;
 }
 

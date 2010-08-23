@@ -38,10 +38,13 @@ private:
     CasesList caseList;
 
 public:
-    GameField(int,int,int);
+    GameField(int blockSize);
     ~GameField();
+    void createRandomMap(int width, int height);
+    void createGraphics();
     void getEventFilter(QObject *obj);
     void movePlayer(int player, int position);
+    void setMap(const Map *);
     const Map *getMap();
 };
 

@@ -28,6 +28,7 @@
 
 class QTcpSocket;
 class NetServer;
+class Map;
 
 typedef struct NetHeader NetHeader;
 
@@ -40,13 +41,15 @@ public:
     ~NetServerClient();
     void setPlayerNumber(int);
     void playerMoved(int plId, int position);
+    void sendMap(const Map&);
 
 private:
     QTcpSocket *tcpSocket;
     NetServer *server;
-    void handleMsg(NetHeader *msg);
+    void handleMsg(QDataStream &);
     int playerId;
     int playerNumber;
+    quint16 blockSize; //size of the current message
 
 private slots:
     void incomingData();

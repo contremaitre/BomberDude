@@ -24,7 +24,7 @@
 
 /**
  * This class represent a bomberman game map
- * For now, the map is hardcoded.
+ * For now, the map create can only be a random map
  * Todo : add a load function, so we can load a map from a file
  */
 
@@ -32,32 +32,38 @@ class Map : public QObject
 {
     Q_OBJECT
 private:
-    int width;
-    int height;
+    qint16 width;
+    qint16 height;
     BlockMapProperty *block_list;
-    int players_positions[MAX_NB_PLAYER];
+    qint16 playersPositions[MAX_NB_PLAYER];
     void Init();
 
 public:
     Map();
-    Map(int, int);
+    Map(qint16, qint16);
     ~Map();
-    void setDim(int,int);
+    void setDim(qint16,qint16);
     void loadRandom();
-    int getWidth();
-    int getHeight();
+    qint16 getWidth() const ;
+    qint16 getHeight() const;
     BlockMapProperty::BlockType getType(int,int) const;
-    BlockMapProperty::BlockType getType(int) const ;
-    int *getPlayersPosition();
+    BlockMapProperty::BlockType getType(int) const;
+    void setType(BlockMapProperty::BlockType type, int pos);
+    void setPlayersPositions(const qint16 *);
+    const BlockMapProperty* getBlockList() const;
+    const qint16 *getPlayersPosition() const;
     void getPlayerPosition(int, int &, int &);
     void setPlayerPosition(int id, int pos);
-    int getMaxPlayer() const;
+    qint16 getMaxPlayer() const;
     bool movePlayer(int, int, int);
     Map & operator=(const Map &);
 
 signals:
      void blockChanged(int pos);
 };
+
+QDataStream &operator>>(QDataStream & in, Map &map);
+QDataStream &operator<<(QDataStream &out, const Map &map);
 
 #endif
 

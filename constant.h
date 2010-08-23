@@ -30,3 +30,7 @@
 
 //Network
 #define SERVER_PORT 10000
+//if "localhost", you will act as a server.
+#define SERVER_ADRESS "localhost" 
+//#define SERVER_ADRESS "127.0.0.1" 
+

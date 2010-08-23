@@ -30,20 +30,22 @@ private:
     PixmapsItems pixmaps;
     QGraphicsCaseItem **casesItem;
     void initCase(int, int);
+    void init();
     void loadPixMaps();
     int width;
     int height;
     int caseSize;
 public:
-    CasesList();
+    CasesList(int caseSize);
     ~CasesList();
     QGraphicsCaseItem *getCase(int);
     QGraphicsCaseItem *getCase(int, int);
-    void init(int,int,int);
+    void createRandomMap(int w, int h);
     int getWidth();
     int getHeight();
     void movePlayer(int player, int position);
     const Map *getMap();
+    void setMap(const Map *);
 
 private slots:
     void blockChanged(int);

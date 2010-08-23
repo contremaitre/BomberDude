@@ -17,6 +17,7 @@
 
 #include "NetClient.h"
 #include "NetMessage.h"
+#include "Map.h"
 
 #include <QTcpSocket>
 
@@ -25,6 +26,8 @@ NetClient::NetClient()
     qDebug("new NetClient");
     tcpSocket = new QTcpSocket();
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMsgFromServer()));
+    blockSize = 0;
+    map = NULL;
 }
 
 void NetClient::connectToServer(QString ip, int port)
@@ -34,41 +37,65 @@ void NetClient::connectToServer(QString ip, int port)
 
 void NetClient::sendMove(int direction)
 {
-    NetMsgMove msg;
-    msg.type = msg_move;
-    msg.length = sizeof(msg);
-    msg.direction = direction;
-    tcpSocket->write((const char*)&msg, sizeof(msg));
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_move;
+    out << (qint16)direction;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    tcpSocket->write(block);
 }
 
 void NetClient::readMsgFromServer()
 {
-    char buff[1000];
-    NetHeader *nh = (NetHeader*)buff;
-    quint64 ret = tcpSocket->read(buff, sizeof(NetHeader));
-    if(ret == sizeof(NetHeader))
-    {
-        ret = tcpSocket->read(buff + sizeof(NetHeader), nh->length - sizeof(NetHeader));
-        if(ret == (nh->length - sizeof(NetHeader)))
-            handleMsg(nh);
+    QDataStream in(tcpSocket);
+    in.setVersion(QDataStream::Qt_4_0);
+
+    if (blockSize == 0) {
+        if (tcpSocket->bytesAvailable() < (int)sizeof(quint16))
+            return;
+        in >> blockSize;
     }
+
+    if (tcpSocket->bytesAvailable() < blockSize)
+        return;
+    handleMsg(in);
+    blockSize = 0;
 }
 
-void NetClient::handleMsg(NetHeader *msg)
+void NetClient::handleMsg(QDataStream &in)
 {
+    qint16 msg_type;
+    in >> msg_type;
     //qDebug() << "NetClient::handleMsg, type = " << msg->type;
-    switch(msg->type)
+    switch(msg_type)
     {
         case msg_moved:
         {
+            qint16 player, position;
+            in >> player >> position;
             //qDebug("netclient move received");
-            emit moveReceived( ((NetMsgMoved*)msg)->player,((NetMsgMoved*)msg)->position );
+            emit moveReceived( player,position );
         }
+        break;
+        case msg_map:
+            qDebug("NetClient map received");
+            map = new Map;
+            in >> *map;
+            emit mapReceived(map);
+        //break;
+        default:
+            //trash the message
+            in.skipRawData(blockSize);
+        break;
     }
 }
 
 NetClient::~NetClient()
 {
     delete tcpSocket;
+    delete map;
 }
 

@@ -17,12 +17,13 @@
 
 #include "CasesList.h"
 
-CasesList::CasesList()
+CasesList::CasesList(int s)
 {
     width = height = 0;
-    caseSize = 20;
+    caseSize = s;
     casesItem = NULL;
     connect(&map,SIGNAL(blockChanged(int)),this,SLOT(blockChanged(int)));
+    loadPixMaps();
 }
 
 void CasesList::loadPixMaps()
@@ -30,25 +31,33 @@ void CasesList::loadPixMaps()
     pixmaps.init(caseSize, caseSize);
 }
 
-void CasesList::init(int w, int h, int s)
+void CasesList::init()
 {
-    width = w;
-    height = h;
-    caseSize = s;
-    loadPixMaps();
-    map.setDim(w,h);
-    map.loadRandom();
-    casesItem = new QGraphicsCaseItem*[w * h];
-    for(int i = 0; i < w; i++)
+    width = map.getWidth();
+    height = map.getHeight();
+    delete[] casesItem;
+    casesItem = new QGraphicsCaseItem*[width * height];
+    for(int i = 0; i < width; i++)
     {
-        for(int j = 0; j < h; j++)
+        for(int j = 0; j < height; j++)
         {
             initCase(i,j);
             getCase(i,j)->setItem(pixmaps.getPixmap(map.getType(i,j)));
         }
     }
-    //getCase(1,1)->setItem(pixmaps.getPixmap(0));
-    //getCase(w-2,h-2)->setItem(pixmaps.getPixmap(0));
+}
+
+void CasesList::setMap(const Map *map)
+{
+    this->map = *map;
+    init();
+}
+
+void CasesList::createRandomMap(int w, int h)
+{
+    map.setDim(w,h);
+    map.loadRandom();
+    init();
 }
 
 void CasesList::movePlayer(int player, int position)

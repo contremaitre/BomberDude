@@ -26,27 +26,9 @@
 
 enum NetMsgType
 {
-   msg_move = 0,
-   msg_moved,
-};
-
-struct NetHeader
-{
-   int length;
-   NetMsgType type;
-};
-
-struct NetMsgMove : NetHeader
-{
-    //Client->Server send the direction of the move
-    int direction;
-};
-
-struct NetMsgMoved : NetHeader
-{
-    //Server->Clients send the new postition on the map
-    int player;
-    int position;
+    msg_move = 0,
+    msg_moved,
+    msg_map,
 };
 
 #endif

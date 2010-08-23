@@ -29,7 +29,7 @@ public:
     ~BlockMapProperty();
 
     void setType(BlockType);
-    BlockType getType();
+    BlockType getType() const;
 private:
     BlockType type;
     Option option;

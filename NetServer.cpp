@@ -19,6 +19,7 @@
 #include "constant.h"
 #include "NetServerClient.h"
 #include "Map.h"
+#include "NetMessage.h"
 #include <QtNetwork>
 
 NetServer::NetServer(const Map *map) : QThread()
@@ -50,6 +51,7 @@ void NetServer::incomingClient()
 
     NetServerClient *client = new NetServerClient(clientConnection,playerIdIncrement++,this);
     clients.append(client);
+    client->sendMap(*map);
     qDebug() << "new client " << clients.size();
     emit newPlayer();
 }

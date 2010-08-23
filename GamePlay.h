@@ -30,6 +30,7 @@
 class GameField;
 class NetClient;
 class NetServer;
+class Map;
 
 class GamePlay : public QObject
 {
@@ -56,6 +57,7 @@ private:
 private slots:
     void slotStart();
     void moveReceived(int plId, int position);
+    void mapReceived(const Map*);
 };
 
 #endif

@@ -32,7 +32,7 @@ void BlockMapProperty::setType(BlockType t)
     type = t;
 }
 
-BlockMapProperty::BlockType BlockMapProperty::getType()
+BlockMapProperty::BlockType BlockMapProperty::getType() const
 {
     return type;
 }
