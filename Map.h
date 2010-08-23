@@ -49,12 +49,11 @@ public:
     BlockMapProperty::BlockType getType(int,int) const;
     BlockMapProperty::BlockType getType(int) const;
     void setType(BlockMapProperty::BlockType type, int pos);
-    void setPlayersPositions(const qint16 *);
     const BlockMapProperty* getBlockList() const;
-    const qint16 *getPlayersPosition() const;
-    void getPlayerPosition(int, int &, int &);
+    void getPlayerPosition(int, int &, int &) const;
+    qint16 getPlayerPosition(int) const;
     void setPlayerPosition(int id, int pos);
-    qint16 getMaxPlayer() const;
+    qint16 getMaxNbPlayers() const;
     bool movePlayer(int, int, int);
     Map & operator=(const Map &);
 

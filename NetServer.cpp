@@ -26,7 +26,7 @@ NetServer::NetServer(const Map *map) : QThread()
 {
     this->map = new Map;
     *this->map = *map;
-    maxNbPlayer = map->getMaxPlayer();
+    maxNbPlayer = map->getMaxNbPlayers();
     playerIdIncrement = 0;
 }
 
@@ -38,7 +38,8 @@ void NetServer::run()
         //TODO error
         return;
     }
-    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(incomingClient()));
+    //hack ? cf NetServerClient::NetServerClient()
+    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(incomingClient()), Qt::DirectConnection);
     exec();
 }
 
@@ -92,7 +93,7 @@ void NetServer::move(int plId, int direction)
     {
         //send the move to the clients
         foreach (NetServerClient *client, clients) {
-            client->playerMoved(plId,map->getPlayersPosition()[plId]);;
+            client->playerMoved(plId,map->getPlayerPosition(plId));
         }
     }
 }

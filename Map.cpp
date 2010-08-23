@@ -155,20 +155,15 @@ qint16 Map::getHeight() const
     return height;
 }
 
-void Map::getPlayerPosition(int pl, int &x, int &y)
+qint16 Map::getPlayerPosition(int pos) const
+{
+    return playersPositions[pos];
+}
+
+void Map::getPlayerPosition(int pl, int &x, int &y) const
 {
     x = playersPositions[pl] % width;
     y = playersPositions[pl] / width;
-}
-
-void Map::setPlayersPositions(const qint16 *plPos)
-{
-    memcpy(playersPositions, plPos, getMaxPlayer()*sizeof *plPos);
-}
-
-const qint16 *Map::getPlayersPosition() const
-{
-    return playersPositions;
 }
 
 const BlockMapProperty* Map::getBlockList() const
@@ -176,7 +171,7 @@ const BlockMapProperty* Map::getBlockList() const
     return block_list;
 }
 
-qint16 Map::getMaxPlayer() const
+qint16 Map::getMaxNbPlayers() const
 {
     return MAX_NB_PLAYER;
 }
@@ -188,9 +183,11 @@ Map::~Map()
 
 QDataStream &operator<<(QDataStream &out, const Map &map)
 {
-    out << map.getMaxPlayer() << map.getWidth() << map.getHeight();
+    out << map.getMaxNbPlayers() << map.getWidth() << map.getHeight();
     //copy player positions in our data stream
-    out.writeBytes((const char *)map.getPlayersPosition(),map.getMaxPlayer()*sizeof(int));
+    //out.writeBytes((const char *)map.getPlayersPosition(),map.getMaxNbPlayers()*sizeof(int));
+    for(int i = 0; i < map.getMaxNbPlayers(); i++)
+        out << map.getPlayerPosition(i);
     //copy block types in our data stream
     for(int i = 0; i < map.getWidth()*map.getHeight(); i++)
         out << (qint16)map.getType(i);
@@ -204,21 +201,19 @@ QDataStream &operator>>(QDataStream & in, Map &map)
     map.setDim(width, height);
 
     //retreive player position from the data stream
-    qint16 *plPos = new qint16[maxNbPlayers];
-    uint len = maxNbPlayers*sizeof(*plPos);
-    char *pt = (char *)plPos;
-    in.readBytes(pt,len);
-    map.setPlayersPositions(plPos);
-
+    qint16 var;
+    for(int i = 0; i < maxNbPlayers; i++)
+    {
+        in >> var;
+        map.setPlayerPosition(i,var);
+    }
     //retreive block types from the data stream
-    qint16 type;
     for(int i = 0; i < width*height; i++)
     {
-        in >> type;
-        map.setType((BlockMapProperty::BlockType)type,i);
+        in >> var;
+        map.setType((BlockMapProperty::BlockType)var,i);
     }
 
-    delete[] plPos;
     return in;
 }
 
@@ -229,7 +224,9 @@ Map & Map::operator=(const Map &oldMap)
     setDim(oldMap.width, oldMap.height);
     for(int i = 0; i < width*height; i++)
         block_list[i].setType(oldMap.block_list[i].getType());
-    memcpy(playersPositions, oldMap.playersPositions, sizeof(*playersPositions*getMaxPlayer()));
+    for(int i = 0; i < getMaxNbPlayers(); i++)
+        playersPositions[i] = oldMap.playersPositions[i];
+//    memcpy(playersPositions, oldMap.playersPositions, sizeof(*playersPositions)*getMaxNbPlayers()));
     return *this;
 }
 
