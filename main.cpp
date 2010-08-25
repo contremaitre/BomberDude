@@ -16,14 +16,15 @@
 */
 
 #include <QApplication>
-#include "GamePlay.h" 
+#include "startUi.h"
 #include "constant.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    GamePlay gp;    
+    StartUi startui;
+    startui.show();
     app.exec();
 
     return 0;

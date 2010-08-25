@@ -31,13 +31,14 @@ class GameField;
 class NetClient;
 class NetServer;
 class Map;
+class QMainWindow;
 
 class GamePlay : public QObject
 {
   Q_OBJECT
 
 public:
-    GamePlay();
+    GamePlay(QMainWindow *);
     ~GamePlay();
     void startGame();
 

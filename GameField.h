@@ -27,6 +27,7 @@
 #include <QObject>
 #include <QGraphicsView>
 #include "CasesList.h"
+class QMainWindow;
 
 class GameField : public QObject
 {
@@ -36,9 +37,9 @@ private:
     QGraphicsView *view;
     QGraphicsScene *scene;
     CasesList caseList;
-
+    QMainWindow *mainWindow;
 public:
-    GameField(int blockSize);
+    GameField(QMainWindow *, int blockSize);
     ~GameField();
     void createRandomMap(int width, int height);
     void createGraphics();

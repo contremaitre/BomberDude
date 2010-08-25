@@ -43,6 +43,7 @@ public:
     void createRandomMap(int w, int h);
     int getWidth();
     int getHeight();
+    int getCaseSize() const;
     void movePlayer(int player, int position);
     const Map *getMap();
     void setMap(const Map *);

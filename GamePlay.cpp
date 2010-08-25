@@ -25,10 +25,10 @@
 #include "constant.h"
 #include "Map.h"
 
-GamePlay::GamePlay()
+GamePlay::GamePlay(QMainWindow *mainw)
 {
 
-    gameField = new GameField(BLOCK_SIZE);
+    gameField = new GameField(mainw, BLOCK_SIZE);
     gameField->getEventFilter(this);
     //MAP_SIZE
     client = new NetClient;

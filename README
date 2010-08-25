@@ -13,12 +13,14 @@ STATUS :
 done :
 - random map creation
 - pixmaps loading
-- player one movement with arrow keys
+- player movements with arrow keys
 - client/server model
 
 started :
+- Settings and menu screen
 
 todo :
+- Movement animation (QPropertyAnimation)
 - players more sophisticated (create a class with attributes like speed, bomb capacity etc...)
 - drop bombs and break bricks
 - auto configuration scripts to build the project

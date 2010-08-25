@@ -65,6 +65,11 @@ void CasesList::movePlayer(int player, int position)
     map.setPlayerPosition(player,position);
 }
 
+int CasesList::getCaseSize() const
+{
+    return caseSize;
+}
+
 void CasesList::initCase(int i, int j)
 {
     int x_a = i*caseSize;

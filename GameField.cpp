@@ -16,10 +16,12 @@
 */
 
 #include "GameField.h"
+#include <QMainWindow>
 
-GameField::GameField(int s) : caseList(s)
+GameField::GameField(QMainWindow *mainw, int s) : caseList(s)
 {
     scene = new QGraphicsScene;
+    mainWindow = mainw;
 }
 
 void GameField::createRandomMap(int width, int height)
@@ -37,8 +39,11 @@ void GameField::createGraphics()
             scene->addItem(m_case->getItem());
         }
     }
-    view = new QGraphicsView(scene);
-    view->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    view = new QGraphicsView(mainWindow);
+    int size = caseList.getCaseSize() * (caseList.getWidth()+1);
+    mainWindow->setMinimumSize(size,size);
+    view->setMinimumSize(size,size);
+    view->setScene(scene);
     view->show();
 }
 
