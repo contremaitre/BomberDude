@@ -4,4 +4,5 @@ Makefile
 bomb
 moc_*
 core*
+ui_*
 

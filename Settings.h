@@ -15,20 +15,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//constants that may be later removed or changed in a configuration menu
+#ifndef SETTINGS_H
+#define SETTINGS_H
 
-//Graphics
-#define BLOCK_SIZE 30
-#define MAP_SIZE 20
+#include <QObject>
 
-//Game
-#define MAX_NB_PLAYER 4
-#define DEFAULT_BOMB_DURATION 4000 //ms
-#define DEFAULT_BOMB_RANGE 1
-//how fast the bomb is blinking (ms)
-#define BOMB_BLINK_INTERVAL 500
+class QSettings;
 
-//Network
-#define SERVER_PORT 10000
-#define SERVER_ADDRESS "localhost" 
+class Settings : public QObject
+{
+    Q_OBJECT
+private:
+    QSettings *qsettings;
+    int serverPort;
+    QString serverAddress;
+    bool isServer;
+public:
+    Settings();
+    ~Settings();
+
+    bool getServer() const;
+    QString getServerAddress() const;
+    int getServerPort() const;
+    void save();
+    void setServer(bool);
+    void setServerPort(int);
+    void setServerAddress(const QString&);
+
+};
+
+#endif
 

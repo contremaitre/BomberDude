@@ -4,6 +4,7 @@ I am using QT.
 Anyone can join the project, just contact me.
 
 INSTALL :
+(QT >= 4.6 required)
 qmake -project "QT += network" "CONFIG += debug"
 qmake
 make
@@ -17,11 +18,11 @@ done :
 - client/server model
 
 started :
-- Settings and menu screen
+- Player animation (QPropertyAnimation)
 
 todo :
-- Movement animation (QPropertyAnimation)
 - players more sophisticated (create a class with attributes like speed, bomb capacity etc...)
+- Settings and menu screen, add more options etc...
 - drop bombs and break bricks
 - auto configuration scripts to build the project
 - menu

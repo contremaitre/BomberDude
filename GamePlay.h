@@ -32,13 +32,14 @@ class NetClient;
 class NetServer;
 class Map;
 class QMainWindow;
+class Settings;
 
 class GamePlay : public QObject
 {
   Q_OBJECT
 
 public:
-    GamePlay(QMainWindow *);
+    GamePlay(QMainWindow *, Settings *);
     ~GamePlay();
     void startGame();
 
@@ -46,6 +47,7 @@ private:
     GameField *gameField;
     NetClient *client;
     NetServer *server; //instanciated if we are the server
+    Settings *settings;
 
     bool eventFilter(QObject *obj, QEvent *event);
 

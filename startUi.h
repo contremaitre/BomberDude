@@ -15,20 +15,45 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//constants that may be later removed or changed in a configuration menu
+/**
+ *
+ * This is the main graphic class
+ * It will draw objects and animations
+ *
+ */
 
-//Graphics
-#define BLOCK_SIZE 30
-#define MAP_SIZE 20
+#ifndef STARTUI_H
+#define STARTUI_H
+#include <QObject>
+#include <QMainWindow>
 
-//Game
-#define MAX_NB_PLAYER 4
-#define DEFAULT_BOMB_DURATION 4000 //ms
-#define DEFAULT_BOMB_RANGE 1
-//how fast the bomb is blinking (ms)
-#define BOMB_BLINK_INTERVAL 500
+class Ui_MainWindow;
+class Ui_Network;
+class GamePlay;
+class Settings;
 
-//Network
-#define SERVER_PORT 10000
-#define SERVER_ADDRESS "localhost" 
+class StartUi : public QMainWindow
+{
+  Q_OBJECT
+public:
+    StartUi();
+    ~StartUi();
+
+private:
+    //QMainWindow mainw;
+    Ui_MainWindow *mainWindow;
+    Ui_Network *network;
+    GamePlay *gamePlay;
+    Settings *settings;
+
+    void loadNetWidget();
+    bool setSettings();
+    void setAddrFieldEnabled(bool);
+
+private slots:
+    void start();
+    void isServerChanged(int);
+};
+
+#endif
 

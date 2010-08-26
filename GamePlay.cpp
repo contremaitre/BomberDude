@@ -24,20 +24,21 @@
 #include "NetServer.h"
 #include "constant.h"
 #include "Map.h"
+#include "Settings.h"
 
-GamePlay::GamePlay(QMainWindow *mainw)
+GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
 {
 
     gameField = new GameField(mainw, BLOCK_SIZE);
     gameField->getEventFilter(this);
     //MAP_SIZE
     client = new NetClient;
-
+    settings = set;
     /**
      * If we act as a server we must create the map
      * If we act as a client we must wait to receive the map from the server
      */
-    if(QString(SERVER_ADRESS) == QString("localhost"))
+    if( settings->getServer() )
     {
         //we are the server
         gameField->createRandomMap(MAP_SIZE,MAP_SIZE);
@@ -56,7 +57,7 @@ GamePlay::GamePlay(QMainWindow *mainw)
         //we will need the map before we can start
         connect(client,SIGNAL(mapReceived(const Map*)),this,SLOT(mapReceived(const Map*)));
     }
-    client->connectToServer(SERVER_ADRESS, SERVER_PORT);
+    client->connectToServer(settings->getServerAddress(), settings->getServerPort());
     connect(client,SIGNAL(moveReceived(int,int)),this,SLOT(moveReceived(int,int)));
     
 }
