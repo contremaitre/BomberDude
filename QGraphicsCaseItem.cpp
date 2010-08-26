@@ -16,6 +16,7 @@
 */
 
 #include "QGraphicsCaseItem.h"
+//#include <QPropertyAnimation>
 
 QGraphicsCaseItem::QGraphicsCaseItem()
 {
@@ -34,17 +35,28 @@ void QGraphicsCaseItem::setPos(int x, int y, int size)
     this->x = x;
     this->y = y;
     this->size = size;
-    setOffset(QPointF(x, y));
+    pix.setOffset(QPointF(x, y));
 }
 
 QGraphicsPixmapItem *QGraphicsCaseItem::getItem()
 {
-    return this;
+    return &pix;
+}
+
+void QGraphicsCaseItem::paint(QPainter*p, const QStyleOptionGraphicsItem* qs, QWidget* qw)
+{
+    pix.paint(p,qs,qw);
 }
 
 void QGraphicsCaseItem::setItem(const QPixmap &p)
 {
-    setPixmap(p);
+    pix.setPixmap(p);
+    //setParentItem(&pix);
+}
+
+QRectF QGraphicsCaseItem::boundingRect() const
+{
+    return pix.boundingRect();
 }
 
 void QGraphicsCaseItem::setItem(caseType t)

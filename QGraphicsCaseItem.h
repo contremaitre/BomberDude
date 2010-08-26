@@ -19,6 +19,7 @@
 #define QGRAPHICSCASEITEM_H
 
 #include <QGraphicsPixmapItem>
+#include <QGraphicsObject>
 
 enum caseType
 {
@@ -28,10 +29,13 @@ enum caseType
     
 };
 
-class QGraphicsCaseItem : public QGraphicsPixmapItem
+class QGraphicsCaseItem : public QGraphicsObject
 {
 private:
     int x,y,size;
+    void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
+    QRectF boundingRect() const;
+    QGraphicsPixmapItem pix;
 public:
     QGraphicsCaseItem();
     QGraphicsCaseItem(int,int,int);
@@ -39,7 +43,6 @@ public:
     void setItem(caseType);
     void setItem(const QPixmap &);
     QGraphicsPixmapItem *getItem();
-    //QGraphicsPixmapItem pixItem;
 };
 
 #endif

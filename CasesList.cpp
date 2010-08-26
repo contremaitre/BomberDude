@@ -74,8 +74,6 @@ void CasesList::initCase(int i, int j)
 {
     int x_a = i*caseSize;
     int y_a = j*caseSize;
-    //casesItem[j*width+i] = new QGraphicsCaseItem;
-    //casesItem[j*width+i]->setPos(x_a,y_a,x_a+caseSize,y_a+caseSize);
     casesItem[j*width+i] = new QGraphicsCaseItem(x_a,y_a,caseSize);
 }
 
