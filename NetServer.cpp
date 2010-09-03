@@ -70,8 +70,6 @@ void NetServer::move(int plId, int direction)
     bool ok = false;
     map->getPlayerPosition(plId,x,y);
 
-    //qDebug() << "player " << plId << " direction " << direction <<  " pos (" << x << "," << y << ")";
-
     switch(direction)
     {
         case 0:
@@ -96,6 +94,8 @@ void NetServer::move(int plId, int direction)
             client->playerMoved(plId,map->getPlayerPosition(plId));
         }
     }
+    //qDebug() << "player " << plId << " direction " << direction <<  " pos (" << x << "," << y << ") ok : " << ok;
+
 }
 
 void NetServer::assignNumberToPlayers()

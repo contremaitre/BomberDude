@@ -53,6 +53,8 @@ private:
 private slots:
     void start();
     void isServerChanged(int);
+    void slotConnectionError();
+    void slotConnected();
 };
 
 #endif

@@ -25,6 +25,8 @@ NetClient::NetClient()
 {
     qDebug("new NetClient");
     tcpSocket = new QTcpSocket();
+    connect(tcpSocket, SIGNAL(connected()), this, SLOT(slotTcpConnected()));
+    connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(slotTcpError(QAbstractSocket::SocketError)));
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMsgFromServer()));
     blockSize = 0;
     map = NULL;
@@ -91,6 +93,17 @@ void NetClient::handleMsg(QDataStream &in)
             in.skipRawData(blockSize);
         break;
     }
+}
+
+void NetClient::slotTcpConnected()
+{
+    emit sigConnected();
+}
+
+void NetClient::slotTcpError(QAbstractSocket::SocketError error)
+{
+    qDebug() << "NetClient tcp error " << error;
+    emit sigConnectionError();
 }
 
 NetClient::~NetClient()

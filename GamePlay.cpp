@@ -17,6 +17,7 @@
 
 #include <QKeyEvent>
 #include <QDebug>
+#include <QTimer>
 
 #include "GamePlay.h"
 #include "GameField.h"
@@ -28,12 +29,20 @@
 
 GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
 {
-
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()),this,SLOT(slotMoveTimer()));
+    leftK = rightK = upK = downK = false;
     gameField = new GameField(mainw, BLOCK_SIZE);
     gameField->getEventFilter(this);
     //MAP_SIZE
     client = new NetClient;
+    connect(client, SIGNAL(sigConnected()), this, SLOT(slotClientConnected()));
+    connect(client, SIGNAL(sigConnectionError()), this, SLOT(slotClientConnectError()));
     settings = set;
+}
+
+void GamePlay::launch()
+{
     /**
      * If we act as a server we must create the map
      * If we act as a client we must wait to receive the map from the server
@@ -59,7 +68,6 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     }
     client->connectToServer(settings->getServerAddress(), settings->getServerPort());
     connect(client,SIGNAL(moveReceived(int,int)),this,SLOT(moveReceived(int,int)));
-    
 }
 
 void GamePlay::mapReceived(const Map *map)
@@ -84,6 +92,27 @@ void GamePlay::moveReceived(int plId, int position)
     gameField->movePlayer(plId,position);
 }
 
+/**
+ *      1
+ *      |
+ *  0 <- -> 2
+ *      |
+ *      3
+ */
+void GamePlay::slotMoveTimer()
+{
+    int direction;
+    if(leftK)
+        direction = 0;
+    else if(rightK)
+        direction = 2;
+    else if(upK)
+        direction = 1;
+    else if(downK)
+        direction = 3;
+    client->sendMove(direction);
+}
+
 bool GamePlay::eventFilter(QObject *obj, QEvent *event)
 {
     if(event->type() == QEvent::KeyPress)
@@ -98,21 +127,29 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
             qDebug("space");
             //dropBomb(0);
         }
-        else if(c->key() == Qt::Key_Left)
-        {
-            move(0);
-        }
+    }
+    if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
+    {
+        QKeyEvent *c = ( QKeyEvent * )event;
+        if(c->isAutoRepeat())
+            return true;
+        bool press = event->type() == QEvent::KeyPress;
+        if(c->key() == Qt::Key_Left)
+            leftK = press;
         else if(c->key() == Qt::Key_Up)
-        {
-            move(1);
-        }
+            upK = press;
         else if(c->key() == Qt::Key_Right)
-        {
-            move(2);
-        }
+            rightK = press;
         else if(c->key() == Qt::Key_Down)
+            downK = press;
+        if(press && !timer->isActive())
         {
-            move(3);
+            timer->start(MOVE_TICK_INTERVAL);
+            slotMoveTimer();
+        }
+        if(!press && !leftK && !upK && !rightK && !downK && timer->isActive())
+        {
+            timer->stop();
         }
         return true;
     }
@@ -120,6 +157,15 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
         // standard event processing
         return QObject::eventFilter(obj, event);
     }
+}
+void GamePlay::slotClientConnected()
+{
+    emit connectedToServer();
+}
+
+void GamePlay::slotClientConnectError()
+{
+    emit connectionError();
 }
 
 GamePlay::~GamePlay()
@@ -132,5 +178,6 @@ GamePlay::~GamePlay()
         delete server;
     }
     delete client;
+    delete timer;
 }
 

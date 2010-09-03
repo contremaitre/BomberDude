@@ -33,6 +33,7 @@ class NetServer;
 class Map;
 class QMainWindow;
 class Settings;
+class QTimer;
 
 class GamePlay : public QObject
 {
@@ -41,13 +42,16 @@ class GamePlay : public QObject
 public:
     GamePlay(QMainWindow *, Settings *);
     ~GamePlay();
-    void startGame();
+    void launch();
 
 private:
     GameField *gameField;
     NetClient *client;
     NetServer *server; //instanciated if we are the server
     Settings *settings;
+
+    bool leftK, rightK, upK, downK;
+    QTimer *timer;
 
     bool eventFilter(QObject *obj, QEvent *event);
 
@@ -59,8 +63,15 @@ private:
 
 private slots:
     void slotStart();
+    void slotMoveTimer();
     void moveReceived(int plId, int position);
     void mapReceived(const Map*);
+    void slotClientConnected();
+    void slotClientConnectError();
+
+signals:
+    void connectedToServer();
+    void connectionError();
 };
 
 #endif

@@ -64,6 +64,9 @@ void StartUi::start()
         return;
     mainWindow->startButton->hide();
     gamePlay = new GamePlay(this, settings);
+    connect( gamePlay, SIGNAL(connectedToServer()), this, SLOT(slotConnected()) );
+    connect( gamePlay, SIGNAL(connectionError()), this, SLOT(slotConnectionError()) );
+    gamePlay->launch();
 }
 
 void StartUi::setAddrFieldEnabled(bool en)
@@ -75,6 +78,21 @@ void StartUi::setAddrFieldEnabled(bool en)
 void StartUi::isServerChanged(int state)
 {
     setAddrFieldEnabled(state > 0);
+}
+
+void StartUi::slotConnected()
+{
+    qDebug("StartUi::slotConnected");
+    //We do not (yet) handle connection errors after this
+    disconnect(gamePlay, SIGNAL(connectionError()), this, SLOT(slotConnectionError()));
+}
+
+void StartUi::slotConnectionError()
+{
+    qDebug("StartUi::slotConnectionError");
+    delete gamePlay;
+    gamePlay = NULL;
+    mainWindow->startButton->show();
 }
 
 StartUi::~StartUi()

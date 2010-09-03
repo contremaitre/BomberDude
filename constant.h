@@ -32,3 +32,5 @@
 #define SERVER_PORT 10000
 #define SERVER_ADDRESS "localhost" 
 
+//Gameplay
+#define MOVE_TICK_INTERVAL 250 //(ms)

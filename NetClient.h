@@ -27,8 +27,11 @@
 #define NETCLIENT_H
 
 #include <QObject>
+#include <QAbstractSocket>
 
 class QTcpSocket;
+
+
 class Map;
 
 typedef struct NetHeader NetHeader;
@@ -50,10 +53,14 @@ private:
 
 private slots:
     void readMsgFromServer();
+    void slotTcpConnected();
+    void slotTcpError(QAbstractSocket::SocketError);
 
 signals:
     void moveReceived(int plId,int pos);
     void mapReceived(const Map *);
+    void sigConnected();
+    void sigConnectionError();
 };
 
 #endif

@@ -59,7 +59,6 @@ void NetServerClient::handleMsg(QDataStream &in)
 {
     qint16 msg_type;
     in >> msg_type;
-    //qDebug() << "NetServerClient::handleMsg, type = " << msg->type;
     switch(msg_type)
     {
         case msg_move:
