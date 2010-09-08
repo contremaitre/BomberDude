@@ -138,9 +138,9 @@ bool Map::movePlayer(int id, int direction)
      * Rules for a player move :
      * Get the block where the player is and :
      * - 1 if the player is at or beyond the middle of the block (wrt the direction of the move),
-     * and if the next block is not empty, we refuse to move
-     * - 2 else the move is accepted
-     * - TODO : Gerer le contournement des blocks comme dans AB
+     * and if the next block is empty, we move in toward the next block
+     * - 2 if the next block is not empty, we try to circle the block if it is possible
+     * - 3 else the move is rejected
      */
     qint16 x,y;
     int move_x = 0;
@@ -172,9 +172,61 @@ bool Map::movePlayer(int id, int direction)
     {
         playersPositions[id].x += move_x;
         playersPositions[id].y += move_y;
+        //We want to stay on the middle of blocks.
+        adjustPlayerPosition(id,move_x,move_y);
         return true;
     }
+    else
+    {
+        //circle the block
+        int pos;
+        if(move_x != 0)
+        {
+            pos = coordinatePositionInBlock(playersPositions[id].y);
+            if( pos != 0)
+            {
+                playersPositions[id].x += move_x;
+                playersPositions[id].y += pos;
+                return true;
+            }
+        }
+        else
+        {
+            pos = coordinatePositionInBlock(playersPositions[id].x);
+            if( pos != 0)
+            {
+                playersPositions[id].y += move_y;
+                playersPositions[id].x += pos;
+                return true;
+            }
+        }
+    }
     return false;
+}
+
+void Map::adjustPlayerPosition(int plId, int xDirection, int yDirection)
+{
+    if(xDirection != 0)
+    {
+        int pos = coordinatePositionInBlock(playersPositions[plId].y);
+        playersPositions[plId].y -= pos;
+    }
+    else
+    {
+        int pos = coordinatePositionInBlock(playersPositions[plId].x);
+        playersPositions[plId].x -= pos;
+    }
+}
+
+int Map::coordinatePositionInBlock(int coord)
+{
+    int block = coord / blockSize;
+    int middle = blockSize * block + blockSize/2;
+    if(coord == middle)
+        return 0;
+    if(coord < middle)
+        return -1;
+    return 1;    
 }
 
 qint16 Map::getWidth() const

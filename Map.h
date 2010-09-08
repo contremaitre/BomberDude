@@ -40,6 +40,9 @@ private:
     struct point{qint16 x; qint16 y;};
     point playersPositions[MAX_NB_PLAYER];
     void Init();
+    void adjustPlayerPosition(int plId, int xDirection, int yDirection);
+    //Test if a coordinate is bellow (-1) on (0) or above (1) the middle of the block
+    int coordinatePositionInBlock(int coord);
 
 public:
     Map();
