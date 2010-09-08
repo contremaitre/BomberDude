@@ -18,7 +18,7 @@
 #include "GameField.h"
 #include <QMainWindow>
 
-GameField::GameField(QMainWindow *mainw, int s) : caseList(s)
+GameField::GameField(QMainWindow *mainw, int s) : blockList(s)
 {
     scene = new QGraphicsScene;
     mainWindow = mainw;
@@ -26,26 +26,26 @@ GameField::GameField(QMainWindow *mainw, int s) : caseList(s)
 
 void GameField::createRandomMap(int width, int height)
 {
-    caseList.createRandomMap(width, height);
+    blockList.createRandomMap(width, height);
 }
 
 void GameField::createGraphics()
 {
-    for(int i = 0; i < caseList.getWidth(); i++)
+    for(int i = 0; i < blockList.getWidth(); i++)
     {
-        for(int j = 0; j < caseList.getHeight(); j++)
+        for(int j = 0; j < blockList.getHeight(); j++)
         {
-            QGraphicsCaseItem *m_case = caseList.getCase(i,j);
+            QGraphicsCaseItem *m_case = blockList.getCase(i,j);
             scene->addItem(m_case->getItem());
         }
     }
-    for(int i = 0 ; i < caseList.getNbPlayers(); i++)
+    for(int i = 0 ; i < blockList.getNbPlayers(); i++)
     {
-            QGraphicsCaseItem *m_case = caseList.getPlayer(i);
+            QGraphicsCaseItem *m_case = blockList.getPlayer(i);
             scene->addItem(m_case->getItem());
     }
     view = new QGraphicsView(mainWindow);
-    int size = caseList.getCaseSize() * (caseList.getWidth()+1);
+    int size = blockList.getCaseSize() * (blockList.getWidth()+1);
     mainWindow->setMinimumSize(size,size);
     view->setMinimumSize(size,size);
     view->setScene(scene);
@@ -54,7 +54,7 @@ void GameField::createGraphics()
 
 void GameField::movePlayer(int player, int x, int y)
 {
-    caseList.movePlayer(player, x, y);
+    blockList.movePlayer(player, x, y);
 }
 
 void GameField::getEventFilter(QObject *obj)
@@ -64,12 +64,12 @@ void GameField::getEventFilter(QObject *obj)
 
 void GameField::setMap(const Map* map)
 {
-    caseList.setMap(map);
+    blockList.setMap(map);
 }
 
 const Map *GameField::getMap()
 {
-    return caseList.getMap();
+    return blockList.getMap();
 }
 
 GameField::~GameField()

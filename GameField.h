@@ -26,7 +26,7 @@
 #define GAMEFIELD_H
 #include <QObject>
 #include <QGraphicsView>
-#include "CasesList.h"
+#include "BlocksList.h"
 class QMainWindow;
 
 class GameField : public QObject
@@ -36,7 +36,7 @@ class GameField : public QObject
 private:
     QGraphicsView *view;
     QGraphicsScene *scene;
-    CasesList caseList;
+    BlocksList blockList;
     QMainWindow *mainWindow;
 public:
     GameField(QMainWindow *, int blockSize);

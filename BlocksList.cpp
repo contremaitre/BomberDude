@@ -16,9 +16,9 @@
 */
 
 #include <QDebug>
-#include "CasesList.h"
+#include "BlocksList.h"
 
-CasesList::CasesList(int s)
+BlocksList::BlocksList(int s)
 {
     width = height = 0;
     caseSize = s;
@@ -28,12 +28,12 @@ CasesList::CasesList(int s)
     loadPixMaps();
 }
 
-void CasesList::loadPixMaps()
+void BlocksList::loadPixMaps()
 {
     pixmaps.init(caseSize, caseSize);
 }
 
-void CasesList::init()
+void BlocksList::init()
 {
     width = map.getWidth();
     height = map.getHeight();
@@ -59,13 +59,13 @@ void CasesList::init()
     }
 }
 
-void CasesList::setMap(const Map *map)
+void BlocksList::setMap(const Map *map)
 {
     this->map = *map;
     init();
 }
 
-void CasesList::createRandomMap(int w, int h)
+void BlocksList::createRandomMap(int w, int h)
 {
     map.setDim(w,h,caseSize);
     map.loadRandom();
@@ -73,66 +73,66 @@ void CasesList::createRandomMap(int w, int h)
 }
 
 
-void CasesList::movePlayer(int player, int x, int y)
+void BlocksList::movePlayer(int player, int x, int y)
 {
     map.setPlayerPosition(player, x, y);
     playersItem[player]->setPos(x-caseSize/2,y-caseSize/2,caseSize);
 }
 
-int CasesList::getCaseSize() const
+int BlocksList::getCaseSize() const
 {
     return caseSize;
 }
 
-void CasesList::initCase(int i, int j)
+void BlocksList::initCase(int i, int j)
 {
     int x_a = i*caseSize;
     int y_a = j*caseSize;
     casesItem[j*width+i] = new QGraphicsCaseItem(x_a,y_a,caseSize);
 }
 
-void CasesList::blockChanged(int pos)
+void BlocksList::blockChanged(int pos)
 {
     getCase(pos)->setItem(pixmaps.getPixmap(map.getType(pos)));
     emit pixmapChanged(pos);
 }
 
-const Map *CasesList::getMap()
+const Map *BlocksList::getMap()
 {
     return &map;
 }
 
-int CasesList::getWidth()
+int BlocksList::getWidth()
 {
     return width;
 }
 
-int CasesList::getHeight()
+int BlocksList::getHeight()
 {
     return height;
 }
 
-int CasesList::getNbPlayers() const
+int BlocksList::getNbPlayers() const
 {
     return map.getMaxNbPlayers();
 }
 
-QGraphicsCaseItem *CasesList::getCase(int i, int j)
+QGraphicsCaseItem *BlocksList::getCase(int i, int j)
 {
     return casesItem[j*width+i];
 }
 
-QGraphicsCaseItem *CasesList::getCase(int pos)
+QGraphicsCaseItem *BlocksList::getCase(int pos)
 {
     return casesItem[pos];
 }
 
-QGraphicsCaseItem *CasesList::getPlayer(int id)
+QGraphicsCaseItem *BlocksList::getPlayer(int id)
 {
     return playersItem[id];
 }
 
-CasesList::~CasesList()
+BlocksList::~BlocksList()
 {
     if(casesItem)
     {

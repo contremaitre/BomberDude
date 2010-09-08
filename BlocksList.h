@@ -22,7 +22,7 @@
 #include "PixmapsItems.h"
 #include <QObject>
 
-class CasesList : public QObject
+class BlocksList : public QObject
 {
   Q_OBJECT
 private:
@@ -37,8 +37,8 @@ private:
     int height;
     int caseSize;
 public:
-    CasesList(int caseSize);
-    ~CasesList();
+    BlocksList(int caseSize);
+    ~BlocksList();
     QGraphicsCaseItem *getCase(int);
     QGraphicsCaseItem *getCase(int, int);
     QGraphicsCaseItem *getPlayer(int);
