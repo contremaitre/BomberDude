@@ -67,7 +67,7 @@ void GamePlay::launch()
         connect(client,SIGNAL(mapReceived(const Map*)),this,SLOT(mapReceived(const Map*)));
     }
     client->connectToServer(settings->getServerAddress(), settings->getServerPort());
-    connect(client,SIGNAL(moveReceived(int,int)),this,SLOT(moveReceived(int,int)));
+    connect(client,SIGNAL(moveReceived(qint16,qint16,qint16)),this,SLOT(moveReceived(qint16,qint16,qint16)));
 }
 
 void GamePlay::mapReceived(const Map *map)
@@ -87,9 +87,9 @@ void GamePlay::move(int direction)
     client->sendMove(direction);
 }
 
-void GamePlay::moveReceived(int plId, int position)
+void GamePlay::moveReceived(qint16 plId, qint16 x, qint16 y)
 {
-    gameField->movePlayer(plId,position);
+    gameField->movePlayer(plId, x, y);
 }
 
 /**

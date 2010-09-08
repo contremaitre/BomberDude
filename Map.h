@@ -34,31 +34,39 @@ class Map : public QObject
 private:
     qint16 width;
     qint16 height;
+    qint16 blockSize;
     BlockMapProperty *block_list;
-    qint16 playersPositions[MAX_NB_PLAYER];
+    //player position coordinates is in "pixel". And there is "blockSize" pixels in one block
+    struct point{qint16 x; qint16 y;};
+    point playersPositions[MAX_NB_PLAYER];
     void Init();
 
 public:
     Map();
-    Map(qint16, qint16);
+    Map(qint16, qint16, qint16);
     ~Map();
-    void setDim(qint16,qint16);
+    void setDim(qint16,qint16,qint16);
     void loadRandom();
     qint16 getWidth() const ;
     qint16 getHeight() const;
     BlockMapProperty::BlockType getType(int,int) const;
     BlockMapProperty::BlockType getType(int) const;
     void setType(BlockMapProperty::BlockType type, int pos);
+    void setType(BlockMapProperty::BlockType type, int x, int y);
     const BlockMapProperty* getBlockList() const;
-    void getPlayerPosition(int, int &, int &) const;
-    qint16 getPlayerPosition(int) const;
-    void setPlayerPosition(int id, int pos);
+    //get the block number at coordinate x,y
+    void getBlockPosition(int, int, int&, int&) const;
+    //get the coordinates of the player
+    void getPlayerPosition(int, qint16&, qint16&) const;
+    void setPlayerPosition(int id, qint16 , qint16);
     qint16 getMaxNbPlayers() const;
-    bool movePlayer(int, int, int);
+    qint16 getBlockSize() const;
+    bool movePlayer(int id, int direction);
     Map & operator=(const Map &);
 
 signals:
-     void blockChanged(int pos);
+    void blockChanged(int pos);
+    void playerMoved(int pl, int x, int y);
 };
 
 QDataStream &operator>>(QDataStream & in, Map &map);

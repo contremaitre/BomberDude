@@ -39,6 +39,11 @@ void GameField::createGraphics()
             scene->addItem(m_case->getItem());
         }
     }
+    for(int i = 0 ; i < caseList.getNbPlayers(); i++)
+    {
+            QGraphicsCaseItem *m_case = caseList.getPlayer(i);
+            scene->addItem(m_case->getItem());
+    }
     view = new QGraphicsView(mainWindow);
     int size = caseList.getCaseSize() * (caseList.getWidth()+1);
     mainWindow->setMinimumSize(size,size);
@@ -47,9 +52,9 @@ void GameField::createGraphics()
     view->show();
 }
 
-void GameField::movePlayer(int player, int position)
+void GameField::movePlayer(int player, int x, int y)
 {
-    caseList.movePlayer(player,position);
+    caseList.movePlayer(player, x, y);
 }
 
 void GameField::getEventFilter(QObject *obj)

@@ -44,7 +44,7 @@ public:
     void createRandomMap(int width, int height);
     void createGraphics();
     void getEventFilter(QObject *obj);
-    void movePlayer(int player, int position);
+    void movePlayer(int player, int x, int y);
     void setMap(const Map *);
     const Map *getMap();
 };

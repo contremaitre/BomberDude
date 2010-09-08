@@ -64,7 +64,7 @@ private:
 private slots:
     void slotStart();
     void slotMoveTimer();
-    void moveReceived(int plId, int position);
+    void moveReceived(qint16 plId, qint16 x, qint16 y);
     void mapReceived(const Map*);
     void slotClientConnected();
     void slotClientConnectError();

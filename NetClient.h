@@ -57,7 +57,7 @@ private slots:
     void slotTcpError(QAbstractSocket::SocketError);
 
 signals:
-    void moveReceived(int plId,int pos);
+    void moveReceived(qint16 plId, qint16 x, qint16 y);
     void mapReceived(const Map *);
     void sigConnected();
     void sigConnectionError();

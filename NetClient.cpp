@@ -76,10 +76,10 @@ void NetClient::handleMsg(QDataStream &in)
     {
         case msg_moved:
         {
-            qint16 player, position;
-            in >> player >> position;
-            //qDebug("netclient move received");
-            emit moveReceived( player,position );
+            qint16 player, x, y;
+            in >> player >> x >> y;
+            //qDebug() << "netclient move received " << x << " " << y;
+            emit moveReceived( player, x, y );
         }
         break;
         case msg_map:

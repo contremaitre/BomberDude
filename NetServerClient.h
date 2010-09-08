@@ -40,7 +40,7 @@ public:
     NetServerClient(QTcpSocket *, int id, NetServer *);
     ~NetServerClient();
     void setPlayerNumber(int);
-    void playerMoved(int plId, int position);
+    void playerMoved(int plId, int x, int y);
     void sendMap(const Map&);
 
 private:

@@ -76,7 +76,7 @@ void NetServerClient::handleMsg(QDataStream &in)
     }
 }
 
-void NetServerClient::playerMoved(int plId, int position)
+void NetServerClient::playerMoved(int plId, int x, int y)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
@@ -84,7 +84,8 @@ void NetServerClient::playerMoved(int plId, int position)
     out << (quint16)0;
     out << (quint16)msg_moved;
     out << (qint16)plId;
-    out << (qint16)position;
+    out << (qint16)x;
+    out << (qint16)y;
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
     tcpSocket->write(block);

@@ -29,6 +29,7 @@ private:
     Map map;
     PixmapsItems pixmaps;
     QGraphicsCaseItem **casesItem;
+    QGraphicsCaseItem **playersItem;
     void initCase(int, int);
     void init();
     void loadPixMaps();
@@ -40,11 +41,13 @@ public:
     ~CasesList();
     QGraphicsCaseItem *getCase(int);
     QGraphicsCaseItem *getCase(int, int);
+    QGraphicsCaseItem *getPlayer(int);
     void createRandomMap(int w, int h);
     int getWidth();
     int getHeight();
     int getCaseSize() const;
-    void movePlayer(int player, int position);
+    void movePlayer(int player, int x, int y);
+    int getNbPlayers() const;
     const Map *getMap();
     void setMap(const Map *);
 

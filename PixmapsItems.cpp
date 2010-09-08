@@ -56,8 +56,6 @@ void PixmapsItems::loadAll()
 
 QPixmap PixmapsItems::getPixmap(BlockMapProperty::BlockType type)
 {
-    if(type == BlockMapProperty::player)
-        return getPixmap(0); //we don't implement multiplayer pixmaps yet
     for (int i = 0; i < block_pixmaps.size(); ++i) {
         if (block_pixmaps.at(i).type == type)
             return block_pixmaps.at(i).pixmap;

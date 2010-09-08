@@ -15,6 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QDebug>
 #include "CasesList.h"
 
 CasesList::CasesList(int s)
@@ -22,6 +23,7 @@ CasesList::CasesList(int s)
     width = height = 0;
     caseSize = s;
     casesItem = NULL;
+    playersItem = NULL;
     connect(&map,SIGNAL(blockChanged(int)),this,SLOT(blockChanged(int)));
     loadPixMaps();
 }
@@ -36,7 +38,9 @@ void CasesList::init()
     width = map.getWidth();
     height = map.getHeight();
     delete[] casesItem;
+    delete[] playersItem;
     casesItem = new QGraphicsCaseItem*[width * height];
+    playersItem = new QGraphicsCaseItem*[map.getMaxNbPlayers()];
     for(int i = 0; i < width; i++)
     {
         for(int j = 0; j < height; j++)
@@ -44,6 +48,14 @@ void CasesList::init()
             initCase(i,j);
             getCase(i,j)->setItem(pixmaps.getPixmap(map.getType(i,j)));
         }
+    }
+    qint16 x,y;
+    for(int i = 0; i < map.getMaxNbPlayers(); i++)
+    {
+        map.getPlayerPosition(i,x,y);
+        qDebug() << "player" << i << "postition" << x << y;
+        playersItem[i] = new QGraphicsCaseItem(x-caseSize/2,y-caseSize/2,caseSize);
+        playersItem[i]->setItem(pixmaps.getPixmap(i));
     }
 }
 
@@ -55,14 +67,16 @@ void CasesList::setMap(const Map *map)
 
 void CasesList::createRandomMap(int w, int h)
 {
-    map.setDim(w,h);
+    map.setDim(w,h,caseSize);
     map.loadRandom();
     init();
 }
 
-void CasesList::movePlayer(int player, int position)
+
+void CasesList::movePlayer(int player, int x, int y)
 {
-    map.setPlayerPosition(player,position);
+    map.setPlayerPosition(player, x, y);
+    playersItem[player]->setPos(x-caseSize/2,y-caseSize/2,caseSize);
 }
 
 int CasesList::getCaseSize() const
@@ -98,6 +112,11 @@ int CasesList::getHeight()
     return height;
 }
 
+int CasesList::getNbPlayers() const
+{
+    return map.getMaxNbPlayers();
+}
+
 QGraphicsCaseItem *CasesList::getCase(int i, int j)
 {
     return casesItem[j*width+i];
@@ -108,6 +127,11 @@ QGraphicsCaseItem *CasesList::getCase(int pos)
     return casesItem[pos];
 }
 
+QGraphicsCaseItem *CasesList::getPlayer(int id)
+{
+    return playersItem[id];
+}
+
 CasesList::~CasesList()
 {
     if(casesItem)
@@ -115,6 +139,12 @@ CasesList::~CasesList()
         for(int i = 0; i < width*height; i++)
             delete casesItem[i];
         delete []casesItem;
+    }
+    if(playersItem)
+    {
+        for(int i = 0; i < map.getMaxNbPlayers(); i++)
+            delete playersItem[i];
+        delete[] playersItem;
     }
 }
 

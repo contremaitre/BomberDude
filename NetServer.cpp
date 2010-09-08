@@ -57,45 +57,18 @@ void NetServer::incomingClient()
     emit newPlayer();
 }
 
-/**
- *      1
- *      |
- *  0 <- -> 2
- *      |
- *      3
- */
 void NetServer::move(int plId, int direction)
 {
-    int x,y;
-    bool ok = false;
-    map->getPlayerPosition(plId,x,y);
-
-    switch(direction)
-    {
-        case 0:
-            ok = map->movePlayer(plId,x-1,y);
-            break;
-
-        case 1:
-            ok = map->movePlayer(plId,x,y-1);        
-            break;
-
-        case 2:
-            ok = map->movePlayer(plId,x+1,y);        
-            break;
-        case 3:
-            ok = map->movePlayer(plId,x,y+1);        
-            break;
-    }
+    bool ok = map->movePlayer(plId,direction);
     if(ok)
     {
         //send the move to the clients
+        qint16 x,y;
+        map->getPlayerPosition(plId, x, y);
         foreach (NetServerClient *client, clients) {
-            client->playerMoved(plId,map->getPlayerPosition(plId));
+            client->playerMoved(plId,x,y);
         }
     }
-    //qDebug() << "player " << plId << " direction " << direction <<  " pos (" << x << "," << y << ") ok : " << ok;
-
 }
 
 void NetServer::assignNumberToPlayers()
