@@ -178,16 +178,21 @@ bool Map::movePlayer(int id, int direction)
     }
     else
     {
-        //circle the block
+        //try to circle the block
         int pos;
         if(move_x != 0)
         {
             pos = coordinatePositionInBlock(playersPositions[id].y);
             if( pos != 0)
             {
-                playersPositions[id].x += move_x;
-                playersPositions[id].y += pos;
-                return true;
+                getBlockPosition( x, y+pos*blockSize/2, x_nextBlock, y_nextBlock );
+                type = getType(x_nextBlock,y_nextBlock);
+                if( type == BlockMapProperty::empty )
+                {
+                    playersPositions[id].x += move_x;
+                    playersPositions[id].y += pos;
+                    return true;
+                }
             }
         }
         else
@@ -195,9 +200,14 @@ bool Map::movePlayer(int id, int direction)
             pos = coordinatePositionInBlock(playersPositions[id].x);
             if( pos != 0)
             {
-                playersPositions[id].y += move_y;
-                playersPositions[id].x += pos;
-                return true;
+                getBlockPosition( x+pos*blockSize/2, y, x_nextBlock, y_nextBlock );
+                type = getType(x_nextBlock,y_nextBlock);
+                if( type == BlockMapProperty::empty )
+                {
+                    playersPositions[id].y += move_y;
+                    playersPositions[id].x += pos;
+                    return true;
+                }
             }
         }
     }
