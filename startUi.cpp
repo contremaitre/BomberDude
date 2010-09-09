@@ -42,7 +42,7 @@ void StartUi::loadNetWidget()
     QString port;
     port.setNum(settings->getServerPort());
     network->serverPort->setPlainText(QString(port));
-    setAddrFieldEnabled(checked > 0);
+    setAddrFieldEnabled(checked == 0);
 }
 
 bool StartUi::setSettings()
@@ -77,7 +77,7 @@ void StartUi::setAddrFieldEnabled(bool en)
 
 void StartUi::isServerChanged(int state)
 {
-    setAddrFieldEnabled(state > 0);
+    setAddrFieldEnabled(state == 0);
 }
 
 void StartUi::slotConnected()
