@@ -34,3 +34,4 @@
 
 //Gameplay
 #define MOVE_TICK_INTERVAL 50 //(ms)
+#define MOVE_STEP (int)(BLOCK_SIZE/7)

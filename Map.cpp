@@ -24,7 +24,6 @@
 #include <string.h>
 #include <time.h> //qrand seed
 
-
 Map::Map()
 {
     block_list = NULL;
@@ -138,7 +137,7 @@ bool Map::movePlayer(int id, int direction)
      * Rules for a player move :
      * Get the block where the player is and :
      * - 1 if the player is at or beyond the middle of the block (wrt the direction of the move),
-     * and if the next block is empty, we move in toward the next block
+     * and if the next block is empty, we move toward the next block
      * - 2 if the next block is not empty, we try to circle the block if it is possible
      * - 3 else the move is rejected
      */
@@ -150,20 +149,20 @@ bool Map::movePlayer(int id, int direction)
     switch(direction)
     {
         case 0:
-            move_x = -1;
+            move_x = -1 * MOVE_STEP;
         break;
         case 1:
-            move_y = -1;
+            move_y = -1 * MOVE_STEP;
         break;
         case 2:
-            move_x = 1;
+            move_x = 1 * MOVE_STEP;
         break;
         case 3:
-            move_y = 1;
+            move_y = 1 * MOVE_STEP;
         break;
     }
-    x += move_x + move_x*(blockSize/2);
-    y += move_y + move_y*(blockSize/2);
+    x += move_x + (move_x/(MOVE_STEP))*(blockSize/2);
+    y += move_y + (move_y/(MOVE_STEP))*(blockSize/2);
     int x_nextBlock, y_nextBlock;
     getBlockPosition( x, y, x_nextBlock, y_nextBlock );
     //qDebug() << "next block" << x_nextBlock << y_nextBlock ;
@@ -178,19 +177,44 @@ bool Map::movePlayer(int id, int direction)
     }
     else
     {
-        //try to circle the block
         int pos;
+        //can we move closer of the next block ?
+        //todo : adjust player position in the case ?
+        if(move_x != 0)
+        {
+            pos = coordinatePositionInBlock(playersPositions[id].x);
+            //qDebug() << "Move closer ?" << pos << move_x;
+            if(pos != 0 && ((pos<0 && move_x>0) || (pos>0&&move_x<0)))
+            {
+                playersPositions[id].x -= pos;
+                return true;
+            }
+        }
+        else
+        {
+            pos = coordinatePositionInBlock(playersPositions[id].y);
+            if(pos != 0 && ((pos<0 && move_y>0) || (pos>0&&move_y<0)))
+            {
+                playersPositions[id].y -= pos;
+                return true;
+            }
+        }
+        //try to circle the block
+        //todo avoid this case : (player is * and he can go in . )
+        //   * #
+        //   # .
         if(move_x != 0)
         {
             pos = coordinatePositionInBlock(playersPositions[id].y);
+            int sign = pos > 0 ? 1 : -1;
             if( pos != 0)
             {
-                getBlockPosition( x, y+pos*blockSize/2, x_nextBlock, y_nextBlock );
+                getBlockPosition( x, y+sign*blockSize/2, x_nextBlock, y_nextBlock );
                 type = getType(x_nextBlock,y_nextBlock);
                 if( type == BlockMapProperty::empty )
                 {
                     playersPositions[id].x += move_x;
-                    playersPositions[id].y += pos;
+                    playersPositions[id].y += absMin(pos,MOVE_STEP);
                     return true;
                 }
             }
@@ -198,14 +222,15 @@ bool Map::movePlayer(int id, int direction)
         else
         {
             pos = coordinatePositionInBlock(playersPositions[id].x);
+            int sign = pos > 0 ? 1 : -1;
             if( pos != 0)
             {
-                getBlockPosition( x+pos*blockSize/2, y, x_nextBlock, y_nextBlock );
+                getBlockPosition( x+sign*blockSize/2, y, x_nextBlock, y_nextBlock );
                 type = getType(x_nextBlock,y_nextBlock);
                 if( type == BlockMapProperty::empty )
                 {
                     playersPositions[id].y += move_y;
-                    playersPositions[id].x += pos;
+                    playersPositions[id].x += absMin(pos,MOVE_STEP);
                     return true;
                 }
             }
@@ -219,12 +244,12 @@ void Map::adjustPlayerPosition(int plId, int xDirection, int yDirection)
     if(xDirection != 0)
     {
         int pos = coordinatePositionInBlock(playersPositions[plId].y);
-        playersPositions[plId].y -= pos;
+        playersPositions[plId].y -= absMin(pos,MOVE_STEP);
     }
     else
     {
         int pos = coordinatePositionInBlock(playersPositions[plId].x);
-        playersPositions[plId].x -= pos;
+        playersPositions[plId].x -= absMin(pos,MOVE_STEP);
     }
 }
 
@@ -234,9 +259,10 @@ int Map::coordinatePositionInBlock(int coord)
     int middle = blockSize * block + blockSize/2;
     if(coord == middle)
         return 0;
-    if(coord < middle)
-        return -1;
-    return 1;    
+    return coord - middle;
+    //if(coord < middle)
+    //    return -1;
+    //return 1;    
 }
 
 qint16 Map::getWidth() const
@@ -274,6 +300,21 @@ qint16 Map::getBlockSize() const
 qint16 Map::getMaxNbPlayers() const
 {
     return MAX_NB_PLAYER;
+}
+
+int Map::absMin(int a, int b) const
+{
+    if( b < 0 )
+       b = -b;
+    if(a > 0)
+    {
+        return a < b ? a : b;
+    }
+    else
+    {
+        a = -a;
+        return a < b ? -a : -b;
+    }
 }
 
 Map::~Map()
