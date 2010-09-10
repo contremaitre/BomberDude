@@ -200,7 +200,7 @@ bool Map::movePlayer(int id, int direction)
             }
         }
         //try to circle the block
-        //todo avoid this case : (player is * and he can go in . )
+        //is this can still happening ? : (player is * and he can go in . )
         //   * #
         //   # .
         if(move_x != 0)
@@ -213,7 +213,7 @@ bool Map::movePlayer(int id, int direction)
                 type = getType(x_nextBlock,y_nextBlock);
                 if( type == BlockMapProperty::empty )
                 {
-                    playersPositions[id].x += move_x;
+                    playersPositions[id].x += move_x/2;
                     playersPositions[id].y += absMin(pos,MOVE_STEP);
                     return true;
                 }
@@ -229,7 +229,7 @@ bool Map::movePlayer(int id, int direction)
                 type = getType(x_nextBlock,y_nextBlock);
                 if( type == BlockMapProperty::empty )
                 {
-                    playersPositions[id].y += move_y;
+                    playersPositions[id].y += move_y/2;
                     playersPositions[id].x += absMin(pos,MOVE_STEP);
                     return true;
                 }
