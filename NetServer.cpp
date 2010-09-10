@@ -22,10 +22,11 @@
 #include "NetMessage.h"
 #include <QtNetwork>
 
-NetServer::NetServer(const Map *map) : QThread()
+NetServer::NetServer(const Map *map, int port) : QThread()
 {
     this->map = new Map;
     *this->map = *map;
+    this->port = port;
     maxNbPlayer = map->getMaxNbPlayers();
     playerIdIncrement = 0;
 }
@@ -34,7 +35,7 @@ void NetServer::run()
 {
     qDebug("NetServer run");
     tcpServer = new QTcpServer();
-    if (!tcpServer->listen(QHostAddress::Any, SERVER_PORT)) {
+    if (!tcpServer->listen(QHostAddress::Any, port)) {
         //TODO error
         return;
     }

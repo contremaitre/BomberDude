@@ -37,7 +37,7 @@ class NetServer : public QThread
 {
     Q_OBJECT
 public:
-    NetServer(const Map *);
+    NetServer(const Map *, int port);
     ~NetServer();
     void run();
     void close();
@@ -49,6 +49,7 @@ private:
     Map *map;
     int maxNbPlayer;
     int playerIdIncrement;
+    int port;
     QTcpServer *tcpServer;
     QList<NetServerClient *> clients;
 
