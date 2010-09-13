@@ -74,6 +74,7 @@ private slots:
 signals:
     void connectedToServer();
     void connectionError();
+    void quitGame();
 };
 
 #endif

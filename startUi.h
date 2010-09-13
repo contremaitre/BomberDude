@@ -55,6 +55,7 @@ private slots:
     void isServerChanged(int);
     void slotConnectionError();
     void slotConnected();
+    void closeGame();
 };
 
 #endif

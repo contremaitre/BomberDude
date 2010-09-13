@@ -133,12 +133,14 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
         if(c->key() == Qt::Key_Escape)
         {
             qDebug("GamePlay escape");
+            emit quitGame();
         }
         else if(c->key() == Qt::Key_Space)
         {
             qDebug("space");
             //dropBomb(0);
         }
+        return true;
     }
     if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
     {

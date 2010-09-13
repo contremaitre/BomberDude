@@ -66,6 +66,7 @@ void StartUi::start()
     gamePlay = new GamePlay(this, settings);
     connect( gamePlay, SIGNAL(connectedToServer()), this, SLOT(slotConnected()) );
     connect( gamePlay, SIGNAL(connectionError()), this, SLOT(slotConnectionError()) );
+    connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );
     gamePlay->launch();
 }
 
@@ -87,12 +88,17 @@ void StartUi::slotConnected()
     disconnect(gamePlay, SIGNAL(connectionError()), this, SLOT(slotConnectionError()));
 }
 
-void StartUi::slotConnectionError()
+void StartUi::closeGame()
 {
-    //qDebug("StartUi::slotConnectionError");
     delete gamePlay;
     gamePlay = NULL;
     mainWindow->startButton->show();
+}
+
+void StartUi::slotConnectionError()
+{
+    //qDebug("StartUi::slotConnectionError");
+    closeGame();
 }
 
 StartUi::~StartUi()

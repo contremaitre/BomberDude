@@ -76,5 +76,6 @@ const Map *GameField::getMap()
 GameField::~GameField()
 {
     delete view;
+    //delete scene; todo crash ?
 }
 
