@@ -58,6 +58,8 @@ private slots:
 
 signals:
     void newPlayer();
+    void serverError();
+    void serverReady();
 };
 
 #endif

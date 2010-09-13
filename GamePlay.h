@@ -68,6 +68,8 @@ private slots:
     void mapReceived(const Map*);
     void slotClientConnected();
     void slotClientConnectError();
+    void slotServerError();
+    void slotServerReady();
 
 signals:
     void connectedToServer();

@@ -22,6 +22,7 @@ GameField::GameField(QMainWindow *mainw, int s) : blockList(s)
 {
     scene = new QGraphicsScene;
     mainWindow = mainw;
+    view = NULL;
 }
 
 void GameField::createRandomMap(int width, int height)

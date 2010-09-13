@@ -53,7 +53,6 @@ void BlocksList::init()
     for(int i = 0; i < map.getMaxNbPlayers(); i++)
     {
         map.getPlayerPosition(i,x,y);
-        qDebug() << "player" << i << "postition" << x << y;
         playersItem[i] = new QGraphicsCaseItem(x-caseSize/2,y-caseSize/2,caseSize);
         playersItem[i]->setItem(pixmaps.getPixmap(i));
     }

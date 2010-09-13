@@ -29,6 +29,7 @@ NetServer::NetServer(const Map *map, int port) : QThread()
     this->port = port;
     maxNbPlayer = map->getMaxNbPlayers();
     playerIdIncrement = 0;
+    tcpServer = NULL;
 }
 
 void NetServer::run()
@@ -36,11 +37,13 @@ void NetServer::run()
     qDebug("NetServer run");
     tcpServer = new QTcpServer();
     if (!tcpServer->listen(QHostAddress::Any, port)) {
-        //TODO error
+        qDebug() << "server tcp error :" << tcpServer->errorString();
+        emit serverError();
         return;
     }
     //hack ? cf NetServerClient::NetServerClient()
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(incomingClient()), Qt::DirectConnection);
+    emit serverReady();
     exec();
 }
 

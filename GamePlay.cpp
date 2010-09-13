@@ -38,6 +38,7 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     client = new NetClient;
     connect(client, SIGNAL(sigConnected()), this, SLOT(slotClientConnected()));
     connect(client, SIGNAL(sigConnectionError()), this, SLOT(slotClientConnectError()));
+    connect(client,SIGNAL(moveReceived(qint16,qint16,qint16)),this,SLOT(moveReceived(qint16,qint16,qint16)));
     settings = set;
 }
 
@@ -53,21 +54,21 @@ void GamePlay::launch()
         gameField->createRandomMap(MAP_SIZE,MAP_SIZE);
         const Map *m = gameField->getMap();
         server = new NetServer(m,settings->getServerPort());
-        server->start();
         //We start the game as soon as a player is connecter to the server (ourselves actualy)
         //others players can join later (but they may miss movement me can make before they join
         //the way the game is launched will be changed later.
         connect(server,SIGNAL(newPlayer()),this,SLOT(slotStart()),Qt::QueuedConnection);
-        gameField->createGraphics();
+        connect(server,SIGNAL(serverError()),this,SLOT(slotServerError()),Qt::QueuedConnection);
+        connect(server,SIGNAL(serverReady()),this,SLOT(slotServerReady()),Qt::QueuedConnection);
+        server->start();
     }
     else
     {
         server = NULL;
         //we will need the map before we can start
         connect(client,SIGNAL(mapReceived(const Map*)),this,SLOT(mapReceived(const Map*)));
+        client->connectToServer(settings->getServerAddress(), settings->getServerPort());
     }
-    client->connectToServer(settings->getServerAddress(), settings->getServerPort());
-    connect(client,SIGNAL(moveReceived(qint16,qint16,qint16)),this,SLOT(moveReceived(qint16,qint16,qint16)));
 }
 
 void GamePlay::mapReceived(const Map *map)
@@ -80,6 +81,17 @@ void GamePlay::mapReceived(const Map *map)
 void GamePlay::slotStart()
 {
     server->assignNumberToPlayers();
+}
+
+void GamePlay::slotServerReady()
+{
+    gameField->createGraphics();
+    client->connectToServer(settings->getServerAddress(), settings->getServerPort());
+}
+
+void GamePlay::slotServerError()
+{
+    emit connectionError();
 }
 
 void GamePlay::move(int direction)

@@ -82,14 +82,14 @@ void StartUi::isServerChanged(int state)
 
 void StartUi::slotConnected()
 {
-    qDebug("StartUi::slotConnected");
+    //qDebug("StartUi::slotConnected");
     //We do not (yet) handle connection errors after this
     disconnect(gamePlay, SIGNAL(connectionError()), this, SLOT(slotConnectionError()));
 }
 
 void StartUi::slotConnectionError()
 {
-    qDebug("StartUi::slotConnectionError");
+    //qDebug("StartUi::slotConnectionError");
     delete gamePlay;
     gamePlay = NULL;
     mainWindow->startButton->show();
