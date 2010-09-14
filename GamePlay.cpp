@@ -86,7 +86,8 @@ void GamePlay::slotStart()
 void GamePlay::slotServerReady()
 {
     gameField->createGraphics();
-    client->connectToServer(settings->getServerAddress(), settings->getServerPort());
+    //we are the server, so we connect with localhost
+    client->connectToServer("localhost", settings->getServerPort());
 }
 
 void GamePlay::slotServerError()
