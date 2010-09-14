@@ -28,9 +28,11 @@
 
 #include <QObject>
 #include <QAbstractSocket>
+#include <QHostAddress>
 
 class QTcpSocket;
-
+class QUdpSocket;
+class QTimer;
 
 class Map;
 
@@ -47,15 +49,24 @@ public:
 
 private:
     QTcpSocket *tcpSocket;
+    QUdpSocket *udpSocket;
+    quint16 serverPort;
+    QHostAddress serverAddress;
+    //timeout in case udp communication fails
+    QTimer *timerCheckUdp;
+    bool udpAckOk;
+    void sendUdpWelcome();
     void handleMsg(QDataStream &);
+    int udpCheckCount;
     quint16 blockSize; //size of the current message
     Map *map; //store the map when the server sends it;
 
 private slots:
     void readMsgFromServer();
+    void receiveUdp();
     void slotTcpConnected();
     void slotTcpError(QAbstractSocket::SocketError);
-
+    void checkUdp();
 signals:
     void moveReceived(qint16 plId, qint16 x, qint16 y);
     void mapReceived(const Map *);

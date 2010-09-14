@@ -20,21 +20,40 @@
 #include "Map.h"
 
 #include <QTcpSocket>
+#include <QUdpSocket>
+#include <QTimer>
 
 NetClient::NetClient()
 {
-    qDebug("new NetClient");
     tcpSocket = new QTcpSocket();
     connect(tcpSocket, SIGNAL(connected()), this, SLOT(slotTcpConnected()));
     connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(slotTcpError(QAbstractSocket::SocketError)));
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMsgFromServer()));
+    udpSocket = new QUdpSocket(); 
+    connect(udpSocket, SIGNAL(readyRead()), this, SLOT(receiveUdp()));
     blockSize = 0;
     map = NULL;
+    serverAddress.setAddress("");
+    serverPort = 0;
+    timerCheckUdp = NULL;
 }
 
 void NetClient::connectToServer(QString ip, int port)
 {
     tcpSocket->connectToHost(ip,port);
+}
+
+void NetClient::sendUdpWelcome()
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_udp_welcome;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    //qDebug() << "NetClient sendUdpWelcome" << udpSocket->localPort() << udpSocket->peerPort();
+    udpSocket->writeDatagram(block,serverAddress,serverPort);
 }
 
 void NetClient::sendMove(int direction)
@@ -47,7 +66,45 @@ void NetClient::sendMove(int direction)
     out << (qint16)direction;
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
-    tcpSocket->write(block);
+    //tcpSocket->write(block);
+    //qDebug() << "NetClient send move udp" << serverAddress << serverPort;
+    udpSocket->writeDatagram(block, serverAddress, serverPort);
+}
+
+void NetClient::receiveUdp()
+{
+    //qDebug() << "NetClient receive udp";
+    while (udpSocket->hasPendingDatagrams()) {
+        QByteArray datagram;
+        datagram.resize(udpSocket->pendingDatagramSize());
+        QHostAddress sender;
+        quint16 senderPort;
+        udpSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
+
+        QDataStream in(&datagram, QIODevice::ReadOnly);
+        quint16 size, msg;
+        in >> size;
+        if(datagram.size() - sizeof(size) != size)
+        {
+            qDebug() << "NetClient readMove size error" << datagram.size() << size;
+            break;
+        }
+        in >> msg;
+        switch(msg)
+        {
+        case msg_udp_welcome:
+            timerCheckUdp->stop();
+            if(!udpAckOk)
+            {
+                udpAckOk = true;
+                emit sigConnected();
+            }
+            break;
+        default:
+            qDebug() << "NetClient readMove discarding unkown message";
+            break;
+        }
+    }   
 }
 
 void NetClient::readMsgFromServer()
@@ -95,9 +152,40 @@ void NetClient::handleMsg(QDataStream &in)
     }
 }
 
+void NetClient::checkUdp()
+{
+    if(udpCheckCount>=10)//todo configurable
+    {
+        timerCheckUdp->stop();
+        qDebug() << "NetClient : diddn't receive udp ack. Check you firewall/router";
+        emit sigConnectionError();
+        return;
+    }
+    udpCheckCount++;
+    sendUdpWelcome();
+}
+
 void NetClient::slotTcpConnected()
 {
-    emit sigConnected();
+    serverPort = tcpSocket->peerPort();
+    serverAddress = tcpSocket->peerAddress();
+    bool b = udpSocket->bind(tcpSocket->localPort());
+    if(b)
+    {
+        //qDebug() << "NetClient slotTcpConnected" << serverAddress << serverPort;
+        udpCheckCount = 0;
+        udpAckOk = false;
+        timerCheckUdp = new QTimer(this);
+        checkUdp();
+        connect(timerCheckUdp, SIGNAL(timeout()),this,SLOT(checkUdp()));
+        timerCheckUdp->start(1000);//todo configurable ?
+        //emit sigConnected();
+    }
+    else
+    {
+        qDebug() << "NetClient udp bind error " << udpSocket->error();
+        emit sigConnectionError();
+    }
 }
 
 void NetClient::slotTcpError(QAbstractSocket::SocketError error)
@@ -108,6 +196,8 @@ void NetClient::slotTcpError(QAbstractSocket::SocketError error)
 
 NetClient::~NetClient()
 {
+    delete timerCheckUdp;
+    delete udpSocket;
     delete tcpSocket;
     delete map;
 }

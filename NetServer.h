@@ -28,9 +28,11 @@
 #define NETSERVER_H
 
 #include <QThread>
+#include <QHostAddress>
 
 class Map;
 class QTcpServer;
+class QUdpSocket;
 class NetServerClient;
 
 class NetServer : public QThread
@@ -51,10 +53,14 @@ private:
     int playerIdIncrement;
     int port;
     QTcpServer *tcpServer;
+    QUdpSocket *udpSocket;
     QList<NetServerClient *> clients;
+    int readMove(QDataStream &in);
+    void sendUdpWelcomeAck(QHostAddress sender, quint16 senderPort);
 
 private slots:
     void incomingClient();
+    void receiveUdp();
 
 signals:
     void newPlayer();

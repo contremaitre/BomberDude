@@ -73,7 +73,6 @@ void GamePlay::launch()
 
 void GamePlay::mapReceived(const Map *map)
 {
-    //todo doesnt work yet
     gameField->setMap(map);
     gameField->createGraphics();
 }
@@ -85,7 +84,6 @@ void GamePlay::slotStart()
 
 void GamePlay::slotServerReady()
 {
-    gameField->createGraphics();
     //we are the server, so we connect with localhost
     client->connectToServer("localhost", settings->getServerPort());
 }
@@ -198,6 +196,7 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
 }
 void GamePlay::slotClientConnected()
 {
+    gameField->createGraphics();
     emit connectedToServer();
 }
 

@@ -25,6 +25,7 @@
 #define NETSERVERCLIENT_H
 
 #include <QObject>
+#include <QHostAddress>
 
 class QTcpSocket;
 class NetServer;
@@ -42,10 +43,15 @@ public:
     void setPlayerNumber(int);
     void playerMoved(int plId, int x, int y);
     void sendMap(const Map&);
+    QHostAddress getAddress() const;
+    quint16 getPeerUdpPort() const;
+    int getId() const;
 
 private:
     QTcpSocket *tcpSocket;
     NetServer *server;
+    QHostAddress peerAddress;
+    quint16 peerUdpPort;
     void handleMsg(QDataStream &);
     int playerId;
     int playerNumber;

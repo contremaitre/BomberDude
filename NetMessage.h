@@ -28,6 +28,7 @@ enum NetMsgType
 {
     msg_move = 0,
     msg_moved,
+    msg_udp_welcome,
     msg_map,
 };
 
