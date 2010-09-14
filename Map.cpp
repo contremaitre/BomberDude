@@ -125,13 +125,54 @@ void Map::setPlayerPosition(int id, qint16 x, qint16 y)
 }
 
 /**
- *      1
- *      |
- *  0 <- -> 2
- *      |
- *      3
+ *   1  2  3
+ *    \ | /
+ *  0 <- -> 4
+ *    / | \
+ *   7  6  5
  */
 bool Map::movePlayer(int id, int direction)
+{
+    bool ret = false;
+    if(direction == 7 || direction == 0 || direction == 1)
+        ret = movePlayerLeft(id);
+    if(!ret && (direction == 7 || direction == 6 || direction == 5))
+        ret = movePlayerDown(id);
+    if(!ret && (direction == 5 || direction == 4 || direction == 3))
+        ret = movePlayerRight(id);
+    if(!ret && (direction == 1 || direction == 2 || direction == 3))
+        ret = movePlayerUp(id);
+    return ret;
+}
+//TODO optimize this
+bool Map::movePlayerLeft(int id)
+{
+    return movePlayerOld(id,0);
+}
+
+bool Map::movePlayerDown(int id)
+{
+    return movePlayerOld(id,3);
+}
+
+bool Map::movePlayerRight(int id)
+{
+    return movePlayerOld(id,2);
+}
+
+bool Map::movePlayerUp(int id)
+{
+    return movePlayerOld(id,1);
+}
+
+ /**
+  *      1
+  *      |
+  *  0 <- -> 2
+  *      |
+  *      3
+  */
+bool Map::movePlayerOld(int id, int direction)
 {
     /**
      * Rules for a player move :
@@ -160,6 +201,8 @@ bool Map::movePlayer(int id, int direction)
         case 3:
             move_y = 1 * MOVE_STEP;
         break;
+        default:
+            return false;
     }
     x += move_x + (move_x/(MOVE_STEP))*(blockSize/2);
     y += move_y + (move_y/(MOVE_STEP))*(blockSize/2);

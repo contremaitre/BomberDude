@@ -44,6 +44,11 @@ private:
     //Test if a coordinate is bellow (-1) on (0) or above (1) the middle of the block
     int coordinatePositionInBlock(int coord);
     int absMin(int a, int b) const;
+    bool movePlayerLeft(int id);
+    bool movePlayerRight(int id);
+    bool movePlayerUp(int id);
+    bool movePlayerDown(int id);
+    bool movePlayerOld(int id, int direction);
 public:
     Map();
     Map(qint16, qint16, qint16);

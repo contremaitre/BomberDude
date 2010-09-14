@@ -105,23 +105,45 @@ void GamePlay::moveReceived(qint16 plId, qint16 x, qint16 y)
 }
 
 /**
- *      1
- *      |
- *  0 <- -> 2
- *      |
- *      3
+ *   1  2  3
+ *    \ | /
+ *  0 <- -> 4
+ *    / | \
+ *   7  6  5
  */
 void GamePlay::slotMoveTimer()
 {
     int direction;
     if(leftK)
-        direction = 0;
+    {
+        if(upK)
+            direction = 1;
+        else if(downK)
+            direction = 7;
+        else
+            direction = 0;
+    }
     else if(rightK)
-        direction = 2;
+    {
+        if(upK)
+            direction = 3;
+        else if(downK)
+            direction = 5;
+        else
+            direction = 4;
+    }
     else if(upK)
-        direction = 1;
+    {
+        if(leftK)
+            direction = 1;
+        else
+            direction = 2;
+    }
     else if(downK)
-        direction = 3;
+    {
+        direction = 6;
+    }
+    //qDebug() << "GamePlay direction=" << direction;
     client->sendMove(direction);
 }
 
@@ -134,13 +156,14 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
         {
             qDebug("GamePlay escape");
             emit quitGame();
+            return true;
         }
         else if(c->key() == Qt::Key_Space)
         {
             qDebug("space");
+            return true;
             //dropBomb(0);
         }
-        return true;
     }
     if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
     {
