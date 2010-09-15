@@ -85,7 +85,7 @@ void GamePlay::slotStart()
 void GamePlay::slotServerReady()
 {
     //we are the server, so we connect with localhost
-    client->connectToServer("localhost", settings->getServerPort());
+    client->connectToServer(LOCAL_ADDRESS, settings->getServerPort());
 }
 
 void GamePlay::slotServerError()
@@ -133,10 +133,7 @@ void GamePlay::slotMoveTimer()
     }
     else if(upK)
     {
-        if(leftK)
-            direction = 1;
-        else
-            direction = 2;
+        direction = 2;
     }
     else if(downK)
     {
