@@ -112,7 +112,7 @@ void GamePlay::moveReceived(qint16 plId, qint16 x, qint16 y)
  */
 void GamePlay::slotMoveTimer()
 {
-    int direction;
+    int direction = -1;
     if(leftK)
     {
         if(upK)
@@ -175,6 +175,8 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
             rightK = press;
         else if(c->key() == Qt::Key_Down)
             downK = press;
+        else
+            return QObject::eventFilter(obj, event);
         if(press && !timer->isActive())
         {
             timer->start(MOVE_TICK_INTERVAL);
@@ -186,11 +188,10 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
         }
         return true;
     }
-    else {
-        // standard event processing
-        return QObject::eventFilter(obj, event);
-    }
+    // standard event processing
+    return QObject::eventFilter(obj, event);
 }
+
 void GamePlay::slotClientConnected()
 {
     gameField->createGraphics();
