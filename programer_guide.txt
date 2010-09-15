@@ -1,0 +1,15 @@
+Programer guide :
+
+Network :
+We send players move with udp, everything else with tcp.
+connection protocol :
+NetClient connects to NetServer (tcp)
+NetServer creates a NetServerClient instance for this client.
+NetClient binds a udp socket to the same port than the local tcp socket port (this way, the server knows which client sent the udp datagram)
+NetClient sends a udp welcome message
+NetServer replies to this client with a udp welcome message
+NetServer/NetServerClient and NetClient can comunicate.
+   - NetSerer receives udp datagrams (moves)
+   - NetServerClient receives tcp messages
+
+
