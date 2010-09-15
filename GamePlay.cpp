@@ -44,9 +44,10 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
 
 void GamePlay::launch()
 {
+    connect(client,SIGNAL(mapReceived(const Map*)),this,SLOT(mapReceived(const Map*)));
     /**
      * If we act as a server we must create the map
-     * If we act as a client we must wait to receive the map from the server
+     * We wait to receive the map from the server to display the graphics
      */
     if( settings->getServer() )
     {
@@ -66,13 +67,14 @@ void GamePlay::launch()
     {
         server = NULL;
         //we will need the map before we can start
-        connect(client,SIGNAL(mapReceived(const Map*)),this,SLOT(mapReceived(const Map*)));
         client->connectToServer(settings->getServerAddress(), settings->getServerPort());
     }
 }
 
 void GamePlay::mapReceived(const Map *map)
 {
+    //todo. If we are the server we recreate the map. It's useless
+    //qDebug() << "map received, create graphics";
     gameField->setMap(map);
     gameField->createGraphics();
 }
@@ -194,7 +196,7 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
 
 void GamePlay::slotClientConnected()
 {
-    gameField->createGraphics();
+    //qDebug() << "slotClientConnected";
     emit connectedToServer();
 }
 
