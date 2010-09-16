@@ -33,7 +33,7 @@
 class QTcpSocket;
 class QUdpSocket;
 class QTimer;
-
+class QTime;
 class Map;
 
 typedef struct NetHeader NetHeader;
@@ -46,6 +46,7 @@ public:
     ~NetClient();
     void connectToServer(QString ip, int port);
     void sendMove(int direction);
+    void sendPing();
 
 private:
     QTcpSocket *tcpSocket;
@@ -54,6 +55,7 @@ private:
     QHostAddress serverAddress;
     //timeout in case udp communication fails
     QTimer *timerCheckUdp;
+    QTime *timePing;
     bool udpAckOk;
     void sendUdpWelcome();
     void handleMsg(QDataStream &);

@@ -22,6 +22,7 @@
 #include <QTcpSocket>
 #include <QUdpSocket>
 #include <QTimer>
+#include <QTime>
 
 NetClient::NetClient()
 {

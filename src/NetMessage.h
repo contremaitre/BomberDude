@@ -30,6 +30,7 @@ enum NetMsgType
     msg_moved,
     msg_udp_welcome,
     msg_map,
+    msg_ping,
 };
 
 #endif
