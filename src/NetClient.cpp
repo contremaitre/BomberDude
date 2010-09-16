@@ -121,9 +121,11 @@ void NetClient::receiveUdp()
             }
             break;
 	case msg_ping: 
-	    int m = timePing->restart();
-	    qDebug() << "Ping : " << m ; 
+        {
+            int m = timePing->restart();
+            qDebug() << "Ping : " << m ; 
             break;
+        }
 	default:
             qDebug() << "NetClient readMove discarding unkown message";
             break;
