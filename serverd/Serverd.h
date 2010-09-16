@@ -15,18 +15,37 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QApplication>
-#include "startUi.h"
-#include "constant.h"
+/**
+ *
+ * This is where the Network server, maps and graphic can interact
+ * Player input keys from the scene are captured here
+ */
 
-int main(int argc, char *argv[])
+
+#ifndef SERVERD_H
+#define SERVERD_H
+
+#include <QObject>
+
+class NetServer;
+class Map;
+
+class Serverd : public QObject
 {
-    QApplication app(argc, argv);
+  Q_OBJECT
 
-    StartUi startui;
-    startui.show();
-    app.exec();
+public:
+    Serverd(int port, int mapSize, int blockSize);
+    ~Serverd();
+    void launch();
 
-    return 0;
-}
+private:
+    NetServer *server;
+    Map *map;
+
+private slots:
+    void slotStart();
+};
+
+#endif
 

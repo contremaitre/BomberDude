@@ -5,7 +5,6 @@ Anyone can join the project, just contact me.
 
 INSTALL :
 (QT >= 4.6 required)
-qmake -project "QT += network" "CONFIG += debug"
 qmake
 make
 
@@ -31,6 +30,7 @@ todo :
 - custom map creation (with xml files)
 - graphics
 - find another name for the game
+- server only option
 
 less important :
 - udp stats

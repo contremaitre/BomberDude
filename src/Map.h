@@ -18,8 +18,8 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "BlockMapProperty.h"
 #include <QObject>
+#include "BlockMapProperty.h"
 #include "constant.h"
 
 /**
