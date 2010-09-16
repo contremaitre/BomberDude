@@ -5,3 +5,8 @@ moc_*
 core*
 ui_*
 
+#binaries
+QtBomberman
+Serverd
+src/libsrc.a
+
