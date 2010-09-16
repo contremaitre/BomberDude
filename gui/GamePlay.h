@@ -52,6 +52,7 @@ private:
 
     bool leftK, rightK, upK, downK;
     QTimer *timer;
+    QTimer *timerPing;
 
     bool eventFilter(QObject *obj, QEvent *event);
 
@@ -64,6 +65,7 @@ private:
 private slots:
     void slotStart();
     void slotMoveTimer();
+    void slotPingTimer();
     void moveReceived(qint16 plId, qint16 x, qint16 y);
     void mapReceived(const Map*);
     void slotClientConnected();

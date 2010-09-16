@@ -21,6 +21,7 @@
 #include "Map.h"
 #include "NetMessage.h"
 #include <QtNetwork>
+#include <unistd.h> // for usleep
 
 NetServer::NetServer(const Map *map, int port) : QThread()
 {
@@ -105,6 +106,11 @@ void NetServer::receiveUdp()
             }
         }
             break;
+        case msg_ping:
+          //simulate 150ms latency :
+	  //usleep(150000);  
+	  sendPingBack(sender,senderPort);
+            break;
         default:
             qDebug() << "NetServer readMove discarding unkown message";
             break;
@@ -112,6 +118,7 @@ void NetServer::receiveUdp()
 
     }
 }
+
 void NetServer::sendUdpWelcomeAck(QHostAddress sender, quint16 senderPort)
 {
     QByteArray block;
@@ -123,6 +130,20 @@ void NetServer::sendUdpWelcomeAck(QHostAddress sender, quint16 senderPort)
     out << (quint16)(block.size() - sizeof(quint16));
     udpSocket->writeDatagram(block,sender,senderPort);
     //qDebug() << "NetServer sendUdpWelcome";
+}
+
+
+void NetServer::sendPingBack(QHostAddress sender, quint16 senderPort)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_ping;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    udpSocket->writeDatagram(block,sender,senderPort);
+    //qDebug() << "NetServer sendPingBack";
 }
 
 int NetServer::readMove(QDataStream &in)

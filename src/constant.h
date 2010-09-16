@@ -15,6 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+<<<<<<< HEAD:src/constant.h
 //constants that may be later removed or changed in a configuration menu
 
 //Graphics
@@ -36,4 +37,25 @@
 //Gameplay
 #define MOVE_TICK_INTERVAL 50 //(ms)
 #define MOVE_STEP (int)(BLOCK_SIZE/7)
+=======
+/**
+ *
+ * Define the message structures between NetClient and NetServer
+ *
+ */
+
+#ifndef NETMESSAGE_H
+#define NETMESSAGE_H
+
+enum NetMsgType
+{
+    msg_move = 0,
+    msg_moved,
+    msg_udp_welcome,
+    msg_map,
+    msg_ping,
+};
+
+#endif
+>>>>>>> UDP Ping every 2s:NetMessage.h
 

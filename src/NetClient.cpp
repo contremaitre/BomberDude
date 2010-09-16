@@ -25,6 +25,9 @@
 
 NetClient::NetClient()
 {
+    timePing = new QTime();
+    timePing->start();
+    
     tcpSocket = new QTcpSocket();
     connect(tcpSocket, SIGNAL(connected()), this, SLOT(slotTcpConnected()));
     connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(slotTcpError(QAbstractSocket::SocketError)));
@@ -36,6 +39,7 @@ NetClient::NetClient()
     serverAddress.setAddress("");
     serverPort = 0;
     timerCheckUdp = NULL;
+    
 }
 
 void NetClient::connectToServer(QString ip, int port)
@@ -71,9 +75,24 @@ void NetClient::sendMove(int direction)
     udpSocket->writeDatagram(block, serverAddress, serverPort);
 }
 
+
+void NetClient::sendPing()
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_ping;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    udpSocket->writeDatagram(block, serverAddress, serverPort);
+    timePing->restart();
+}
+
+
 void NetClient::receiveUdp()
 {
-    //qDebug() << "NetClient receive udp";
+  //qDebug() << "NetClient receive udp";
     while (udpSocket->hasPendingDatagrams()) {
         QByteArray datagram;
         datagram.resize(udpSocket->pendingDatagramSize());
@@ -100,7 +119,11 @@ void NetClient::receiveUdp()
                 emit sigConnected();
             }
             break;
-        default:
+	case msg_ping: 
+	    int m = timePing->restart();
+	    qDebug() << "Ping : " << m ; 
+            break;
+	default:
             qDebug() << "NetClient readMove discarding unkown message";
             break;
         }
