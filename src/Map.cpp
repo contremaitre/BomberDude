@@ -87,9 +87,17 @@ void Map::loadRandom()
     //add players
     playersPositions[0].x = blockSize + blockSize/2; //middle of the second block
     playersPositions[0].y = blockSize + blockSize/2;
+
     playersPositions[1].x = (width-2) * blockSize + blockSize/2;
     playersPositions[1].y = (height-2) * blockSize + blockSize/2;
-    int x,y;
+
+    playersPositions[2].x = blockSize + blockSize/2; //middle of the second block
+    playersPositions[2].y = (height-2) * blockSize + blockSize/2;
+
+    playersPositions[3].x = (width-2) * blockSize + blockSize/2;
+    playersPositions[3].y = blockSize + blockSize/2;
+ 
+   int x,y;
     getBlockPosition(playersPositions[0].x,playersPositions[0].y,x,y);
     setType(BlockMapProperty::empty,x,y);
     getBlockPosition(playersPositions[1].x,playersPositions[1].y,x,y);

@@ -22,7 +22,7 @@
 #define MAP_SIZE 20
 
 //Game
-#define MAX_NB_PLAYER 2
+#define MAX_NB_PLAYER 4
 #define DEFAULT_BOMB_DURATION 4000 //ms
 #define DEFAULT_BOMB_RANGE 1
 //how fast the bomb is blinking (ms)
