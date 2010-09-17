@@ -18,6 +18,7 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QTimer>
+#include <QSound>
 
 #include "GamePlay.h"
 #include "GameField.h"
@@ -31,11 +32,12 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
 {
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()),this,SLOT(slotMoveTimer()));
-    
     timerPing = new QTimer(this);
     connect(timerPing, SIGNAL(timeout()),this,SLOT(slotPingTimer()));
     timerPing->start(2000); // Ping every 2s
-
+    music = new QSound("sounds/music.wav",this);
+    music->setLoops(-1);
+    music->play();
     leftK = rightK = upK = downK = false;
     gameField = new GameField(mainw, BLOCK_SIZE);
     gameField->getEventFilter(this);
@@ -219,6 +221,8 @@ void GamePlay::slotClientConnectError()
 GamePlay::~GamePlay()
 {
     delete gameField;
+    delete music;
+    delete timerPing;
     if(server)
     {
         server->quit();

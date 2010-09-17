@@ -34,6 +34,8 @@ class Map;
 class QMainWindow;
 class Settings;
 class QTimer;
+class QSound;
+
 
 class GamePlay : public QObject
 {
@@ -53,7 +55,8 @@ private:
     bool leftK, rightK, upK, downK;
     QTimer *timer;
     QTimer *timerPing;
-
+    QSound *music;
+    
     bool eventFilter(QObject *obj, QEvent *event);
 
     /**
