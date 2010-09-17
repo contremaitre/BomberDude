@@ -44,6 +44,7 @@ public:
     void run();
     void close();
     void move(int plId, int direction);
+    void bomb(int id);
     //call this function when the game is launched
     void assignNumberToPlayers();
 

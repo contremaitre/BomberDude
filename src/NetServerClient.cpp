@@ -95,6 +95,23 @@ void NetServerClient::playerMoved(int plId, int x, int y)
     udpSocket->writeDatagram(block,peerAddress,peerUdpPort);
 }
 
+
+void NetServerClient::bombAdded(int plId, int x, int y)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_bomb;
+    out << (qint16)plId;
+    out << (qint16)x;
+    out << (qint16)y;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    udpSocket->writeDatagram(block,peerAddress,peerUdpPort);
+}
+
+
 void NetServerClient::sendMap(const Map &map)
 {
     QByteArray block;

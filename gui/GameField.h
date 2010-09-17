@@ -45,6 +45,7 @@ public:
     void createGraphics();
     void getEventFilter(QObject *obj);
     void movePlayer(int player, int x, int y);
+    void addBomb(int player, int x, int y);
     void setMap(const Map *);
     const Map *getMap();
 };

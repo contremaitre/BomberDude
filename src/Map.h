@@ -18,6 +18,7 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include <QList> 
 #include <QObject>
 #include "BlockMapProperty.h"
 #include "constant.h"
@@ -39,6 +40,8 @@ private:
     //player position coordinates is in "pixel". And there is "blockSize" pixels in one block
     struct point{qint16 x; qint16 y;};
     point playersPositions[MAX_NB_PLAYER];
+    QList<point*> bombs;
+
     void Init();
     void adjustPlayerPosition(int plId, int xDirection, int yDirection);
     //Test if a coordinate is bellow (-1) on (0) or above (1) the middle of the block
@@ -70,6 +73,7 @@ public:
     qint16 getMaxNbPlayers() const;
     qint16 getBlockSize() const;
     bool movePlayer(int id, int direction);
+    bool bomb(int id);
     Map & operator=(const Map &);
 
 signals:

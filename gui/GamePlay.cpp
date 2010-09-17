@@ -46,6 +46,8 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     connect(client, SIGNAL(sigConnected()), this, SLOT(slotClientConnected()));
     connect(client, SIGNAL(sigConnectionError()), this, SLOT(slotClientConnectError()));
     connect(client,SIGNAL(moveReceived(qint16,qint16,qint16)),this,SLOT(moveReceived(qint16,qint16,qint16)));
+    connect(client,SIGNAL(bombReceived(qint16,qint16,qint16)),this,SLOT(bombReceived(qint16,qint16,qint16)));
+    
     settings = set;
 }
 
@@ -101,6 +103,13 @@ void GamePlay::slotServerError()
 {
     emit connectionError();
 }
+
+
+void GamePlay::bombReceived(qint16 plId, qint16 x, qint16 y)
+{
+    gameField->addBomb(plId, x, y);
+}
+
 
 void GamePlay::move(int direction)
 {
@@ -158,6 +167,12 @@ void GamePlay::slotPingTimer()
 }
 
 
+void GamePlay::dropBomb()
+{
+    client->sendBomb();
+}
+
+
 bool GamePlay::eventFilter(QObject *obj, QEvent *event)
 {
     if(event->type() == QEvent::KeyPress)
@@ -171,9 +186,9 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
         }
         else if(c->key() == Qt::Key_Space)
         {
-            qDebug("space");
+	    //qDebug("space");
+            dropBomb();
             return true;
-            //dropBomb(0);
         }
     }
     if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)

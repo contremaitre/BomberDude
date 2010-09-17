@@ -15,6 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+#include <QDebug>
+
 #include "GameField.h"
 #include <QMainWindow>
 
@@ -51,6 +54,12 @@ void GameField::createGraphics()
     view->setMinimumSize(size,size);
     view->setScene(scene);
     view->show();
+}
+
+void GameField::addBomb(int player, int x, int y)
+{
+    qDebug() << " addBomb() GameField " ; 
+    blockList.movePlayer(player, x, y);
 }
 
 void GameField::movePlayer(int player, int x, int y)

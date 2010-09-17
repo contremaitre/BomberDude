@@ -33,8 +33,7 @@ Map::Map()
 Map::Map(qint16 w, qint16 h, qint16 bs)
 {
     block_list = NULL;
-    setDim(w,h,bs);
-}
+    setDim(w,h,bs);}
 
 void Map::Init()
 {
@@ -131,6 +130,34 @@ void Map::setPlayerPosition(int id, qint16 x, qint16 y)
     playersPositions[id].y = y;
     emit playerMoved(id, x, y);
 }
+
+
+bool Map::bomb(int id)
+{
+  bool ret = true;
+  int x,y;
+  getBlockPosition(playersPositions[id].x,playersPositions[id].y,x,y);
+  
+  // is there a bomb at the same place ?
+  foreach (point *b, bombs) 
+    {
+      if((b->x == x) && (b->y == y))
+	ret = false;
+    }
+
+  if( ret )
+    {   
+      // add the bomb
+      point *newBomb = new point ;
+      newBomb->x = x;
+      newBomb->y = y;
+      bombs.append(newBomb);
+    }
+  qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! ";
+  
+  return ret;
+}
+
 
 /**
  *   1  2  3

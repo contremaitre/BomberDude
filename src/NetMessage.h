@@ -31,6 +31,7 @@ enum NetMsgType
     msg_udp_welcome,
     msg_map,
     msg_ping,
+    msg_bomb,
 };
 
 #endif

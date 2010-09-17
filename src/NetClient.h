@@ -47,6 +47,7 @@ public:
     void connectToServer(QString ip, int port);
     void sendMove(int direction);
     void sendPing();
+    void sendBomb();
 
 private:
     QTcpSocket *tcpSocket;
@@ -72,7 +73,9 @@ private slots:
     void slotTcpError(QAbstractSocket::SocketError);
     void checkUdp();
 signals:
+
     void moveReceived(qint16 plId, qint16 x, qint16 y);
+    void bombReceived(qint16 plId, qint16 x, qint16 y);
     void mapReceived(const Map *);
     void sigConnected();
     void sigConnectionError();

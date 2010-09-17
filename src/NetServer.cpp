@@ -115,6 +115,17 @@ void NetServer::receiveUdp()
 	  sendPingBack(cpt, sender,senderPort);
           break;
         }
+        case msg_bomb:
+        {
+          foreach (NetServerClient *client, clients) {
+	    if(client->getAddress() == sender && client->getPeerUdpPort() == senderPort)
+                {
+		  bomb(client->getId());
+                }
+        
+	  }
+          break;
+        }
         default:
             qDebug() << "NetServer readMove discarding unkown message";
             break;
@@ -158,6 +169,25 @@ int NetServer::readMove(QDataStream &in)
     //qDebug() << "NetServer readMove UDP" << direction;
     return direction;
 }
+
+
+void NetServer::bomb(int id)
+{
+  bool ok = map->bomb(id);
+  if(ok)
+    {
+        //send the bomb to the clients
+        qint16 x,y;
+        map->getPlayerPosition(id, x, y);
+        foreach (NetServerClient *client, clients) {
+            client->bombAdded(id,x,y);
+        }
+    }
+  
+
+
+}
+
 
 void NetServer::move(int plId, int direction)
 {

@@ -78,6 +78,19 @@ void NetClient::sendMove(int direction)
 }
 
 
+void NetClient::sendBomb()
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_bomb;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    udpSocket->writeDatagram(block, serverAddress, serverPort);
+}
+
+
 void NetClient::sendPing()
 {
     if(lastPingAck != cptPing)
@@ -143,6 +156,16 @@ void NetClient::receiveUdp()
             emit moveReceived( player, x, y );
         }
             break;
+        case msg_bomb:
+        {
+            qint16 player, x, y;
+            in >> player >> x >> y;
+            //qDebug() << "netclient move received " << x << " " << y;
+            emit bombReceived( player, x, y );
+        }
+            break;
+
+
 	default:
             qDebug() << "NetClient readMove discarding unkown message";
             break;
