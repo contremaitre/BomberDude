@@ -16,10 +16,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-				    /**
-				     * Keep track of each client connected to the server
-				     *
-				     */
+/**
+* Keep track of each client connected to the server
+*
+*/
 
 #ifndef NETSERVERCLIENT_H
 #define NETSERVERCLIENT_H
@@ -28,6 +28,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <QHostAddress>
 
 class QTcpSocket;
+class QUdpSocket;
 class NetServer;
 class Map;
 
@@ -38,7 +39,7 @@ class NetServerClient : public QObject
     Q_OBJECT
 
       public:
-  NetServerClient(QTcpSocket *, int id, NetServer *);
+  NetServerClient(QTcpSocket *, QUdpSocket *, int id, NetServer *);
   ~NetServerClient();
   void setPlayerNumber(int);
   void playerMoved(int plId, int x, int y);
@@ -49,6 +50,7 @@ class NetServerClient : public QObject
 
  private:
   QTcpSocket *tcpSocket;
+  QUdpSocket *udpSocket;
   NetServer *server;
   QHostAddress peerAddress;
   quint16 peerUdpPort;
@@ -62,3 +64,4 @@ class NetServerClient : public QObject
 };
 
 #endif
+

@@ -20,10 +20,12 @@
 #include "NetMessage.h"
 #include "Map.h"
 #include <QTcpSocket>
+#include <QUdpSocket>
 
-NetServerClient::NetServerClient(QTcpSocket *t, int id, NetServer *s) 
+NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, NetServer *s) 
 {
     tcpSocket = t;
+    udpSocket = u;
     //Had to add DirectConnection, to avoid a Qobject / qthread parenting error.
     //need to check this (cf http://forum.qtfr.org/viewtopic.php?id=10104)
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(incomingData()), Qt::DirectConnection);
@@ -90,7 +92,7 @@ void NetServerClient::playerMoved(int plId, int x, int y)
     out << (qint16)y;
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
-    tcpSocket->write(block);
+    udpSocket->writeDatagram(block,peerAddress,peerUdpPort);
 }
 
 void NetServerClient::sendMap(const Map &map)

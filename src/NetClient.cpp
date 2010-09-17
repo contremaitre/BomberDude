@@ -98,7 +98,7 @@ void NetClient::sendPing()
 
 void NetClient::receiveUdp()
 {
-  //qDebug() << "NetClient receive udp";
+    //qDebug() << "NetClient receive udp";
     while (udpSocket->hasPendingDatagrams()) {
         QByteArray datagram;
         datagram.resize(udpSocket->pendingDatagramSize());
@@ -125,7 +125,7 @@ void NetClient::receiveUdp()
                 emit sigConnected();
             }
             break;
-	case msg_ping: 
+	case msg_ping:
             in >> lastPingAck;
             if(lastPingAck == cptPing)
             {
@@ -134,6 +134,14 @@ void NetClient::receiveUdp()
             }
             else
                 qDebug() << "Ping : received out of delay";
+            break;
+        case msg_moved:
+        {
+            qint16 player, x, y;
+            in >> player >> x >> y;
+            //qDebug() << "netclient move received " << x << " " << y;
+            emit moveReceived( player, x, y );
+        }
             break;
 	default:
             qDebug() << "NetClient readMove discarding unkown message";
@@ -163,7 +171,7 @@ void NetClient::handleMsg(QDataStream &in)
 {
     qint16 msg_type;
     in >> msg_type;
-    //qDebug() << "NetClient::handleMsg, type = " << msg->type;
+    //qDebug() << "NetClient::handleMsg tcp, type = " << msg_type;
     switch(msg_type)
     {
         case msg_moved:
@@ -192,7 +200,7 @@ void NetClient::checkUdp()
     if(udpCheckCount>=10)//todo configurable
     {
         timerCheckUdp->stop();
-        qDebug() << "NetClient : diddn't receive udp ack. Check you firewall/router";
+        qDebug() << "NetClient : didn't receive udp ack. Check you firewall/router";
         emit sigConnectionError();
         return;
     }

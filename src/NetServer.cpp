@@ -60,7 +60,7 @@ void NetServer::incomingClient()
             clientConnection, SLOT(deleteLater()));
     //clientConnection->disconnectFromHost();
 
-    NetServerClient *client = new NetServerClient(clientConnection,playerIdIncrement++,this);
+    NetServerClient *client = new NetServerClient(clientConnection,udpSocket,playerIdIncrement++,this);
     clients.append(client);
     client->sendMap(*map);
     qDebug() << "NetServer new client " << clients.size();
