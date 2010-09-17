@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     Serverd serverd(SERVER_PORT,MAP_SIZE,BLOCK_SIZE);
+    serverd.launch();
     app.exec();
 
     return 0;

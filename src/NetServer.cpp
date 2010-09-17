@@ -148,7 +148,7 @@ void NetServer::sendPingBack(quint32 cpt, QHostAddress sender, quint16 senderPor
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
     udpSocket->writeDatagram(block,sender,senderPort);
-    qDebug() << "NetServer sendPingBack" << cpt;
+    //qDebug() << "NetServer sendPingBack" << cpt;
 }
 
 int NetServer::readMove(QDataStream &in)

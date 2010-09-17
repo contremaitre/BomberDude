@@ -24,6 +24,7 @@
 Serverd::Serverd(int port, int mapSize, int blockSize)
 {
     map = new Map(mapSize,mapSize,blockSize);
+    map->loadRandom();
     server = new NetServer(map,port);
 }
 
@@ -33,11 +34,13 @@ void Serverd::launch()
     //others players can join later (but they may miss movement me can make before they join
     //the way the game is launched will be changed later.
     connect(server,SIGNAL(newPlayer()),this,SLOT(slotStart()),Qt::QueuedConnection);
+    qDebug() << "launch server";
     server->start();
 }
 
 void Serverd::slotStart()
 {
+    qDebug() << "client connecter, start";
     server->assignNumberToPlayers();
 }
 
