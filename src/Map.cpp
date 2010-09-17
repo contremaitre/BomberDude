@@ -65,9 +65,9 @@ void Map::loadRandom()
         {
             //randomly add wall or bricks or nothing
             double d = (double)qrand() / RAND_MAX;
-            if(d < 0.1)
+            if(d < 0.05)
                 block_list[h*width+w].setType(BlockMapProperty::wall);
-            else if(d < 0.4)
+            else if(d < 0.1)
                 block_list[h*width+w].setType(BlockMapProperty::brick);
             else
                 block_list[h*width+w].setType(BlockMapProperty::empty);
