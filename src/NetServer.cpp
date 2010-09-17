@@ -107,10 +107,14 @@ void NetServer::receiveUdp()
         }
             break;
         case msg_ping:
+        {
           //simulate 150ms latency :
-	  //usleep(150000);  
-	  sendPingBack(sender,senderPort);
-            break;
+	  //usleep(150*1000);
+          quint32 cpt;
+          in >> cpt;
+	  sendPingBack(cpt, sender,senderPort);
+          break;
+        }
         default:
             qDebug() << "NetServer readMove discarding unkown message";
             break;
@@ -133,17 +137,18 @@ void NetServer::sendUdpWelcomeAck(QHostAddress sender, quint16 senderPort)
 }
 
 
-void NetServer::sendPingBack(QHostAddress sender, quint16 senderPort)
+void NetServer::sendPingBack(quint32 cpt, QHostAddress sender, quint16 senderPort)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
     out << (quint16)0;
     out << (quint16)msg_ping;
+    out << cpt;
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
     udpSocket->writeDatagram(block,sender,senderPort);
-    //qDebug() << "NetServer sendPingBack";
+    qDebug() << "NetServer sendPingBack" << cpt;
 }
 
 int NetServer::readMove(QDataStream &in)

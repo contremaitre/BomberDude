@@ -28,7 +28,8 @@ NetClient::NetClient()
 {
     timePing = new QTime();
     timePing->start();
-    
+    cptPing = 0;
+    lastPingAck = 0;
     tcpSocket = new QTcpSocket();
     connect(tcpSocket, SIGNAL(connected()), this, SLOT(slotTcpConnected()));
     connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(slotTcpError(QAbstractSocket::SocketError)));
@@ -79,11 +80,15 @@ void NetClient::sendMove(int direction)
 
 void NetClient::sendPing()
 {
+    if(lastPingAck != cptPing)
+        qDebug() << "Ping : timeout";
+    cptPing++;
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
     out << (quint16)0;
     out << (quint16)msg_ping;
+    out << cptPing;
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
     udpSocket->writeDatagram(block, serverAddress, serverPort);
@@ -121,11 +126,15 @@ void NetClient::receiveUdp()
             }
             break;
 	case msg_ping: 
-        {
-            int m = timePing->restart();
-            qDebug() << "Ping : " << m ; 
+            in >> lastPingAck;
+            if(lastPingAck == cptPing)
+            {
+                int e = timePing->elapsed();
+                qDebug() << "Ping :" << e; 
+            }
+            else
+                qDebug() << "Ping : received out of delay";
             break;
-        }
 	default:
             qDebug() << "NetClient readMove discarding unkown message";
             break;

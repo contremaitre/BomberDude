@@ -57,7 +57,7 @@ private:
     QList<NetServerClient *> clients;
     int readMove(QDataStream &in);
     void sendUdpWelcomeAck(QHostAddress sender, quint16 senderPort);
-    void sendPingBack(QHostAddress sender, quint16 senderPort);
+    void sendPingBack(quint32 cpt, QHostAddress sender, quint16 senderPort);
 private slots:
     void incomingClient();
     void receiveUdp();

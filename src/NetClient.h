@@ -56,6 +56,8 @@ private:
     //timeout in case udp communication fails
     QTimer *timerCheckUdp;
     QTime *timePing;
+    quint32 cptPing;
+    quint32 lastPingAck;
     bool udpAckOk;
     void sendUdpWelcome();
     void handleMsg(QDataStream &);
