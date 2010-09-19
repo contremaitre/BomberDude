@@ -47,6 +47,12 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     connect(client, SIGNAL(sigConnectionError()), this, SLOT(slotClientConnectError()));
     connect(client,SIGNAL(moveReceived(qint16,qint16,qint16)),this,SLOT(moveReceived(qint16,qint16,qint16)));
     settings = set;
+
+    if(QSound::isAvailable)
+      qDebug() << "Sound OK ";
+    else
+      qDebug() << "No Sound ";
+
 }
 
 void GamePlay::launch()
