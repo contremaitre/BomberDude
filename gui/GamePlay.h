@@ -57,6 +57,7 @@ private:
     QTimer *timerPing;
     QSound *music;
     
+    //inherited from QObject and redefined
     bool eventFilter(QObject *obj, QEvent *event);
 
     /**

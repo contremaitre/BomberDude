@@ -130,18 +130,23 @@ void Map::setPlayerPosition(int id, qint16 x, qint16 y)
     playersPositions[id].y = y;
     emit playerMoved(id, x, y);
 }
-
-
+//to be used by server only
 bool Map::bomb(int id)
 {
-  bool ret = true;
-  int x,y;
-  getBlockPosition(playersPositions[id].x,playersPositions[id].y,x,y);
-  
+	  int squareX,squareY;
+	  getBlockPosition(playersPositions[id].x,playersPositions[id].y,squareX,squareY);
+	  return bomb(id,squareX,squareY);
+}
+
+
+bool Map::bomb(int id, int squareX, int squareY)
+{
+	bool ret = true;
+
   // is there a bomb at the same place ?
   foreach (point *b, bombs) 
     {
-      if((b->x == x) && (b->y == y))
+      if((b->x == squareX) && (b->y == squareY))
 	ret = false;
     }
 
@@ -149,14 +154,16 @@ bool Map::bomb(int id)
     {   
       // add the bomb
       point *newBomb = new point ;
-      newBomb->x = x;
-      newBomb->y = y;
+      newBomb->x = squareX;
+      newBomb->y = squareY;
       bombs.append(newBomb);
     }
-  qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! ";
+  qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY;
   
   return ret;
 }
+
+
 
 
 /**

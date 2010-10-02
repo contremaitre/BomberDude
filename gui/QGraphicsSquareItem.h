@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef QGRAPHICSCASEITEM_H
-#define QGRAPHICSCASEITEM_H
+#ifndef QGRAPHICSSQUAREITEM_H
+#define QGRAPHICSSQUAREITEM_H
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsObject>
@@ -29,7 +29,7 @@ enum caseType
     
 };
 
-class QGraphicsCaseItem : public QGraphicsObject
+class QGraphicsSquareItem : public QGraphicsObject
 {
 private:
     int x,y,size;
@@ -37,8 +37,8 @@ private:
     QRectF boundingRect() const;
     QGraphicsPixmapItem pix;
 public:
-    QGraphicsCaseItem();
-    QGraphicsCaseItem(int,int,int);
+    QGraphicsSquareItem();
+    QGraphicsSquareItem(int,int,int);
     void setPos(int, int, int);
     void setItem(caseType);
     void setItem(const QPixmap &);

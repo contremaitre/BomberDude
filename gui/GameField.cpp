@@ -21,50 +21,52 @@
 #include "GameField.h"
 #include <QMainWindow>
 
-GameField::GameField(QMainWindow *mainw, int s) : blockList(s)
+GameField::GameField(QMainWindow *mainw, int s) : area(s)
 {
-    scene = new QGraphicsScene;
+
+	connect(&area,SIGNAL(bombAdded(QGraphicsSquareItem*)),this,SLOT(bombAdded(QGraphicsSquareItem*)));
+	scene = new QGraphicsScene;
     mainWindow = mainw;
     view = NULL;
 }
 
 void GameField::createRandomMap(int width, int height)
 {
-    blockList.createRandomMap(width, height);
+    area.createRandomMap(width, height);
 }
 
 void GameField::createGraphics()
 {
-    for(int i = 0; i < blockList.getWidth(); i++)
+    for(int i = 0; i < area.getWidth(); i++)
     {
-        for(int j = 0; j < blockList.getHeight(); j++)
+        for(int j = 0; j < area.getHeight(); j++)
         {
-            QGraphicsCaseItem *m_case = blockList.getCase(i,j);
+            QGraphicsSquareItem *m_case = area.getCase(i,j);
             scene->addItem(m_case->getItem());
         }
     }
-    for(int i = 0 ; i < blockList.getNbPlayers(); i++)
+    for(int i = 0 ; i < area.getNbPlayers(); i++)
     {
-            QGraphicsCaseItem *m_case = blockList.getPlayer(i);
+            QGraphicsSquareItem *m_case = area.getPlayer(i);
             scene->addItem(m_case->getItem());
     }
     view = new QGraphicsView(mainWindow);
-    int size = blockList.getCaseSize() * (blockList.getWidth()+1);
+    int size = area.getCaseSize() * (area.getWidth()+1);
     mainWindow->setMinimumSize(size,size);
     view->setMinimumSize(size,size);
     view->setScene(scene);
     view->show();
 }
 
-void GameField::addBomb(int player, int x, int y)
+void GameField::addBomb(int player, int squareX, int squareY)
 {
     qDebug() << " addBomb() GameField " ; 
-    blockList.movePlayer(player, x, y);
+    area.addBomb(player, squareX, squareY);
 }
 
 void GameField::movePlayer(int player, int x, int y)
 {
-    blockList.movePlayer(player, x, y);
+    area.movePlayer(player, x, y);
 }
 
 void GameField::getEventFilter(QObject *obj)
@@ -74,17 +76,22 @@ void GameField::getEventFilter(QObject *obj)
 
 void GameField::setMap(const Map* map)
 {
-    blockList.setMap(map);
+    area.setMap(map);
 }
 
 const Map *GameField::getMap()
 {
-    return blockList.getMap();
+    return area.getMap();
 }
 
 GameField::~GameField()
 {
     delete view;
     //delete scene; todo crash ?
+}
+
+void GameField::bombAdded(QGraphicsSquareItem* bombItem){
+	scene->addItem(bombItem);
+	qDebug() <<" bombAdded() GameField";
 }
 

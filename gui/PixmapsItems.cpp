@@ -52,6 +52,12 @@ void PixmapsItems::loadAll()
     tmp_block.pixmap = ps3;
     tmp_block.type = BlockMapProperty::wall;
     block_pixmaps.push_back(tmp_block);
+
+    QPixmap p4("pictures/bomb.png");
+    QPixmap ps4 = p4.scaled(QSizeF(width,height).toSize());
+    tmp_block.pixmap = ps4;
+    tmp_block.type = BlockMapProperty::bomb;
+    block_pixmaps.push_back(tmp_block);
 }
 
 QPixmap PixmapsItems::getPixmap(BlockMapProperty::BlockType type)

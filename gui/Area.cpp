@@ -16,31 +16,31 @@
 */
 
 #include <QDebug>
-#include "BlocksList.h"
+#include "Area.h"
 
-BlocksList::BlocksList(int s)
+Area::Area(int s)
 {
     width = height = 0;
-    caseSize = s;
-    casesItem = NULL;
+    squareSize = s;
+    squaresItem = NULL;
     playersItem = NULL;
     connect(&map,SIGNAL(blockChanged(int)),this,SLOT(blockChanged(int)));
     loadPixMaps();
 }
 
-void BlocksList::loadPixMaps()
+void Area::loadPixMaps()
 {
-    pixmaps.init(caseSize, caseSize);
+    pixmaps.init(squareSize, squareSize);
 }
 
-void BlocksList::init()
+void Area::init()
 {
     width = map.getWidth();
     height = map.getHeight();
-    delete[] casesItem;
+    delete[] squaresItem;
     delete[] playersItem;
-    casesItem = new QGraphicsCaseItem*[width * height];
-    playersItem = new QGraphicsCaseItem*[map.getMaxNbPlayers()];
+    squaresItem = new QGraphicsSquareItem*[width * height];
+    playersItem = new QGraphicsSquareItem*[map.getMaxNbPlayers()];
     for(int i = 0; i < width; i++)
     {
         for(int j = 0; j < height; j++)
@@ -53,91 +53,103 @@ void BlocksList::init()
     for(int i = 0; i < map.getMaxNbPlayers(); i++)
     {
         map.getPlayerPosition(i,x,y);
-        playersItem[i] = new QGraphicsCaseItem(x-caseSize/2,y-caseSize/2,caseSize);
+        playersItem[i] = new QGraphicsSquareItem(x-squareSize/2,y-squareSize/2,squareSize);
         playersItem[i]->setItem(pixmaps.getPixmap(i));
     }
 }
 
-void BlocksList::setMap(const Map *map)
+void Area::setMap(const Map *map)
 {
     this->map = *map;
     init();
 }
 
-void BlocksList::createRandomMap(int w, int h)
+void Area::createRandomMap(int w, int h)
 {
-    map.setDim(w,h,caseSize);
+    map.setDim(w,h,squareSize);
     map.loadRandom();
     init();
 }
 
 
-void BlocksList::movePlayer(int player, int x, int y)
+void Area::movePlayer(int player, int x, int y)
 {
     map.setPlayerPosition(player, x, y);
-    playersItem[player]->setPos(x-caseSize/2,y-caseSize/2,caseSize);
+    playersItem[player]->setPos(x-squareSize/2,y-squareSize/2,squareSize);
 }
-
-int BlocksList::getCaseSize() const
+void Area::addBomb(int player, int squareX, int squareY)
 {
-    return caseSize;
+	int x,y;
+	x=squareX*squareSize;
+	y=squareY*squareSize;
+	map.bomb(player, squareX, squareY);
+	QGraphicsSquareItem* bombItem=new QGraphicsSquareItem(x,y,squareSize);
+    bombItem->setItem(pixmaps.getPixmap(BlockMapProperty::bomb));
+    bombsItem.append(bombItem);
+    emit bombAdded(bombItem);
+    qDebug() <<" addBomb() Area";
 }
 
-void BlocksList::initCase(int i, int j)
+int Area::getCaseSize() const
 {
-    int x_a = i*caseSize;
-    int y_a = j*caseSize;
-    casesItem[j*width+i] = new QGraphicsCaseItem(x_a,y_a,caseSize);
+    return squareSize;
 }
 
-void BlocksList::blockChanged(int pos)
+void Area::initCase(int i, int j)
+{
+    int x_a = i*squareSize;
+    int y_a = j*squareSize;
+    squaresItem[j*width+i] = new QGraphicsSquareItem(x_a,y_a,squareSize);
+}
+
+void Area::blockChanged(int pos)
 {
     getCase(pos)->setItem(pixmaps.getPixmap(map.getType(pos)));
     emit pixmapChanged(pos);
 }
 
-const Map *BlocksList::getMap()
+const Map *Area::getMap()
 {
     return &map;
 }
 
-int BlocksList::getWidth()
+int Area::getWidth()
 {
     return width;
 }
 
-int BlocksList::getHeight()
+int Area::getHeight()
 {
     return height;
 }
 
-int BlocksList::getNbPlayers() const
+int Area::getNbPlayers() const
 {
     return map.getMaxNbPlayers();
 }
 
-QGraphicsCaseItem *BlocksList::getCase(int i, int j)
+QGraphicsSquareItem *Area::getCase(int i, int j)
 {
-    return casesItem[j*width+i];
+    return squaresItem[j*width+i];
 }
 
-QGraphicsCaseItem *BlocksList::getCase(int pos)
+QGraphicsSquareItem *Area::getCase(int pos)
 {
-    return casesItem[pos];
+    return squaresItem[pos];
 }
 
-QGraphicsCaseItem *BlocksList::getPlayer(int id)
+QGraphicsSquareItem *Area::getPlayer(int id)
 {
     return playersItem[id];
 }
 
-BlocksList::~BlocksList()
+Area::~Area()
 {
-    if(casesItem)
+    if(squaresItem)
     {
         for(int i = 0; i < width*height; i++)
-            delete casesItem[i];
-        delete []casesItem;
+            delete squaresItem[i];
+        delete []squaresItem;
     }
     if(playersItem)
     {

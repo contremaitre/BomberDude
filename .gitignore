@@ -10,3 +10,5 @@ QtBomberman
 Serverd
 src/libsrc.a
 
+/.cproject
+/.project

@@ -61,7 +61,7 @@ class NetServerClient : public QObject
   quint16 blockSize; //size of the current message
 
   private slots:
-  void incomingData();
+  void incomingTcpData();
 };
 
 #endif

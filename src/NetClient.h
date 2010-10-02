@@ -61,13 +61,13 @@ private:
     quint32 lastPingAck;
     bool udpAckOk;
     void sendUdpWelcome();
-    void handleMsg(QDataStream &);
+    void handleTcpMsg(QDataStream &);
     int udpCheckCount;
     quint16 blockSize; //size of the current message
     Map *map; //store the map when the server sends it;
 
 private slots:
-    void readMsgFromServer();
+    void readTcpMsgFromServer();
     void receiveUdp();
     void slotTcpConnected();
     void slotTcpError(QAbstractSocket::SocketError);

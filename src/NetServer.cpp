@@ -178,9 +178,11 @@ void NetServer::bomb(int id)
     {
         //send the bomb to the clients
         qint16 x,y;
+        int squareX,squareY;
         map->getPlayerPosition(id, x, y);
+        map->getBlockPosition(x,y,squareX,squareY);
         foreach (NetServerClient *client, clients) {
-            client->bombAdded(id,x,y);
+            client->bombAdded(id,squareX,squareY);
         }
     }
   

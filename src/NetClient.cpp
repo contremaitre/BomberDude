@@ -33,7 +33,7 @@ NetClient::NetClient()
     tcpSocket = new QTcpSocket();
     connect(tcpSocket, SIGNAL(connected()), this, SLOT(slotTcpConnected()));
     connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(slotTcpError(QAbstractSocket::SocketError)));
-    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMsgFromServer()));
+    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readTcpMsgFromServer()));
     udpSocket = new QUdpSocket(); 
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(receiveUdp()));
     blockSize = 0;
@@ -173,7 +173,7 @@ void NetClient::receiveUdp()
     }   
 }
 
-void NetClient::readMsgFromServer()
+void NetClient::readTcpMsgFromServer()
 {
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_0);
@@ -186,11 +186,11 @@ void NetClient::readMsgFromServer()
 
     if (tcpSocket->bytesAvailable() < blockSize)
         return;
-    handleMsg(in);
+    handleTcpMsg(in);
     blockSize = 0;
 }
 
-void NetClient::handleMsg(QDataStream &in)
+void NetClient::handleTcpMsg(QDataStream &in)
 {
     qint16 msg_type;
     in >> msg_type;
