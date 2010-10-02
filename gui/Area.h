@@ -22,6 +22,7 @@
 #include "PixmapsItems.h"
 #include <QObject>
 
+
 class Area : public QObject
 {
   Q_OBJECT
@@ -30,7 +31,7 @@ private:
     PixmapsItems pixmaps;
     QGraphicsSquareItem **squaresItem;
     QGraphicsSquareItem **playersItem;
-    QList<QGraphicsSquareItem*> bombsItem;
+    QMap<Bomb*,QGraphicsSquareItem*> bombsItem;
     void initCase(int, int);
     void init();
     void loadPixMaps();
@@ -49,6 +50,7 @@ public:
     int getCaseSize() const;
     void movePlayer(int player, int x, int y);
     void addBomb(int player, int x, int y);
+    void removeBomb(int x, int y);
     int getNbPlayers() const;
     const Map *getMap();
     void setMap(const Map *);
@@ -59,6 +61,7 @@ private slots:
 signals:
     void pixmapChanged(int);
     void bombAdded(QGraphicsSquareItem*);
+    void bombRemoved(QGraphicsSquareItem*);
 
 };
 

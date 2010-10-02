@@ -45,7 +45,7 @@ public:
     void run();
     void close();
     void move(int plId, int direction);
-    void bomb(int id);
+    void addBomb(int id);
     //call this function when the game is launched
     void assignNumberToPlayers();
     void createRandomMap(int w, int h,int squareSize);
@@ -63,6 +63,7 @@ private:
 private slots:
     void incomingClient();
     void receiveUdp();
+    void removeBomb(int x,int y);
 
 signals:
     void newPlayer();

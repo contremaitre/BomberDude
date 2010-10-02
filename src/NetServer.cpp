@@ -36,8 +36,9 @@ NetServer::NetServer(const MapServer *map, int port) : QThread()
 NetServer::NetServer(int port) : QThread()
 {
     this->map = new MapServer;
+    connect(map,SIGNAL(bombRemoved(int,int)),this,SLOT(removeBomb(int,int)));
     this->port = port;
-    maxNbPlayer = 4; //map->getMaxNbPlayers();
+    maxNbPlayer = map->getMaxNbPlayers();
     playerIdIncrement = 0;
     tcpServer = NULL;
     udpSocket = NULL;
@@ -128,7 +129,7 @@ void NetServer::receiveUdp()
           foreach (NetServerClient *client, clients) {
 	    if(client->getAddress() == sender && client->getPeerUdpPort() == senderPort)
                 {
-		  bomb(client->getId());
+		  addBomb(client->getId());
                 }
         
 	  }
@@ -179,7 +180,7 @@ int NetServer::readMove(QDataStream &in)
 }
 
 
-void NetServer::bomb(int id)
+void NetServer::addBomb(int id)
 {
   bool ok = map->bomb(id);
   if(ok)
@@ -193,10 +194,16 @@ void NetServer::bomb(int id)
             client->bombAdded(id,squareX,squareY);
         }
     }
-  
-
-
 }
+
+void NetServer::removeBomb(int x,int y)
+{
+	qDebug()<< "remove bomb";
+	foreach (NetServerClient *client, clients) {
+	            client->bombRemoved(x,y);
+	        }
+}
+
 
 
 void NetServer::move(int plId, int direction)

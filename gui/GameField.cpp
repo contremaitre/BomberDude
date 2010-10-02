@@ -25,6 +25,8 @@ GameField::GameField(QMainWindow *mainw, int s) : area(s)
 {
 
 	connect(&area,SIGNAL(bombAdded(QGraphicsSquareItem*)),this,SLOT(bombAdded(QGraphicsSquareItem*)));
+	connect(&area,SIGNAL(bombRemoved(QGraphicsSquareItem*)),this,SLOT(bombRemoved(QGraphicsSquareItem*)));
+
 	scene = new QGraphicsScene;
     mainWindow = mainw;
     view = NULL;
@@ -64,6 +66,12 @@ void GameField::addBomb(int player, int squareX, int squareY)
     area.addBomb(player, squareX, squareY);
 }
 
+void GameField::removeBomb(int x, int y)
+{
+    qDebug() << " removeBomb() GameField " ;
+    area.removeBomb(x,y);
+}
+
 void GameField::movePlayer(int player, int x, int y)
 {
     area.movePlayer(player, x, y);
@@ -93,5 +101,10 @@ GameField::~GameField()
 void GameField::bombAdded(QGraphicsSquareItem* bombItem){
 	scene->addItem(bombItem);
 	qDebug() <<" bombAdded() GameField";
+}
+
+void GameField::bombRemoved(QGraphicsSquareItem* bombItem){
+	qDebug() <<" bombRemoved() GameField"<<bombItem;
+	scene->removeItem(bombItem);
 }
 

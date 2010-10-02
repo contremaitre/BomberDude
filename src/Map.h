@@ -60,6 +60,7 @@ public:
     void setType(BlockMapProperty::BlockType type, int pos);
     void setType(BlockMapProperty::BlockType type, int x, int y);
     BlockMapProperty* getBlockList() ;
+    QList<Bomb*>* getBombList();
     //get the block number at coordinate x,y
     void getBlockPosition(int, int, int&, int&) const;
     //get the coordinates of the player
@@ -68,13 +69,16 @@ public:
     qint16 getMaxNbPlayers() const;
     qint16 getBlockSize() const;
 
-    bool bomb(int id, int x, int y);
+    Bomb* bomb(int id, int x, int y);
+    Bomb* removeBomb(int x, int y);
     bool blockContainsBomb(int x,int y);
     Map & operator=(const Map &);
 
 signals:
     void blockChanged(int pos);
-    void playerMoved(int pl, int x, int y);
+    void bombRemoved(int x, int y);
+    //void playerMoved(int pl, int x, int y); useless?
+
 };
 
 QDataStream &operator>>(QDataStream & in, Map &map);

@@ -21,6 +21,7 @@
 #include <QObject>
 #include <QTimer>
 
+
 class Bomb : public QObject
 {
     Q_OBJECT
@@ -41,10 +42,16 @@ public:
     Bomb(int playerId, int x, int y);
     ~Bomb();
 
+bool operator<(const Bomb & b);
+
 signals:
      void aspectChanged();
-     void explode();
-};
+     void explode(Bomb* b);
 
+private slots:
+	void bombTimeout();
+
+
+};
 #endif
 

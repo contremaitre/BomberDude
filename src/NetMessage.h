@@ -32,6 +32,7 @@ enum NetMsgType
     msg_map,
     msg_ping,
     msg_bomb,
+    msg_rmbomb,
 };
 
 #endif

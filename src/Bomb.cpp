@@ -16,15 +16,21 @@
 */
 
 #include "Bomb.h"
+#include <QDebug>
+
 
 Bomb::Bomb(int range, int playerId, int duration, int x, int y)
 {
-    this->range = range;
+	qDebug() << "Bomb constructor";
+	this->range = range;
     this->playerId = playerId;
     this->duration = duration;
     this->x=x;
     this->y=y;
     blinkTimer = new QTimer(this);
+    blinkTimer->setSingleShot(true);
+    connect(blinkTimer, SIGNAL(timeout()), this, SLOT(bombTimeout()));
+    blinkTimer->start(duration);
 }
 Bomb::Bomb(int playerId, int x, int y)
 {
@@ -33,7 +39,15 @@ Bomb::Bomb(int playerId, int x, int y)
    this->y=y;
 
 }
+void Bomb::bombTimeout(){
+
+	emit explode(this);
+}
+
 Bomb::~Bomb()
 {
 }
-
+bool Bomb::operator< (const Bomb & b)
+{
+	return this->x*100+this->y<b.x*100+b.y;
+}

@@ -33,7 +33,7 @@
 
 class MapServer : public Map
 {
-
+	 Q_OBJECT
 private:
 
 
@@ -48,14 +48,15 @@ private:
     bool movePlayerDown(int id);
     bool movePlayerOld(int id, int direction);
 public:
-    MapServer();
-    MapServer(qint16, qint16, qint16);
-    ~MapServer();
+//    MapServer();
+//    MapServer(qint16, qint16, qint16);
+//    ~MapServer();
     void loadRandom();
     bool movePlayer(int id, int direction);
     bool bomb(int id, int x, int y);
     bool bomb(int id);
-
+private slots :
+void explosion(Bomb* b);
 };
 
 

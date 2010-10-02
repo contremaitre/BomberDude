@@ -73,6 +73,7 @@ private slots:
     void slotPingTimer();
     void moveReceived(qint16 plId, qint16 x, qint16 y);
     void bombReceived(qint16 plId, qint16 x, qint16 y);
+    void bombRemoved(qint16 x, qint16 y);
     void mapReceived(const Map*);
     void slotClientConnected();
     void slotClientConnectError();

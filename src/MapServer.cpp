@@ -24,11 +24,7 @@
 #include <string.h>
 #include <time.h> //qrand seed
 
-MapServer::MapServer() : Map()
-{}
 
-MapServer::MapServer(qint16 w, qint16 h, qint16 bs):Map(w,h,bs)
-{ }
 
 
 
@@ -309,7 +305,9 @@ int MapServer::coordinatePositionInBlock(int coord)
 bool MapServer::bomb(int id)
 {
 	  int squareX,squareY;
-	  getBlockPosition(playersPositions[id].x,playersPositions[id].y,squareX,squareY);
+	  qint16 x,y;
+	  getPlayerPosition(id,x,y);
+	  getBlockPosition(x,y,squareX,squareY);
 	  return bomb(id,squareX,squareY);
 }
 
@@ -318,30 +316,36 @@ bool MapServer::bomb(int id, int squareX, int squareY)
 	bool ret = true;
 
   // is there a bomb at the same place ?
-  foreach (Bomb *b, bombs)
+  foreach (Bomb *b, *getBombList())
     {
       if((b->x == squareX) && (b->y == squareY))
 	ret = false;
     }
-
+qDebug()<<"ret"<<ret;
   if( ret )
     {
       // add the bomb
       Bomb *newBomb = new Bomb(3,id,3000, squareX, squareY) ;
      // newBomb->x = squareX;
      // newBomb->y = squareY;
-      bombs.append(newBomb);
+      getBombList()->append(newBomb);
+      connect(newBomb,SIGNAL(explode(Bomb*)),this,SLOT(explosion(Bomb*)));
     }
-  qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY;
+  qDebug() << " MapServer> AddBomb : " << getBombList()->size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY;
 
   return ret;
 }
 
 
-MapServer::~MapServer()
+void MapServer::explosion(Bomb* b)
 {
+	bombRemoved( b->x,b->y);
+	getBombList()->removeOne(b);
 
+
+	qDebug()<<"BOOM !";
 }
+
 
 
 

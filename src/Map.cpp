@@ -129,15 +129,15 @@ void Map::setPlayerPosition(int id, qint16 x, qint16 y)
     int x_oldBlock, y_oldBlock;
     playersPositions[id].x = x;
     playersPositions[id].y = y;
-    emit playerMoved(id, x, y);
+    //emit playerMoved(id, x, y); useless?
 }
 
 
 
-bool Map::bomb(int id, int squareX, int squareY)
+Bomb* Map::bomb(int id, int squareX, int squareY)
 {
 	bool ret = true;
-
+	Bomb *newBomb=NULL;
   // is there a bomb at the same place ?
   foreach (Bomb *b, bombs)
     {
@@ -148,17 +148,24 @@ bool Map::bomb(int id, int squareX, int squareY)
   if( ret )
     {   
       // add the bomb
-      Bomb *newBomb = new Bomb(id, squareX, squareY) ;
-     // newBomb->x = squareX;
-     // newBomb->y = squareY;
+      newBomb = new Bomb(id, squareX, squareY) ;
       bombs.append(newBomb);
     }
   qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY;
-  
-  return ret;
+  return newBomb;
 }
 
-
+Bomb* Map::removeBomb(int x, int y)
+{
+	foreach (Bomb *b, bombs)
+	    {
+	      if((b->x == x) && (b->y == y))
+	    	  bombs.removeOne(b);
+	      return b;
+	    }
+	qDebug()<< "nothing has been removed";
+	return NULL;
+}
 
 
 
@@ -172,7 +179,6 @@ bool Map::blockContainsBomb(int x,int y)
     }
 	return false;
 }
-
 
 
 
@@ -212,6 +218,9 @@ void Map::getPlayerPosition(int pl, qint16 &x, qint16 &y) const
 BlockMapProperty* Map::getBlockList()
 {
     return block_list;
+}
+QList<Bomb*>* Map::getBombList(){
+	return &bombs;
 }
 
 qint16 Map::getBlockSize() const

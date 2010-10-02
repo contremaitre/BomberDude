@@ -46,12 +46,13 @@ public:
     void getEventFilter(QObject *obj);
     void movePlayer(int player, int x, int y);
     void addBomb(int player, int x, int y);
+    void removeBomb(int x, int y);
     void setMap(const Map *);
     const Map *getMap();
 
 public slots:
 	void bombAdded(QGraphicsSquareItem*);
-
+	void bombRemoved(QGraphicsSquareItem*);
 };
 
 #endif
