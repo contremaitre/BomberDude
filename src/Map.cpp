@@ -20,7 +20,7 @@
 #include <QDebug>
 
 #include "Map.h"
-#include <stdlib.h> //temporaraire (NULL)
+#include <stdlib.h> //Temporary (NULL)
 #include <string.h>
 #include <time.h> //qrand seed
 
@@ -207,6 +207,16 @@ bool Map::movePlayerUp(int id)
     return movePlayerOld(id,1);
 }
 
+bool Map::blockContainsBomb(int x,int y)
+{
+   foreach( point *b, bombs)
+    {
+    	if ((b->x == x) && (b->y == y))
+    		return true;
+    }
+	return false;
+}
+
  /**
   *      1
   *      |
@@ -224,10 +234,10 @@ bool Map::movePlayerOld(int id, int direction)
      * - 2 if the next block is not empty, we try to circle the block if it is possible
      * - 3 else the move is rejected
      */
-    qint16 x,y;
+    qint16 x_player,y_player;
     int move_x = 0;
     int move_y = 0;
-    getPlayerPosition( id, x, y );
+    getPlayerPosition( id, x_player, y_player );
     //qDebug() << "Map move player" << id << direction << "x,y" << x << y;
     switch(direction)
     {
@@ -246,15 +256,16 @@ bool Map::movePlayerOld(int id, int direction)
         default:
             return false;
     }
-    x += move_x + (move_x/(MOVE_STEP))*(blockSize/2);
-    y += move_y + (move_y/(MOVE_STEP))*(blockSize/2);
+    x_player += move_x + (move_x/(MOVE_STEP))*(blockSize/2);
+    y_player += move_y + (move_y/(MOVE_STEP))*(blockSize/2);
     int x_nextBlock, y_nextBlock;
-    getBlockPosition( x, y, x_nextBlock, y_nextBlock );
+    getBlockPosition( x_player, y_player, x_nextBlock, y_nextBlock );
     //qDebug() << "next block" << x_nextBlock << y_nextBlock ;
-    BlockMapProperty::BlockType type = getType(x_nextBlock,y_nextBlock);
-    if( type == BlockMapProperty::empty )
+    BlockMapProperty::BlockType typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
+
+    if( typeOfNextBlock == BlockMapProperty::empty && !blockContainsBomb(x_nextBlock,y_nextBlock))
     {
-        playersPositions[id].x += move_x;
+       	playersPositions[id].x += move_x;
         playersPositions[id].y += move_y;
         //We want to stay on the middle of blocks.
         adjustPlayerPosition(id,move_x,move_y);
@@ -294,9 +305,9 @@ bool Map::movePlayerOld(int id, int direction)
             int sign = pos > 0 ? 1 : -1;
             if( pos != 0)
             {
-                getBlockPosition( x, y+sign*blockSize/2, x_nextBlock, y_nextBlock );
-                type = getType(x_nextBlock,y_nextBlock);
-                if( type == BlockMapProperty::empty )
+                getBlockPosition( x_player, y_player+sign*blockSize/2, x_nextBlock, y_nextBlock );
+                typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
+                if( typeOfNextBlock == BlockMapProperty::empty && !blockContainsBomb(x_nextBlock,y_nextBlock))
                 {
                     playersPositions[id].x += move_x/2;
                     playersPositions[id].y += absMin(pos,MOVE_STEP);
@@ -310,9 +321,9 @@ bool Map::movePlayerOld(int id, int direction)
             int sign = pos > 0 ? 1 : -1;
             if( pos != 0)
             {
-                getBlockPosition( x+sign*blockSize/2, y, x_nextBlock, y_nextBlock );
-                type = getType(x_nextBlock,y_nextBlock);
-                if( type == BlockMapProperty::empty )
+                getBlockPosition( x_player+sign*blockSize/2, y_player, x_nextBlock, y_nextBlock );
+                typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
+                if( typeOfNextBlock == BlockMapProperty::empty && !blockContainsBomb(x_nextBlock,y_nextBlock))
                 {
                     playersPositions[id].y += move_y/2;
                     playersPositions[id].x += absMin(pos,MOVE_STEP);

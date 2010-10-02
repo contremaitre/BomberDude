@@ -75,6 +75,7 @@ public:
     bool movePlayer(int id, int direction);
     bool bomb(int id);
     bool bomb(int id, int x, int y);
+    bool blockContainsBomb(int x,int y);
     Map & operator=(const Map &);
 
 signals:
