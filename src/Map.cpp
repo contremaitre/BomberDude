@@ -256,6 +256,8 @@ bool Map::movePlayerOld(int id, int direction)
         default:
             return false;
     }
+    int x_originalBlock, y_originalBlock;
+    getBlockPosition( x_player, y_player, x_originalBlock, y_originalBlock );
     x_player += move_x + (move_x/(MOVE_STEP))*(blockSize/2);
     y_player += move_y + (move_y/(MOVE_STEP))*(blockSize/2);
     int x_nextBlock, y_nextBlock;
@@ -263,7 +265,7 @@ bool Map::movePlayerOld(int id, int direction)
     //qDebug() << "next block" << x_nextBlock << y_nextBlock ;
     BlockMapProperty::BlockType typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
 
-    if( typeOfNextBlock == BlockMapProperty::empty && !blockContainsBomb(x_nextBlock,y_nextBlock))
+    if( typeOfNextBlock == BlockMapProperty::empty && (((x_originalBlock==x_nextBlock) && (y_originalBlock==y_nextBlock))||!blockContainsBomb(x_nextBlock,y_nextBlock)))
     {
        	playersPositions[id].x += move_x;
         playersPositions[id].y += move_y;
