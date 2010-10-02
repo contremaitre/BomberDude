@@ -22,6 +22,7 @@
 #include <QObject>
 #include "BlockMapProperty.h"
 #include "constant.h"
+#include "Bomb.h"
 
 /**
  * This class represent a bomberman game map
@@ -40,18 +41,12 @@ private:
     //player position coordinates is in "pixel". And there is "blockSize" pixels in one block
     struct point{qint16 x; qint16 y;};
     point playersPositions[MAX_NB_PLAYER];
-    QList<point*> bombs;
+    QList<Bomb*> bombs;
 
     void Init();
-    void adjustPlayerPosition(int plId, int xDirection, int yDirection);
     //Test if a coordinate is bellow (-1) on (0) or above (1) the middle of the block
     int coordinatePositionInBlock(int coord);
-    int absMin(int a, int b) const;
-    bool movePlayerLeft(int id);
-    bool movePlayerRight(int id);
-    bool movePlayerUp(int id);
-    bool movePlayerDown(int id);
-    bool movePlayerOld(int id, int direction);
+
 public:
     Map();
     Map(qint16, qint16, qint16);
@@ -64,7 +59,7 @@ public:
     BlockMapProperty::BlockType getType(int) const;
     void setType(BlockMapProperty::BlockType type, int pos);
     void setType(BlockMapProperty::BlockType type, int x, int y);
-    const BlockMapProperty* getBlockList() const;
+    BlockMapProperty* getBlockList() ;
     //get the block number at coordinate x,y
     void getBlockPosition(int, int, int&, int&) const;
     //get the coordinates of the player
@@ -72,8 +67,7 @@ public:
     void setPlayerPosition(int id, qint16 , qint16);
     qint16 getMaxNbPlayers() const;
     qint16 getBlockSize() const;
-    bool movePlayer(int id, int direction);
-    bool bomb(int id);
+
     bool bomb(int id, int x, int y);
     bool blockContainsBomb(int x,int y);
     Map & operator=(const Map &);

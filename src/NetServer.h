@@ -30,7 +30,7 @@
 #include <QThread>
 #include <QHostAddress>
 
-class Map;
+class MapServer;
 class QTcpServer;
 class QUdpSocket;
 class NetServerClient;
@@ -39,7 +39,8 @@ class NetServer : public QThread
 {
     Q_OBJECT
 public:
-    NetServer(const Map *, int port);
+    NetServer(const MapServer *, int port);
+    NetServer(int port);
     ~NetServer();
     void run();
     void close();
@@ -47,9 +48,9 @@ public:
     void bomb(int id);
     //call this function when the game is launched
     void assignNumberToPlayers();
-
+    void createRandomMap(int w, int h,int squareSize);
 private:
-    Map *map;
+    MapServer *map;
     int maxNbPlayer;
     int playerIdIncrement;
     int port;

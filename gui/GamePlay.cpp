@@ -60,10 +60,14 @@ void GamePlay::launch()
      */
     if( settings->getServer() )
     {
-        //we are the server
-        gameField->createRandomMap(MAP_SIZE,MAP_SIZE);
-        const Map *m = gameField->getMap();
-        server = new NetServer(m,settings->getServerPort());
+        qDebug()<< "going to create server";
+    	//we are the server
+        //gameField->createRandomMap(MAP_SIZE,MAP_SIZE);
+        //const MapServer *m = gameField->getMap();
+
+        server = new NetServer(settings->getServerPort());
+        qDebug()<< "server created";
+        server->createRandomMap(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
         //We start the game as soon as a player is connecter to the server (ourselves actualy)
         //others players can join later (but they may miss movement me can make before they join
         //the way the game is launched will be changed later.

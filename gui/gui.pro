@@ -18,7 +18,6 @@ LIBS += -L../src \
 # Input
 HEADERS += QGraphicsSquareItem.h \
     Area.h \
-    Bomb.h \
     GameField.h \
     GamePlay.h \
     PixmapsItems.h \
@@ -28,7 +27,6 @@ FORMS += ui/main_window.ui \
     ui/network.ui
 SOURCES += QGraphicsSquareItem.cpp \
     Area.cpp \
-    Bomb.cpp \
     GameField.cpp \
     GamePlay.cpp \
     main.cpp \

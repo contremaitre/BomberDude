@@ -32,9 +32,13 @@ private:
     //duration in ms
     int duration;
     QTimer *blinkTimer;
+public:
+    int x;
+    int y;
 
 public:
-    Bomb(int range, int playerId, int duration);
+    Bomb(int range, int playerId, int duration, int x, int y);
+    Bomb(int playerId, int x, int y);
     ~Bomb();
 
 signals:

@@ -18,14 +18,14 @@
 #include "NetServer.h"
 #include "constant.h"
 #include "NetServerClient.h"
-#include "Map.h"
+#include "MapServer.h"
 #include "NetMessage.h"
 #include <QtNetwork>
 #include <unistd.h> // for usleep
 
-NetServer::NetServer(const Map *map, int port) : QThread()
+NetServer::NetServer(const MapServer *map, int port) : QThread()
 {
-    this->map = new Map;
+    this->map = new MapServer;
     *this->map = *map;
     this->port = port;
     maxNbPlayer = map->getMaxNbPlayers();
@@ -33,7 +33,15 @@ NetServer::NetServer(const Map *map, int port) : QThread()
     tcpServer = NULL;
     udpSocket = NULL;
 }
-
+NetServer::NetServer(int port) : QThread()
+{
+    this->map = new MapServer;
+    this->port = port;
+    maxNbPlayer = 4; //map->getMaxNbPlayers();
+    playerIdIncrement = 0;
+    tcpServer = NULL;
+    udpSocket = NULL;
+}
 void NetServer::run()
 {
     qDebug("NetServer run");
@@ -211,6 +219,15 @@ void NetServer::assignNumberToPlayers()
     foreach (NetServerClient *client, clients) {
         client->setPlayerNumber(id++);
     }
+}
+
+void NetServer::createRandomMap(int w, int h,int squareSize)
+{
+	qDebug() << "going to create random map";
+    map->setDim(w,h,squareSize);
+    qDebug() << "set Dimensions "<<w<<" "<<h<<" "<<squareSize;
+    map->loadRandom();
+    qDebug() << "random map created";
 }
 
 NetServer::~NetServer()

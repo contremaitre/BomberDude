@@ -17,14 +17,22 @@
 
 #include "Bomb.h"
 
-Bomb::Bomb(int range, int playerId, int duration)
+Bomb::Bomb(int range, int playerId, int duration, int x, int y)
 {
     this->range = range;
     this->playerId = playerId;
     this->duration = duration;
+    this->x=x;
+    this->y=y;
     blinkTimer = new QTimer(this);
 }
+Bomb::Bomb(int playerId, int x, int y)
+{
+   this->playerId = playerId;
+   this->x=x;
+   this->y=y;
 
+}
 Bomb::~Bomb()
 {
 }
