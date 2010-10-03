@@ -60,10 +60,10 @@ void GameField::createGraphics()
     view->show();
 }
 
-void GameField::addBomb(int player, int squareX, int squareY)
+void GameField::addBomb(int player, int squareX, int squareY, int bombId)
 {
     qDebug() << " addBomb() GameField " ; 
-    area.addBomb(player, squareX, squareY);
+    area.addBomb(player, squareX, squareY, bombId);
 }
 
 void GameField::removeBomb(int x, int y)

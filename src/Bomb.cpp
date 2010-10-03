@@ -18,7 +18,8 @@
 #include "Bomb.h"
 #include <QDebug>
 
-
+int Bomb::index=1;
+//constructor for server
 Bomb::Bomb(int range, int playerId, int duration, int x, int y)
 {
 	qDebug() << "Bomb constructor";
@@ -31,23 +32,28 @@ Bomb::Bomb(int range, int playerId, int duration, int x, int y)
     blinkTimer->setSingleShot(true);
     connect(blinkTimer, SIGNAL(timeout()), this, SLOT(bombTimeout()));
     blinkTimer->start(duration);
+    bombId=index;
+      index++;
 }
-Bomb::Bomb(int playerId, int x, int y)
+
+//constructor for client
+Bomb::Bomb(int playerId, int x, int y, int bombId)
 {
    this->playerId = playerId;
    this->x=x;
    this->y=y;
-
+   bombId=bombId;
 }
 void Bomb::bombTimeout(){
 
 	emit explode(this);
 }
 
+
 Bomb::~Bomb()
 {
 }
-bool Bomb::operator< (const Bomb & b)
-{
-	return this->x*100+this->y<b.x*100+b.y;
-}
+//bool Bomb::operator< (const Bomb & b)
+//{
+//	return this->x*100+this->y<b.x*100+b.y;
+//}

@@ -77,12 +77,12 @@ void Area::movePlayer(int player, int x, int y)
 	map.setPlayerPosition(player, x, y);
 	playersItem[player]->setPos(x-squareSize/2,y-squareSize/2,squareSize);
 }
-void Area::addBomb(int player, int squareX, int squareY)
+void Area::addBomb(int player, int squareX, int squareY, int bombId)
 {
 	int x,y;
 	x=squareX*squareSize;
 	y=squareY*squareSize;
-	Bomb* bomb=map.bomb(player, squareX, squareY);
+	Bomb* bomb=map.bomb(player, squareX, squareY, bombId);
 	qDebug()<<"add a bomb"<<bomb;
 
 	if (bomb)

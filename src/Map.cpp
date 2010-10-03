@@ -134,7 +134,7 @@ void Map::setPlayerPosition(int id, qint16 x, qint16 y)
 
 
 
-Bomb* Map::bomb(int id, int squareX, int squareY)
+Bomb* Map::bomb(int id, int squareX, int squareY, int bombId)
 {
 	bool ret = true;
 	Bomb *newBomb=NULL;
@@ -148,7 +148,7 @@ Bomb* Map::bomb(int id, int squareX, int squareY)
   if( ret )
     {   
       // add the bomb
-      newBomb = new Bomb(id, squareX, squareY) ;
+      newBomb = new Bomb(id, squareX, squareY, bombId) ;
       bombs.append(newBomb);
     }
   qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY;

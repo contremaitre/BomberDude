@@ -158,10 +158,10 @@ void NetClient::receiveUdp()
 		break;
 		case msg_bomb:
 		{
-			qint16 player, x, y;
-			in >> player >> x >> y;
-			//qDebug() << "netclient move received " << x << " " << y;
-			emit bombReceived( player, x, y );
+			qint16 player, x, y, bombId;
+			in >> player >> x >> y >> bombId;
+			qDebug() << "netclient bomb received " << x << " " << y;
+			emit bombReceived( player, x, y , bombId);
 		}
 		break;
 		case msg_rmbomb:
@@ -170,7 +170,7 @@ void NetClient::receiveUdp()
 			in >> x >> y;
 			emit bombRemoved(x,y);
 		}
-
+		break;
 		default:
 			qDebug() << "NetClient readMove discarding unkown message";
 			break;

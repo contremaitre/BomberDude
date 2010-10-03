@@ -26,23 +26,28 @@ class Bomb : public QObject
 {
     Q_OBJECT
 
+    static int index;
 private:
-    int range;
-    //owner
-    int playerId;
-    //duration in ms
-    int duration;
     QTimer *blinkTimer;
 public:
     int x;
     int y;
+    //owner
+    int playerId;
+    //duration in ms
+    int duration;
+    int range;
+    int bombId;
 
 public:
     Bomb(int range, int playerId, int duration, int x, int y);
-    Bomb(int playerId, int x, int y);
+    Bomb(int playerId, int x, int y,int bombId);
     ~Bomb();
 
-bool operator<(const Bomb & b);
+
+
+
+//bool operator<(const Bomb & b);
 
 signals:
      void aspectChanged();

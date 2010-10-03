@@ -49,7 +49,7 @@ public:
     int getHeight();
     int getCaseSize() const;
     void movePlayer(int player, int x, int y);
-    void addBomb(int player, int x, int y);
+    void addBomb(int player, int x, int y, int bombId);
     void removeBomb(int x, int y);
     int getNbPlayers() const;
     const Map *getMap();

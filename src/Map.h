@@ -69,7 +69,7 @@ public:
     qint16 getMaxNbPlayers() const;
     qint16 getBlockSize() const;
 
-    Bomb* bomb(int id, int x, int y);
+    Bomb* bomb(int id, int x, int y,int bombId);
     Bomb* removeBomb(int x, int y);
     bool blockContainsBomb(int x,int y);
     Map & operator=(const Map &);

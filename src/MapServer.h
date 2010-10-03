@@ -53,8 +53,8 @@ public:
 //    ~MapServer();
     void loadRandom();
     bool movePlayer(int id, int direction);
-    bool bomb(int id, int x, int y);
-    bool bomb(int id);
+    int bomb(int id, int x, int y);
+    int bomb(int id);
 private slots :
 void explosion(Bomb* b);
 };
