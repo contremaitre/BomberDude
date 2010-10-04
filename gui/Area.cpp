@@ -95,13 +95,13 @@ void Area::addBomb(int player, int squareX, int squareY, int bombId)
 
 	}
 }
-void Area::removeBomb(int x, int y)
+void Area::removeBomb(int bombId)
 {
-	Bomb* bomb=map.removeBomb(x,y);
+	Bomb* bomb=map.removeBomb(bombId);
 	QGraphicsSquareItem * itemToRemove=bombsItem.value(bomb);
 	emit bombRemoved(itemToRemove);
 	bombsItem.remove(bomb);
-
+	delete bomb;
 
 }
 int Area::getCaseSize() const

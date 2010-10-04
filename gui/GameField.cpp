@@ -66,10 +66,10 @@ void GameField::addBomb(int player, int squareX, int squareY, int bombId)
     area.addBomb(player, squareX, squareY, bombId);
 }
 
-void GameField::removeBomb(int x, int y)
+void GameField::removeBomb(int bombId)
 {
     qDebug() << " removeBomb() GameField " ;
-    area.removeBomb(x,y);
+    area.removeBomb(bombId);
 }
 
 void GameField::movePlayer(int player, int x, int y)

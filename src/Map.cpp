@@ -151,15 +151,15 @@ Bomb* Map::bomb(int id, int squareX, int squareY, int bombId)
       newBomb = new Bomb(id, squareX, squareY, bombId) ;
       bombs.append(newBomb);
     }
-  qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY;
+  qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<"bombId: "<<newBomb->bombId;
   return newBomb;
 }
 
-Bomb* Map::removeBomb(int x, int y)
+Bomb* Map::removeBomb(int bombId)
 {
 	foreach (Bomb *b, bombs)
 	    {
-	      if((b->x == x) && (b->y == y))
+	      if(b->bombId == bombId)
 	    	  bombs.removeOne(b);
 	      return b;
 	    }

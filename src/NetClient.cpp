@@ -166,9 +166,9 @@ void NetClient::receiveUdp()
 		break;
 		case msg_rmbomb:
 		{
-			qint16 x,y;
-			in >> x >> y;
-			emit bombRemoved(x,y);
+			qint16 bombId;
+			in >> bombId;
+			emit bombRemoved(bombId);
 		}
 		break;
 		default:

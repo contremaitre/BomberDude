@@ -46,7 +46,7 @@ public:
     void getEventFilter(QObject *obj);
     void movePlayer(int player, int x, int y);
     void addBomb(int player, int x, int y, int bombId);
-    void removeBomb(int x, int y);
+    void removeBomb(int bombId);
     void setMap(const Map *);
     const Map *getMap();
 

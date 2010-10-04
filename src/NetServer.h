@@ -63,7 +63,7 @@ private:
 private slots:
     void incomingClient();
     void receiveUdp();
-    void removeBomb(int x,int y);
+    void removeBomb(int bombId);
 
 signals:
     void newPlayer();

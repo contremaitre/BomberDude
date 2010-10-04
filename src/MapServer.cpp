@@ -343,7 +343,7 @@ int MapServer::bomb(int playerId, int squareX, int squareY)
 
 void MapServer::explosion(Bomb* b)
 {
-	bombRemoved( b->x,b->y);
+	bombRemoved( b->bombId);
 	getBombList()->removeOne(b);
 
 

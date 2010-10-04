@@ -32,7 +32,7 @@ Bomb::Bomb(int range, int playerId, int duration, int x, int y)
     blinkTimer->setSingleShot(true);
     connect(blinkTimer, SIGNAL(timeout()), this, SLOT(bombTimeout()));
     blinkTimer->start(duration);
-    bombId=index;
+    this->bombId=index;
       index++;
 }
 
@@ -42,7 +42,7 @@ Bomb::Bomb(int playerId, int x, int y, int bombId)
    this->playerId = playerId;
    this->x=x;
    this->y=y;
-   bombId=bombId;
+   this->bombId=bombId;
 }
 void Bomb::bombTimeout(){
 

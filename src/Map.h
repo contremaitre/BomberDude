@@ -70,13 +70,13 @@ public:
     qint16 getBlockSize() const;
 
     Bomb* bomb(int id, int x, int y,int bombId);
-    Bomb* removeBomb(int x, int y);
+    Bomb* removeBomb(int bombId);
     bool blockContainsBomb(int x,int y);
     Map & operator=(const Map &);
 
 signals:
     void blockChanged(int pos);
-    void bombRemoved(int x, int y);
+    void bombRemoved(int bombId);
     //void playerMoved(int pl, int x, int y); useless?
 
 };
