@@ -48,7 +48,7 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     connect(client,SIGNAL(moveReceived(qint16,qint16,qint16)),this,SLOT(moveReceived(qint16,qint16,qint16)));
     connect(client,SIGNAL(bombReceived(qint16,qint16,qint16,qint16)),this,SLOT(bombReceived(qint16,qint16,qint16,qint16)));
     connect(client,SIGNAL(bombRemoved(qint16)),this,SLOT(bombRemoved(qint16)));
-
+    connect(client,SIGNAL(flameReceived(Flame&)),this,SLOT(flameReceived(Flame&)));
     settings = set;
 }
 
@@ -115,6 +115,12 @@ void GamePlay::bombReceived(qint16 plId, qint16 squareX, qint16 squareY,qint16 b
 	qDebug()<<"GamePlay> add bomb"<<bombId;
 	gameField->addBomb(plId, squareX, squareY,bombId);
 }
+
+void GamePlay::flameReceived(Flame & flame)
+{
+	gameField->addFlame(flame);
+}
+
 void GamePlay::bombRemoved(qint16 bombId)
 {
     gameField->removeBomb(bombId);

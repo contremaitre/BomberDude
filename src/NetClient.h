@@ -29,6 +29,7 @@
 #include <QObject>
 #include <QAbstractSocket>
 #include <QHostAddress>
+#include "Flame.h"
 
 class QTcpSocket;
 class QUdpSocket;
@@ -73,7 +74,7 @@ private slots:
     void slotTcpError(QAbstractSocket::SocketError);
     void checkUdp();
 signals:
-
+	void flameReceived(Flame & flame);
     void moveReceived(qint16 plId, qint16 x, qint16 y);
     void bombReceived(qint16 plId, qint16 x, qint16 y, qint16 bombId);
     void bombRemoved(qint16 bombId);

@@ -9,7 +9,8 @@ DEPENDPATH += .
 INCLUDEPATH += .
 
 # Input
-HEADERS += MapServer.h \
+HEADERS += Flame.h \
+    MapServer.h \
     Bomb.h \
     constant.h \
     Map.h \
@@ -18,7 +19,8 @@ HEADERS += MapServer.h \
     NetMessage.h \
     NetServer.h \
     NetServerClient.h
-SOURCES += MapServer.cpp \
+SOURCES += Flame.cpp \
+    MapServer.cpp \
     Bomb.cpp \
     Map.cpp \
     NetClient.cpp \

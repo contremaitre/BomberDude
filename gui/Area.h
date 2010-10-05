@@ -32,6 +32,7 @@ private:
     QGraphicsSquareItem **squaresItem;
     QGraphicsSquareItem **playersItem;
     QMap<Bomb*,QGraphicsSquareItem*> bombsItem;
+    QHash<int,QList<QGraphicsSquareItem*>* > flamesItem;
     void initCase(int, int);
     void init();
     void loadPixMaps();
@@ -50,6 +51,7 @@ public:
     int getCaseSize() const;
     void movePlayer(int player, int x, int y);
     void addBomb(int player, int x, int y, int bombId);
+    void addFlame(Flame& flame);
     void removeBomb(int bombId);
     int getNbPlayers() const;
     const Map *getMap();
@@ -62,7 +64,7 @@ signals:
     void pixmapChanged(int);
     void bombAdded(QGraphicsSquareItem*);
     void bombRemoved(QGraphicsSquareItem*);
-
+    void flameAdded(QList<QGraphicsSquareItem*>&);
 };
 
 #endif

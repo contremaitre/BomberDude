@@ -33,6 +33,8 @@ enum NetMsgType
     msg_ping,
     msg_bomb,
     msg_rmbomb,
+    msg_flame,
+    msg_rmflame,
 };
 
 #endif

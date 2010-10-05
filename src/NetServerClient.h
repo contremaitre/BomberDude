@@ -26,7 +26,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 #include <QHostAddress>
-
+#include <QList>
+#include <QPoint>
+#include "Flame.h"
 class QTcpSocket;
 class QUdpSocket;
 class NetServer;
@@ -45,6 +47,7 @@ class NetServerClient : public QObject
   void playerMoved(int plId, int x, int y);
   void bombAdded(int plId, int x, int y, int bombId);
   void bombRemoved(int bombId);
+  void flameAdded(Flame & flame);
   void sendMap(const Map&);
   QHostAddress getAddress() const;
   quint16 getPeerUdpPort() const;

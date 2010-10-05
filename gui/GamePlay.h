@@ -26,7 +26,7 @@
 #define GAMEPLAY_H
 
 #include <QObject>
-
+#include "Flame.h"
 class GameField;
 class NetClient;
 class NetServer;
@@ -71,6 +71,7 @@ private slots:
     void slotMoveTimer();
     void dropBomb();
     void slotPingTimer();
+    void flameReceived(Flame & flame);
     void moveReceived(qint16 plId, qint16 x, qint16 y);
     void bombReceived(qint16 plId, qint16 x, qint16 y,qint16 bombId);
     void bombRemoved(qint16 bombId);

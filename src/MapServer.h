@@ -18,12 +18,10 @@
 #ifndef MAPSERVER_H
 #define MAPSERVER_H
 
-#include <QList> 
-#include <QObject>
-#include "BlockMapProperty.h"
-#include "constant.h"
-#include "Bomb.h"
+
 #include "Map.h"
+#include "Flame.h"
+#include "Bomb.h"
 
 /**
  * This class represent a bomberman game map
@@ -57,6 +55,10 @@ public:
     int bomb(int id);
 private slots :
 void explosion(Bomb* b);
+
+signals:
+	void addFlame(Flame& f);
+    void bombRemoved(int bombId);
 };
 
 

@@ -30,6 +30,7 @@
 #include <QThread>
 #include <QHostAddress>
 
+#include "Flame.h"
 class MapServer;
 class QTcpServer;
 class QUdpSocket;
@@ -64,6 +65,7 @@ private slots:
     void incomingClient();
     void receiveUdp();
     void removeBomb(int bombId);
+    void addFlame(Flame& flame);
 
 signals:
     void newPlayer();

@@ -124,6 +124,19 @@ void NetServerClient::bombRemoved(int bombId){
 	    udpSocket->writeDatagram(block,peerAddress,peerUdpPort);
 }
 
+void NetServerClient::flameAdded(Flame & flame ){
+	QByteArray block;
+		    QDataStream out(&block, QIODevice::WriteOnly);
+		    out.setVersion(QDataStream::Qt_4_0);
+		    out << (quint16)0;
+		    out << (quint16)msg_flame;
+		    out << flame;
+		    out.device()->seek(0);
+		    out << (quint16)(block.size() - sizeof(quint16));
+		    udpSocket->writeDatagram(block,peerAddress,peerUdpPort);
+		    qDebug()<<"NetServerClient> flameAdded "<<flame.getFlamePositions().size()<<" "<<flame.getFlamePositions().at(0)->x()<<" "<<flame.getFlamePositions().at(0)->y() ;
+}
+
 void NetServerClient::sendMap(const Map &map)
 {
     QByteArray block;

@@ -26,6 +26,7 @@ GameField::GameField(QMainWindow *mainw, int s) : area(s)
 
 	connect(&area,SIGNAL(bombAdded(QGraphicsSquareItem*)),this,SLOT(bombAdded(QGraphicsSquareItem*)));
 	connect(&area,SIGNAL(bombRemoved(QGraphicsSquareItem*)),this,SLOT(bombRemoved(QGraphicsSquareItem*)));
+	connect(&area,SIGNAL(flameAdded(QList<QGraphicsSquareItem*>&)),this,SLOT(flameAdded(QList<QGraphicsSquareItem*>&)));
 
 	scene = new QGraphicsScene;
     mainWindow = mainw;
@@ -64,6 +65,11 @@ void GameField::addBomb(int player, int squareX, int squareY, int bombId)
 {
     qDebug() << " addBomb() GameField " ; 
     area.addBomb(player, squareX, squareY, bombId);
+}
+
+void GameField::addFlame(Flame& flame)
+{
+	area.addFlame(flame);
 }
 
 void GameField::removeBomb(int bombId)
@@ -106,5 +112,13 @@ void GameField::bombAdded(QGraphicsSquareItem* bombItem){
 void GameField::bombRemoved(QGraphicsSquareItem* bombItem){
 	qDebug() <<" bombRemoved() GameField"<<bombItem;
 	scene->removeItem(bombItem);
+}
+
+void GameField::flameAdded(QList<QGraphicsSquareItem*>& flamesItem){
+	qDebug()<< "GameField> flameAdded";
+	foreach(QGraphicsSquareItem * item, flamesItem)
+		{
+			scene->addItem(item);
+		}
 }
 

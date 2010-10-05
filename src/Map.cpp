@@ -132,7 +132,10 @@ void Map::setPlayerPosition(int id, qint16 x, qint16 y)
     //emit playerMoved(id, x, y); useless?
 }
 
-
+void Map::flame(Flame& flame)
+{
+	flames.append(&flame);
+}
 
 Bomb* Map::bomb(int id, int squareX, int squareY, int bombId)
 {
@@ -221,6 +224,10 @@ BlockMapProperty* Map::getBlockList()
 }
 QList<Bomb*>* Map::getBombList(){
 	return &bombs;
+}
+
+QList<Flame*>* Map::getFlameList(){
+	return &flames;
 }
 
 qint16 Map::getBlockSize() const

@@ -341,11 +341,16 @@ int MapServer::bomb(int playerId, int squareX, int squareY)
 }
 
 
+
+
 void MapServer::explosion(Bomb* b)
 {
-	bombRemoved( b->bombId);
+	emit bombRemoved( b->bombId);
 	getBombList()->removeOne(b);
-
+	Flame f(b->playerId,1000);
+	f.addFlame(b->x,b->y);
+	getFlameList()->append(&f);
+	emit addFlame(f);
 
 	qDebug()<<"BOOM !";
 }

@@ -23,6 +23,7 @@
 #include "BlockMapProperty.h"
 #include "constant.h"
 #include "Bomb.h"
+#include "Flame.h"
 
 /**
  * This class represent a bomberman game map
@@ -42,6 +43,7 @@ private:
     struct point{qint16 x; qint16 y;};
     point playersPositions[MAX_NB_PLAYER];
     QList<Bomb*> bombs;
+    QList<Flame*> flames;
 
     void Init();
     //Test if a coordinate is bellow (-1) on (0) or above (1) the middle of the block
@@ -61,6 +63,7 @@ public:
     void setType(BlockMapProperty::BlockType type, int x, int y);
     BlockMapProperty* getBlockList() ;
     QList<Bomb*>* getBombList();
+    QList<Flame*>* getFlameList();
     //get the block number at coordinate x,y
     void getBlockPosition(int, int, int&, int&) const;
     //get the coordinates of the player
@@ -68,7 +71,7 @@ public:
     void setPlayerPosition(int id, qint16 , qint16);
     qint16 getMaxNbPlayers() const;
     qint16 getBlockSize() const;
-
+    void flame(Flame& f);
     Bomb* bomb(int id, int x, int y,int bombId);
     Bomb* removeBomb(int bombId);
     bool blockContainsBomb(int x,int y);
@@ -76,7 +79,6 @@ public:
 
 signals:
     void blockChanged(int pos);
-    void bombRemoved(int bombId);
     //void playerMoved(int pl, int x, int y); useless?
 
 };
