@@ -15,22 +15,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "QGraphicsCaseItem.h"
+#include "QGraphicsSquareItem.h"
 //#include <QPropertyAnimation>
 
-QGraphicsCaseItem::QGraphicsCaseItem()
+QGraphicsSquareItem::QGraphicsSquareItem()
 {
     x = 0;
     y = 0;
     size = 0;
 }
 
-QGraphicsCaseItem::QGraphicsCaseItem(int x, int y, int size)
+QGraphicsSquareItem::QGraphicsSquareItem(int x, int y, int size)
 {
     setPos(x,y,size);
 }
 
-void QGraphicsCaseItem::setPos(int x, int y, int size)
+void QGraphicsSquareItem::setPos(int x, int y, int size)
 {
     this->x = x;
     this->y = y;
@@ -38,28 +38,28 @@ void QGraphicsCaseItem::setPos(int x, int y, int size)
     pix.setOffset(QPointF(x, y));
 }
 
-QGraphicsPixmapItem *QGraphicsCaseItem::getItem()
+QGraphicsPixmapItem *QGraphicsSquareItem::getItem()
 {
     return &pix;
 }
 
-void QGraphicsCaseItem::paint(QPainter*p, const QStyleOptionGraphicsItem* qs, QWidget* qw)
+void QGraphicsSquareItem::paint(QPainter*p, const QStyleOptionGraphicsItem* qs, QWidget* qw)
 {
     pix.paint(p,qs,qw);
 }
 
-void QGraphicsCaseItem::setItem(const QPixmap &p)
+void QGraphicsSquareItem::setItem(const QPixmap &p)
 {
     pix.setPixmap(p);
     //setParentItem(&pix);
 }
 
-QRectF QGraphicsCaseItem::boundingRect() const
+QRectF QGraphicsSquareItem::boundingRect() const
 {
     return pix.boundingRect();
 }
 
-void QGraphicsCaseItem::setItem(caseType t)
+void QGraphicsSquareItem::setItem(caseType t)
 {
     switch(t)
     {

@@ -9,7 +9,7 @@ NetClient binds a udp socket to the same port than the local tcp socket port (th
 NetClient sends a udp welcome message
 NetServer replies to this client with a udp welcome message
 NetServer/NetServerClient and NetClient can comunicate.
-   - NetSerer receives udp datagrams (moves)
+   - NetServer receives udp datagrams (moves)
    - NetServerClient receives tcp messages
 
 

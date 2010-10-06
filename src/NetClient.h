@@ -29,6 +29,7 @@
 #include <QObject>
 #include <QAbstractSocket>
 #include <QHostAddress>
+#include "Flame.h"
 
 class QTcpSocket;
 class QUdpSocket;
@@ -47,6 +48,7 @@ public:
     void connectToServer(QString ip, int port);
     void sendMove(int direction);
     void sendPing();
+    void sendBomb();
 
 private:
     QTcpSocket *tcpSocket;
@@ -60,19 +62,23 @@ private:
     quint32 lastPingAck;
     bool udpAckOk;
     void sendUdpWelcome();
-    void handleMsg(QDataStream &);
+    void handleTcpMsg(QDataStream &);
     int udpCheckCount;
     quint16 blockSize; //size of the current message
     Map *map; //store the map when the server sends it;
 
 private slots:
-    void readMsgFromServer();
+    void readTcpMsgFromServer();
     void receiveUdp();
     void slotTcpConnected();
     void slotTcpError(QAbstractSocket::SocketError);
     void checkUdp();
 signals:
+	void flameReceived(Flame & flame);
+	void flameRemoved(qint16 flameId);
     void moveReceived(qint16 plId, qint16 x, qint16 y);
+    void bombReceived(qint16 plId, qint16 x, qint16 y, qint16 bombId);
+    void bombRemoved(qint16 bombId);
     void mapReceived(const Map *);
     void sigConnected();
     void sigConnectionError();

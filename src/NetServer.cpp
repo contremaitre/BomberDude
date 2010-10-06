@@ -18,14 +18,14 @@
 #include "NetServer.h"
 #include "constant.h"
 #include "NetServerClient.h"
-#include "Map.h"
+#include "MapServer.h"
 #include "NetMessage.h"
 #include <QtNetwork>
 #include <unistd.h> // for usleep
 
-NetServer::NetServer(const Map *map, int port) : QThread()
+NetServer::NetServer(const MapServer *map, int port) : QThread()
 {
-    this->map = new Map;
+    this->map = new MapServer;
     *this->map = *map;
     this->port = port;
     maxNbPlayer = map->getMaxNbPlayers();
@@ -33,7 +33,18 @@ NetServer::NetServer(const Map *map, int port) : QThread()
     tcpServer = NULL;
     udpSocket = NULL;
 }
-
+NetServer::NetServer(int port) : QThread()
+{
+    this->map = new MapServer;
+    connect(map,SIGNAL(bombRemoved(int)),this,SLOT(removeBomb(int)));
+    connect(map,SIGNAL(flameRemoved(int)),this,SLOT(removeFlame(int)));
+    connect(map,SIGNAL(addFlame(Flame&)),this,SLOT(addFlame(Flame&)));
+    this->port = port;
+    maxNbPlayer = map->getMaxNbPlayers();
+    playerIdIncrement = 0;
+    tcpServer = NULL;
+    udpSocket = NULL;
+}
 void NetServer::run()
 {
     qDebug("NetServer run");
@@ -115,6 +126,17 @@ void NetServer::receiveUdp()
 	  sendPingBack(cpt, sender,senderPort);
           break;
         }
+        case msg_bomb:
+        {
+          foreach (NetServerClient *client, clients) {
+	    if(client->getAddress() == sender && client->getPeerUdpPort() == senderPort)
+                {
+		  addBomb(client->getId());
+                }
+        
+	  }
+          break;
+        }
         default:
             qDebug() << "NetServer readMove discarding unkown message";
             break;
@@ -159,6 +181,49 @@ int NetServer::readMove(QDataStream &in)
     return direction;
 }
 
+
+void NetServer::addBomb(int id)
+{
+  int bombId = map->bomb(id);
+  if(bombId)
+    {
+        //qDebug()<<"send bomb to clients";
+	  	  //send the bomb to the clients
+        qint16 x,y;
+        int squareX,squareY;
+        map->getPlayerPosition(id, x, y);
+        map->getBlockPosition(x,y,squareX,squareY);
+        foreach (NetServerClient *client, clients) {
+        client->bombAdded(id,squareX,squareY,bombId);
+        }
+    }
+}
+
+void NetServer::removeBomb(int bombId)
+{
+	//qDebug()<< "NetServer>removeBomb "<< bombId;
+	foreach (NetServerClient *client, clients) {
+	            client->bombRemoved(bombId);
+	        }
+}
+
+void NetServer::removeFlame(int flameId)
+{
+	//qDebug()<< "NetServer>removeFlame "<< flameId;
+		foreach (NetServerClient *client, clients) {
+		            client->flameRemoved(flameId);
+		        }
+}
+
+void NetServer::addFlame(Flame & flame)
+{
+	//qDebug()<< "NetServer>addFlame ";
+	foreach (NetServerClient *client, clients) {
+		client->flameAdded(flame);
+	}
+}
+
+
 void NetServer::move(int plId, int direction)
 {
     bool ok = map->movePlayer(plId,direction);
@@ -179,6 +244,15 @@ void NetServer::assignNumberToPlayers()
     foreach (NetServerClient *client, clients) {
         client->setPlayerNumber(id++);
     }
+}
+
+void NetServer::createRandomMap(int w, int h,int squareSize)
+{
+	qDebug() << "going to create random map";
+    map->setDim(w,h,squareSize);
+    qDebug() << "set Dimensions "<<w<<" "<<h<<" "<<squareSize;
+    map->loadRandom();
+    qDebug() << "random map created";
 }
 
 NetServer::~NetServer()

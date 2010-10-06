@@ -20,7 +20,7 @@
 #include <QDebug>
 
 #include "Map.h"
-#include <stdlib.h> //temporaraire (NULL)
+#include <stdlib.h> //Temporary (NULL)
 #include <string.h>
 #include <time.h> //qrand seed
 
@@ -33,8 +33,7 @@ Map::Map()
 Map::Map(qint16 w, qint16 h, qint16 bs)
 {
     block_list = NULL;
-    setDim(w,h,bs);
-}
+    setDim(w,h,bs);}
 
 void Map::Init()
 {
@@ -46,6 +45,7 @@ void Map::Init()
     else
         block_list = NULL;
     memset(playersPositions,0,sizeof(playersPositions));
+    qDebug() << "init";
 }
 
 void Map::setDim(qint16 w, qint16 h, qint16 bs)
@@ -129,180 +129,71 @@ void Map::setPlayerPosition(int id, qint16 x, qint16 y)
     int x_oldBlock, y_oldBlock;
     playersPositions[id].x = x;
     playersPositions[id].y = y;
-    emit playerMoved(id, x, y);
+    //emit playerMoved(id, x, y); useless?
 }
 
-/**
- *   1  2  3
- *    \ | /
- *  0 <- -> 4
- *    / | \
- *   7  6  5
- */
-bool Map::movePlayer(int id, int direction)
+void Map::flame(Flame& flame)
 {
-    bool ret = false;
-    if(direction == 7 || direction == 0 || direction == 1)
-        ret = movePlayerLeft(id);
-    if(!ret && (direction == 7 || direction == 6 || direction == 5))
-        ret = movePlayerDown(id);
-    if(!ret && (direction == 5 || direction == 4 || direction == 3))
-        ret = movePlayerRight(id);
-    if(!ret && (direction == 1 || direction == 2 || direction == 3))
-        ret = movePlayerUp(id);
-    return ret;
-}
-//TODO optimize this
-bool Map::movePlayerLeft(int id)
-{
-    return movePlayerOld(id,0);
+	flames.append(&flame);
 }
 
-bool Map::movePlayerDown(int id)
+void Map::removeFlame(int flameId)
 {
-    return movePlayerOld(id,3);
+	foreach (Flame *f, flames)
+	{
+	  if(f->getFlameId() == flameId)
+		  flames.removeOne(f);
+
+	}
 }
 
-bool Map::movePlayerRight(int id)
+Bomb* Map::bomb(int id, int squareX, int squareY, int bombId)
 {
-    return movePlayerOld(id,2);
-}
-
-bool Map::movePlayerUp(int id)
-{
-    return movePlayerOld(id,1);
-}
-
- /**
-  *      1
-  *      |
-  *  0 <- -> 2
-  *      |
-  *      3
-  */
-bool Map::movePlayerOld(int id, int direction)
-{
-    /**
-     * Rules for a player move :
-     * Get the block where the player is and :
-     * - 1 if the player is at or beyond the middle of the block (wrt the direction of the move),
-     * and if the next block is empty, we move toward the next block
-     * - 2 if the next block is not empty, we try to circle the block if it is possible
-     * - 3 else the move is rejected
-     */
-    qint16 x,y;
-    int move_x = 0;
-    int move_y = 0;
-    getPlayerPosition( id, x, y );
-    //qDebug() << "Map move player" << id << direction << "x,y" << x << y;
-    switch(direction)
+	bool ret = true;
+	Bomb *newBomb=NULL;
+  // is there a bomb at the same place ?
+  foreach (Bomb *b, bombs)
     {
-        case 0:
-            move_x = -1 * MOVE_STEP;
-        break;
-        case 1:
-            move_y = -1 * MOVE_STEP;
-        break;
-        case 2:
-            move_x = 1 * MOVE_STEP;
-        break;
-        case 3:
-            move_y = 1 * MOVE_STEP;
-        break;
-        default:
-            return false;
+      if((b->x == squareX) && (b->y == squareY))
+	ret = false;
     }
-    x += move_x + (move_x/(MOVE_STEP))*(blockSize/2);
-    y += move_y + (move_y/(MOVE_STEP))*(blockSize/2);
-    int x_nextBlock, y_nextBlock;
-    getBlockPosition( x, y, x_nextBlock, y_nextBlock );
-    //qDebug() << "next block" << x_nextBlock << y_nextBlock ;
-    BlockMapProperty::BlockType type = getType(x_nextBlock,y_nextBlock);
-    if( type == BlockMapProperty::empty )
-    {
-        playersPositions[id].x += move_x;
-        playersPositions[id].y += move_y;
-        //We want to stay on the middle of blocks.
-        adjustPlayerPosition(id,move_x,move_y);
-        return true;
+
+  if( ret )
+    {   
+      // add the bomb
+      newBomb = new Bomb(id, squareX, squareY, bombId) ;
+      bombs.append(newBomb);
     }
-    else
-    {
-        int pos;
-        //can we move closer of the next block ?
-        //todo : adjust player position in the case ?
-        if(move_x != 0)
-        {
-            pos = coordinatePositionInBlock(playersPositions[id].x);
-            //qDebug() << "Move closer ?" << pos << move_x;
-            if(pos != 0 && ((pos<0 && move_x>0) || (pos>0&&move_x<0)))
-            {
-                playersPositions[id].x -= pos;
-                return true;
-            }
-        }
-        else
-        {
-            pos = coordinatePositionInBlock(playersPositions[id].y);
-            if(pos != 0 && ((pos<0 && move_y>0) || (pos>0&&move_y<0)))
-            {
-                playersPositions[id].y -= pos;
-                return true;
-            }
-        }
-        //try to circle the block
-        //is this can still happening ? : (player is * and he can go in . )
-        //   * #
-        //   # .
-        if(move_x != 0)
-        {
-            pos = coordinatePositionInBlock(playersPositions[id].y);
-            int sign = pos > 0 ? 1 : -1;
-            if( pos != 0)
-            {
-                getBlockPosition( x, y+sign*blockSize/2, x_nextBlock, y_nextBlock );
-                type = getType(x_nextBlock,y_nextBlock);
-                if( type == BlockMapProperty::empty )
-                {
-                    playersPositions[id].x += move_x/2;
-                    playersPositions[id].y += absMin(pos,MOVE_STEP);
-                    return true;
-                }
-            }
-        }
-        else
-        {
-            pos = coordinatePositionInBlock(playersPositions[id].x);
-            int sign = pos > 0 ? 1 : -1;
-            if( pos != 0)
-            {
-                getBlockPosition( x+sign*blockSize/2, y, x_nextBlock, y_nextBlock );
-                type = getType(x_nextBlock,y_nextBlock);
-                if( type == BlockMapProperty::empty )
-                {
-                    playersPositions[id].y += move_y/2;
-                    playersPositions[id].x += absMin(pos,MOVE_STEP);
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
+  qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<"bombId: "<<newBomb->bombId;
+  return newBomb;
 }
 
-void Map::adjustPlayerPosition(int plId, int xDirection, int yDirection)
+Bomb* Map::removeBomb(int bombId)
 {
-    if(xDirection != 0)
-    {
-        int pos = coordinatePositionInBlock(playersPositions[plId].y);
-        playersPositions[plId].y -= absMin(pos,MOVE_STEP);
-    }
-    else
-    {
-        int pos = coordinatePositionInBlock(playersPositions[plId].x);
-        playersPositions[plId].x -= absMin(pos,MOVE_STEP);
-    }
+	foreach (Bomb *b, bombs)
+	    {
+	      if(b->bombId == bombId)
+	    	  bombs.removeOne(b);
+	      return b;
+	    }
+	qDebug()<< "nothing has been removed";
+	return NULL;
 }
+
+
+
+
+bool Map::blockContainsBomb(int x,int y)
+{
+   foreach( Bomb *b, bombs)
+    {
+    	if ((b->x == x) && (b->y == y))
+    		return true;
+    }
+	return false;
+}
+
+
 
 int Map::coordinatePositionInBlock(int coord)
 {
@@ -337,10 +228,16 @@ void Map::getPlayerPosition(int pl, qint16 &x, qint16 &y) const
     x = playersPositions[pl].x;
     y = playersPositions[pl].y;
 }
-
-const BlockMapProperty* Map::getBlockList() const
+BlockMapProperty* Map::getBlockList()
 {
     return block_list;
+}
+QList<Bomb*>* Map::getBombList(){
+	return &bombs;
+}
+
+QList<Flame*>* Map::getFlameList(){
+	return &flames;
 }
 
 qint16 Map::getBlockSize() const
@@ -353,20 +250,7 @@ qint16 Map::getMaxNbPlayers() const
     return MAX_NB_PLAYER;
 }
 
-int Map::absMin(int a, int b) const
-{
-    if( b < 0 )
-       b = -b;
-    if(a > 0)
-    {
-        return a < b ? a : b;
-    }
-    else
-    {
-        a = -a;
-        return a < b ? -a : -b;
-    }
-}
+
 
 Map::~Map()
 {

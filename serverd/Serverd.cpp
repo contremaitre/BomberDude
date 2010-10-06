@@ -25,7 +25,7 @@ Serverd::Serverd(int port, int mapSize, int blockSize)
 {
     map = new Map(mapSize,mapSize,blockSize);
     map->loadRandom();
-    server = new NetServer(map,port);
+    //server = new NetServer(map,port);
 }
 
 void Serverd::launch()

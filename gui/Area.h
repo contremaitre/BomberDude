@@ -17,36 +17,43 @@
 
 #ifndef CASELIST_H
 #define CASELIST_H
-#include "QGraphicsCaseItem.h"
+#include "QGraphicsSquareItem.h"
 #include "Map.h"
 #include "PixmapsItems.h"
 #include <QObject>
+#include <QList>
 
-class BlocksList : public QObject
+class Area : public QObject
 {
   Q_OBJECT
 private:
     Map map;
     PixmapsItems pixmaps;
-    QGraphicsCaseItem **casesItem;
-    QGraphicsCaseItem **playersItem;
+    QGraphicsSquareItem **squaresItem;
+    QGraphicsSquareItem **playersItem;
+    QMap<Bomb*,QGraphicsSquareItem*> bombsItem;
+    QHash<int,QList<QGraphicsSquareItem*>* > flamesItem;
     void initCase(int, int);
     void init();
     void loadPixMaps();
     int width;
     int height;
-    int caseSize;
+    int squareSize;
 public:
-    BlocksList(int caseSize);
-    ~BlocksList();
-    QGraphicsCaseItem *getCase(int);
-    QGraphicsCaseItem *getCase(int, int);
-    QGraphicsCaseItem *getPlayer(int);
+    Area(int caseSize);
+    ~Area();
+    QGraphicsSquareItem *getCase(int);
+    QGraphicsSquareItem *getCase(int, int);
+    QGraphicsSquareItem *getPlayer(int);
     void createRandomMap(int w, int h);
     int getWidth();
     int getHeight();
     int getCaseSize() const;
     void movePlayer(int player, int x, int y);
+    void addBomb(int player, int x, int y, int bombId);
+    void addFlame(Flame& flame);
+    void removeFlame(int flameId);
+    void removeBomb(int bombId);
     int getNbPlayers() const;
     const Map *getMap();
     void setMap(const Map *);
@@ -56,7 +63,10 @@ private slots:
 
 signals:
     void pixmapChanged(int);
-
+    void bombAdded(QGraphicsSquareItem*);
+    void bombRemoved(QGraphicsSquareItem*);
+    void flameAdded(QList<QGraphicsSquareItem*>&);
+    void flameRemoved(QList<QGraphicsSquareItem*>&);
 };
 
 #endif

@@ -15,35 +15,48 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef QGRAPHICSCASEITEM_H
-#define QGRAPHICSCASEITEM_H
+#ifndef BOMB_H
+#define BOMB_H
 
-#include <QGraphicsPixmapItem>
-#include <QGraphicsObject>
+#include <QObject>
+#include <QTimer>
 
-enum caseType
+
+class Bomb : public QObject
 {
-    VOID,
-    BOMBERMAN,
-    BOMB,
-    
-};
+    Q_OBJECT
 
-class QGraphicsCaseItem : public QGraphicsObject
-{
+    static int index;
 private:
-    int x,y,size;
-    void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
-    QRectF boundingRect() const;
-    QGraphicsPixmapItem pix;
+    QTimer *blinkTimer;
 public:
-    QGraphicsCaseItem();
-    QGraphicsCaseItem(int,int,int);
-    void setPos(int, int, int);
-    void setItem(caseType);
-    void setItem(const QPixmap &);
-    QGraphicsPixmapItem *getItem();
-};
+    int x;
+    int y;
+    //owner
+    int playerId;
+    //duration in ms
+    int duration;
+    int range;
+    int bombId;
 
+public:
+    Bomb(int range, int playerId, int duration, int x, int y);
+    Bomb(int playerId, int x, int y,int bombId);
+    ~Bomb();
+
+
+
+
+//bool operator<(const Bomb & b);
+
+signals:
+     void aspectChanged();
+     void explode(Bomb* b);
+
+private slots:
+	void bombTimeout();
+
+
+};
 #endif
 

@@ -15,47 +15,78 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+#include <QDebug>
+
 #include "GameField.h"
 #include <QMainWindow>
 
-GameField::GameField(QMainWindow *mainw, int s) : blockList(s)
+GameField::GameField(QMainWindow *mainw, int s) : area(s)
 {
-    scene = new QGraphicsScene;
+
+	connect(&area,SIGNAL(bombAdded(QGraphicsSquareItem*)),this,SLOT(bombAdded(QGraphicsSquareItem*)));
+	connect(&area,SIGNAL(bombRemoved(QGraphicsSquareItem*)),this,SLOT(bombRemoved(QGraphicsSquareItem*)));
+	connect(&area,SIGNAL(flameAdded(QList<QGraphicsSquareItem*>&)),this,SLOT(flameAdded(QList<QGraphicsSquareItem*>&)));
+	connect(&area,SIGNAL(flameRemoved(QList<QGraphicsSquareItem*>&)),this,SLOT(flameRemoved(QList<QGraphicsSquareItem*>&)));
+
+	scene = new QGraphicsScene;
     mainWindow = mainw;
     view = NULL;
 }
 
 void GameField::createRandomMap(int width, int height)
 {
-    blockList.createRandomMap(width, height);
+    area.createRandomMap(width, height);
 }
 
 void GameField::createGraphics()
 {
-    for(int i = 0; i < blockList.getWidth(); i++)
+    for(int i = 0; i < area.getWidth(); i++)
     {
-        for(int j = 0; j < blockList.getHeight(); j++)
+        for(int j = 0; j < area.getHeight(); j++)
         {
-            QGraphicsCaseItem *m_case = blockList.getCase(i,j);
+            QGraphicsSquareItem *m_case = area.getCase(i,j);
             scene->addItem(m_case->getItem());
         }
     }
-    for(int i = 0 ; i < blockList.getNbPlayers(); i++)
+    for(int i = 0 ; i < area.getNbPlayers(); i++)
     {
-            QGraphicsCaseItem *m_case = blockList.getPlayer(i);
+            QGraphicsSquareItem *m_case = area.getPlayer(i);
             scene->addItem(m_case->getItem());
     }
     view = new QGraphicsView(mainWindow);
-    int size = blockList.getCaseSize() * (blockList.getWidth()+1);
+    int size = area.getCaseSize() * (area.getWidth()+1);
     mainWindow->setMinimumSize(size,size);
     view->setMinimumSize(size,size);
     view->setScene(scene);
     view->show();
 }
 
+void GameField::addBomb(int player, int squareX, int squareY, int bombId)
+{
+    qDebug() << " addBomb() GameField " ; 
+    area.addBomb(player, squareX, squareY, bombId);
+}
+
+void GameField::addFlame(Flame& flame)
+{
+	area.addFlame(flame);
+}
+
+void GameField::removeBomb(int bombId)
+{
+    //qDebug() << " removeBomb() GameField " ;
+    area.removeBomb(bombId);
+}
+
+void GameField::removeFlame(int flameId){
+	//qDebug() << " removeFlame() GameField " ;
+	    area.removeFlame(flameId);
+}
+
 void GameField::movePlayer(int player, int x, int y)
 {
-    blockList.movePlayer(player, x, y);
+    area.movePlayer(player, x, y);
 }
 
 void GameField::getEventFilter(QObject *obj)
@@ -65,17 +96,44 @@ void GameField::getEventFilter(QObject *obj)
 
 void GameField::setMap(const Map* map)
 {
-    blockList.setMap(map);
+    area.setMap(map);
 }
 
 const Map *GameField::getMap()
 {
-    return blockList.getMap();
+    return area.getMap();
 }
 
 GameField::~GameField()
 {
     delete view;
     //delete scene; todo crash ?
+}
+
+void GameField::bombAdded(QGraphicsSquareItem* bombItem){
+	scene->addItem(bombItem);
+	//qDebug() <<" bombAdded() GameField";
+}
+
+void GameField::bombRemoved(QGraphicsSquareItem* bombItem){
+	//qDebug() <<" bombRemoved() GameField"<<bombItem;
+	scene->removeItem(bombItem);
+}
+
+void GameField::flameAdded(QList<QGraphicsSquareItem*>& flamesItem){
+	//qDebug()<< "GameField> flameAdded";
+	foreach(QGraphicsSquareItem * item, flamesItem)
+		{
+			scene->addItem(item);
+		}
+}
+void GameField::flameRemoved(QList<QGraphicsSquareItem*>& flamesItem){
+	//qDebug()<< "GameField> flameRemoved"<<flamesItem.size();
+	foreach(QGraphicsSquareItem * item, flamesItem)
+		{
+		//qDebug()<< "GameField> flameRemoved(2)";
+			scene->removeItem(item);
+		}
+
 }
 

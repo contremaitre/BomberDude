@@ -15,17 +15,35 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Bomb.h"
+#ifndef QGRAPHICSSQUAREITEM_H
+#define QGRAPHICSSQUAREITEM_H
 
-Bomb::Bomb(int range, int playerId, int duration)
-{
-    this->range = range;
-    this->playerId = playerId;
-    this->duration = duration;
-    blinkTimer = new QTimer(this);
-}
+#include <QGraphicsPixmapItem>
+#include <QGraphicsObject>
 
-Bomb::~Bomb()
+enum caseType
 {
-}
+    VOID,
+    BOMBERMAN,
+    BOMB,
+    
+};
+
+class QGraphicsSquareItem : public QGraphicsObject
+{
+private:
+    int x,y,size;
+    void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
+    QRectF boundingRect() const;
+    QGraphicsPixmapItem pix;
+public:
+    QGraphicsSquareItem();
+    QGraphicsSquareItem(int,int,int);
+    void setPos(int, int, int);
+    void setItem(caseType);
+    void setItem(const QPixmap &);
+    QGraphicsPixmapItem *getItem();
+};
+
+#endif
 

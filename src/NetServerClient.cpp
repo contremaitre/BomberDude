@@ -28,7 +28,7 @@ NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, NetServer
     udpSocket = u;
     //Had to add DirectConnection, to avoid a Qobject / qthread parenting error.
     //need to check this (cf http://forum.qtfr.org/viewtopic.php?id=10104)
-    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(incomingData()), Qt::DirectConnection);
+    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(incomingTcpData()), Qt::DirectConnection);
     peerAddress = tcpSocket->peerAddress();
     peerUdpPort = tcpSocket->peerPort();
     playerId = id;
@@ -43,7 +43,7 @@ void NetServerClient::setPlayerNumber(int n)
     playerNumber = n;
 }
 
-void NetServerClient::incomingData()
+void NetServerClient::incomingTcpData()
 {
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_0);
@@ -93,6 +93,60 @@ void NetServerClient::playerMoved(int plId, int x, int y)
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
     udpSocket->writeDatagram(block,peerAddress,peerUdpPort);
+}
+
+
+void NetServerClient::bombAdded(int plId, int squareX, int squareY, int bombId)
+{
+    qDebug()<<"send bomb to client";
+	QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_bomb;
+    out << (qint16)plId;
+    out << (qint16)squareX;
+    out << (qint16)squareY;
+    out << (qint16)bombId;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    udpSocket->writeDatagram(block,peerAddress,peerUdpPort);
+}
+void NetServerClient::bombRemoved(int bombId){
+	QByteArray block;
+	    QDataStream out(&block, QIODevice::WriteOnly);
+	    out.setVersion(QDataStream::Qt_4_0);
+	    out << (quint16)0;
+	    out << (quint16)msg_rmbomb;
+	    out << (qint16)bombId;
+	    out.device()->seek(0);
+	    out << (quint16)(block.size() - sizeof(quint16));
+	    udpSocket->writeDatagram(block,peerAddress,peerUdpPort);
+}
+
+void NetServerClient::flameRemoved(int flameId){
+	QByteArray block;
+		    QDataStream out(&block, QIODevice::WriteOnly);
+		    out.setVersion(QDataStream::Qt_4_0);
+		    out << (quint16)0;
+		    out << (quint16)msg_rmflame;
+		    out << (qint16)flameId;
+		    out.device()->seek(0);
+		    out << (quint16)(block.size() - sizeof(quint16));
+		    udpSocket->writeDatagram(block,peerAddress,peerUdpPort);
+}
+
+void NetServerClient::flameAdded(Flame & flame ){
+	QByteArray block;
+		    QDataStream out(&block, QIODevice::WriteOnly);
+		    out.setVersion(QDataStream::Qt_4_0);
+		    out << (quint16)0;
+		    out << (quint16)msg_flame;
+		    out << flame;
+		    out.device()->seek(0);
+		    out << (quint16)(block.size() - sizeof(quint16));
+		    udpSocket->writeDatagram(block,peerAddress,peerUdpPort);
+		    //qDebug()<<"NetServerClient> flameAdded "<<flame.getFlamePositions().size()<<" "<<flame.getFlamePositions().at(0)->x()<<" "<<flame.getFlamePositions().at(0)->y() ;
 }
 
 void NetServerClient::sendMap(const Map &map)

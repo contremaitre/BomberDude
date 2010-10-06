@@ -26,7 +26,7 @@
 #define GAMEFIELD_H
 #include <QObject>
 #include <QGraphicsView>
-#include "BlocksList.h"
+#include "Area.h"
 class QMainWindow;
 
 class GameField : public QObject
@@ -36,7 +36,7 @@ class GameField : public QObject
 private:
     QGraphicsView *view;
     QGraphicsScene *scene;
-    BlocksList blockList;
+    Area area;
     QMainWindow *mainWindow;
 public:
     GameField(QMainWindow *, int blockSize);
@@ -45,8 +45,18 @@ public:
     void createGraphics();
     void getEventFilter(QObject *obj);
     void movePlayer(int player, int x, int y);
+    void addBomb(int player, int x, int y, int bombId);
+    void addFlame(Flame& flame);
+    void removeBomb(int bombId);
+    void removeFlame(int flameId);
     void setMap(const Map *);
     const Map *getMap();
+
+public slots:
+	void bombAdded(QGraphicsSquareItem*);
+	void bombRemoved(QGraphicsSquareItem*);
+	void flameAdded(QList<QGraphicsSquareItem*>&);
+	void flameRemoved(QList<QGraphicsSquareItem*>&);
 };
 
 #endif

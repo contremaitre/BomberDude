@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Sébastien Escudier
+    Copyright (C) 2010 lartick
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,32 +15,42 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BOMB_H
-#define BOMB_H
+#ifndef FLAME_H
+#define FLAME_H
 
 #include <QObject>
+#include <QDebug>
 #include <QTimer>
+#include <QPoint>
+#include <QDataStream>
 
-class Bomb : public QObject
-{
-    Q_OBJECT
-
-private:
-    int range;
-    //owner
-    int playerId;
-    //duration in ms
-    int duration;
-    QTimer *blinkTimer;
-
+class Flame : public QObject {
+	Q_OBJECT
+	static int index;
 public:
-    Bomb(int range, int playerId, int duration);
-    ~Bomb();
-
+	int playerId;
+	void addFlame(int x, int y);
+	QList<QPoint*> getFlamePositions() const;
+	Flame();
+	Flame(int playerId, int duration);
+	virtual ~Flame();
+	void setFlameId(int id);
+	int getFlameId() const;
+	void startFlameTimer();
+private:
+	int flameId;
+	QTimer *blinkTimer;
+	QList<QPoint*> flames;
+	int duration;
 signals:
-     void aspectChanged();
-     void explode();
+	void flameEnd(Flame&);
+	void test();
+public slots:
+	void flameTimeout();
+
 };
+QDataStream &operator>>(QDataStream & in, Flame &f);
+QDataStream &operator<<(QDataStream &out, const Flame &f);
 
-#endif
 
+#endif /* FLAME_H */

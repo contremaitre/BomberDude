@@ -35,9 +35,9 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     timerPing = new QTimer(this);
     connect(timerPing, SIGNAL(timeout()),this,SLOT(slotPingTimer()));
     timerPing->start(2000); // Ping every 2s
-    music = new QSound("sounds/music.wav",this);
-    music->setLoops(-1);
-    music->play();
+//    music = new QSound("sounds/music.wav",this);
+//    music->setLoops(-1);
+//    music->play();
     leftK = rightK = upK = downK = false;
     gameField = new GameField(mainw, BLOCK_SIZE);
     gameField->getEventFilter(this);
@@ -46,6 +46,10 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     connect(client, SIGNAL(sigConnected()), this, SLOT(slotClientConnected()));
     connect(client, SIGNAL(sigConnectionError()), this, SLOT(slotClientConnectError()));
     connect(client,SIGNAL(moveReceived(qint16,qint16,qint16)),this,SLOT(moveReceived(qint16,qint16,qint16)));
+    connect(client,SIGNAL(bombReceived(qint16,qint16,qint16,qint16)),this,SLOT(bombReceived(qint16,qint16,qint16,qint16)));
+    connect(client,SIGNAL(bombRemoved(qint16)),this,SLOT(bombRemoved(qint16)));
+    connect(client,SIGNAL(flameReceived(Flame&)),this,SLOT(flameReceived(Flame&)));
+    connect(client,SIGNAL(flameRemoved(qint16)),this,SLOT(flameRemoved(qint16)));
     settings = set;
 
     if(QSound::isAvailable())
@@ -64,10 +68,14 @@ void GamePlay::launch()
      */
     if( settings->getServer() )
     {
-        //we are the server
-        gameField->createRandomMap(MAP_SIZE,MAP_SIZE);
-        const Map *m = gameField->getMap();
-        server = new NetServer(m,settings->getServerPort());
+        qDebug()<< "going to create server";
+    	//we are the server
+        //gameField->createRandomMap(MAP_SIZE,MAP_SIZE);
+        //const MapServer *m = gameField->getMap();
+
+        server = new NetServer(settings->getServerPort());
+        qDebug()<< "server created";
+        server->createRandomMap(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
         //We start the game as soon as a player is connecter to the server (ourselves actualy)
         //others players can join later (but they may miss movement me can make before they join
         //the way the game is launched will be changed later.
@@ -107,6 +115,29 @@ void GamePlay::slotServerError()
 {
     emit connectionError();
 }
+
+
+void GamePlay::bombReceived(qint16 plId, qint16 squareX, qint16 squareY,qint16 bombId)
+{
+	qDebug()<<"GamePlay> add bomb"<<bombId;
+	gameField->addBomb(plId, squareX, squareY,bombId);
+}
+
+void GamePlay::flameReceived(Flame & flame)
+{
+	gameField->addFlame(flame);
+}
+
+void GamePlay::bombRemoved(qint16 bombId)
+{
+    gameField->removeBomb(bombId);
+}
+
+void GamePlay::flameRemoved(qint16 flameId)
+{
+    gameField->removeFlame(flameId);
+}
+
 
 void GamePlay::move(int direction)
 {
@@ -164,6 +195,12 @@ void GamePlay::slotPingTimer()
 }
 
 
+void GamePlay::dropBomb()
+{
+    client->sendBomb();
+}
+
+
 bool GamePlay::eventFilter(QObject *obj, QEvent *event)
 {
     if(event->type() == QEvent::KeyPress)
@@ -177,9 +214,9 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
         }
         else if(c->key() == Qt::Key_Space)
         {
-            qDebug("space");
+	    //qDebug("space");
+            dropBomb();
             return true;
-            //dropBomb(0);
         }
     }
     if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
