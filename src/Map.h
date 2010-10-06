@@ -72,6 +72,7 @@ public:
     qint16 getMaxNbPlayers() const;
     qint16 getBlockSize() const;
     void flame(Flame& f);
+    void removeFlame(int flameId);
     Bomb* bomb(int id, int x, int y,int bombId);
     Bomb* removeBomb(int bombId);
     bool blockContainsBomb(int x,int y);

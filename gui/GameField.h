@@ -48,6 +48,7 @@ public:
     void addBomb(int player, int x, int y, int bombId);
     void addFlame(Flame& flame);
     void removeBomb(int bombId);
+    void removeFlame(int flameId);
     void setMap(const Map *);
     const Map *getMap();
 
@@ -55,6 +56,7 @@ public slots:
 	void bombAdded(QGraphicsSquareItem*);
 	void bombRemoved(QGraphicsSquareItem*);
 	void flameAdded(QList<QGraphicsSquareItem*>&);
+	void flameRemoved(QList<QGraphicsSquareItem*>&);
 };
 
 #endif

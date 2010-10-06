@@ -55,10 +55,12 @@ public:
     int bomb(int id);
 private slots :
 void explosion(Bomb* b);
+void flameEnd(Flame& f);
 
 signals:
 	void addFlame(Flame& f);
     void bombRemoved(int bombId);
+    void flameRemoved(int flameId);
 };
 
 

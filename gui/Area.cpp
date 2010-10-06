@@ -98,18 +98,18 @@ void Area::addBomb(int player, int squareX, int squareY, int bombId)
 
 void Area::addFlame(Flame& flame)
 {
-	qDebug() << "Area> addFlame";
 	map.flame(flame);
-	QList<QGraphicsSquareItem*> flameItems;
+	QList<QGraphicsSquareItem*> *flameItems=new QList<QGraphicsSquareItem*>();
 
 	foreach (QPoint * point, flame.getFlamePositions())
 	{
 		QGraphicsSquareItem* item=new QGraphicsSquareItem(point->x()*squareSize,point->y()*squareSize,squareSize);
 		item->setItem(pixmaps.getPixmap(BlockMapProperty::flame));
-		flameItems.append(item);
+		flameItems->append(item);
 	}
+	flamesItem.insert(flame.getFlameId(),flameItems);
+	emit flameAdded(*flameItems);
 
-	emit flameAdded(flameItems);
 }
 
 void Area::removeBomb(int bombId)
@@ -120,6 +120,15 @@ void Area::removeBomb(int bombId)
 	bombsItem.remove(bomb);
 	delete bomb;
 
+}
+
+void Area::removeFlame(int flameId)
+{
+	map.removeFlame(flameId);
+	QList<QGraphicsSquareItem *>* itemsToRemove=flamesItem.value(flameId);
+	qDebug()<< "Area> removeFlame";
+	emit flameRemoved(*itemsToRemove);
+	flamesItem.remove(flameId);
 }
 int Area::getCaseSize() const
 {

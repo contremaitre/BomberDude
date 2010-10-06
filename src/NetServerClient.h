@@ -48,6 +48,7 @@ class NetServerClient : public QObject
   void bombAdded(int plId, int x, int y, int bombId);
   void bombRemoved(int bombId);
   void flameAdded(Flame & flame);
+  void flameRemoved(int flameId);
   void sendMap(const Map&);
   QHostAddress getAddress() const;
   quint16 getPeerUdpPort() const;

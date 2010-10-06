@@ -137,6 +137,16 @@ void Map::flame(Flame& flame)
 	flames.append(&flame);
 }
 
+void Map::removeFlame(int flameId)
+{
+	foreach (Flame *f, flames)
+	{
+	  if(f->getFlameId() == flameId)
+		  flames.removeOne(f);
+
+	}
+}
+
 Bomb* Map::bomb(int id, int squareX, int squareY, int bombId)
 {
 	bool ret = true;

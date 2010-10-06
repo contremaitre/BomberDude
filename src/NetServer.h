@@ -66,6 +66,7 @@ private slots:
     void receiveUdp();
     void removeBomb(int bombId);
     void addFlame(Flame& flame);
+    void removeFlame(int flameId);
 
 signals:
     void newPlayer();

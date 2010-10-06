@@ -21,7 +21,7 @@
 #include "Map.h"
 #include "PixmapsItems.h"
 #include <QObject>
-
+#include <QList>
 
 class Area : public QObject
 {
@@ -52,6 +52,7 @@ public:
     void movePlayer(int player, int x, int y);
     void addBomb(int player, int x, int y, int bombId);
     void addFlame(Flame& flame);
+    void removeFlame(int flameId);
     void removeBomb(int bombId);
     int getNbPlayers() const;
     const Map *getMap();
@@ -65,6 +66,7 @@ signals:
     void bombAdded(QGraphicsSquareItem*);
     void bombRemoved(QGraphicsSquareItem*);
     void flameAdded(QList<QGraphicsSquareItem*>&);
+    void flameRemoved(QList<QGraphicsSquareItem*>&);
 };
 
 #endif

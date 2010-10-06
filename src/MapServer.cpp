@@ -347,14 +347,25 @@ void MapServer::explosion(Bomb* b)
 {
 	emit bombRemoved( b->bombId);
 	getBombList()->removeOne(b);
-	Flame f(b->playerId,1000);
-	f.addFlame(b->x,b->y);
-	getFlameList()->append(&f);
-	emit addFlame(f);
+	Flame *f =new Flame(b->playerId,1000);
+	f->addFlame(b->x,b->y);
+	getFlameList()->append(f);
+	connect(f, SIGNAL(flameEnd(Flame&)), this, SLOT(flameEnd(Flame&)));
+
+	f->startFlameTimer();
+	emit addFlame(*f);
 
 	qDebug()<<"BOOM !";
 }
 
+
+void MapServer::flameEnd(Flame & f)
+{
+	qDebug()<< "MapServer>flameEnd";
+	emit flameRemoved(f.getFlameId());
+	getFlameList()->removeOne(&f);
+	delete &f;
+}
 
 
 

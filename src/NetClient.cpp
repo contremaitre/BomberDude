@@ -179,6 +179,14 @@ void NetClient::receiveUdp()
 			qDebug() << "NetClient>flames received "<<flame.getFlamePositions().size()<<" "<<flame.getFlamePositions().at(0)->x()<<" "<<flame.getFlamePositions().at(0)->y();
 		}
 		break;
+		case msg_rmflame:
+		{
+			qint16 flameId;
+			in >> flameId;
+			emit flameRemoved(flameId);
+			qDebug() << "NetClient>flames removed "<<flameId;
+		}
+		break;
 		default:
 			qDebug() << "NetClient readMove discarding unkown message";
 			break;

@@ -37,6 +37,7 @@ NetServer::NetServer(int port) : QThread()
 {
     this->map = new MapServer;
     connect(map,SIGNAL(bombRemoved(int)),this,SLOT(removeBomb(int)));
+    connect(map,SIGNAL(flameRemoved(int)),this,SLOT(removeFlame(int)));
     connect(map,SIGNAL(addFlame(Flame&)),this,SLOT(addFlame(Flame&)));
     this->port = port;
     maxNbPlayer = map->getMaxNbPlayers();
@@ -206,6 +207,13 @@ void NetServer::removeBomb(int bombId)
 	        }
 }
 
+void NetServer::removeFlame(int flameId)
+{
+	qDebug()<< "NetServer>removeFlame "<< flameId;
+		foreach (NetServerClient *client, clients) {
+		            client->flameRemoved(flameId);
+		        }
+}
 
 void NetServer::addFlame(Flame & flame)
 {
