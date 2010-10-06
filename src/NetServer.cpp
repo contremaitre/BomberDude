@@ -187,7 +187,7 @@ void NetServer::addBomb(int id)
   int bombId = map->bomb(id);
   if(bombId)
     {
-        qDebug()<<"send bomb to clients";
+        //qDebug()<<"send bomb to clients";
 	  	  //send the bomb to the clients
         qint16 x,y;
         int squareX,squareY;
@@ -201,7 +201,7 @@ void NetServer::addBomb(int id)
 
 void NetServer::removeBomb(int bombId)
 {
-	qDebug()<< "NetServer>removeBomb "<< bombId;
+	//qDebug()<< "NetServer>removeBomb "<< bombId;
 	foreach (NetServerClient *client, clients) {
 	            client->bombRemoved(bombId);
 	        }
@@ -209,7 +209,7 @@ void NetServer::removeBomb(int bombId)
 
 void NetServer::removeFlame(int flameId)
 {
-	qDebug()<< "NetServer>removeFlame "<< flameId;
+	//qDebug()<< "NetServer>removeFlame "<< flameId;
 		foreach (NetServerClient *client, clients) {
 		            client->flameRemoved(flameId);
 		        }
@@ -217,7 +217,7 @@ void NetServer::removeFlame(int flameId)
 
 void NetServer::addFlame(Flame & flame)
 {
-	qDebug()<< "NetServer>addFlame ";
+	//qDebug()<< "NetServer>addFlame ";
 	foreach (NetServerClient *client, clients) {
 		client->flameAdded(flame);
 	}

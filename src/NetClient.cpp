@@ -160,7 +160,7 @@ void NetClient::receiveUdp()
 		{
 			qint16 player, x, y, bombId;
 			in >> player >> x >> y >> bombId;
-			qDebug() << "netclient bomb received " << x << " " << y;
+			//qDebug() << "netclient bomb received " << x << " " << y;
 			emit bombReceived( player, x, y , bombId);
 		}
 		break;
@@ -176,7 +176,7 @@ void NetClient::receiveUdp()
 			Flame flame;
 			in >> flame;
 			emit flameReceived(flame);
-			qDebug() << "NetClient>flames received "<<flame.getFlamePositions().size()<<" "<<flame.getFlamePositions().at(0)->x()<<" "<<flame.getFlamePositions().at(0)->y();
+			//qDebug() << "NetClient>flames received "<<flame.getFlamePositions().size()<<" "<<flame.getFlamePositions().at(0)->x()<<" "<<flame.getFlamePositions().at(0)->y();
 		}
 		break;
 		case msg_rmflame:
@@ -184,7 +184,7 @@ void NetClient::receiveUdp()
 			qint16 flameId;
 			in >> flameId;
 			emit flameRemoved(flameId);
-			qDebug() << "NetClient>flames removed "<<flameId;
+			//qDebug() << "NetClient>flames removed "<<flameId;
 		}
 		break;
 		default:

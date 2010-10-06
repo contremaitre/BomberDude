@@ -20,8 +20,7 @@
 
 
 #include "Map.h"
-#include "Flame.h"
-#include "Bomb.h"
+
 
 /**
  * This class represent a bomberman game map
@@ -35,7 +34,8 @@ class MapServer : public Map
 private:
 
 
-
+	void propagateFlame(Flame & f,QPoint & p, int range);
+	void directedFlameProgagation(Flame & f, QPoint & p, QPoint & direction, int range);
     void adjustPlayerPosition(int plId, int xDirection, int yDirection);
     //Test if a coordinate is bellow (-1) on (0) or above (1) the middle of the block
     int coordinatePositionInBlock(int coord);

@@ -75,12 +75,12 @@ void GameField::addFlame(Flame& flame)
 
 void GameField::removeBomb(int bombId)
 {
-    qDebug() << " removeBomb() GameField " ;
+    //qDebug() << " removeBomb() GameField " ;
     area.removeBomb(bombId);
 }
 
 void GameField::removeFlame(int flameId){
-	qDebug() << " removeFlame() GameField " ;
+	//qDebug() << " removeFlame() GameField " ;
 	    area.removeFlame(flameId);
 }
 
@@ -112,26 +112,26 @@ GameField::~GameField()
 
 void GameField::bombAdded(QGraphicsSquareItem* bombItem){
 	scene->addItem(bombItem);
-	qDebug() <<" bombAdded() GameField";
+	//qDebug() <<" bombAdded() GameField";
 }
 
 void GameField::bombRemoved(QGraphicsSquareItem* bombItem){
-	qDebug() <<" bombRemoved() GameField"<<bombItem;
+	//qDebug() <<" bombRemoved() GameField"<<bombItem;
 	scene->removeItem(bombItem);
 }
 
 void GameField::flameAdded(QList<QGraphicsSquareItem*>& flamesItem){
-	qDebug()<< "GameField> flameAdded";
+	//qDebug()<< "GameField> flameAdded";
 	foreach(QGraphicsSquareItem * item, flamesItem)
 		{
 			scene->addItem(item);
 		}
 }
 void GameField::flameRemoved(QList<QGraphicsSquareItem*>& flamesItem){
-	qDebug()<< "GameField> flameRemoved"<<flamesItem.size();
+	//qDebug()<< "GameField> flameRemoved"<<flamesItem.size();
 	foreach(QGraphicsSquareItem * item, flamesItem)
 		{
-		qDebug()<< "GameField> flameRemoved(2)";
+		//qDebug()<< "GameField> flameRemoved(2)";
 			scene->removeItem(item);
 		}
 

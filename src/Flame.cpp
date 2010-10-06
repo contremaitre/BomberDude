@@ -41,7 +41,7 @@ Flame::Flame(int playerId, int duration) {
 	connect(blinkTimer, SIGNAL(timeout()), this, SLOT(flameTimeout()));
 	//blinkTimer->start(duration);
 	this->duration=duration;
-	qDebug()<< "connect timer to flameTimeOut "<<duration;//<< " "<<blinkTimer->isActive();
+	//qDebug()<< "connect timer to flameTimeOut "<<duration;//<< " "<<blinkTimer->isActive();
 
 }
 
@@ -56,7 +56,7 @@ Flame::~Flame() {
 
 void Flame::flameTimeout()
 {
-	qDebug() << "Flame>flameTimeout";
+	//qDebug() << "Flame>flameTimeout";
 	emit flameEnd(*this);
 }
 

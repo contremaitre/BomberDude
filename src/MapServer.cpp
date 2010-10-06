@@ -20,13 +20,6 @@
 #include <QDebug>
 
 #include "MapServer.h"
-#include <stdlib.h> //Temporary (NULL)
-#include <string.h>
-#include <time.h> //qrand seed
-
-
-
-
 
 
 void MapServer::loadRandom()
@@ -348,7 +341,7 @@ void MapServer::explosion(Bomb* b)
 	emit bombRemoved( b->bombId);
 	getBombList()->removeOne(b);
 	Flame *f =new Flame(b->playerId,1000);
-	f->addFlame(b->x,b->y);
+	propagateFlame(*f,*new QPoint(b->x,b->y),b->range);
 	getFlameList()->append(f);
 	connect(f, SIGNAL(flameEnd(Flame&)), this, SLOT(flameEnd(Flame&)));
 
@@ -358,10 +351,70 @@ void MapServer::explosion(Bomb* b)
 	qDebug()<<"BOOM !";
 }
 
+void MapServer::propagateFlame(Flame & f,QPoint & p, int range)
+{
+	if (!f.getFlamePositions().contains(&p))
+	{
+		f.addFlame(p.x(),p.y());
+		for (int i=0;i<MAX_NB_PLAYER;i++)
+		{
+			qint16 x,y;
+			getPlayerPosition(i,x,y);
+			int squareX, squareY;
+			getBlockPosition(x,y,squareX,squareY);
+			if (p.x()==squareX && p.y()==squareY)
+				qDebug() << "player "<<f.playerId<<" pwned player "<<i;
+		}
+	}
+
+	directedFlameProgagation(f,p,*new QPoint(0,1),range);
+	directedFlameProgagation(f,p,*new QPoint(0,-1),range);
+	directedFlameProgagation(f,p,*new QPoint(1,0),range);
+	directedFlameProgagation(f,p,*new QPoint(-1,0),range);
+}
+
+void MapServer::directedFlameProgagation(Flame & f, QPoint & p, QPoint & direction, int range){
+	QPoint pTemp=p;
+	for (int i=0;i<range;i++)
+	{
+		pTemp=pTemp+direction;
+		if (getType(pTemp.x(),pTemp.y())==BlockMapProperty::wall)
+			return;
+		if (getType(pTemp.x(),pTemp.y())==BlockMapProperty::brick)
+			return;//todo manage brick destruction
+		foreach (Bomb * b,*getBombList())
+		{
+			if (b->x == pTemp.x() && b->y == pTemp.y())
+			{
+				emit bombRemoved( b->bombId);
+				getBombList()->removeOne(b);
+				delete b;
+				propagateFlame(f,*new QPoint(b->x,b->y),b->range);
+			}
+		}
+
+		if (!f.getFlamePositions().contains(&pTemp))
+		{
+			f.addFlame(pTemp.x(),pTemp.y());
+			for (int i=0;i<MAX_NB_PLAYER;i++)
+			{
+				qint16 x,y;
+				getPlayerPosition(i,x,y);
+				int squareX, squareY;
+				getBlockPosition(x,y,squareX,squareY);
+				if (pTemp.x()==squareX && pTemp.y()==squareY)
+					qDebug() << "player "<<f.playerId<<" pwned player "<<i;
+			}
+		}
+	}
+}
+
+
+
 
 void MapServer::flameEnd(Flame & f)
 {
-	qDebug()<< "MapServer>flameEnd";
+	//qDebug()<< "MapServer>flameEnd";
 	emit flameRemoved(f.getFlameId());
 	getFlameList()->removeOne(&f);
 	delete &f;
