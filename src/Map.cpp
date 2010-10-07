@@ -168,16 +168,19 @@ Bomb* Map::bomb(int id, int squareX, int squareY, int bombId)
   return newBomb;
 }
 
-Bomb* Map::removeBomb(int bombId)
+void Map::removeBomb(int bombId)
 {
 	foreach (Bomb *b, bombs)
 	    {
 	      if(b->bombId == bombId)
+	      {
 	    	  bombs.removeOne(b);
-	      return b;
+	    	  delete b;
+	      }
+	      return;
 	    }
 	qDebug()<< "nothing has been removed";
-	return NULL;
+	return;
 }
 
 

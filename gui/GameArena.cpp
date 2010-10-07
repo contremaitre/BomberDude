@@ -123,7 +123,7 @@ void GameArena::addBomb(int player, int squareX, int squareY, int bombId)
 		QGraphicsSquareItem* bombItem=new QGraphicsSquareItem(x,y,squareSize);
 		bombItem->setItem(pixmaps.getPixmap(BlockMapProperty::bomb));
 
-		bombsItem.insert(bomb,bombItem);
+		bombsItem.insert(bombId,bombItem);
 		scene->addItem(bombItem);
 
 	}
@@ -147,12 +147,11 @@ void GameArena::addFlame(Flame& flame)
 
 void GameArena::removeBomb(int bombId)
 {
-	Bomb* bomb=map.removeBomb(bombId);
-	QGraphicsSquareItem * itemToRemove=bombsItem.value(bomb);
+	map.removeBomb(bombId);
+	QGraphicsSquareItem * itemToRemove=bombsItem.value(bombId);
     scene->removeItem(itemToRemove);
-	bombsItem.remove(bomb);
-	delete bomb;
-
+	bombsItem.remove(bombId);
+	delete itemToRemove;
 }
 
 void GameArena::removeFlame(int flameId)

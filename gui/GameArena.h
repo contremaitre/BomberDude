@@ -37,7 +37,7 @@ private:
     PixmapsItems pixmaps;
     QGraphicsSquareItem **squaresItem;
     QGraphicsSquareItem **playersItem;
-    QMap<Bomb*,QGraphicsSquareItem*> bombsItem;
+    QHash<int,QGraphicsSquareItem*> bombsItem;
     QHash<int,QList<QGraphicsSquareItem*>* > flamesItem;
     void initCase(int, int);
     void init();
