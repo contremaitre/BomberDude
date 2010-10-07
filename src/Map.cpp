@@ -149,23 +149,11 @@ void Map::removeFlame(int flameId)
 
 Bomb* Map::bomb(int id, int squareX, int squareY, int bombId)
 {
-	bool ret = true;
 	Bomb *newBomb=NULL;
-  // is there a bomb at the same place ?
-  foreach (Bomb *b, bombs)
-    {
-      if((b->x == squareX) && (b->y == squareY))
-	ret = false;
-    }
-
-  if( ret )
-    {   
-      // add the bomb
-      newBomb = new Bomb(id, squareX, squareY, bombId) ;
-      bombs.append(newBomb);
-    }
-  qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<"bombId: "<<newBomb->bombId;
-  return newBomb;
+    newBomb = new Bomb(id, squareX, squareY, bombId) ;
+    bombs.append(newBomb);
+    qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<"bombId: "<<newBomb->bombId;
+    return newBomb;
 }
 
 void Map::removeBomb(int bombId)
