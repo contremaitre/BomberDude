@@ -1,4 +1,6 @@
-Programer guide :
+Coding conventions :
+- Use 4 spaces as tabs
+
 
 Network :
 We send players move with udp, everything else with tcp.
