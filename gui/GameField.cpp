@@ -21,13 +21,13 @@
 #include "GameField.h"
 #include <QMainWindow>
 
-GameField::GameField(QMainWindow *mainw, int s) : area(s)
+GameField::GameField(QMainWindow *mainw, int s) : arena(s)
 {
 
-	connect(&area,SIGNAL(bombAdded(QGraphicsSquareItem*)),this,SLOT(bombAdded(QGraphicsSquareItem*)));
-	connect(&area,SIGNAL(bombRemoved(QGraphicsSquareItem*)),this,SLOT(bombRemoved(QGraphicsSquareItem*)));
-	connect(&area,SIGNAL(flameAdded(QList<QGraphicsSquareItem*>&)),this,SLOT(flameAdded(QList<QGraphicsSquareItem*>&)));
-	connect(&area,SIGNAL(flameRemoved(QList<QGraphicsSquareItem*>&)),this,SLOT(flameRemoved(QList<QGraphicsSquareItem*>&)));
+	connect(&arena,SIGNAL(bombAdded(QGraphicsSquareItem*)),this,SLOT(bombAdded(QGraphicsSquareItem*)));
+	connect(&arena,SIGNAL(bombRemoved(QGraphicsSquareItem*)),this,SLOT(bombRemoved(QGraphicsSquareItem*)));
+	connect(&arena,SIGNAL(flameAdded(QList<QGraphicsSquareItem*>&)),this,SLOT(flameAdded(QList<QGraphicsSquareItem*>&)));
+	connect(&arena,SIGNAL(flameRemoved(QList<QGraphicsSquareItem*>&)),this,SLOT(flameRemoved(QList<QGraphicsSquareItem*>&)));
 
 	scene = new QGraphicsScene;
     mainWindow = mainw;
@@ -36,26 +36,26 @@ GameField::GameField(QMainWindow *mainw, int s) : area(s)
 
 void GameField::createRandomMap(int width, int height)
 {
-    area.createRandomMap(width, height);
+    arena.createRandomMap(width, height);
 }
 
 void GameField::createGraphics()
 {
-    for(int i = 0; i < area.getWidth(); i++)
+    for(int i = 0; i < arena.getWidth(); i++)
     {
-        for(int j = 0; j < area.getHeight(); j++)
+        for(int j = 0; j < arena.getHeight(); j++)
         {
-            QGraphicsSquareItem *m_case = area.getCase(i,j);
+            QGraphicsSquareItem *m_case = arena.getCase(i,j);
             scene->addItem(m_case->getItem());
         }
     }
-    for(int i = 0 ; i < area.getNbPlayers(); i++)
+    for(int i = 0 ; i < arena.getNbPlayers(); i++)
     {
-            QGraphicsSquareItem *m_case = area.getPlayer(i);
+            QGraphicsSquareItem *m_case = arena.getPlayer(i);
             scene->addItem(m_case->getItem());
     }
     view = new QGraphicsView(mainWindow);
-    int size = area.getCaseSize() * (area.getWidth()+1);
+    int size = arena.getCaseSize() * (arena.getWidth()+1);
     mainWindow->setMinimumSize(size,size);
     view->setMinimumSize(size,size);
     view->setScene(scene);
@@ -65,28 +65,28 @@ void GameField::createGraphics()
 void GameField::addBomb(int player, int squareX, int squareY, int bombId)
 {
     qDebug() << " addBomb() GameField " ; 
-    area.addBomb(player, squareX, squareY, bombId);
+    arena.addBomb(player, squareX, squareY, bombId);
 }
 
 void GameField::addFlame(Flame& flame)
 {
-	area.addFlame(flame);
+	arena.addFlame(flame);
 }
 
 void GameField::removeBomb(int bombId)
 {
     //qDebug() << " removeBomb() GameField " ;
-    area.removeBomb(bombId);
+    arena.removeBomb(bombId);
 }
 
 void GameField::removeFlame(int flameId){
 	//qDebug() << " removeFlame() GameField " ;
-	    area.removeFlame(flameId);
+	    arena.removeFlame(flameId);
 }
 
 void GameField::movePlayer(int player, int x, int y)
 {
-    area.movePlayer(player, x, y);
+    arena.movePlayer(player, x, y);
 }
 
 void GameField::getEventFilter(QObject *obj)
@@ -96,12 +96,12 @@ void GameField::getEventFilter(QObject *obj)
 
 void GameField::setMap(const Map* map)
 {
-    area.setMap(map);
+    arena.setMap(map);
 }
 
 const Map *GameField::getMap()
 {
-    return area.getMap();
+    return arena.getMap();
 }
 
 GameField::~GameField()

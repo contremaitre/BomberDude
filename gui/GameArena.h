@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QList>
 
-class Area : public QObject
+class GameArena : public QObject
 {
   Q_OBJECT
 private:
@@ -40,8 +40,8 @@ private:
     int height;
     int squareSize;
 public:
-    Area(int caseSize);
-    ~Area();
+    GameArena(int caseSize);
+    ~GameArena();
     QGraphicsSquareItem *getCase(int);
     QGraphicsSquareItem *getCase(int, int);
     QGraphicsSquareItem *getPlayer(int);
