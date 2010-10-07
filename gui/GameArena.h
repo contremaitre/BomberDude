@@ -23,10 +23,16 @@
 #include <QObject>
 #include <QList>
 
+class QMainWindow;
+class QGraphicsView;
+
 class GameArena : public QObject
 {
   Q_OBJECT
 private:
+    QGraphicsView *view;
+    QGraphicsScene *scene;
+    QMainWindow *mainWindow;
     Map map;
     PixmapsItems pixmaps;
     QGraphicsSquareItem **squaresItem;
@@ -40,12 +46,14 @@ private:
     int height;
     int squareSize;
 public:
-    GameArena(int caseSize);
+    GameArena(QMainWindow *, int blockSize);
     ~GameArena();
     QGraphicsSquareItem *getCase(int);
     QGraphicsSquareItem *getCase(int, int);
     QGraphicsSquareItem *getPlayer(int);
+    void createGraphics();
     void createRandomMap(int w, int h);
+    void getEventFilter(QObject *obj);
     int getWidth();
     int getHeight();
     int getCaseSize() const;
@@ -63,10 +71,6 @@ private slots:
 
 signals:
     void pixmapChanged(int);
-    void bombAdded(QGraphicsSquareItem*);
-    void bombRemoved(QGraphicsSquareItem*);
-    void flameAdded(QList<QGraphicsSquareItem*>&);
-    void flameRemoved(QList<QGraphicsSquareItem*>&);
 };
 
 #endif

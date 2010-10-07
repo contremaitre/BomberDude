@@ -27,7 +27,7 @@
 
 #include <QObject>
 #include "Flame.h"
-class GameField;
+class GameArena;
 class NetClient;
 class NetServer;
 class Map;
@@ -47,7 +47,7 @@ public:
     void launch();
 
 private:
-    GameField *gameField;
+    GameArena *gameArena;
     NetClient *client;
     NetServer *server; //instanciated if we are the server
     Settings *settings;

@@ -16,14 +16,19 @@
  */
 
 #include <QDebug>
+#include <QGraphicsView>
+#include <QMainWindow>
 #include "GameArena.h"
 
-GameArena::GameArena(int s)
+GameArena::GameArena(QMainWindow * mainw, int s)
 {
 	width = height = 0;
 	squareSize = s;
 	squaresItem = NULL;
 	playersItem = NULL;
+    scene = new QGraphicsScene;
+    mainWindow = mainw;
+    view = NULL;
 	connect(&map,SIGNAL(blockChanged(int)),this,SLOT(blockChanged(int)));
 	loadPixMaps();
 }
@@ -56,6 +61,34 @@ void GameArena::init()
 		playersItem[i] = new QGraphicsSquareItem(x-squareSize/2,y-squareSize/2,squareSize);
 		playersItem[i]->setItem(pixmaps.getPixmap(i));
 	}
+}
+
+void GameArena::createGraphics()
+{
+    for(int i = 0; i < width; i++)
+    {
+        for(int j = 0; j < height; j++)
+        {
+            QGraphicsSquareItem *m_case = getCase(i,j);
+            scene->addItem(m_case->getItem());
+        }
+    }
+    for(int i = 0 ; i < getNbPlayers(); i++)
+    {
+            QGraphicsSquareItem *m_case = getPlayer(i);
+            scene->addItem(m_case->getItem());
+    }
+    view = new QGraphicsView(mainWindow);
+    int size = squareSize * (width+1);
+    mainWindow->setMinimumSize(size,size);
+    view->setMinimumSize(size,size);
+    view->setScene(scene);
+    view->show();
+}
+
+void GameArena::getEventFilter(QObject *obj)
+{
+    scene->installEventFilter(obj);
 }
 
 void GameArena::setMap(const Map *map)
@@ -91,7 +124,7 @@ void GameArena::addBomb(int player, int squareX, int squareY, int bombId)
 		bombItem->setItem(pixmaps.getPixmap(BlockMapProperty::bomb));
 
 		bombsItem.insert(bomb,bombItem);
-		emit bombAdded(bombItem);
+		scene->addItem(bombItem);
 
 	}
 }
@@ -106,17 +139,17 @@ void GameArena::addFlame(Flame& flame)
 		QGraphicsSquareItem* item=new QGraphicsSquareItem(point->x()*squareSize,point->y()*squareSize,squareSize);
 		item->setItem(pixmaps.getPixmap(BlockMapProperty::flame));
 		flameItems->append(item);
+		scene->addItem(item);
 	}
 	flamesItem.insert(flame.getFlameId(),flameItems);
-	emit flameAdded(*flameItems);
-
 }
+
 
 void GameArena::removeBomb(int bombId)
 {
 	Bomb* bomb=map.removeBomb(bombId);
 	QGraphicsSquareItem * itemToRemove=bombsItem.value(bomb);
-	emit bombRemoved(itemToRemove);
+    scene->removeItem(itemToRemove);
 	bombsItem.remove(bomb);
 	delete bomb;
 
@@ -127,7 +160,11 @@ void GameArena::removeFlame(int flameId)
 	map.removeFlame(flameId);
 	QList<QGraphicsSquareItem *>* itemsToRemove=flamesItem.value(flameId);
 	qDebug()<< "GameArena> removeFlame";
-	emit flameRemoved(*itemsToRemove);
+    foreach(QGraphicsSquareItem * item, *itemsToRemove)
+	{
+        //qDebug()<< "GameField> flameRemoved(2)";
+        scene->removeItem(item);
+	}
 	flamesItem.remove(flameId);
 }
 int GameArena::getCaseSize() const
@@ -197,5 +234,7 @@ GameArena::~GameArena()
 			delete playersItem[i];
 		delete[] playersItem;
 	}
+    delete view;
+    //delete scene; todo crash ?
 }
 

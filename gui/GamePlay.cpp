@@ -21,7 +21,7 @@
 #include <QSound>
 
 #include "GamePlay.h"
-#include "GameField.h"
+#include "GameArena.h"
 #include "NetClient.h"
 #include "NetServer.h"
 #include "constant.h"
@@ -39,8 +39,8 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
 //    music->setLoops(-1);
 //    music->play();
     leftK = rightK = upK = downK = false;
-    gameField = new GameField(mainw, BLOCK_SIZE);
-    gameField->getEventFilter(this);
+    gameArena = new GameArena(mainw, BLOCK_SIZE);
+    gameArena->getEventFilter(this);
     //MAP_SIZE
     client = new NetClient;
     connect(client, SIGNAL(sigConnected()), this, SLOT(slotClientConnected()));
@@ -96,8 +96,8 @@ void GamePlay::mapReceived(const Map *map)
 {
     //todo. If we are the server we recreate the map. It's useless
     //qDebug() << "map received, create graphics";
-    gameField->setMap(map);
-    gameField->createGraphics();
+    gameArena->setMap(map);
+    gameArena->createGraphics();
 }
 
 void GamePlay::slotStart()
@@ -120,22 +120,22 @@ void GamePlay::slotServerError()
 void GamePlay::bombReceived(qint16 plId, qint16 squareX, qint16 squareY,qint16 bombId)
 {
 	qDebug()<<"GamePlay> add bomb"<<bombId;
-	gameField->addBomb(plId, squareX, squareY,bombId);
+	gameArena->addBomb(plId, squareX, squareY,bombId);
 }
 
 void GamePlay::flameReceived(Flame & flame)
 {
-	gameField->addFlame(flame);
+	gameArena->addFlame(flame);
 }
 
 void GamePlay::bombRemoved(qint16 bombId)
 {
-    gameField->removeBomb(bombId);
+    gameArena->removeBomb(bombId);
 }
 
 void GamePlay::flameRemoved(qint16 flameId)
 {
-    gameField->removeFlame(flameId);
+    gameArena->removeFlame(flameId);
 }
 
 
@@ -146,7 +146,7 @@ void GamePlay::move(int direction)
 
 void GamePlay::moveReceived(qint16 plId, qint16 x, qint16 y)
 {
-    gameField->movePlayer(plId, x, y);
+    gameArena->movePlayer(plId, x, y);
 }
 
 /**
@@ -263,7 +263,7 @@ void GamePlay::slotClientConnectError()
 
 GamePlay::~GamePlay()
 {
-    delete gameField;
+    delete gameArena;
     delete music;
     delete timerPing;
     if(server)
