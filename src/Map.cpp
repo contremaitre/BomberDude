@@ -142,8 +142,11 @@ void Map::removeFlame(int flameId)
 	foreach (Flame *f, flames)
 	{
 	  if(f->getFlameId() == flameId)
+	  {
 		  flames.removeOne(f);
-
+		  delete f;
+		  return;
+	  }
 	}
 }
 
@@ -159,16 +162,15 @@ Bomb* Map::bomb(int id, int squareX, int squareY, int bombId)
 void Map::removeBomb(int bombId)
 {
 	foreach (Bomb *b, bombs)
-	    {
-	      if(b->bombId == bombId)
-	      {
-	    	  bombs.removeOne(b);
-	    	  delete b;
-	      }
-	      return;
-	    }
+	{
+	  if(b->bombId == bombId)
+	  {
+		  bombs.removeOne(b);
+		  delete b;
+		  return;
+	  }
+	}
 	qDebug()<< "nothing has been removed";
-	return;
 }
 
 
