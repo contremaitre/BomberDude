@@ -53,8 +53,8 @@ class NetServerClient : public QObject
   QHostAddress getAddress() const;
   quint16 getPeerUdpPort() const;
   int getId() const;
-
-
+  void udpReceived();
+  void sendUdpStats();
 
  private:
   QTcpSocket *tcpSocket;
@@ -62,6 +62,7 @@ class NetServerClient : public QObject
   NetServer *server;
   QHostAddress peerAddress;
   quint16 peerUdpPort;
+  quint32 udpCpt;
   void handleMsg(QDataStream &);
   int playerId;
   int playerNumber;

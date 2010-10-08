@@ -94,9 +94,25 @@ void NetServer::receiveUdp()
         if(datagram.size() - sizeof(size) != size)
         {
             qDebug() << "NetServer readMove size error" << datagram.size() << size;
-            break;
+            continue;
         }
         in >> msg;
+        NetServerClient *client = NULL;
+        //TODO : would it be usefull to use a qmap here ?
+        //qDebug() << "cherche client" << sender << senderPort;
+        foreach (NetServerClient *cl, clients) {
+            if(cl->getAddress() == sender && cl->getPeerUdpPort() == senderPort)
+            {
+                //qDebug() << "trouve";
+                client = cl;
+            }
+        }
+        if(!client)
+        {
+            qDebug("Received a udp message from an unknown client !");
+            continue;
+        }
+        client->udpReceived();
         switch(msg)
         {
         case msg_udp_welcome:
@@ -105,16 +121,7 @@ void NetServer::receiveUdp()
         case msg_move:
         {
             int direction = readMove(in);
-            //TODO : would it be usefull to use a qmap here ?
-            //qDebug() << "cherche client" << sender << senderPort;
-            foreach (NetServerClient *client, clients) {
-                //qDebug() << client->getAddress() << client->getPeerUdpPort();
-                if(client->getAddress() == sender && client->getPeerUdpPort() == senderPort)
-                {
-                    //qDebug() << "trouve";
-                    move(client->getId(), direction);
-                }
-            }
+            move(client->getId(), direction);
         }
             break;
         case msg_ping:
@@ -128,13 +135,7 @@ void NetServer::receiveUdp()
         }
         case msg_bomb:
         {
-          foreach (NetServerClient *client, clients) {
-	    if(client->getAddress() == sender && client->getPeerUdpPort() == senderPort)
-                {
 		  addBomb(client->getId());
-                }
-        
-	  }
           break;
         }
         default:

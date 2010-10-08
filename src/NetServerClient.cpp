@@ -34,6 +34,7 @@ NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, NetServer
     playerId = id;
     playerNumber = -1;
     blockSize = 0;
+    udpCpt = 0;
     server = s;
     qDebug() << "new NetServerClient " << id << peerAddress;
 }
@@ -162,6 +163,19 @@ void NetServerClient::sendMap(const Map &map)
     tcpSocket->write(block);
 }
 
+void NetServerClient::sendUdpStats()
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_udp_stat;
+    out << udpCpt;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    tcpSocket->write(block);
+}
+
 int NetServerClient::getId() const
 {
     return playerId;
@@ -175,6 +189,16 @@ QHostAddress NetServerClient::getAddress() const
 quint16 NetServerClient::getPeerUdpPort() const
 {
     return peerUdpPort;
+}
+
+void NetServerClient::udpReceived()
+{
+    udpCpt++;
+    if(udpCpt % 100 == 0)
+    {
+        //qDebug() << "player" << playerId << "received" << udpCpt << "udp packets";
+        sendUdpStats();
+    }
 }
 
 NetServerClient::~NetServerClient()

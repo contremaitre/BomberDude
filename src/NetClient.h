@@ -60,9 +60,11 @@ private:
     QTime *timePing;
     quint32 cptPing;
     quint32 lastPingAck;
+    quint32 udpCpt;
     bool udpAckOk;
     void sendUdpWelcome();
     void handleTcpMsg(QDataStream &);
+    void sendUdpDatagram(const QByteArray &);
     int udpCheckCount;
     quint16 blockSize; //size of the current message
     Map *map; //store the map when the server sends it;

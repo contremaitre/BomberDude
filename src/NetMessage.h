@@ -35,6 +35,7 @@ enum NetMsgType
     msg_rmbomb,
     msg_flame,
     msg_rmflame,
+    msg_udp_stat,
 };
 
 #endif

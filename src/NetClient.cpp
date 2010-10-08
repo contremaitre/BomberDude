@@ -59,7 +59,7 @@ void NetClient::sendUdpWelcome()
 	out.device()->seek(0);
 	out << (quint16)(block.size() - sizeof(quint16));
 	//qDebug() << "NetClient sendUdpWelcome" << udpSocket->localPort() << udpSocket->peerPort();
-	udpSocket->writeDatagram(block,serverAddress,serverPort);
+	sendUdpDatagram(block);
 }
 
 void NetClient::sendMove(int direction)
@@ -74,7 +74,7 @@ void NetClient::sendMove(int direction)
 	out << (quint16)(block.size() - sizeof(quint16));
 	//tcpSocket->write(block);
 	//qDebug() << "NetClient send move udp" << serverAddress << serverPort;
-	udpSocket->writeDatagram(block, serverAddress, serverPort);
+    sendUdpDatagram(block);
 }
 
 
@@ -87,7 +87,7 @@ void NetClient::sendBomb()
 	out << (quint16)msg_bomb;
 	out.device()->seek(0);
 	out << (quint16)(block.size() - sizeof(quint16));
-	udpSocket->writeDatagram(block, serverAddress, serverPort);
+    sendUdpDatagram(block);
 }
 
 
@@ -104,7 +104,7 @@ void NetClient::sendPing()
 	out << cptPing;
 	out.device()->seek(0);
 	out << (quint16)(block.size() - sizeof(quint16));
-	udpSocket->writeDatagram(block, serverAddress, serverPort);
+    sendUdpDatagram(block);
 	timePing->restart();
 }
 
@@ -231,7 +231,13 @@ void NetClient::handleTcpMsg(QDataStream &in)
 		map = new Map;
 		in >> *map;
 		emit mapReceived(map);
-		//break;
+		break; //pourquoi c'est commenté ????
+	case msg_udp_stat:
+	{
+	    quint32 cpt;
+	    in >> cpt;
+	    qDebug() << "udp stats : sent" << udpCpt << "packets, server received" << cpt << "packets";
+	}
 	default:
 		//trash the message
 		in.skipRawData(blockSize);
@@ -250,6 +256,16 @@ void NetClient::checkUdp()
 	}
 	udpCheckCount++;
 	sendUdpWelcome();
+}
+
+void NetClient::sendUdpDatagram(const QByteArray &block)
+{
+    udpSocket->writeDatagram(block, serverAddress, serverPort);
+    udpCpt++;
+    if(udpCpt % 100 == 0)
+    {
+        qDebug() << "Client, sent" << udpCpt << "udp packets";
+    }
 }
 
 void NetClient::slotTcpConnected()
