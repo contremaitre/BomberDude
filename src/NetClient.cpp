@@ -29,6 +29,7 @@ NetClient::NetClient()
 	timePing = new QTime();
 	timePing->start();
 	cptPing = 0;
+	udpCpt = 0;
 	lastPingAck = 0;
 	tcpSocket = new QTcpSocket();
 	connect(tcpSocket, SIGNAL(connected()), this, SLOT(slotTcpConnected()));
@@ -231,7 +232,7 @@ void NetClient::handleTcpMsg(QDataStream &in)
 		map = new Map;
 		in >> *map;
 		emit mapReceived(map);
-		break; //pourquoi c'est commenté ????
+		break;
 	case msg_udp_stat:
 	{
 	    quint32 cpt;
@@ -262,10 +263,8 @@ void NetClient::sendUdpDatagram(const QByteArray &block)
 {
     udpSocket->writeDatagram(block, serverAddress, serverPort);
     udpCpt++;
-    if(udpCpt % 100 == 0)
-    {
-        qDebug() << "Client, sent" << udpCpt << "udp packets";
-    }
+    //if(udpCpt % 100 == 0)
+    //    qDebug() << "Client, sent" << udpCpt << "udp packets";
 }
 
 void NetClient::slotTcpConnected()

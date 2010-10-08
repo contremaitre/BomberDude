@@ -21,19 +21,13 @@ started :
 
 todo :
 - players more sophisticated (create a class with attributes like speed, bomb capacity etc...)
-- Settings and menu screen, add more options etc...
-- drop bombs and break bricks
-- auto configuration scripts to build the project
+- bombs break bricks
+- auto configuration scripts to build the project (CMAKE ?)
 - menu
 - configuration screen (to change the gameplay, keys, connect or launch a server) etc...
 - bonus
 - custom map creation (with xml files)
-- graphics
 - find another name for the game
-- server only option
-
-less important :
-- udp stats
-- ping
+- send udp stats at the end of the game, or from time to time
 ----------------------------------------------------------------------------------
 
