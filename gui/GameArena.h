@@ -52,7 +52,6 @@ public:
     QGraphicsSquareItem *getCase(int, int);
     QGraphicsSquareItem *getPlayer(int);
     void createGraphics();
-    void createRandomMap(int w, int h);
     void getEventFilter(QObject *obj);
     int getWidth();
     int getHeight();

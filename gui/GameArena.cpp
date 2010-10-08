@@ -97,12 +97,6 @@ void GameArena::setMap(const Map *map)
 	init();
 }
 
-void GameArena::createRandomMap(int w, int h)
-{
-	map.setDim(w,h,squareSize);
-	map.loadRandom();
-	init();
-}
 
 
 void GameArena::movePlayer(int player, int x, int y)
