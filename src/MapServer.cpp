@@ -347,7 +347,8 @@ void MapServer::explosion(Bomb* b)
 	emit bombRemoved( b->bombId);
 	getBombList()->removeOne(b);
 	Flame *f =new Flame(b->playerId,1000);
-	propagateFlame(*f,*new QPoint(b->x,b->y),b->range);
+	QPoint tempPoint = QPoint(b->x,b->y);
+	propagateFlame(*f, tempPoint, b->range);
 	getFlameList()->append(f);
 	connect(f, SIGNAL(flameEnd(Flame&)), this, SLOT(flameEnd(Flame&)));
 
@@ -357,9 +358,9 @@ void MapServer::explosion(Bomb* b)
 	qDebug()<<"BOOM !";
 }
 
-void MapServer::propagateFlame(Flame & f,QPoint & p, int range)
+void MapServer::propagateFlame(Flame & f, const QPoint & p, int range)
 {
-	if (!f.getFlamePositions().contains(&p))
+	if (!f.getFlamePositions().contains(p))
 	{
 		f.addFlame(p.x(),p.y());
 		for (int i=0;i<MAX_NB_PLAYER;i++)
@@ -379,7 +380,7 @@ void MapServer::propagateFlame(Flame & f,QPoint & p, int range)
 	directedFlameProgagation(f,p,dirRight,range);
 }
 
-void MapServer::directedFlameProgagation(Flame & f, QPoint & p, const QPoint & direction, int range){
+void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoint & direction, int range){
 	QPoint pTemp=p;
 	for (int i=0;i<range;i++)
 	{
@@ -400,7 +401,7 @@ void MapServer::directedFlameProgagation(Flame & f, QPoint & p, const QPoint & d
 			}
 		}
 
-		if (!f.getFlamePositions().contains(&pTemp))
+		if (!f.getFlamePositions().contains(pTemp))
 		{
 			f.addFlame(pTemp.x(),pTemp.y());
 			for (int i=0;i<MAX_NB_PLAYER;i++)

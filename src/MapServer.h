@@ -34,8 +34,8 @@ class MapServer : public Map
 private:
 
 
-	void propagateFlame(Flame & f,QPoint & p, int range);
-	void directedFlameProgagation(Flame & f, QPoint & p, const QPoint & direction, int range);
+	void propagateFlame(Flame & f, const QPoint & p, int range);
+	void directedFlameProgagation(Flame & f, const QPoint & p, const QPoint & direction, int range);
     void adjustPlayerPosition(int plId, int xDirection, int yDirection);
     //Test if a coordinate is bellow (-1) on (0) or above (1) the middle of the block
     int coordinatePositionInBlock(int coord);

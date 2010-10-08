@@ -22,31 +22,32 @@
 int Flame::index=1;
 
 void Flame::addFlame(int x, int y) {
-	flames.append(new QPoint(x,y));
+	flames.append(QPoint(x,y));
 }
 
-QList<QPoint*> Flame::getFlamePositions() const{
+QList<QPoint> Flame::getFlamePositions() const{
 	return flames;
 }
 Flame::Flame() {
 }
 
 //constructor for server
-Flame::Flame(int playerId, int duration) {
+Flame::Flame(int playerId, int duration) :
+		blinkTimer(this)
+{
 	this->playerId=playerId;
 	flameId=index;
 	index++;
-    blinkTimer=new QTimer(this);
-	blinkTimer->setSingleShot(true);
-	connect(blinkTimer, SIGNAL(timeout()), this, SLOT(flameTimeout()));
-	//blinkTimer->start(duration);
+	blinkTimer.setSingleShot(true);
+	connect(&blinkTimer, SIGNAL(timeout()), this, SLOT(flameTimeout()));
+	//blinkTimer.start(duration);
 	this->duration=duration;
-	//qDebug()<< "connect timer to flameTimeOut "<<duration;//<< " "<<blinkTimer->isActive();
+	//qDebug()<< "connect timer to flameTimeOut "<<duration;//<< " "<<blinkTimer.isActive();
 
 }
 
 void Flame::startFlameTimer(){
-	blinkTimer->start(duration);
+	blinkTimer.start(duration);
 }
 
 Flame::~Flame() {
@@ -72,9 +73,9 @@ void Flame::setFlameId(int id){
 QDataStream &operator<<(QDataStream &out, const Flame &flame)
 {
     out << (qint16)(flame.getFlamePositions().size()) << (qint16) flame.getFlameId();
-    foreach(QPoint* flamePosition , flame.getFlamePositions())
+	foreach(const QPoint flamePosition , flame.getFlamePositions())
     {
-    	out << (qint16)flamePosition->x() << (qint16)flamePosition->y();
+		out << (qint16)flamePosition.x() << (qint16)flamePosition.y();
     }
     return out;
 }

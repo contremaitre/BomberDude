@@ -30,7 +30,7 @@ class Flame : public QObject {
 public:
 	int playerId;
 	void addFlame(int x, int y);
-	QList<QPoint*> getFlamePositions() const;
+	QList<QPoint> getFlamePositions() const;
 	Flame();
 	Flame(int playerId, int duration);
 	virtual ~Flame();
@@ -39,8 +39,8 @@ public:
 	void startFlameTimer();
 private:
 	int flameId;
-	QTimer *blinkTimer;
-	QList<QPoint*> flames;
+	QTimer blinkTimer;
+	QList<QPoint> flames;
 	int duration;
 signals:
 	void flameEnd(Flame&);

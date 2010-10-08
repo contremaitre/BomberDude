@@ -134,9 +134,9 @@ void GameArena::addFlame(Flame& flame)
 	map.flame(flame);
 	QList<QGraphicsSquareItem*> *flameItems=new QList<QGraphicsSquareItem*>();
 
-	foreach (QPoint * point, flame.getFlamePositions())
+	foreach (QPoint point, flame.getFlamePositions())
 	{
-		QGraphicsSquareItem* item=new QGraphicsSquareItem(point->x()*squareSize,point->y()*squareSize,squareSize);
+		QGraphicsSquareItem* item = new QGraphicsSquareItem(point.x() * squareSize, point.y() * squareSize, squareSize);
 		item->setItem(pixmaps.getPixmap(BlockMapProperty::flame));
 		flameItems->append(item);
 		scene->addItem(item);

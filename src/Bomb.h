@@ -28,7 +28,7 @@ class Bomb : public QObject
 
     static int index;
 private:
-    QTimer *blinkTimer;
+	QTimer blinkTimer;
 public:
     int x;
     int y;
