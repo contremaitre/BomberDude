@@ -22,6 +22,12 @@
 #include "MapServer.h"
 
 
+const QPoint MapServer::dirLeft = QPoint(-1,0);
+const QPoint MapServer::dirRight = QPoint(1,0);
+const QPoint MapServer::dirUp = QPoint(0,-1);
+const QPoint MapServer::dirDown = QPoint(0,1);
+
+
 void MapServer::loadRandom()
 {
 	// qDebug() << "set Dimensions (2) "<<width<<" "<<height<<" ";
@@ -367,13 +373,13 @@ void MapServer::propagateFlame(Flame & f,QPoint & p, int range)
 		}
 	}
 
-	directedFlameProgagation(f,p,*new QPoint(0,1),range);
-	directedFlameProgagation(f,p,*new QPoint(0,-1),range);
-	directedFlameProgagation(f,p,*new QPoint(1,0),range);
-	directedFlameProgagation(f,p,*new QPoint(-1,0),range);
+	directedFlameProgagation(f,p,dirUp,range);
+	directedFlameProgagation(f,p,dirDown,range);
+	directedFlameProgagation(f,p,dirLeft,range);
+	directedFlameProgagation(f,p,dirRight,range);
 }
 
-void MapServer::directedFlameProgagation(Flame & f, QPoint & p, QPoint & direction, int range){
+void MapServer::directedFlameProgagation(Flame & f, QPoint & p, const QPoint & direction, int range){
 	QPoint pTemp=p;
 	for (int i=0;i<range;i++)
 	{
@@ -388,8 +394,9 @@ void MapServer::directedFlameProgagation(Flame & f, QPoint & p, QPoint & directi
 			{
 				emit bombRemoved( b->bombId);
 				getBombList()->removeOne(b);
+				QPoint newPos = QPoint(b->x, b->y);
+				propagateFlame(f, newPos, b->range);
 				delete b;
-				propagateFlame(f,*new QPoint(b->x,b->y),b->range);
 			}
 		}
 

@@ -35,7 +35,7 @@ private:
 
 
 	void propagateFlame(Flame & f,QPoint & p, int range);
-	void directedFlameProgagation(Flame & f, QPoint & p, QPoint & direction, int range);
+	void directedFlameProgagation(Flame & f, QPoint & p, const QPoint & direction, int range);
     void adjustPlayerPosition(int plId, int xDirection, int yDirection);
     //Test if a coordinate is bellow (-1) on (0) or above (1) the middle of the block
     int coordinatePositionInBlock(int coord);
@@ -45,6 +45,11 @@ private:
     bool movePlayerUp(int id);
     bool movePlayerDown(int id);
     bool movePlayerOld(int id, int direction);
+
+	static const QPoint dirLeft;
+	static const QPoint dirRight;
+	static const QPoint dirUp;
+	static const QPoint dirDown;
 public:
 //    MapServer();
 //    MapServer(qint16, qint16, qint16);
