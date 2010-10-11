@@ -67,6 +67,7 @@ public:
 
 private slots:
     void blockChanged(int);
+	void blockChanged(int x, int y);
 
 signals:
     void pixmapChanged(int);

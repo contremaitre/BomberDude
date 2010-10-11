@@ -30,6 +30,7 @@ GameArena::GameArena(QMainWindow * mainw, int s)
     mainWindow = mainw;
     view = NULL;
 	connect(&map,SIGNAL(blockChanged(int)),this,SLOT(blockChanged(int)));
+	connect(&map,SIGNAL(blockChanged(int,int)),this,SLOT(blockChanged(int,int)));
 	loadPixMaps();
 }
 
@@ -174,8 +175,17 @@ void GameArena::initCase(int i, int j)
 
 void GameArena::blockChanged(int pos)
 {
-	getCase(pos)->setItem(pixmaps.getPixmap(map.getType(pos)));
+	QGraphicsSquareItem* tempItem = getCase(pos);
+	qDebug() << "Wall: " << tempItem->getItem()->pixmap().cacheKey() << ", new value: " << pixmaps.getPixmap(map.getType(pos)).cacheKey();
+	tempItem->setItem(pixmaps.getPixmap(map.getType(pos)));
+	scene->removeItem(tempItem);
+	scene->addItem(tempItem);
 	emit pixmapChanged(pos);
+}
+
+void GameArena::blockChanged(int i, int j)
+{
+	blockChanged(j * width + i);
 }
 
 const Map *GameArena::getMap()

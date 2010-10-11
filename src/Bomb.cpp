@@ -20,8 +20,7 @@
 
 int Bomb::index=1;
 //constructor for server
-Bomb::Bomb(int range, int playerId, int duration, int x, int y) :
-		blinkTimer(this)
+Bomb::Bomb(int range, int playerId, int duration, int x, int y)
 {
 	qDebug() << "Bomb constructor";
 	this->range = range;
@@ -29,9 +28,6 @@ Bomb::Bomb(int range, int playerId, int duration, int x, int y) :
     this->duration = duration;
     this->x=x;
     this->y=y;
-	blinkTimer.setSingleShot(true);
-	connect(&blinkTimer, SIGNAL(timeout()), this, SLOT(bombTimeout()));
-	blinkTimer.start(duration);
     this->bombId=index;
       index++;
 }
@@ -44,16 +40,8 @@ Bomb::Bomb(int playerId, int x, int y, int bombId)
    this->y=y;
    this->bombId=bombId;
 }
-void Bomb::bombTimeout(){
-
-	emit explode(this);
-}
-
 
 Bomb::~Bomb()
 {
 }
-//bool Bomb::operator< (const Bomb & b)
-//{
-//	return this->x*100+this->y<b.x*100+b.y;
-//}
+

@@ -23,28 +23,27 @@
 #include <QtNetwork>
 #include <unistd.h> // for usleep
 
-NetServer::NetServer(const MapServer *map, int port) : QThread()
-{
-    this->map = new MapServer;
-    *this->map = *map;
-    this->port = port;
-    maxNbPlayer = map->getMaxNbPlayers();
-    playerIdIncrement = 0;
-    tcpServer = NULL;
-    udpSocket = NULL;
-}
+//NetServer::NetServer(const MapServer *map, int port) : QThread()
+//{
+//	this->map = new MapServer(*map);
+//    this->port = port;
+//    maxNbPlayer = map->getMaxNbPlayers();
+//    playerIdIncrement = 0;
+//    tcpServer = NULL;
+//    udpSocket = NULL;
+//}
+
 NetServer::NetServer(int port) : QThread()
 {
-    this->map = new MapServer;
-    connect(map,SIGNAL(bombRemoved(int)),this,SLOT(removeBomb(int)));
-    connect(map,SIGNAL(flameRemoved(int)),this,SLOT(removeFlame(int)));
-    connect(map,SIGNAL(addFlame(Flame&)),this,SLOT(addFlame(Flame&)));
+	this->map = new MapServer();
+	connect(map,SIGNAL(updateMap(QByteArray)),this,SLOT(updateMap(QByteArray)));
     this->port = port;
     maxNbPlayer = map->getMaxNbPlayers();
     playerIdIncrement = 0;
     tcpServer = NULL;
     udpSocket = NULL;
 }
+
 void NetServer::run()
 {
     qDebug("NetServer run");
@@ -267,3 +266,11 @@ NetServer::~NetServer()
     delete map;
 }
 
+void NetServer::updateMap(QByteArray updateData) {
+	QByteArray packetUpdateMap;
+	packetUpdateMap
+
+	foreach(NetServerClient *client, clients) {
+		client;
+	}
+}

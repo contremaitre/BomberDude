@@ -24,16 +24,19 @@
 #include <string.h>
 #include <time.h> //qrand seed
 
-Map::Map()
+Map::Map() :
+	block_list(0),
+	heartBeat(-999999999)
 {
-    block_list = NULL;
     setDim(0,0,0);
 }
 
-Map::Map(qint16 w, qint16 h, qint16 bs)
+Map::Map(qint16 w, qint16 h, qint16 bs) :
+	block_list(0),
+	heartBeat(-999999999)
 {
-    block_list = NULL;
-    setDim(w,h,bs);}
+	setDim(w,h,bs);
+}
 
 void Map::Init()
 {
@@ -44,7 +47,10 @@ void Map::Init()
     }
     else
         block_list = NULL;
-    memset(playersPositions,0,sizeof(playersPositions));
+
+	for(int i = 0; i < MAX_NB_PLAYER; i++)
+		players.append(new Player(i));
+
     qDebug() << "init";
 }
 
@@ -85,23 +91,23 @@ void Map::loadRandom()
         block_list[h*width+width-1].setType(BlockMapProperty::wall);
     }
     //add players
-    playersPositions[0].x = blockSize + blockSize/2; //middle of the second block
-    playersPositions[0].y = blockSize + blockSize/2;
+	players[0]->setX(blockSize + blockSize/2); //middle of the second block
+	players[0]->setY(blockSize + blockSize/2);
 
-    playersPositions[1].x = (width-2) * blockSize + blockSize/2;
-    playersPositions[1].y = (height-2) * blockSize + blockSize/2;
+	players[1]->setX((width-2) * blockSize + blockSize/2);
+	players[1]->setY((height-2) * blockSize + blockSize/2);
 
-    playersPositions[2].x = blockSize + blockSize/2; //middle of the second block
-    playersPositions[2].y = (height-2) * blockSize + blockSize/2;
+	players[2]->setX(blockSize + blockSize/2); //middle of the second block
+	players[2]->setY((height-2) * blockSize + blockSize/2);
 
-    playersPositions[3].x = (width-2) * blockSize + blockSize/2;
-    playersPositions[3].y = blockSize + blockSize/2;
+	players[3]->setX((width-2) * blockSize + blockSize/2);
+	players[3]->setY(blockSize + blockSize/2);
  
-   int x,y;
-    getBlockPosition(playersPositions[0].x,playersPositions[0].y,x,y);
-    setType(BlockMapProperty::empty,x,y);
-    getBlockPosition(playersPositions[1].x,playersPositions[1].y,x,y);
-    setType(BlockMapProperty::empty,x,y);
+	int x,y;
+	foreach(const Player* playerN, players) {
+		getBlockPosition(playerN->getX(), playerN->getY(), x, y);
+		setType(BlockMapProperty::empty, x, y);
+	}
 }
 
 BlockMapProperty::BlockType Map::getType(int w,int h) const
@@ -127,8 +133,8 @@ void Map::setType(BlockMapProperty::BlockType type, int x, int y)
 void Map::setPlayerPosition(int id, qint16 x, qint16 y)
 {
     int x_oldBlock, y_oldBlock;
-    playersPositions[id].x = x;
-    playersPositions[id].y = y;
+	players[id]->setX(x);
+	players[id]->setY(y);
     //emit playerMoved(id, x, y); useless?
 }
 
@@ -218,8 +224,8 @@ void Map::getBlockPosition(int x, int y, int &xdest, int &ydest) const
 
 void Map::getPlayerPosition(int pl, qint16 &x, qint16 &y) const
 {
-    x = playersPositions[pl].x;
-    y = playersPositions[pl].y;
+	x = players[pl]->getX();
+	y = players[pl]->getY();
 }
 BlockMapProperty* Map::getBlockList()
 {
@@ -297,9 +303,11 @@ Map & Map::operator=(const Map &oldMap)
     setDim(oldMap.width, oldMap.height, oldMap.blockSize);
     for(int i = 0; i < width*height; i++)
         block_list[i].setType(oldMap.block_list[i].getType());
-    for(int i = 0; i < getMaxNbPlayers(); i++)
-        playersPositions[i] = oldMap.playersPositions[i];
-//    memcpy(playersPositions, oldMap.playersPositions, sizeof(*playersPositions)*getMaxNbPlayers()));
+
+	//do not copy the pointers but the objects themselves
+	foreach(const Player* playerN, oldMap.players)
+		players.append(new Player(*playerN));
+
     return *this;
 }
 

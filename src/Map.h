@@ -24,6 +24,7 @@
 #include "constant.h"
 #include "Bomb.h"
 #include "Flame.h"
+#include "Player.h"
 
 /**
  * This class represent a bomberman game map
@@ -40,14 +41,18 @@ private:
     qint16 blockSize;
     BlockMapProperty *block_list;
     //player position coordinates is in "pixel". And there is "blockSize" pixels in one block
-    struct point{qint16 x; qint16 y;};
-    point playersPositions[MAX_NB_PLAYER];
-    QList<Bomb*> bombs;
-    QList<Flame*> flames;
+	//Player playersPositions[MAX_NB_PLAYER];
 
     void Init();
     //Test if a coordinate is bellow (-1) on (0) or above (1) the middle of the block
     int coordinatePositionInBlock(int coord);
+
+protected:
+	qint32 heartBeat;						///< timestamp of the game
+
+	QList<Player*> players;					///< list of players currently on the field
+	QList<Bomb*> bombs;						///< list of bombs yet to explode
+	QList<Flame*> flames;					///< list of explosions
 
 public:
     Map();
@@ -78,8 +83,13 @@ public:
     bool blockContainsBomb(int x,int y);
     Map & operator=(const Map &);
 
+	void setHeartBeat(qint32 hb)							{ heartBeat = hb; }
+	qint32 getHeartBeat() const								{ return heartBeat; }
+
 signals:
     void blockChanged(int pos);
+	void blockChanged(int i, int j);
+
     //void playerMoved(int pl, int x, int y); useless?
 
 };

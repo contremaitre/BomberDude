@@ -40,7 +40,7 @@ class NetServer : public QThread
 {
     Q_OBJECT
 public:
-    NetServer(const MapServer *, int port);
+	//NetServer(const MapServer *, int port);
     NetServer(int port);
     ~NetServer();
     void run();

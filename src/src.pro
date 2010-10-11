@@ -18,7 +18,8 @@ HEADERS += Flame.h \
     NetClient.h \
     NetMessage.h \
     NetServer.h \
-    NetServerClient.h
+    NetServerClient.h \
+    Player.h
 SOURCES += Flame.cpp \
     MapServer.cpp \
     Bomb.cpp \
@@ -26,4 +27,5 @@ SOURCES += Flame.cpp \
     NetClient.cpp \
     NetServer.cpp \
     NetServerClient.cpp \
-    BlockMapProperty.cpp
+    BlockMapProperty.cpp \
+    Player.cpp

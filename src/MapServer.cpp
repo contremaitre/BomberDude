@@ -28,6 +28,12 @@ const QPoint MapServer::dirUp = QPoint(0,-1);
 const QPoint MapServer::dirDown = QPoint(0,1);
 
 
+
+MapServer::MapServer()
+{
+	connect(&timerHeartBeat, SIGNAL(timeout()), this, SLOT(newHeartBeat()));
+}
+
 void MapServer::loadRandom()
 {
 	// qDebug() << "set Dimensions (2) "<<width<<" "<<height<<" ";
@@ -324,11 +330,8 @@ int MapServer::bomb(int playerId, int squareX, int squareY)
 	if( ret )
 	{
 		// add the bomb
-		Bomb *newBomb = new Bomb(3,playerId,3000, squareX, squareY) ;
-		// newBomb->x = squareX;
-		// newBomb->y = squareY;
+		Bomb *newBomb = new Bomb(3, playerId, 150, squareX, squareY);
 		getBombList()->append(newBomb);
-		connect(newBomb,SIGNAL(explode(Bomb*)),this,SLOT(explosion(Bomb*)));
 		qDebug() << " MapServer> AddBomb : " << getBombList()->size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
 		return newBomb->bombId;
 	}
@@ -342,20 +345,16 @@ int MapServer::bomb(int playerId, int squareX, int squareY)
 
 
 
-void MapServer::explosion(Bomb* b)
+const Flame* MapServer::explosion(Bomb* b)
 {
-	emit bombRemoved( b->bombId);
 	getBombList()->removeOne(b);
-	Flame *f =new Flame(b->playerId,1000);
+	Flame *f = new Flame(b->playerId,20);
 	QPoint tempPoint = QPoint(b->x,b->y);
 	propagateFlame(*f, tempPoint, b->range);
 	getFlameList()->append(f);
-	connect(f, SIGNAL(flameEnd(Flame&)), this, SLOT(flameEnd(Flame&)));
-
-	f->startFlameTimer();
-	emit addFlame(*f);
 
 	qDebug()<<"BOOM !";
+	return f;
 }
 
 void MapServer::propagateFlame(Flame & f, const QPoint & p, int range)
@@ -370,7 +369,7 @@ void MapServer::propagateFlame(Flame & f, const QPoint & p, int range)
 			int squareX, squareY;
 			getBlockPosition(x,y,squareX,squareY);
 			if (p.x()==squareX && p.y()==squareY)
-				qDebug() << "player "<<f.playerId<<" pwned player "<<i;
+				qDebug() << "player "<<f.getPlayerId()<<" pwned player "<<i;
 		}
 	}
 
@@ -387,13 +386,18 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 		pTemp=pTemp+direction;
 		if (getType(pTemp.x(),pTemp.y())==BlockMapProperty::wall)
 			return;
+
 		if (getType(pTemp.x(),pTemp.y())==BlockMapProperty::brick)
-			return;//todo manage brick destruction
+		{
+			setType(BlockMapProperty::empty, pTemp.x(), pTemp.y());
+			f.addBrokenBlock(pTemp.x(),pTemp.y());
+			return;
+		}
+
 		foreach (Bomb * b,*getBombList())
 		{
 			if (b->x == pTemp.x() && b->y == pTemp.y())
 			{
-				emit bombRemoved( b->bombId);
 				getBombList()->removeOne(b);
 				QPoint newPos = QPoint(b->x, b->y);
 				propagateFlame(f, newPos, b->range);
@@ -411,22 +415,74 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 				int squareX, squareY;
 				getBlockPosition(x,y,squareX,squareY);
 				if (pTemp.x()==squareX && pTemp.y()==squareY)
-					qDebug() << "player "<<f.playerId<<" pwned player "<<i;
+					qDebug() << "player "<<f.getPlayerId()<<" pwned player "<<i;
 			}
 		}
 	}
 }
 
-
-
-
-void MapServer::flameEnd(Flame & f)
-{
-	//qDebug()<< "MapServer>flameEnd";
-	emit flameRemoved(f.getFlameId());
-	getFlameList()->removeOne(&f);
-	delete &f;
+void MapServer::startHeartBeat(qint32 startValue, int intervals) {
+	setHeartBeat(startValue);
+	timerHeartBeat.start(intervals);
 }
 
+void MapServer::newHeartBeat() {
+	heartBeat++;
 
+	QByteArray updateArray;
+	QDataStream updateOut(&updateArray,QIODevice::WriteOnly | QIODevice::Truncate);
+	updateOut << heartBeat;
 
+	// start by cleaning flames
+	QList<Flame*> cleanList;
+	QList<Flame*>::iterator itFlame = flames.begin();
+	while(itFlame != flames.end()) {
+		(*itFlame)->decreaseLifeSpan();
+		if( (*itFlame)->isFinished() ) {
+			cleanList.append(*itFlame);
+			flames.erase(itFlame++);
+		}
+		else
+			++itFlame;
+	}
+	updateOut << cleanList;
+	foreach(Flame* flame, cleanList)
+		delete flame;
+	cleanList.clear();
+
+	// now let each alive player lay a bomb, then move
+	foreach(Player* playerN, players) {
+		if(playerN->getLayingBomb()) {
+			playerN->clearLayingBomb();
+			bomb(playerN->getId());
+		}
+		if(playerN->getDirection() != -1) {
+			movePlayer(playerN->getId(), playerN->getDirection());
+			playerN->setDirection(-1);
+		}
+	}
+	updateOut << players;
+
+	// then make explode some bombs
+
+	// WARNING : it is very important to have a list or a similar container for which iterators remain
+	// valid even when other elements are removed, because a bomb can trigger several other ones
+	QList<const Flame*> explodeList;
+	QList<Bomb*>::iterator itBomb = bombs.begin();
+	while(itBomb != bombs.end()) {
+		(*itBomb)->decreaseLifeSpan();
+		if((*itBomb)->mustExplode()) {
+			explodeList.append(explosion(*itBomb));
+			delete *itBomb;
+			bombs.erase(itBomb++);
+		}
+		else
+			++itBomb;
+	}
+	updateOut << explodeList;
+	// don't delete the pointers, they're still held in MapServer's "flames"
+	explodeList.clear();
+
+	// send the update to the clients
+	emit updatedMap(updateArray);
+}
