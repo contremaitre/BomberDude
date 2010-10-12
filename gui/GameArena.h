@@ -58,7 +58,7 @@ public:
     int getCaseSize() const;
     void movePlayer(int player, int x, int y);
     void addBomb(int player, int x, int y, int bombId);
-    void addFlame(Flame& flame);
+    void addFlame(Flame* flame);
     void removeFlame(int flameId);
     void removeBomb(qint16 bombId);
 	void updateMap(QByteArray& updateBlock);

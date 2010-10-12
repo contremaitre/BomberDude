@@ -126,19 +126,19 @@ void GameArena::addBomb(int player, int squareX, int squareY, int bombId)
 	}
 }
 
-void GameArena::addFlame(Flame& flame)
+void GameArena::addFlame(Flame* flame)
 {
 	map.flame(flame);
 	QList<QGraphicsSquareItem*> *flameItems=new QList<QGraphicsSquareItem*>();
 
-	foreach (QPoint point, flame.getFlamePositions())
+	foreach (QPoint point, flame->getFlamePositions())
 	{
 		QGraphicsSquareItem* item = new QGraphicsSquareItem(point.x() * squareSize, point.y() * squareSize, squareSize);
 		item->setItem(pixmaps.getPixmap(BlockMapProperty::flame));
 		flameItems->append(item);
 		scene->addItem(item);
 	}
-	flamesItem.insert(flame.getFlameId(),flameItems);
+	flamesItem.insert(flame->getFlameId(),flameItems);
 }
 
 
@@ -221,11 +221,11 @@ void GameArena::updateMap(QByteArray& updateBlock) {
 	qint8 nbExplosions;
 	updateIn >> nbExplosions;
 	for(qint8 i = 0; i < nbExplosions; i++) {
-		Flame f;
-		updateIn >> f;
+		Flame* f = new Flame();
+		updateIn >> *f;
 
-		QList<qint16>::const_iterator itBomb = f.getFirstDetonatedBomb();
-		for( ; itBomb != f.getLastDetonatedBomb(); ++itBomb)
+		QList<qint16>::const_iterator itBomb = f->getFirstDetonatedBomb();
+		for( ; itBomb != f->getLastDetonatedBomb(); ++itBomb)
 			removeBomb(*itBomb);
 
 		addFlame(f);

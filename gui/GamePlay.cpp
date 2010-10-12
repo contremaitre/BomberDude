@@ -45,11 +45,11 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     client = new NetClient;
     connect(client, SIGNAL(sigConnected()), this, SLOT(slotClientConnected()));
     connect(client, SIGNAL(sigConnectionError()), this, SLOT(slotClientConnectError()));
-    connect(client,SIGNAL(moveReceived(qint16,qint16,qint16)),this,SLOT(moveReceived(qint16,qint16,qint16)));
-    connect(client,SIGNAL(bombReceived(qint16,qint16,qint16,qint16)),this,SLOT(bombReceived(qint16,qint16,qint16,qint16)));
-    connect(client,SIGNAL(bombRemoved(qint16)),this,SLOT(bombRemoved(qint16)));
-    connect(client,SIGNAL(flameReceived(Flame&)),this,SLOT(flameReceived(Flame&)));
-    connect(client,SIGNAL(flameRemoved(qint16)),this,SLOT(flameRemoved(qint16)));
+    //connect(client,SIGNAL(moveReceived(qint16,qint16,qint16)),this,SLOT(moveReceived(qint16,qint16,qint16)));
+    //connect(client,SIGNAL(bombReceived(qint16,qint16,qint16,qint16)),this,SLOT(bombReceived(qint16,qint16,qint16,qint16)));
+    //connect(client,SIGNAL(bombRemoved(qint16)),this,SLOT(bombRemoved(qint16)));
+    //connect(client,SIGNAL(flameReceived(Flame&)),this,SLOT(flameReceived(Flame&)));
+    //connect(client,SIGNAL(flameRemoved(qint16)),this,SLOT(flameRemoved(qint16)));
 	connect(client, SIGNAL(updateMap(QByteArray)), this, SLOT(updateMap(QByteArray)));
     settings = set;
 
@@ -116,26 +116,26 @@ void GamePlay::slotServerError()
 }
 
 
-void GamePlay::bombReceived(qint16 plId, qint16 squareX, qint16 squareY,qint16 bombId)
-{
-	qDebug()<<"GamePlay> add bomb"<<bombId;
-	gameArena->addBomb(plId, squareX, squareY,bombId);
-}
+//void GamePlay::bombReceived(qint16 plId, qint16 squareX, qint16 squareY,qint16 bombId)
+//{
+//	qDebug()<<"GamePlay> add bomb"<<bombId;
+//	gameArena->addBomb(plId, squareX, squareY,bombId);
+//}
 
-void GamePlay::flameReceived(Flame & flame)
-{
-	gameArena->addFlame(flame);
-}
+//void GamePlay::flameReceived(Flame & flame)
+//{
+//	gameArena->addFlame(flame);
+//}
 
-void GamePlay::bombRemoved(qint16 bombId)
-{
-    gameArena->removeBomb(bombId);
-}
+//void GamePlay::bombRemoved(qint16 bombId)
+//{
+//    gameArena->removeBomb(bombId);
+//}
 
-void GamePlay::flameRemoved(qint16 flameId)
-{
-    gameArena->removeFlame(flameId);
-}
+//void GamePlay::flameRemoved(qint16 flameId)
+//{
+//    gameArena->removeFlame(flameId);
+//}
 
 
 void GamePlay::move(int direction)
@@ -143,10 +143,10 @@ void GamePlay::move(int direction)
     client->sendMove(direction);
 }
 
-void GamePlay::moveReceived(qint16 plId, qint16 x, qint16 y)
-{
-    gameArena->movePlayer(plId, x, y);
-}
+//void GamePlay::moveReceived(qint16 plId, qint16 x, qint16 y)
+//{
+//    gameArena->movePlayer(plId, x, y);
+//}
 
 /**
  *   1  2  3

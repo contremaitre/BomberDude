@@ -203,7 +203,6 @@ void NetServerClient::udpReceived()
 }
 
 void NetServerClient::sendUpdate(const QByteArray& block) {
-	qDebug() << "Sending update";
 	udpSocket->writeDatagram(block,peerAddress,peerUdpPort);
 }
 

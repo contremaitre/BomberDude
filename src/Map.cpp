@@ -90,9 +90,9 @@ void Map::setPlayerPosition(int id, qint16 x, qint16 y)
     //emit playerMoved(id, x, y); useless?
 }
 
-void Map::flame(Flame& flame)
+void Map::flame(Flame* flame)
 {
-	flames.append(&flame);
+	flames.append(flame);
 }
 
 void Map::removeFlame(int flameId)

@@ -75,7 +75,7 @@ public:
     void setPlayerPosition(int id, qint16 , qint16);
     qint16 getMaxNbPlayers() const;
     qint16 getBlockSize() const;
-    void flame(Flame& f);
+    void flame(Flame* f);
     void removeFlame(int flameId);
     Bomb* bomb(int id, int x, int y,int bombId);
     void removeBomb(qint16 bombId);

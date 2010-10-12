@@ -27,9 +27,9 @@ NetServer::NetServer(int port) : QThread()
 {
     map = new MapServer;
     connect(map,SIGNAL(updatedMap(QByteArray)),this,SLOT(updateMap(QByteArray)));
-    connect(map,SIGNAL(bombRemoved(int)),this,SLOT(removeBomb(int)));
-    connect(map,SIGNAL(flameRemoved(int)),this,SLOT(removeFlame(int)));
-    connect(map,SIGNAL(addFlame(Flame&)),this,SLOT(addFlame(Flame&)));
+    //connect(map,SIGNAL(bombRemoved(int)),this,SLOT(removeBomb(int)));
+    //connect(map,SIGNAL(flameRemoved(int)),this,SLOT(removeFlame(int)));
+    //connect(map,SIGNAL(addFlame(Flame&)),this,SLOT(addFlame(Flame&)));
     this->port = port;
     tcpServer = NULL;
     udpSocket = NULL;
