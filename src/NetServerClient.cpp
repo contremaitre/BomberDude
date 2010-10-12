@@ -29,6 +29,7 @@ NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, NetServer
     //Had to add DirectConnection, to avoid a Qobject / qthread parenting error.
     //need to check this (cf http://forum.qtfr.org/viewtopic.php?id=10104)
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(incomingTcpData()), Qt::DirectConnection);
+    connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(clientDisconected()));
     peerAddress = tcpSocket->peerAddress();
     peerUdpPort = tcpSocket->peerPort();
     playerId = id;
@@ -39,9 +40,9 @@ NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, NetServer
     qDebug() << "new NetServerClient " << id << peerAddress;
 }
 
-void NetServerClient::setPlayerNumber(int n)
+void NetServerClient::clientDisconected()
 {
-    playerNumber = n;
+    emit disconected(this);
 }
 
 void NetServerClient::incomingTcpData()
@@ -208,6 +209,6 @@ void NetServerClient::sendUpdate(const QByteArray& block) {
 
 NetServerClient::~NetServerClient()
 {
-
+    tcpSocket->deleteLater();
 }
 

@@ -67,7 +67,6 @@ private:
     void move(int);
 
 private slots:
-    void slotStart();
     void slotMoveTimer();
     void dropBomb();
     void slotPingTimer();

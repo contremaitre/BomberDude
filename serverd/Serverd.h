@@ -44,7 +44,7 @@ private:
     MapServer *map;
 
 private slots:
-    void slotStart();
+    void allPlayersLeft();
 };
 
 #endif
