@@ -64,8 +64,8 @@ void MapServer::loadRandom()
     for (int i = 0; i < getMaxNbPlayers(); i++)
     {
         int x, y;
-        int w = (qrand() % (getWidth() - 1)) + 1;
-        int h = (qrand() % (getHeight() - 1)) + 1;
+        int w = (qrand() % (getWidth() - 2)) + 1;
+        int h = (qrand() % (getHeight() - 2)) + 1;
         qDebug() << "Player" << i << ", pos " << w << h;
         w = w * getBlockSize() + getBlockSize() / 2;
         h = h * getBlockSize() + getBlockSize() / 2;

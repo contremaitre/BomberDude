@@ -43,7 +43,6 @@ class NetServerClient : public QObject
       public:
   NetServerClient(QTcpSocket *, QUdpSocket *, int id, NetServer *);
   ~NetServerClient();
-  void setPlayerNumber(int);
   void playerMoved(int plId, int x, int y);
   void bombAdded(int plId, int x, int y, int bombId);
   void bombRemoved(int bombId);
@@ -68,8 +67,12 @@ class NetServerClient : public QObject
   int playerNumber;
   quint16 blockSize; //size of the current message
 
-  private slots:
+private slots:
   void incomingTcpData();
+  void clientDisconected();
+
+signals:
+    void disconected(NetServerClient*);
 };
 
 #endif
