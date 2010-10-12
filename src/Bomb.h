@@ -27,6 +27,7 @@ class Bomb : public QObject
     Q_OBJECT
 
 public:
+	Bomb();
 	Bomb(int range, int playerId, int duration, int x, int y);
 	Bomb(int playerId, int x, int y,int bombId);
 	~Bomb();
@@ -49,7 +50,12 @@ public:
     int range;
     int bombId;
 
+	friend QDataStream& operator>>(QDataStream& in, Bomb& f);
+	friend QDataStream& operator<<(QDataStream& out, const Bomb& f);
 };
+
+QDataStream& operator>>(QDataStream& in, Bomb& f);
+QDataStream& operator<<(QDataStream& out, const Bomb& f);
 
 
 #endif

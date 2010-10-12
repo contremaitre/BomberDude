@@ -210,6 +210,17 @@ qDebug() << "On recoit le heartbeat " << heartBeat;
 		movePlayer(playerN.getId(), playerN.getX(), playerN.getY());
 	}
 
+	qint8 newBombsListSize;
+	updateIn >> newBombsListSize;
+	qDebug() << newBombsListSize << " new bombs received";
+	for(qint8 i = 0; i < newBombsListSize; i++) {
+		Bomb bombN;
+		updateIn >> bombN;
+		qDebug() << "Bomb #" << bombN.bombId << ", player #" << bombN.playerId << ", x:" << bombN.x << ", y:" << bombN.y;
+		addBomb(bombN.playerId, bombN.x, bombN.y, bombN.bombId);
+	}
+	
+
 	QList<Flame*> explodeList;
 	//updateIn >> explodeList;
 }

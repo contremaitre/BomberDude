@@ -19,6 +19,17 @@
 #include <QDebug>
 
 int Bomb::index=1;
+
+//constructor for serialization
+Bomb::Bomb() :
+	x(-1),
+	y(-1),
+	playerId(-1),
+	duration(-1),
+	range(-1),
+	bombId(-1)
+{}
+
 //constructor for server
 Bomb::Bomb(int range, int playerId, int duration, int x, int y)
 {
@@ -45,3 +56,10 @@ Bomb::~Bomb()
 {
 }
 
+QDataStream& operator>>(QDataStream& in, Bomb& f) {
+	in >> f.bombId >> f.x >> f.y;
+}
+
+QDataStream& operator<<(QDataStream& out, const Bomb& f) {
+	out << f.bombId << f.x << f.y;
+}

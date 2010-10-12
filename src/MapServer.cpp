@@ -465,12 +465,18 @@ void MapServer::newHeartBeat() {
 			movedPlayers.append(playerN);
 		}
 	}
+
+	// serialize the new positions for the players who moved
 	updateOut << (qint8) movedPlayers.size();
 	foreach(Player* playerN, movedPlayers) {
 		updateOut << *playerN;
 	}
 
-	updateOut << players;
+	// serialize the new bombs
+	updateOut << (qint8) newBombs.size();
+	foreach(Bomb* bombN, newBombs) {
+		updateOut << *bombN;
+	}
 
 	// then make explode some bombs
 
