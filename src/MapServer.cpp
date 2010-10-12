@@ -336,7 +336,7 @@ Bomb* MapServer::bomb(int playerId, int squareX, int squareY)
 	}
 
 	// add the bomb
-	Bomb *newBomb = new Bomb(3, playerId, 150, squareX, squareY);
+	Bomb *newBomb = new Bomb(3, playerId, 100, squareX, squareY);
 	getBombList()->append(newBomb);
 	qDebug() << " MapServer> AddBomb : " << getBombList()->size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
 	return newBomb;
@@ -437,21 +437,18 @@ void MapServer::newHeartBeat() {
 	updateOut << heartBeat;
 
 	// start by cleaning flames
-	QList<Flame*> cleanList;
+	QList<qint16> cleanList;
 	QList<Flame*>::iterator itFlame = flames.begin();
 	while(itFlame != flames.end()) {
 		(*itFlame)->decreaseLifeSpan();
 		if( (*itFlame)->isFinished() ) {
-			cleanList.append(*itFlame);
+			cleanList.append((*itFlame)->getFlameId());
 			flames.erase(itFlame++);
 		}
 		else
 			++itFlame;
 	}
-	//updateOut << cleanList;
-	foreach(Flame* flame, cleanList)
-		delete flame;
-	cleanList.clear();
+	updateOut << cleanList;
 
 	// now let each alive player lay a bomb, then move
 	QList<Player*> movedPlayers;

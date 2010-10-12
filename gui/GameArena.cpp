@@ -191,14 +191,12 @@ void GameArena::updateMap(QByteArray& updateBlock) {
 	qint32 heartBeat;
 	updateIn >> heartBeat;
 	map.setHeartBeat(heartBeat);
-qDebug() << "On recoit le heartbeat " << heartBeat;
-	QList<Flame*> cleanList;
-	//updateIn >> cleanList;
-	foreach(Flame* flamesN, cleanList) {
-		QSet<QPoint> flames = flamesN->getFlamePositions();
-//		foreach(QPoint flameN, flames)
-//			flamesN->
-	}
+	qDebug() << "Received heartbeat " << heartBeat;
+
+	QList<qint16> cleanList;
+	updateIn >> cleanList;
+	foreach(qint16 flameId, cleanList)
+		removeFlame(flameId);
 
 	qint8 playerListSize;
 	updateIn >> playerListSize;
