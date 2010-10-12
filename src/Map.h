@@ -54,7 +54,6 @@ public:
     Map(qint16, qint16, qint16);
     ~Map();
     void setDim(qint16,qint16,qint16);
-    void loadRandom();
     qint16 getWidth() const ;
     qint16 getHeight() const;
     BlockMapProperty::BlockType getType(int,int) const;
