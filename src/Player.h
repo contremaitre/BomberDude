@@ -36,12 +36,10 @@ private:
 
 	// allows easier serialization, avoids exposing all internal variables for writing
 	friend QDataStream& operator>>(QDataStream& in, Player& f);
-	friend QDataStream& operator>>(QDataStream& in, Player* f);
 	friend QDataStream& operator<<(QDataStream& out, const Player& f);
 };
 
 QDataStream& operator>>(QDataStream& in, Player& f);
-QDataStream& operator>>(QDataStream& in, Player* f);
 QDataStream& operator<<(QDataStream& out, const Player& f);
 
 

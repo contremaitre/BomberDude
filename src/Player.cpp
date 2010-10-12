@@ -24,11 +24,6 @@ QDataStream& operator>>(QDataStream& in, Player& p) {
 	return in;
 }
 
-QDataStream& operator>>(QDataStream& in, Player* p) {
-	in >> p->id >> p->x >> p->y;
-	return in;
-}
-
 QDataStream& operator<<(QDataStream& out, const Player& p) {
 	out << p.id << p.x << p.y;
 	return out;

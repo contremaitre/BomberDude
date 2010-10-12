@@ -181,22 +181,22 @@ int NetServer::readMove(QDataStream &in)
 }
 
 
-void NetServer::addBomb(int id)
-{
-  int bombId = map->bomb(id);
-  if(bombId)
-    {
-        //qDebug()<<"send bomb to clients";
-	  	  //send the bomb to the clients
-        qint16 x,y;
-        int squareX,squareY;
-        map->getPlayerPosition(id, x, y);
-        map->getBlockPosition(x,y,squareX,squareY);
-        foreach (NetServerClient *client, clients) {
-        client->bombAdded(id,squareX,squareY,bombId);
-        }
-    }
-}
+//void NetServer::addBomb(int id)
+//{
+//  int bombId = map->bomb(id);
+//  if(bombId)
+//    {
+//        //qDebug()<<"send bomb to clients";
+//	  	  //send the bomb to the clients
+//        qint16 x,y;
+//        int squareX,squareY;
+//        map->getPlayerPosition(id, x, y);
+//        map->getBlockPosition(x,y,squareX,squareY);
+//        foreach (NetServerClient *client, clients) {
+//        client->bombAdded(id,squareX,squareY,bombId);
+//        }
+//    }
+//}
 
 //void NetServer::move(int plId, int direction)
 //{

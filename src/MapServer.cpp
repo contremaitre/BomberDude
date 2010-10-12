@@ -317,7 +317,7 @@ int MapServer::coordinatePositionInBlock(int coord)
 }
 
 //to be used by server only
-int MapServer::bomb(int playerId)
+Bomb* MapServer::bomb(int playerId)
 {
 	int squareX,squareY;
 	qint16 x,y;
@@ -326,33 +326,21 @@ int MapServer::bomb(int playerId)
 	return bomb(playerId,squareX,squareY);
 }
 
-int MapServer::bomb(int playerId, int squareX, int squareY)
+Bomb* MapServer::bomb(int playerId, int squareX, int squareY)
 {
-	bool ret = true;
-
 	// is there a bomb at the same place ?
 	foreach (Bomb *b, *getBombList())
 	{
 		if((b->x == squareX) && (b->y == squareY))
-			ret = false;
-	}
-	qDebug()<<"ret"<<ret;
-	if( ret )
-	{
-		// add the bomb
-		Bomb *newBomb = new Bomb(3, playerId, 150, squareX, squareY);
-		getBombList()->append(newBomb);
-		qDebug() << " MapServer> AddBomb : " << getBombList()->size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
-		return newBomb->bombId;
-	}
-	else
-	{
-		return 0;
+			return 0;
 	}
 
+	// add the bomb
+	Bomb *newBomb = new Bomb(3, playerId, 150, squareX, squareY);
+	getBombList()->append(newBomb);
+	qDebug() << " MapServer> AddBomb : " << getBombList()->size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
+	return newBomb;
 }
-
-
 
 
 const Flame* MapServer::explosion(Bomb* b)
@@ -467,7 +455,9 @@ void MapServer::newHeartBeat() {
 	foreach(Player* playerN, players) {
 		if(playerN->getLayingBomb()) {
 			playerN->clearLayingBomb();
-			bomb(playerN->getId());
+			Bomb* newBomb = bomb(playerN->getId());
+			if(newBomb != 0)
+				newBombs.append(newBomb);
 		}
 		if(playerN->getDirection() != -1) {
 			movePlayer(playerN->getId(), playerN->getDirection());
