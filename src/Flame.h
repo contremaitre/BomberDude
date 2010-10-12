@@ -54,6 +54,8 @@ public:
 
 	void addFlame(int x, int y);
 	QSet<QPoint> getFlamePositions() const		{ return flames; }
+	QSet<QPoint>::const_iterator getFirstFlame() const		{ return flames.constBegin(); }
+	QSet<QPoint>::const_iterator getLastFlame() const		{ return flames.constEnd(); }
 
 	void addBrokenBlock(int x, int y);
 	QSet<QPoint>::const_iterator getFirstBrokenBlock() const	{ return brokenBlocks.constBegin(); }

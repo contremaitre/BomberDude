@@ -229,6 +229,8 @@ qDebug() << "On recoit le heartbeat " << heartBeat;
 		QList<qint16>::const_iterator itBomb = f.getFirstDetonatedBomb();
 		for( ; itBomb != f.getLastDetonatedBomb(); ++itBomb)
 			removeBomb(*itBomb);
+
+		addFlame(f);
 	}
 }
 
