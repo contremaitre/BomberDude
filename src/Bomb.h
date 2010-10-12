@@ -28,8 +28,8 @@ class Bomb : public QObject
 
 public:
 	Bomb();
-	Bomb(int range, int playerId, int duration, int x, int y);
-	Bomb(int playerId, int x, int y,int bombId);
+	Bomb(int range, qint8 playerId, int duration, qint16 x, qint16 y);
+	Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId);
 	~Bomb();
 
 	void decreaseLifeSpan()					{ duration--; }
@@ -38,17 +38,17 @@ public:
 	bool mustExplode()						{ return duration < 0; }
 
 private:
-	static int index;
+	static qint16 index;
 
 public:
-    int x;
-    int y;
+    qint16 x;
+    qint16 y;
     //owner
-    int playerId;
+    qint8 playerId;
 	//duration in heartbeats
     int duration;
     int range;
-    int bombId;
+    qint16 bombId;
 
 	friend QDataStream& operator>>(QDataStream& in, Bomb& f);
 	friend QDataStream& operator<<(QDataStream& out, const Bomb& f);

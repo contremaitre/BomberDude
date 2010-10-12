@@ -48,7 +48,7 @@ void Map::Init()
     else
         block_list = NULL;
 
-	for(int i = 0; i < MAX_NB_PLAYER; i++)
+	for(qint8 i = 0; i < MAX_NB_PLAYER; i++)
 		players.append(new Player(i));
 
     qDebug() << "init";
@@ -117,7 +117,7 @@ Bomb* Map::bomb(int id, int squareX, int squareY, int bombId)
     return newBomb;
 }
 
-void Map::removeBomb(int bombId)
+void Map::removeBomb(qint16 bombId)
 {
 	foreach (Bomb *b, bombs)
 	{

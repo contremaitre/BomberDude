@@ -19,7 +19,7 @@
 #include <QDebug>
 
 
-int Flame::index=1;
+qint16 Flame::index=1;
 
 
 uint qHash(const QPoint& key) {
@@ -31,7 +31,7 @@ Flame::Flame() {
 }
 
 //constructor for server
-Flame::Flame(int playerId, int duration)
+Flame::Flame(qint8 playerId, int duration)
 {
 	this->playerId=playerId;
 	flameId=index;
@@ -54,8 +54,13 @@ void Flame::addBrokenBlock(int x, int y) {
 QDataStream &operator<<(QDataStream &out, const Flame& flame)
 {
 	out << flame.flameId;
-	out << flame.flames;
-	out << flame.brokenBlocks;
+	//out << flame.flames;
+	//out << flame.brokenBlocks;
+
+	qint16 nbBombs = flame.detonatedBombs.size();
+	out << nbBombs;
+	foreach(qint16 bombId, flame.detonatedBombs)
+		out << bombId;
 
 	return out;
 }
@@ -63,26 +68,17 @@ QDataStream &operator<<(QDataStream &out, const Flame& flame)
 QDataStream &operator>>(QDataStream & in, Flame& flame)
 {
 	in >> flame.flameId;
-	in >> flame.flames;
-	in >> flame.brokenBlocks;
+	//in >> flame.flames;
+	//in >> flame.brokenBlocks;
+
+	qint16 nbBombs;
+	in >> nbBombs;
+	for(qint16 i = 0; i < nbBombs; i++) {
+		qint16 bombId;
+		in >> bombId;
+		flame.detonatedBombs.append(bombId);
+	}
 
 	return in;
 }
 
-QDataStream &operator<<(QDataStream &out, const Flame* flame)
-{
-	out << flame->flameId;
-	out << flame->flames;
-	out << flame->brokenBlocks;
-
-	return out;
-}
-
-QDataStream &operator>>(QDataStream & in, Flame* flame)
-{
-	in >> flame->flameId;
-	in >> flame->flames;
-	in >> flame->brokenBlocks;
-
-    return in;
-}

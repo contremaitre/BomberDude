@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QPoint>
 #include <QDataStream>
+#include "Bomb.h"
 
 
 /**
@@ -48,7 +49,7 @@ public:
 	  @param playerId Id of the player to whom belongs the initial bomb
 	  @param duration Lifespan of the flames in number of heartbeats
 	  */
-	Flame(int playerId, int duration);
+	Flame(qint8 playerId, int duration);
 	virtual ~Flame();
 
 	void addFlame(int x, int y);
@@ -58,38 +59,38 @@ public:
 	QSet<QPoint>::const_iterator getFirstBrokenBlock() const	{ return brokenBlocks.constBegin(); }
 	QSet<QPoint>::const_iterator getLastBrokenBlock() const		{ return brokenBlocks.constEnd(); }
 
-	int getFlameId() const						{ return flameId; }
+	qint16 getFlameId() const					{ return flameId; }
 
-	int getPlayerId() const						{ return playerId; }
+	qint8 getPlayerId() const					{ return playerId; }
 
 	void decreaseLifeSpan()						{ duration--; }
 	bool isFinished()							{ return duration < 0; }
 
-private:
-	static int index;							///< unique ID for each explosion
+	void addDetonatedBomb(const Bomb& bombN)	{ detonatedBombs.append(bombN.bombId); }
+	QList<qint16>::const_iterator getFirstDetonatedBomb() const		{ return detonatedBombs.constBegin(); }
+	QList<qint16>::const_iterator getLastDetonatedBomb() const		{ return detonatedBombs.constEnd(); }
 
-	int flameId;
-	int playerId;								///< owner of the bomb
+private:
+	static qint16 index;							///< unique ID for each explosion
+
+	qint16 flameId;
+	qint8 playerId;								///< owner of the bomb
 
 	int duration;								///< duration in number of heartbeats
 
 	QSet<QPoint> flames;
 	QSet<QPoint> brokenBlocks;
+	QList<qint16> detonatedBombs;
 
 private:
 	// allows easier serialization, avoids exposing all internal variables for writing
 	friend QDataStream &operator>>(QDataStream & in, Flame& f);
 	friend QDataStream &operator<<(QDataStream &out, const Flame& f);
 
-	friend QDataStream &operator>>(QDataStream & in, Flame* f);
-	friend QDataStream &operator<<(QDataStream &out, const Flame* f);
-
 };
 
 QDataStream &operator>>(QDataStream & in, Flame& f);
 QDataStream &operator<<(QDataStream &out, const Flame& f);
 
-QDataStream &operator>>(QDataStream & in, Flame* f);
-QDataStream &operator<<(QDataStream &out, const Flame* f);
 
 #endif /* FLAME_H */

@@ -345,10 +345,13 @@ Bomb* MapServer::bomb(int playerId, int squareX, int squareY)
 
 const Flame* MapServer::explosion(Bomb* b)
 {
-	//getBombList()->removeOne(b);
+	getBombList()->removeOne(b);
 	Flame *f = new Flame(b->playerId,20);
+	f->addDetonatedBomb(*b);
+
 	QPoint tempPoint = QPoint(b->x,b->y);
 	propagateFlame(*f, tempPoint, b->range);
+
 	getFlameList()->append(f);
 
 	qDebug()<<"BOOM !";
@@ -392,11 +395,12 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 			return;
 		}
 
-		foreach (Bomb * b,*getBombList())
+		foreach(Bomb * b, *getBombList())
 		{
 			if (b->x == pTemp.x() && b->y == pTemp.y())
 			{
 				getBombList()->removeOne(b);
+				f.addDetonatedBomb(*b);
 				QPoint newPos = QPoint(b->x, b->y);
 				propagateFlame(f, newPos, b->range);
 				delete b;
@@ -467,36 +471,40 @@ void MapServer::newHeartBeat() {
 	}
 
 	// serialize the new positions for the players who moved
-	updateOut << (qint8) movedPlayers.size();
+	updateOut << static_cast<qint8>(movedPlayers.size());
 	foreach(Player* playerN, movedPlayers) {
 		updateOut << *playerN;
 	}
 
 	// serialize the new bombs
-	updateOut << (qint8) newBombs.size();
+	updateOut << static_cast<qint8>(newBombs.size());
 	foreach(Bomb* bombN, newBombs) {
 		updateOut << *bombN;
 	}
 
-	// then make explode some bombs
+	// then decrease each bomb's counter
+	foreach(Bomb* bombN, bombs)
+		bombN->decreaseLifeSpan();
 
-	// WARNING : it is very important to have a list or a similar container for which iterators remain
-	// valid even when other elements are removed, because a bomb can trigger several other ones
+	// now we check which bombs must explode
+	// WARNING : because a bomb exploding can trigger several other ones
+	//           we must restart from the beginning of the list every time
+	//           to ensure the iterator is still valid
 	QList<const Flame*> explodeList;
 	QList<Bomb*>::iterator itBomb = bombs.begin();
 	while(itBomb != bombs.end()) {
-		(*itBomb)->decreaseLifeSpan();
 		if((*itBomb)->mustExplode()) {
 			explodeList.append(explosion(*itBomb));
-			delete *itBomb;
-			bombs.erase(itBomb++);
+			itBomb = bombs.begin();
 		}
 		else
 			++itBomb;
 	}
-	//updateOut << explodeList;
-	// don't delete the pointers, they're still held in MapServer's "flames"
-	explodeList.clear();
+
+	// serialize the list of explosions
+	updateOut << static_cast<qint8>(explodeList.size());
+	foreach(const Flame* flameN, explodeList)
+		updateOut << *flameN;
 
 	// send the update to the clients
 	emit updatedMap(updateArray);

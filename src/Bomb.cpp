@@ -18,7 +18,7 @@
 #include "Bomb.h"
 #include <QDebug>
 
-int Bomb::index=1;
+qint16 Bomb::index=1;
 
 //constructor for serialization
 Bomb::Bomb() :
@@ -31,7 +31,7 @@ Bomb::Bomb() :
 {}
 
 //constructor for server
-Bomb::Bomb(int range, int playerId, int duration, int x, int y)
+Bomb::Bomb(int range, qint8 playerId, int duration, qint16 x, qint16 y)
 {
 	qDebug() << "Bomb constructor";
 	this->range = range;
@@ -44,7 +44,7 @@ Bomb::Bomb(int range, int playerId, int duration, int x, int y)
 }
 
 //constructor for client
-Bomb::Bomb(int playerId, int x, int y, int bombId)
+Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId)
 {
    this->playerId = playerId;
    this->x=x;
@@ -57,9 +57,11 @@ Bomb::~Bomb()
 }
 
 QDataStream& operator>>(QDataStream& in, Bomb& f) {
-	in >> f.bombId >> f.x >> f.y;
+	in >> f.bombId >> f.x >> f.y >> f.playerId;
+	return in;
 }
 
 QDataStream& operator<<(QDataStream& out, const Bomb& f) {
-	out << f.bombId << f.x << f.y;
+	out << f.bombId << f.x << f.y << f.playerId;
+	return out;
 }

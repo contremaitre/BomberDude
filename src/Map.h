@@ -78,7 +78,7 @@ public:
     void flame(Flame& f);
     void removeFlame(int flameId);
     Bomb* bomb(int id, int x, int y,int bombId);
-    void removeBomb(int bombId);
+    void removeBomb(qint16 bombId);
     bool blockContainsBomb(int x,int y);
     Map & operator=(const Map &);
 

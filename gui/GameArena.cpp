@@ -142,7 +142,7 @@ void GameArena::addFlame(Flame& flame)
 }
 
 
-void GameArena::removeBomb(int bombId)
+void GameArena::removeBomb(qint16 bombId)
 {
 	map.removeBomb(bombId);
 	QGraphicsSquareItem * itemToRemove=bombsItem.value(bombId);
@@ -219,10 +219,17 @@ qDebug() << "On recoit le heartbeat " << heartBeat;
 		qDebug() << "Bomb #" << bombN.bombId << ", player #" << bombN.playerId << ", x:" << bombN.x << ", y:" << bombN.y;
 		addBomb(bombN.playerId, bombN.x, bombN.y, bombN.bombId);
 	}
-	
 
-	QList<Flame*> explodeList;
-	//updateIn >> explodeList;
+	qint8 nbExplosions;
+	updateIn >> nbExplosions;
+	for(qint8 i = 0; i < nbExplosions; i++) {
+		Flame f;
+		updateIn >> f;
+
+		QList<qint16>::const_iterator itBomb = f.getFirstDetonatedBomb();
+		for( ; itBomb != f.getLastDetonatedBomb(); ++itBomb)
+			removeBomb(*itBomb);
+	}
 }
 
 void GameArena::blockChanged(int i, int j)

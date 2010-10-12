@@ -8,15 +8,15 @@
 class Player {
 public:
 	Player();
-	Player(int playerId);
+	Player(qint8 playerId);
 
-	void setId(int id)			{ this->id = id; }
-	int getId() const			{ return id; }
+	void setId(qint8 id)				{ this->id = id; }
+	qint8 getId() const					{ return id; }
 
-	void setX(int x)					{ this->x = x; }
-	int getX() const					{ return x; }
-	void setY(int y)					{ this->y = y; }
-	int getY() const					{ return y; }
+	void setX(qint16 x)					{ this->x = x; }
+	qint16 getX() const					{ return x; }
+	void setY(qint16 y)					{ this->y = y; }
+	qint16 getY() const					{ return y; }
 
 	void setDirection(int dir)			{ latestDirection = dir; }
 	int getDirection() const			{ return latestDirection; }
@@ -26,10 +26,10 @@ public:
 	bool getLayingBomb() const			{ return layingBomb; }
 
 private:
-	int id;
+	qint8 id;
 
-	int x;
-	int y;
+	qint16 x;
+	qint16 y;
 
 	int latestDirection;
 	bool layingBomb;
