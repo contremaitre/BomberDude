@@ -22,7 +22,7 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QApplication app(argc, argv, false);
 
     Serverd serverd(SERVER_PORT,MAP_SIZE,BLOCK_SIZE);
     serverd.launch();
