@@ -62,57 +62,6 @@ void Map::setDim(qint16 w, qint16 h, qint16 bs)
     Init();
 }
 
-<<<<<<< HEAD
-void Map::loadRandom()
-{
-    qsrand(time(NULL));
-    for(int w = 1; w < width-1; w++)
-    {
-        for(int h = 1; h < height-1; h++)
-        {
-            //randomly add wall or bricks or nothing
-            double d = (double)qrand() / RAND_MAX;
-            if(d < 0.05)
-                block_list[h*width+w].setType(BlockMapProperty::wall);
-            else if(d < 0.1)
-                block_list[h*width+w].setType(BlockMapProperty::brick);
-            else
-                block_list[h*width+w].setType(BlockMapProperty::empty);
-        }
-    }
-    //add walls on the map sides
-    for(int w = 0; w < width; w++)
-    {
-        block_list[w].setType(BlockMapProperty::wall);
-        block_list[(height-1)*width+w].setType(BlockMapProperty::wall);
-    }
-    for(int h = 1; h < height-1; h++)
-    {
-        block_list[h*width].setType(BlockMapProperty::wall);
-        block_list[h*width+width-1].setType(BlockMapProperty::wall);
-    }
-    //add players
-	players[0]->setX(blockSize + blockSize/2); //middle of the second block
-	players[0]->setY(blockSize + blockSize/2);
-
-	players[1]->setX((width-2) * blockSize + blockSize/2);
-	players[1]->setY((height-2) * blockSize + blockSize/2);
-
-	players[2]->setX(blockSize + blockSize/2); //middle of the second block
-	players[2]->setY((height-2) * blockSize + blockSize/2);
-
-	players[3]->setX((width-2) * blockSize + blockSize/2);
-	players[3]->setY(blockSize + blockSize/2);
- 
-	int x,y;
-	foreach(const Player* playerN, players) {
-		getBlockPosition(playerN->getX(), playerN->getY(), x, y);
-		setType(BlockMapProperty::empty, x, y);
-	}
-}
-
-=======
->>>>>>> 8f7b0bc28ad1b0e5e9e04e54534f1afab9968f95
 BlockMapProperty::BlockType Map::getType(int w,int h) const
 {
     return block_list[h*width+w].getType();
