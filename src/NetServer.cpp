@@ -23,25 +23,17 @@
 #include <QtNetwork>
 #include <unistd.h> // for usleep
 
-//NetServer::NetServer(const MapServer *map, int port) : QThread()
-//{
-//	this->map = new MapServer(*map);
-//    this->port = port;
-//    maxNbPlayer = map->getMaxNbPlayers();
-//    playerIdIncrement = 0;
-//    tcpServer = NULL;
-//    udpSocket = NULL;
-//}
-
 NetServer::NetServer(int port) : QThread()
 {
-	this->map = new MapServer();
-	connect(map,SIGNAL(updatedMap(QByteArray)),this,SLOT(updateMap(QByteArray)));
+    map = new MapServer;
+    connect(map,SIGNAL(updatedMap(QByteArray)),this,SLOT(updateMap(QByteArray)));
+    connect(map,SIGNAL(bombRemoved(int)),this,SLOT(removeBomb(int)));
+    connect(map,SIGNAL(flameRemoved(int)),this,SLOT(removeFlame(int)));
+    connect(map,SIGNAL(addFlame(Flame&)),this,SLOT(addFlame(Flame&)));
     this->port = port;
-    maxNbPlayer = map->getMaxNbPlayers();
-    playerIdIncrement = 0;
     tcpServer = NULL;
     udpSocket = NULL;
+    playersInGame = NULL;
 }
 
 void NetServer::run()
@@ -67,15 +59,48 @@ void NetServer::run()
 void NetServer::incomingClient()
 {
     QTcpSocket *clientConnection = tcpServer->nextPendingConnection();
-    connect(clientConnection, SIGNAL(disconnected()),
-            clientConnection, SLOT(deleteLater()));
-    //clientConnection->disconnectFromHost();
 
-    NetServerClient *client = new NetServerClient(clientConnection,udpSocket,playerIdIncrement++,this);
-    clients.append(client);
-    client->sendMap(*map);
-    qDebug() << "NetServer new client " << clients.size();
-    emit newPlayer();
+    int playerId = -1;
+    for(int i = 0; i < map->getMaxNbPlayers(); i++)
+    {
+        if(playersInGame[i] == -1)
+        {
+            playerId = i;
+            playersInGame[i] = playerId;
+            break;
+        }
+    }
+    if(playerId != -1)
+    {
+        NetServerClient *client = new NetServerClient(clientConnection,udpSocket,playerId,this);
+        connect(client, SIGNAL(disconected(NetServerClient*)), this, SLOT(clientDisconected(NetServerClient*)));
+        clients.append(client);
+        client->sendMap(*map);
+        qDebug() << "NetServer new client " << clients.size();
+        emit newPlayer();
+    }
+    else
+    {
+        qDebug() << "New client. No place left";
+        clientConnection->disconnectFromHost();
+    }
+}
+
+void NetServer::clientDisconected(NetServerClient *client)
+{
+    qDebug("NetServer : clientDisconected");
+    for (int i = 0; i < clients.size(); ++i) {
+        if (clients.at(i) == client)
+        {
+            clients.removeAt(i);
+            playersInGame[client->getId()] = -1;
+            delete client;
+            if(clients.empty())
+                emit allPlayersLeft();
+            return;
+        }
+    }
+    qDebug("didn't find it");
 }
 
 void NetServer::receiveUdp()
@@ -212,21 +237,19 @@ int NetServer::readMove(QDataStream &in)
 //    }
 //}
 
-void NetServer::assignNumberToPlayers()
-{
-    int id = 0;
-    foreach (NetServerClient *client, clients) {
-        client->setPlayerNumber(id++);
-    }
-}
-
 void NetServer::createRandomMap(int w, int h,int squareSize)
 {
-	qDebug() << "going to create random map";
+    if(!clients.empty())
+        qFatal("create map, and player already in game");
+    qDebug() << "going to create random map";
     map->setDim(w,h,squareSize);
     qDebug() << "set Dimensions "<<w<<" "<<h<<" "<<squareSize;
     map->loadRandom();
     qDebug() << "random map created";
+    delete[] playersInGame;
+    playersInGame = new int[map->getMaxNbPlayers()];
+    for(int i = 0; i < map->getMaxNbPlayers(); i++)
+        playersInGame[i] = -1;
 }
 
 NetServer::~NetServer()
@@ -238,6 +261,7 @@ NetServer::~NetServer()
     delete tcpServer;
     delete udpSocket;
     delete map;
+    delete[] playersInGame;
 }
 
 void NetServer::updateMap(QByteArray updateData) {

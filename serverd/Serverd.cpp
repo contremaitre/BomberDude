@@ -32,15 +32,16 @@ void Serverd::launch()
     //We start the game as soon as a player is connecter to the server
     //others players can join later (but they may miss movement me can make before they join
     //the way the game is launched will be changed later.
-    connect(server,SIGNAL(newPlayer()),this,SLOT(slotStart()),Qt::QueuedConnection);
+    connect(server, SIGNAL(allPlayersLeft()), this, SLOT(allPlayersLeft()));
     qDebug() << "launch server";
     server->start();
 }
 
-void Serverd::slotStart()
+void Serverd::allPlayersLeft()
 {
-    qDebug() << "client connecter, start";
-    server->assignNumberToPlayers();
+    qDebug() << "allPlayersLeft, restart";
+    server->createRandomMap(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
+
 }
 
 Serverd::~Serverd()

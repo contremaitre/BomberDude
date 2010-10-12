@@ -80,7 +80,6 @@ void GamePlay::launch()
         //We start the game as soon as a player is connecter to the server (ourselves actualy)
         //others players can join later (but they may miss movement me can make before they join
         //the way the game is launched will be changed later.
-        connect(server,SIGNAL(newPlayer()),this,SLOT(slotStart()),Qt::QueuedConnection);
         connect(server,SIGNAL(serverError()),this,SLOT(slotServerError()),Qt::QueuedConnection);
         connect(server,SIGNAL(serverReady()),this,SLOT(slotServerReady()),Qt::QueuedConnection);
         server->start();
@@ -103,11 +102,6 @@ void GamePlay::mapReceived(const Map *map)
 
 void GamePlay::updateMap(QByteArray updateBlock) {
 	gameArena->updateMap(updateBlock);
-}
-
-void GamePlay::slotStart()
-{
-    server->assignNumberToPlayers();
 }
 
 void GamePlay::slotServerReady()
