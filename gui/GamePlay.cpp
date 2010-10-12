@@ -50,6 +50,7 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     connect(client,SIGNAL(bombRemoved(qint16)),this,SLOT(bombRemoved(qint16)));
     connect(client,SIGNAL(flameReceived(Flame&)),this,SLOT(flameReceived(Flame&)));
     connect(client,SIGNAL(flameRemoved(qint16)),this,SLOT(flameRemoved(qint16)));
+	connect(client, SIGNAL(updateMap(QByteArray)), this, SLOT(updateMap(QByteArray)));
     settings = set;
 
     if(QSound::isAvailable())
@@ -98,6 +99,10 @@ void GamePlay::mapReceived(const Map *map)
     //qDebug() << "map received, create graphics";
     gameArena->setMap(map);
     gameArena->createGraphics();
+}
+
+void GamePlay::updateMap(QByteArray updateBlock) {
+	gameArena->updateMap(updateBlock);
 }
 
 void GamePlay::slotStart()

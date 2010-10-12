@@ -51,7 +51,7 @@ void Flame::addBrokenBlock(int x, int y) {
 	brokenBlocks.insert(QPoint(x,y));
 }
 
-QDataStream &operator<<(QDataStream &out, const Flame &flame)
+QDataStream &operator<<(QDataStream &out, const Flame& flame)
 {
 	out << flame.flameId;
 	out << flame.flames;
@@ -60,11 +60,29 @@ QDataStream &operator<<(QDataStream &out, const Flame &flame)
 	return out;
 }
 
-QDataStream &operator>>(QDataStream & in, Flame &flame)
+QDataStream &operator>>(QDataStream & in, Flame& flame)
 {
 	in >> flame.flameId;
 	in >> flame.flames;
 	in >> flame.brokenBlocks;
+
+	return in;
+}
+
+QDataStream &operator<<(QDataStream &out, const Flame* flame)
+{
+	out << flame->flameId;
+	out << flame->flames;
+	out << flame->brokenBlocks;
+
+	return out;
+}
+
+QDataStream &operator>>(QDataStream & in, Flame* flame)
+{
+	in >> flame->flameId;
+	in >> flame->flames;
+	in >> flame->brokenBlocks;
 
     return in;
 }

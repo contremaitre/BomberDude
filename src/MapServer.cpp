@@ -94,7 +94,18 @@ void MapServer::loadRandom()
 
 
 
-
+void MapServer::requestBombPlayer(int id) {
+	QList<Player*>::iterator itPlayer = players.begin();
+	while(itPlayer != players.end())
+		if((*itPlayer)->getId() == id)
+			break;
+	if(itPlayer == players.end()) {
+		qDebug() << "Unknown player #" << id;
+		return;
+	}
+	//qDebug() << "Player #" << id << " going " << direction;
+	(*itPlayer)->raiseLayingBomb();
+}
 
 
 /**
@@ -104,6 +115,19 @@ void MapServer::loadRandom()
  *    / | \
  *   7  6  5
  */
+void MapServer::requestMovePlayer(int id, int direction) {
+	QList<Player*>::iterator itPlayer = players.begin();
+	while(itPlayer != players.end())
+		if((*itPlayer)->getId() == id)
+			break;
+	if(itPlayer == players.end()) {
+		qDebug() << "Unknown player #" << id;
+		return;
+	}
+	//qDebug() << "Player #" << id << " going " << direction;
+	(*itPlayer)->setDirection(direction);
+}
+
 bool MapServer::movePlayer(int id, int direction)
 {
 	bool ret = false;
@@ -347,7 +371,7 @@ int MapServer::bomb(int playerId, int squareX, int squareY)
 
 const Flame* MapServer::explosion(Bomb* b)
 {
-	getBombList()->removeOne(b);
+	//getBombList()->removeOne(b);
 	Flame *f = new Flame(b->playerId,20);
 	QPoint tempPoint = QPoint(b->x,b->y);
 	propagateFlame(*f, tempPoint, b->range);
@@ -428,6 +452,7 @@ void MapServer::startHeartBeat(qint32 startValue, int intervals) {
 
 void MapServer::newHeartBeat() {
 	heartBeat++;
+	//qDebug() << "Hearbeat #" << heartBeat;
 
 	QByteArray updateArray;
 	QDataStream updateOut(&updateArray,QIODevice::WriteOnly | QIODevice::Truncate);
@@ -445,12 +470,14 @@ void MapServer::newHeartBeat() {
 		else
 			++itFlame;
 	}
-	updateOut << cleanList;
+	//updateOut << cleanList;
 	foreach(Flame* flame, cleanList)
 		delete flame;
 	cleanList.clear();
 
 	// now let each alive player lay a bomb, then move
+	QList<Player*> movedPlayers;
+	QList<Bomb*> newBombs;
 	foreach(Player* playerN, players) {
 		if(playerN->getLayingBomb()) {
 			playerN->clearLayingBomb();
@@ -459,8 +486,14 @@ void MapServer::newHeartBeat() {
 		if(playerN->getDirection() != -1) {
 			movePlayer(playerN->getId(), playerN->getDirection());
 			playerN->setDirection(-1);
+			movedPlayers.append(playerN);
 		}
 	}
+	updateOut << (qint8) movedPlayers.size();
+	foreach(Player* playerN, movedPlayers) {
+		updateOut << *playerN;
+	}
+
 	updateOut << players;
 
 	// then make explode some bombs
@@ -479,7 +512,7 @@ void MapServer::newHeartBeat() {
 		else
 			++itBomb;
 	}
-	updateOut << explodeList;
+	//updateOut << explodeList;
 	// don't delete the pointers, they're still held in MapServer's "flames"
 	explodeList.clear();
 

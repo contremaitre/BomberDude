@@ -39,7 +39,8 @@ private:
     //Test if a coordinate is bellow (-1) on (0) or above (1) the middle of the block
     int coordinatePositionInBlock(int coord);
     int absMin(int a, int b) const;
-    bool movePlayerLeft(int id);
+	bool movePlayer(int id, int direction);
+	bool movePlayerLeft(int id);
     bool movePlayerRight(int id);
     bool movePlayerUp(int id);
     bool movePlayerDown(int id);
@@ -57,9 +58,10 @@ public:
 //    MapServer(qint16, qint16, qint16);
 //    ~MapServer();
 	void loadRandom();
-	bool movePlayer(int id, int direction);
 	int bomb(int id, int x, int y);
 	int bomb(int id);
+	void requestMovePlayer(int id, int direction);
+	void requestBombPlayer(int id);
 
 	void startHeartBeat(qint32 startValue, int intervals);
 

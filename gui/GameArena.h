@@ -61,6 +61,7 @@ public:
     void addFlame(Flame& flame);
     void removeFlame(int flameId);
     void removeBomb(int bombId);
+	void updateMap(QByteArray& updateBlock);
     int getNbPlayers() const;
     const Map *getMap();
     void setMap(const Map *);

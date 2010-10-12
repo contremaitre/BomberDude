@@ -50,6 +50,7 @@ class NetServerClient : public QObject
   void flameAdded(Flame & flame);
   void flameRemoved(int flameId);
   void sendMap(const Map&);
+  void sendUpdate(const QByteArray& block);
   QHostAddress getAddress() const;
   quint16 getPeerUdpPort() const;
   int getId() const;

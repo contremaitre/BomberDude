@@ -20,7 +20,6 @@
 
 #include <QObject>
 #include <QDebug>
-#include <QTimer>
 #include <QPoint>
 #include <QDataStream>
 
@@ -79,13 +78,18 @@ private:
 
 private:
 	// allows easier serialization, avoids exposing all internal variables for writing
-	friend QDataStream &operator>>(QDataStream & in, Flame &f);
-	friend QDataStream &operator<<(QDataStream &out, const Flame &f);
+	friend QDataStream &operator>>(QDataStream & in, Flame& f);
+	friend QDataStream &operator<<(QDataStream &out, const Flame& f);
+
+	friend QDataStream &operator>>(QDataStream & in, Flame* f);
+	friend QDataStream &operator<<(QDataStream &out, const Flame* f);
 
 };
 
-QDataStream &operator>>(QDataStream & in, Flame &f);
-QDataStream &operator<<(QDataStream &out, const Flame &f);
+QDataStream &operator>>(QDataStream & in, Flame& f);
+QDataStream &operator<<(QDataStream &out, const Flame& f);
 
+QDataStream &operator>>(QDataStream & in, Flame* f);
+QDataStream &operator<<(QDataStream &out, const Flame* f);
 
 #endif /* FLAME_H */

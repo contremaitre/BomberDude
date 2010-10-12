@@ -77,6 +77,7 @@ private slots:
     void bombReceived(qint16 plId, qint16 x, qint16 y,qint16 bombId);
     void bombRemoved(qint16 bombId);
     void mapReceived(const Map*);
+	void updateMap(QByteArray updateBlock);
     void slotClientConnected();
     void slotClientConnectError();
     void slotServerError();

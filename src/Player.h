@@ -7,6 +7,7 @@
 
 class Player {
 public:
+	Player();
 	Player(int playerId);
 
 	void setId(int id)			{ this->id = id; }
@@ -34,13 +35,14 @@ private:
 	bool layingBomb;
 
 	// allows easier serialization, avoids exposing all internal variables for writing
-	friend QDataStream &operator>>(QDataStream & in, Player &f);
-	friend QDataStream &operator<<(QDataStream &out, const Player &f);
+	friend QDataStream& operator>>(QDataStream& in, Player& f);
+	friend QDataStream& operator>>(QDataStream& in, Player* f);
+	friend QDataStream& operator<<(QDataStream& out, const Player& f);
 };
 
-
-QDataStream &operator>>(QDataStream & in, Player &f);
-QDataStream &operator<<(QDataStream &out, const Player &f);
+QDataStream& operator>>(QDataStream& in, Player& f);
+QDataStream& operator>>(QDataStream& in, Player* f);
+QDataStream& operator<<(QDataStream& out, const Player& f);
 
 
 #endif // PLAYER_H

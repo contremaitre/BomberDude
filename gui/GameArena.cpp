@@ -18,6 +18,9 @@
 #include <QDebug>
 #include <QGraphicsView>
 #include <QMainWindow>
+#include <QDataStream>
+#include <QList>
+#include "Flame.h"
 #include "GameArena.h"
 
 GameArena::GameArena(QMainWindow * mainw, int s)
@@ -98,13 +101,12 @@ void GameArena::setMap(const Map *map)
 	init();
 }
 
-
-
 void GameArena::movePlayer(int player, int x, int y)
 {
 	map.setPlayerPosition(player, x, y);
 	playersItem[player]->setPos(x-squareSize/2,y-squareSize/2,squareSize);
 }
+
 void GameArena::addBomb(int player, int squareX, int squareY, int bombId)
 {
 	int x,y;
@@ -181,6 +183,35 @@ void GameArena::blockChanged(int pos)
 	scene->removeItem(tempItem);
 	scene->addItem(tempItem);
 	emit pixmapChanged(pos);
+}
+
+void GameArena::updateMap(QByteArray& updateBlock) {
+	QDataStream updateIn(updateBlock);
+
+	qint32 heartBeat;
+	updateIn >> heartBeat;
+	map.setHeartBeat(heartBeat);
+qDebug() << "On recoit le heartbeat " << heartBeat;
+	QList<Flame*> cleanList;
+	//updateIn >> cleanList;
+	foreach(Flame* flamesN, cleanList) {
+		QSet<QPoint> flames = flamesN->getFlamePositions();
+//		foreach(QPoint flameN, flames)
+//			flamesN->
+	}
+
+	qint8 playerListSize;
+	updateIn >> playerListSize;
+	qDebug() << playerListSize << " players received";
+	for(qint8 i = 0; i < playerListSize; i++) {
+		Player playerN;
+		updateIn >> playerN;
+		qDebug() << "Player #" << playerN.getId() << ", x:" << playerN.getX() << " y:" << playerN.getY();
+		movePlayer(playerN.getId(), playerN.getX(), playerN.getY());
+	}
+
+	QList<Flame*> explodeList;
+	//updateIn >> explodeList;
 }
 
 void GameArena::blockChanged(int i, int j)

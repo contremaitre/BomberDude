@@ -45,7 +45,7 @@ public:
     ~NetServer();
     void run();
     void close();
-    void move(int plId, int direction);
+	//void move(int plId, int direction);
     void addBomb(int id);
     //call this function when the game is launched
     void assignNumberToPlayers();
@@ -64,9 +64,9 @@ private:
 private slots:
     void incomingClient();
     void receiveUdp();
-    void removeBomb(int bombId);
-    void addFlame(Flame& flame);
-    void removeFlame(int flameId);
+
+	// sent by the game loop
+	void updateMap(QByteArray updateData);
 
 signals:
     void newPlayer();
