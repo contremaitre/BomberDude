@@ -19,13 +19,12 @@
 #include "Serverd.h"
 #include "NetServer.h"
 #include "constant.h"
-#include "Map.h"
+#include "MapServer.h"
 
 Serverd::Serverd(int port, int mapSize, int blockSize)
 {
-    map = new Map(mapSize,mapSize,blockSize);
-    map->loadRandom();
-    //server = new NetServer(map,port);
+    server = new NetServer(port);
+    server->createRandomMap(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
 }
 
 void Serverd::launch()

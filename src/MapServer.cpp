@@ -59,40 +59,27 @@ void MapServer::loadRandom()
 		getBlockList()[w].setType(BlockMapProperty::wall);
 		getBlockList()[(getHeight()-1)*getWidth()+w].setType(BlockMapProperty::wall);
 	}
-	qDebug() << "add walls and bricks (bis)";
-
 	for(int h = 1; h < getHeight()-1; h++)
 	{
 		getBlockList()[h*getWidth()].setType(BlockMapProperty::wall);
 		getBlockList()[h*getWidth()+getWidth()-1].setType(BlockMapProperty::wall);
 	}
-	qDebug() << "add walls and bricks (ter)";
-	//add players
-	setPlayerPosition(0 ,getBlockSize() + getBlockSize()/2, getBlockSize() + getBlockSize()/2);
-	setPlayerPosition(1,(getWidth()-2) * getBlockSize() + getBlockSize()/2,(getHeight()-2) * getBlockSize() + getBlockSize()/2);
-	setPlayerPosition(2,getBlockSize() + getBlockSize()/2, (getHeight()-2) * getBlockSize() + getBlockSize()/2);//middle of the second block
-	setPlayerPosition(3,(getWidth()-2) * getBlockSize() + getBlockSize()/2,getBlockSize() + getBlockSize()/2);
-	qint16 x_position,y_position;
-	int x,y;
-	//player 0 position
-	getPlayerPosition(0,x_position,y_position);
-	getBlockPosition(x_position,y_position,x,y);
-	setType(BlockMapProperty::empty,x,y);
-	getPlayerPosition(1,x_position,y_position);
-	getBlockPosition(x_position,y_position,x,y);
-	setType(BlockMapProperty::empty,x,y);
-	getPlayerPosition(2,x_position,y_position);
-	getBlockPosition(x_position,y_position,x,y);
-	setType(BlockMapProperty::empty,x,y);
-	getPlayerPosition(3,x_position,y_position);
-	getBlockPosition(x_position,y_position,x,y);
-	setType(BlockMapProperty::empty,x,y);
-	//player 2 position
-	//player 3 position
+	qDebug() << "add players";
+
+    //randomly add players
+    for (int i = 0; i < getMaxNbPlayers(); i++)
+    {
+        int x, y;
+        int w = (qrand() % (getWidth() - 1)) + 1;
+        int h = (qrand() % (getHeight() - 1)) + 1;
+        qDebug() << "Player" << i << ", pos " << w << h;
+        w = w * getBlockSize() + getBlockSize() / 2;
+        h = h * getBlockSize() + getBlockSize() / 2;
+        setPlayerPosition(i, w, h);
+        getBlockPosition(w, h, x, y);
+        setType(BlockMapProperty::empty, x, y);
+    }
 }
-
-
-
 
 void MapServer::requestBombPlayer(int id) {
 	QList<Player*>::iterator itPlayer = players.begin();
@@ -106,7 +93,6 @@ void MapServer::requestBombPlayer(int id) {
 	//qDebug() << "Player #" << id << " going " << direction;
 	(*itPlayer)->raiseLayingBomb();
 }
-
 
 /**
  *   1  2  3

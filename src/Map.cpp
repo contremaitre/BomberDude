@@ -62,6 +62,7 @@ void Map::setDim(qint16 w, qint16 h, qint16 bs)
     Init();
 }
 
+<<<<<<< HEAD
 void Map::loadRandom()
 {
     qsrand(time(NULL));
@@ -110,6 +111,8 @@ void Map::loadRandom()
 	}
 }
 
+=======
+>>>>>>> 8f7b0bc28ad1b0e5e9e04e54534f1afab9968f95
 BlockMapProperty::BlockType Map::getType(int w,int h) const
 {
     return block_list[h*width+w].getType();

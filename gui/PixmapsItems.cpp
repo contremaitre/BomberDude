@@ -41,13 +41,13 @@ void PixmapsItems::loadAll()
         bomberman[i] = ps;
     }
 
-    QPixmap p2("pictures/brique.jpg");
+    QPixmap p2("pictures/brick.png");
     QPixmap ps2 = p2.scaled(QSizeF(width,height).toSize());
     tmp_block.pixmap = ps2;
     tmp_block.type = BlockMapProperty::brick;
     block_pixmaps.push_back(tmp_block);
 
-    QPixmap p3("pictures/stonewall.jpg");
+    QPixmap p3("pictures/wall.png");
     QPixmap ps3 = p3.scaled(QSizeF(width,height).toSize());
     tmp_block.pixmap = ps3;
     tmp_block.type = BlockMapProperty::wall;

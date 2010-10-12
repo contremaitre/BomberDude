@@ -28,7 +28,7 @@
 #include <QObject>
 
 class NetServer;
-class Map;
+class MapServer;
 
 class Serverd : public QObject
 {
@@ -41,7 +41,7 @@ public:
 
 private:
     NetServer *server;
-    Map *map;
+    MapServer *map;
 
 private slots:
     void slotStart();
