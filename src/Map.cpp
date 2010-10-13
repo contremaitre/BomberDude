@@ -196,7 +196,7 @@ qint16 Map::getBlockSize() const
     return blockSize;
 }
 
-qint16 Map::getMaxNbPlayers() const
+qint8 Map::getMaxNbPlayers() const
 {
     return MAX_NB_PLAYER;
 }
@@ -227,7 +227,8 @@ QDataStream &operator<<(QDataStream &out, const Map &map)
 
 QDataStream &operator>>(QDataStream & in, Map &map)
 {
-    qint16 maxNbPlayers, width, height, blockSize;
+    qint8 maxNbPlayers;
+	qint16 width, height, blockSize;
     in >> maxNbPlayers >> width >> height >> blockSize;
     map.setDim(width, height, blockSize);
 

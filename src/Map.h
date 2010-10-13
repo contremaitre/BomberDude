@@ -73,7 +73,7 @@ public:
     //get the coordinates of the player
     void getPlayerPosition(int, qint16&, qint16&) const;
     void setPlayerPosition(int id, qint16 , qint16);
-    qint16 getMaxNbPlayers() const;
+    qint8 getMaxNbPlayers() const;
     qint16 getBlockSize() const;
     void flame(Flame* f);
     void removeFlame(int flameId);
