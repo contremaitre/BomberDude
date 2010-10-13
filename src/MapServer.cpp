@@ -83,7 +83,7 @@ void MapServer::loadRandom()
 
 void MapServer::requestBombPlayer(int id) {
 	QList<Player*>::iterator itPlayer = players.begin();
-	while(itPlayer != players.end())
+	for(; itPlayer != players.end(); ++itPlayer)
 		if((*itPlayer)->getId() == id)
 			break;
 	if(itPlayer == players.end()) {
@@ -103,7 +103,7 @@ void MapServer::requestBombPlayer(int id) {
  */
 void MapServer::requestMovePlayer(int id, int direction) {
 	QList<Player*>::iterator itPlayer = players.begin();
-	while(itPlayer != players.end())
+	for(; itPlayer != players.end(); ++itPlayer)
 		if((*itPlayer)->getId() == id)
 			break;
 	if(itPlayer == players.end()) {
