@@ -192,6 +192,7 @@ void GameArena::updateMap(QByteArray& updateBlock) {
 	qint32 heartBeat;
 	updateIn >> heartBeat;
 	map.setHeartBeat(heartBeat);
+	if(heartBeat % 20 == 0)
 	qDebug() << "Received heartbeat " << heartBeat;
 
 	QList<qint16> cleanList;
@@ -201,21 +202,19 @@ void GameArena::updateMap(QByteArray& updateBlock) {
 
 	qint8 playerListSize;
 	updateIn >> playerListSize;
-	qDebug() << playerListSize << " players received";
+//	qDebug() << playerListSize << " players received";
 	for(qint8 i = 0; i < playerListSize; i++) {
 		Player playerN;
 		updateIn >> playerN;
-		qDebug() << "Player #" << playerN.getId() << ", x:" << playerN.getX() << " y:" << playerN.getY();
 		movePlayer(playerN.getId(), playerN.getX(), playerN.getY());
 	}
 
 	qint8 newBombsListSize;
 	updateIn >> newBombsListSize;
-	qDebug() << newBombsListSize << " new bombs received";
+//	qDebug() << newBombsListSize << " new bombs received";
 	for(qint8 i = 0; i < newBombsListSize; i++) {
 		Bomb bombN;
 		updateIn >> bombN;
-		qDebug() << "Bomb #" << bombN.bombId << ", player #" << bombN.playerId << ", x:" << bombN.x << ", y:" << bombN.y;
 		addBomb(bombN.playerId, bombN.x, bombN.y, bombN.bombId);
 	}
 
