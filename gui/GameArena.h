@@ -33,7 +33,7 @@ private:
     QGraphicsView *view;
     QGraphicsScene *scene;
     QMainWindow *mainWindow;
-    Map map;
+    Map* map;
     PixmapsItems pixmaps;
     QGraphicsSquareItem **squaresItem;
     QGraphicsSquareItem **playersItem;
@@ -64,7 +64,7 @@ public:
 	void updateMap(QByteArray& updateBlock);
     int getNbPlayers() const;
     const Map *getMap();
-    void setMap(const Map *);
+    void setMap(Map *);
 
 private slots:
     void blockChanged(int);

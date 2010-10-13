@@ -62,7 +62,7 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
 
 void GamePlay::launch()
 {
-    connect(client,SIGNAL(mapReceived(const Map*)),this,SLOT(mapReceived(const Map*)));
+    connect(client,SIGNAL(mapReceived(Map*)),this,SLOT(mapReceived(Map*)));
     /**
      * If we act as a server we must create the map
      * We wait to receive the map from the server to display the graphics
@@ -92,7 +92,7 @@ void GamePlay::launch()
     }
 }
 
-void GamePlay::mapReceived(const Map *map)
+void GamePlay::mapReceived(Map *map)
 {
     //todo. If we are the server we recreate the map. It's useless
     //qDebug() << "map received, create graphics";
