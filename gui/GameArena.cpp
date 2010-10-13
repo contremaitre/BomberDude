@@ -84,6 +84,7 @@ void GameArena::createGraphics()
     view->setMinimumSize(size,size);
     view->setScene(scene);
     view->show();
+    view->setFocus();
 }
 
 void GameArena::getEventFilter(QObject *obj)
