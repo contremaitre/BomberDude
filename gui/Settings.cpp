@@ -26,11 +26,13 @@ Settings::Settings()
     isServer = qsettings->value("isServer",false).toBool();
     serverAddress = qsettings->value("serverAddress",SERVER_ADDRESS).toString();
     serverPort = qsettings->value("serverPort",SERVER_PORT).toInt();
+    sound = qsettings->value("sound", true).toBool();
 }
 
 void Settings::save()
 {
     qsettings->setValue("isServer",isServer);
+    qsettings->setValue("sound",sound);
     qsettings->setValue("serverAddress",serverAddress);
     qsettings->setValue("serverPort",serverPort);
 }
@@ -50,6 +52,11 @@ int Settings::getServerPort() const
     return serverPort;
 }
 
+bool Settings::isSound() const
+{
+    return sound;
+}
+
 void Settings::setServer(bool val)
 {
     isServer = val;
@@ -63,6 +70,11 @@ void Settings::setServerPort(int port)
 void Settings::setServerAddress(const QString& addr)
 {
     serverAddress = addr;
+}
+
+void Settings::setSound(bool val)
+{
+    sound = val;
 }
 
 Settings::~Settings()

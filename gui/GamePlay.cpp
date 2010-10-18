@@ -18,7 +18,6 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QTimer>
-#include <QSound>
 
 #include "GamePlay.h"
 #include "GameArena.h"
@@ -35,9 +34,6 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     timerPing = new QTimer(this);
     connect(timerPing, SIGNAL(timeout()),this,SLOT(slotPingTimer()));
     timerPing->start(2000); // Ping every 2s
-    music = new QSound("sounds/music.wav",this);
-    music->setLoops(-1);
-    music->play();
     leftK = rightK = upK = downK = false;
     gameArena = new GameArena(mainw, BLOCK_SIZE);
     gameArena->getEventFilter(this);
@@ -51,12 +47,6 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     connect(client,SIGNAL(flameReceived(Flame&)),this,SLOT(flameReceived(Flame&)));
     connect(client,SIGNAL(flameRemoved(qint16)),this,SLOT(flameRemoved(qint16)));
     settings = set;
-
-    if(QSound::isAvailable())
-      qDebug() << "Sound OK ";
-    else
-      qDebug() << "No Sound ";
-
 }
 
 void GamePlay::launch()
@@ -258,7 +248,6 @@ void GamePlay::slotClientConnectError()
 GamePlay::~GamePlay()
 {
     delete gameArena;
-    delete music;
     delete timerPing;
     if(server)
     {

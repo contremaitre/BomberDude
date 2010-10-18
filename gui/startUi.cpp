@@ -17,44 +17,62 @@
 
 #include "startUi.h"
 #include "ui_main_window.h"
-#include "ui_network.h"
 #include "Settings.h"
 #include "GamePlay.h"
+#include <QSound>
 
 StartUi::StartUi()
 {
     gamePlay = NULL;
     settings = new Settings;
     mainWindow = new Ui_MainWindow;
-    network = new Ui_Network;
     mainWindow->setupUi(this);
-    network->setupUi(this);
     loadNetWidget();
+    loadSound();
     connect(mainWindow->startButton,SIGNAL(clicked()),this,SLOT(start()));
-    connect(network->isServer, SIGNAL(stateChanged(int)), this, SLOT(isServerChanged(int)));
+    connect(mainWindow->isServer, SIGNAL(stateChanged(int)), this, SLOT(isServerChanged(int)));
+    connect(mainWindow->sound, SIGNAL(stateChanged(int)), this, SLOT(soundChanged(int)));
+}
+
+void StartUi::loadSound()
+{
+    music = NULL;
+    if(!QSound::isAvailable())
+    {
+        qDebug() << "No Sound available";
+        mainWindow->sound->setEnabled(false);
+        mainWindow->sound->setCheckState(Qt::Unchecked);
+        return;
+    }
+    Qt::CheckState checked = settings->isSound() ? Qt::Checked : Qt::Unchecked;
+    mainWindow->sound->setCheckState(checked);
+    toggleMusic(settings->isSound());
 }
 
 void StartUi::loadNetWidget()
 {
     Qt::CheckState checked = settings->getServer() ? Qt::Checked : Qt::Unchecked;
-    network->isServer->setCheckState(checked);
-    network->serverIp->setPlainText(settings->getServerAddress());
+
+    mainWindow->isServer->setCheckState(checked);
+    mainWindow->serverIp->setPlainText(settings->getServerAddress());
     QString port;
     port.setNum(settings->getServerPort());
-    network->serverPort->setPlainText(QString(port));
+    mainWindow->serverPort->setPlainText(QString(port));
     setAddrFieldEnabled(checked == 0);
 }
 
 bool StartUi::setSettings()
 {
-    bool ok;
-    int port = network->serverPort->toPlainText().toInt(&ok);
+    bool ok, checked;
+    int port = mainWindow->serverPort->toPlainText().toInt(&ok);
     if(!ok)
         return false;
-    bool checked = network->isServer->checkState() == 0 ? false : true; 
+    checked = mainWindow->isServer->checkState() == 0 ? false : true;
     settings->setServer(checked);
     settings->setServerPort(port);
-    settings->setServerAddress(network->serverIp->toPlainText());
+    settings->setServerAddress(mainWindow->serverIp->toPlainText());
+    checked = mainWindow->sound->checkState() == 0 ? false : true;
+    settings->setSound(checked);
     return true;
 }
 
@@ -63,6 +81,9 @@ void StartUi::start()
     if(!setSettings())
         return;
     mainWindow->startButton->hide();
+    mainWindow->network_pref->hide();
+    mainWindow->sound_pref->hide();
+
     gamePlay = new GamePlay(this, settings);
     connect( gamePlay, SIGNAL(connectedToServer()), this, SLOT(slotConnected()) );
     connect( gamePlay, SIGNAL(connectionError()), this, SLOT(slotConnectionError()) );
@@ -72,13 +93,31 @@ void StartUi::start()
 
 void StartUi::setAddrFieldEnabled(bool en)
 {
-    network->serverIp->setEnabled(en);
-    network->ipLabel->setEnabled(en);
+    mainWindow->serverIp->setEnabled(en);
+    mainWindow->ipLabel->setEnabled(en);
 }
 
 void StartUi::isServerChanged(int state)
 {
     setAddrFieldEnabled(state == 0);
+}
+
+void StartUi::soundChanged(int state)
+{
+    toggleMusic(state != 0);
+}
+
+void StartUi::toggleMusic(bool on)
+{
+    delete music;
+    music = NULL;
+    qDebug() << "music" << on;
+    if(on)
+    {
+        music = new QSound("sounds/music.wav",this);
+        music->setLoops(-1);
+        music->play();
+    }
 }
 
 void StartUi::slotConnected()
@@ -93,6 +132,8 @@ void StartUi::closeGame()
     delete gamePlay;
     gamePlay = NULL;
     mainWindow->startButton->show();
+    mainWindow->network_pref->show();
+    mainWindow->sound_pref->show();
 }
 
 void StartUi::slotConnectionError()
@@ -107,5 +148,6 @@ StartUi::~StartUi()
     delete gamePlay;
     delete mainWindow;
     delete settings;
+    delete music;
 }
 

@@ -26,11 +26,12 @@
 #define STARTUI_H
 #include <QObject>
 #include <QMainWindow>
+#include <QLayout>
 
 class Ui_MainWindow;
-class Ui_Network;
 class GamePlay;
 class Settings;
+class QSound;
 
 class StartUi : public QMainWindow
 {
@@ -42,17 +43,20 @@ public:
 private:
     //QMainWindow mainw;
     Ui_MainWindow *mainWindow;
-    Ui_Network *network;
     GamePlay *gamePlay;
     Settings *settings;
+    QSound *music;
 
     void loadNetWidget();
+    void loadSound();
     bool setSettings();
     void setAddrFieldEnabled(bool);
+    void toggleMusic(bool);
 
 private slots:
     void start();
     void isServerChanged(int);
+    void soundChanged(int);
     void slotConnectionError();
     void slotConnected();
     void closeGame();

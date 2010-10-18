@@ -30,6 +30,8 @@ private:
     int serverPort;
     QString serverAddress;
     bool isServer;
+    bool sound;
+
 public:
     Settings();
     ~Settings();
@@ -37,10 +39,12 @@ public:
     bool getServer() const;
     QString getServerAddress() const;
     int getServerPort() const;
+    bool isSound() const;
     void save();
     void setServer(bool);
     void setServerPort(int);
     void setServerAddress(const QString&);
+    void setSound(bool);
 
 };
 

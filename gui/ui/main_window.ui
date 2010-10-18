@@ -39,6 +39,98 @@
      <string>Start</string>
     </property>
    </widget>
+   <widget class="QWidget" name="network_pref" native="true">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>271</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <widget class="QCheckBox" name="isServer">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>91</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Server</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="ipLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>50</y>
+       <width>119</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Server IP</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="portLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>119</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Server port</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="serverIp">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>50</y>
+       <width>131</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="serverPort">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>100</y>
+       <width>131</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="sound_pref" native="true">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>10</y>
+      <width>171</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <widget class="QCheckBox" name="sound">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>91</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Sound</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

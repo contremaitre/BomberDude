@@ -22,8 +22,8 @@ HEADERS += QGraphicsSquareItem.h \
     PixmapsItems.h \
     Settings.h \
     startUi.h
-FORMS += ui/main_window.ui \
-    ui/network.ui
+FORMS += ui/main_window.ui
+
 SOURCES += QGraphicsSquareItem.cpp \
     GameArena.cpp \
     GamePlay.cpp \
