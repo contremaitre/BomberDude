@@ -25,11 +25,11 @@
 #include <time.h> //qrand seed
 
 Map::Map() :
-	block_list(0),
-	heartBeat(-999999999),
 	width(0),
 	height(0),
-	blockSize(0)
+	blockSize(0),
+    block_list(0),
+    heartBeat(-999999999)
 {}
 
 Map::Map(qint16 w, qint16 h, qint16 bs) :
