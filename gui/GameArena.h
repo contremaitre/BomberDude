@@ -33,7 +33,7 @@ private:
     QGraphicsView *view;
     QGraphicsScene *scene;
     QMainWindow *mainWindow;
-    Map map;
+    Map* map;
     PixmapsItems pixmaps;
     QGraphicsSquareItem **squaresItem;
     QGraphicsSquareItem **playersItem;
@@ -58,15 +58,17 @@ public:
     int getCaseSize() const;
     void movePlayer(int player, int x, int y);
     void addBomb(int player, int x, int y, int bombId);
-    void addFlame(Flame& flame);
+    void addFlame(Flame* flame);
     void removeFlame(int flameId);
-    void removeBomb(int bombId);
+    void removeBomb(qint16 bombId);
+	void updateMap(QByteArray& updateBlock);
     int getNbPlayers() const;
     const Map *getMap();
-    void setMap(const Map *);
+    void setMap(Map *);
 
 private slots:
     void blockChanged(int);
+	void blockChanged(int x, int y);
 
 signals:
     void pixmapChanged(int);

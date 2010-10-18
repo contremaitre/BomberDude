@@ -18,10 +18,20 @@
 #include "Bomb.h"
 #include <QDebug>
 
-int Bomb::index=1;
+qint16 Bomb::index=1;
+
+//constructor for serialization
+Bomb::Bomb() :
+	x(-1),
+	y(-1),
+	playerId(-1),
+	duration(-1),
+	range(-1),
+	bombId(-1)
+{}
+
 //constructor for server
-Bomb::Bomb(int range, int playerId, int duration, int x, int y) :
-		blinkTimer(this)
+Bomb::Bomb(int range, qint8 playerId, int duration, qint16 x, qint16 y)
 {
 	qDebug() << "Bomb constructor";
 	this->range = range;
@@ -29,31 +39,29 @@ Bomb::Bomb(int range, int playerId, int duration, int x, int y) :
     this->duration = duration;
     this->x=x;
     this->y=y;
-	blinkTimer.setSingleShot(true);
-	connect(&blinkTimer, SIGNAL(timeout()), this, SLOT(bombTimeout()));
-	blinkTimer.start(duration);
     this->bombId=index;
       index++;
 }
 
 //constructor for client
-Bomb::Bomb(int playerId, int x, int y, int bombId)
+Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId)
 {
    this->playerId = playerId;
    this->x=x;
    this->y=y;
    this->bombId=bombId;
 }
-void Bomb::bombTimeout(){
-
-	emit explode(this);
-}
-
 
 Bomb::~Bomb()
 {
 }
-//bool Bomb::operator< (const Bomb & b)
-//{
-//	return this->x*100+this->y<b.x*100+b.y;
-//}
+
+QDataStream& operator>>(QDataStream& in, Bomb& f) {
+	in >> f.bombId >> f.x >> f.y >> f.playerId;
+	return in;
+}
+
+QDataStream& operator<<(QDataStream& out, const Bomb& f) {
+	out << f.bombId << f.x << f.y << f.playerId;
+	return out;
+}

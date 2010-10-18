@@ -24,27 +24,35 @@
 #include <string.h>
 #include <time.h> //qrand seed
 
-Map::Map()
-{
-    block_list = NULL;
-    setDim(0,0,0);
-}
+Map::Map() :
+	block_list(0),
+	heartBeat(-999999999),
+	width(0),
+	height(0),
+	blockSize(0)
+{}
 
-Map::Map(qint16 w, qint16 h, qint16 bs)
+Map::Map(qint16 w, qint16 h, qint16 bs) :
+	block_list(0),
+	heartBeat(-999999999)
 {
-    block_list = NULL;
-    setDim(w,h,bs);}
+	setDim(w,h,bs);
+}
 
 void Map::Init()
 {
-    delete[] block_list;
-    if( width * height > 0 )
-    {
-        block_list = new BlockMapProperty[width*height];
-    }
-    else
-        block_list = NULL;
-    memset(playersPositions,0,sizeof(playersPositions));
+	// FIXME if block_list is not null, we already called Init(), is it supposed to happen?
+	if(block_list != 0)
+		return;
+
+    if( width * height <= 0 )
+		return;
+
+    block_list = new BlockMapProperty[width*height];
+
+	for(qint8 i = 0; i < MAX_NB_PLAYER; i++)
+		players.append(new Player(i));
+
     qDebug() << "init";
 }
 
@@ -79,14 +87,14 @@ void Map::setType(BlockMapProperty::BlockType type, int x, int y)
 void Map::setPlayerPosition(int id, qint16 x, qint16 y)
 {
     int x_oldBlock, y_oldBlock;
-    playersPositions[id].x = x;
-    playersPositions[id].y = y;
+	players[id]->setX(x);
+	players[id]->setY(y);
     //emit playerMoved(id, x, y); useless?
 }
 
-void Map::flame(Flame& flame)
+void Map::flame(Flame* flame)
 {
-	flames.append(&flame);
+	flames.append(flame);
 }
 
 void Map::removeFlame(int flameId)
@@ -111,7 +119,7 @@ Bomb* Map::bomb(int id, int squareX, int squareY, int bombId)
     return newBomb;
 }
 
-void Map::removeBomb(int bombId)
+void Map::removeBomb(qint16 bombId)
 {
 	foreach (Bomb *b, bombs)
 	{
@@ -170,8 +178,8 @@ void Map::getBlockPosition(int x, int y, int &xdest, int &ydest) const
 
 void Map::getPlayerPosition(int pl, qint16 &x, qint16 &y) const
 {
-    x = playersPositions[pl].x;
-    y = playersPositions[pl].y;
+	x = players[pl]->getX();
+	y = players[pl]->getY();
 }
 BlockMapProperty* Map::getBlockList()
 {
@@ -190,7 +198,7 @@ qint16 Map::getBlockSize() const
     return blockSize;
 }
 
-qint16 Map::getMaxNbPlayers() const
+qint8 Map::getMaxNbPlayers() const
 {
     return MAX_NB_PLAYER;
 }
@@ -221,7 +229,8 @@ QDataStream &operator<<(QDataStream &out, const Map &map)
 
 QDataStream &operator>>(QDataStream & in, Map &map)
 {
-    qint16 maxNbPlayers, width, height, blockSize;
+    qint8 maxNbPlayers;
+	qint16 width, height, blockSize;
     in >> maxNbPlayers >> width >> height >> blockSize;
     map.setDim(width, height, blockSize);
 
@@ -249,9 +258,11 @@ Map & Map::operator=(const Map &oldMap)
     setDim(oldMap.width, oldMap.height, oldMap.blockSize);
     for(int i = 0; i < width*height; i++)
         block_list[i].setType(oldMap.block_list[i].getType());
-    for(int i = 0; i < getMaxNbPlayers(); i++)
-        playersPositions[i] = oldMap.playersPositions[i];
-//    memcpy(playersPositions, oldMap.playersPositions, sizeof(*playersPositions)*getMaxNbPlayers()));
+
+	//do not copy the pointers but the objects themselves
+	foreach(const Player* playerN, oldMap.players)
+		players.append(new Player(*playerN));
+
     return *this;
 }
 

@@ -18,9 +18,13 @@
 #include <QDebug>
 #include <QGraphicsView>
 #include <QMainWindow>
+#include <QDataStream>
+#include <QList>
+#include "Flame.h"
 #include "GameArena.h"
 
-GameArena::GameArena(QMainWindow * mainw, int s)
+GameArena::GameArena(QMainWindow * mainw, int s) :
+	map(0)
 {
 	width = height = 0;
 	squareSize = s;
@@ -29,7 +33,8 @@ GameArena::GameArena(QMainWindow * mainw, int s)
     scene = new QGraphicsScene;
     mainWindow = mainw;
     view = NULL;
-	connect(&map,SIGNAL(blockChanged(int)),this,SLOT(blockChanged(int)));
+	//connect(&map,SIGNAL(blockChanged(int)),this,SLOT(blockChanged(int)));
+	//connect(&map,SIGNAL(blockChanged(int,int)),this,SLOT(blockChanged(int,int)));
 	loadPixMaps();
 }
 
@@ -40,24 +45,24 @@ void GameArena::loadPixMaps()
 
 void GameArena::init()
 {
-	width = map.getWidth();
-	height = map.getHeight();
+	width = map->getWidth();
+	height = map->getHeight();
 	delete[] squaresItem;
 	delete[] playersItem;
 	squaresItem = new QGraphicsSquareItem*[width * height];
-	playersItem = new QGraphicsSquareItem*[map.getMaxNbPlayers()];
+	playersItem = new QGraphicsSquareItem*[map->getMaxNbPlayers()];
 	for(int i = 0; i < width; i++)
 	{
 		for(int j = 0; j < height; j++)
 		{
 			initCase(i,j);
-			getCase(i,j)->setItem(pixmaps.getPixmap(map.getType(i,j)));
+			getCase(i,j)->setItem(pixmaps.getPixmap(map->getType(i,j)));
 		}
 	}
 	qint16 x,y;
-	for(int i = 0; i < map.getMaxNbPlayers(); i++)
+	for(int i = 0; i < map->getMaxNbPlayers(); i++)
 	{
-		map.getPlayerPosition(i,x,y);
+		map->getPlayerPosition(i,x,y);
 		playersItem[i] = new QGraphicsSquareItem(x-squareSize/2,y-squareSize/2,squareSize);
 		playersItem[i]->setItem(pixmaps.getPixmap(i));
 	}
@@ -92,25 +97,24 @@ void GameArena::getEventFilter(QObject *obj)
     scene->installEventFilter(obj);
 }
 
-void GameArena::setMap(const Map *map)
+void GameArena::setMap(Map *map)
 {
-	this->map = *map;
+	this->map = map;
 	init();
 }
 
-
-
 void GameArena::movePlayer(int player, int x, int y)
 {
-	map.setPlayerPosition(player, x, y);
+	map->setPlayerPosition(player, x, y);
 	playersItem[player]->setPos(x-squareSize/2,y-squareSize/2,squareSize);
 }
+
 void GameArena::addBomb(int player, int squareX, int squareY, int bombId)
 {
 	int x,y;
 	x=squareX*squareSize;
 	y=squareY*squareSize;
-	Bomb* bomb=map.bomb(player, squareX, squareY, bombId);
+	Bomb* bomb=map->bomb(player, squareX, squareY, bombId);
 	qDebug()<<"add a bomb"<<bomb;
 
 	if (bomb)
@@ -124,25 +128,25 @@ void GameArena::addBomb(int player, int squareX, int squareY, int bombId)
 	}
 }
 
-void GameArena::addFlame(Flame& flame)
+void GameArena::addFlame(Flame* flame)
 {
-	map.flame(flame);
+	map->flame(flame);
 	QList<QGraphicsSquareItem*> *flameItems=new QList<QGraphicsSquareItem*>();
 
-	foreach (QPoint point, flame.getFlamePositions())
+	foreach (QPoint point, flame->getFlamePositions())
 	{
 		QGraphicsSquareItem* item = new QGraphicsSquareItem(point.x() * squareSize, point.y() * squareSize, squareSize);
 		item->setItem(pixmaps.getPixmap(BlockMapProperty::flame));
 		flameItems->append(item);
 		scene->addItem(item);
 	}
-	flamesItem.insert(flame.getFlameId(),flameItems);
+	flamesItem.insert(flame->getFlameId(),flameItems);
 }
 
 
-void GameArena::removeBomb(int bombId)
+void GameArena::removeBomb(qint16 bombId)
 {
-	map.removeBomb(bombId);
+	map->removeBomb(bombId);
 	QGraphicsSquareItem * itemToRemove=bombsItem.value(bombId);
     scene->removeItem(itemToRemove);
 	bombsItem.remove(bombId);
@@ -151,7 +155,7 @@ void GameArena::removeBomb(int bombId)
 
 void GameArena::removeFlame(int flameId)
 {
-	map.removeFlame(flameId);
+	map->removeFlame(flameId);
 	QList<QGraphicsSquareItem *>* itemsToRemove=flamesItem.value(flameId);
 	qDebug()<< "GameArena> removeFlame";
     foreach(QGraphicsSquareItem * item, *itemsToRemove)
@@ -175,13 +179,75 @@ void GameArena::initCase(int i, int j)
 
 void GameArena::blockChanged(int pos)
 {
-	getCase(pos)->setItem(pixmaps.getPixmap(map.getType(pos)));
+	QGraphicsSquareItem* tempItem = getCase(pos);
+	qDebug() << "Wall: " << tempItem->getItem()->pixmap().cacheKey() << ", new value: " << pixmaps.getPixmap(map->getType(pos)).cacheKey();
+	tempItem->setItem(pixmaps.getPixmap(map->getType(pos)));
+	scene->removeItem(tempItem);
+	scene->addItem(tempItem);
 	emit pixmapChanged(pos);
+}
+
+void GameArena::updateMap(QByteArray& updateBlock) {
+	// FIXME this method should not be called before the map has been setup,
+	// i.e. the calling method which is a slot should not be connected before
+	// I'll leave that as an exercise to whoever fixes a bit the workflow of
+	// the client :p
+	if(map == 0)
+		return;
+
+	QDataStream updateIn(updateBlock);
+
+	qint32 heartBeat;
+	updateIn >> heartBeat;
+	map->setHeartBeat(heartBeat);
+	if(heartBeat % 20 == 0)
+	qDebug() << "Received heartbeat " << heartBeat;
+
+	QList<qint16> cleanList;
+	updateIn >> cleanList;
+	foreach(qint16 flameId, cleanList)
+		removeFlame(flameId);
+
+	qint8 playerListSize;
+	updateIn >> playerListSize;
+//	qDebug() << playerListSize << " players received";
+	for(qint8 i = 0; i < playerListSize; i++) {
+		Player playerN;
+		updateIn >> playerN;
+		movePlayer(playerN.getId(), playerN.getX(), playerN.getY());
+	}
+
+	qint8 newBombsListSize;
+	updateIn >> newBombsListSize;
+//	qDebug() << newBombsListSize << " new bombs received";
+	for(qint8 i = 0; i < newBombsListSize; i++) {
+		Bomb bombN;
+		updateIn >> bombN;
+		addBomb(bombN.playerId, bombN.x, bombN.y, bombN.bombId);
+	}
+
+	qint8 nbExplosions;
+	updateIn >> nbExplosions;
+	for(qint8 i = 0; i < nbExplosions; i++) {
+		Flame* f = new Flame();
+		updateIn >> *f;
+
+		QList<qint16>::const_iterator itBomb = f->getFirstDetonatedBomb();
+		for( ; itBomb != f->getLastDetonatedBomb(); ++itBomb)
+			removeBomb(*itBomb);
+
+		addFlame(f);
+	}
+}
+
+void GameArena::blockChanged(int i, int j)
+{
+	blockChanged(j * width + i);
 }
 
 const Map *GameArena::getMap()
 {
-	return &map;
+	return map;
 }
 
 int GameArena::getWidth()
@@ -196,7 +262,7 @@ int GameArena::getHeight()
 
 int GameArena::getNbPlayers() const
 {
-	return map.getMaxNbPlayers();
+	return map->getMaxNbPlayers();
 }
 
 QGraphicsSquareItem *GameArena::getCase(int i, int j)
@@ -224,7 +290,7 @@ GameArena::~GameArena()
 	}
 	if(playersItem)
 	{
-		for(int i = 0; i < map.getMaxNbPlayers(); i++)
+		for(int i = 0; i < map->getMaxNbPlayers(); i++)
 			delete playersItem[i];
 		delete[] playersItem;
 	}

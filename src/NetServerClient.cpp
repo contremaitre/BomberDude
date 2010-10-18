@@ -71,7 +71,7 @@ void NetServerClient::handleMsg(QDataStream &in)
         {
             qint16 direction;
             in >> direction;
-            server->move(playerNumber, direction);
+			//server->move(playerNumber, direction);
         }
         break;
         default:
@@ -200,6 +200,11 @@ void NetServerClient::udpReceived()
         //qDebug() << "player" << playerId << "received" << udpCpt << "udp packets";
         sendUdpStats();
     }
+}
+
+void NetServerClient::sendUpdate(const QByteArray& block) {
+	//qDebug() << "Sending update";
+	udpSocket->writeDatagram(block,peerAddress,peerUdpPort);
 }
 
 NetServerClient::~NetServerClient()

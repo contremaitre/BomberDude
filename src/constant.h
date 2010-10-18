@@ -15,6 +15,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+#ifndef CONSTANT_H_
+#define CONSTANT_H_
+
+
 //constants that may be later removed or changed in a configuration menu
 
 //Graphics
@@ -36,3 +41,6 @@
 //Gameplay
 #define MOVE_TICK_INTERVAL 50 //(ms)
 #define MOVE_STEP (int)(BLOCK_SIZE/7)
+
+
+#endif // CONSTANT_H_

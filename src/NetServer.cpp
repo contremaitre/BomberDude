@@ -26,14 +26,16 @@
 NetServer::NetServer(int port) : QThread()
 {
     map = new MapServer;
-    connect(map,SIGNAL(bombRemoved(int)),this,SLOT(removeBomb(int)));
-    connect(map,SIGNAL(flameRemoved(int)),this,SLOT(removeFlame(int)));
-    connect(map,SIGNAL(addFlame(Flame&)),this,SLOT(addFlame(Flame&)));
+    connect(map,SIGNAL(updatedMap(QByteArray)),this,SLOT(updateMap(QByteArray)));
+    //connect(map,SIGNAL(bombRemoved(int)),this,SLOT(removeBomb(int)));
+    //connect(map,SIGNAL(flameRemoved(int)),this,SLOT(removeFlame(int)));
+    //connect(map,SIGNAL(addFlame(Flame&)),this,SLOT(addFlame(Flame&)));
     this->port = port;
     tcpServer = NULL;
     udpSocket = NULL;
     playersInGame = NULL;
 }
+
 void NetServer::run()
 {
     qDebug("NetServer run");
@@ -50,6 +52,7 @@ void NetServer::run()
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(receiveUdp()), Qt::DirectConnection);
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(incomingClient()), Qt::DirectConnection);
     emit serverReady();
+	map->startHeartBeat(0, 50);
     exec();
 }
 
@@ -143,7 +146,7 @@ void NetServer::receiveUdp()
         case msg_move:
         {
             int direction = readMove(in);
-            move(client->getId(), direction);
+			map->requestMovePlayer(client->getId(), direction);
         }
             break;
         case msg_ping:
@@ -156,10 +159,8 @@ void NetServer::receiveUdp()
           break;
         }
         case msg_bomb:
-        {
-		  addBomb(client->getId());
-          break;
-        }
+			map->requestBombPlayer(client->getId());
+			break;
         default:
             qDebug() << "NetServer readMove discarding unkown message";
             break;
@@ -205,61 +206,36 @@ int NetServer::readMove(QDataStream &in)
 }
 
 
-void NetServer::addBomb(int id)
-{
-  int bombId = map->bomb(id);
-  if(bombId)
-    {
-        //qDebug()<<"send bomb to clients";
-	  	  //send the bomb to the clients
-        qint16 x,y;
-        int squareX,squareY;
-        map->getPlayerPosition(id, x, y);
-        map->getBlockPosition(x,y,squareX,squareY);
-        foreach (NetServerClient *client, clients) {
-        client->bombAdded(id,squareX,squareY,bombId);
-        }
-    }
-}
+//void NetServer::addBomb(int id)
+//{
+//  int bombId = map->bomb(id);
+//  if(bombId)
+//    {
+//        //qDebug()<<"send bomb to clients";
+//	  	  //send the bomb to the clients
+//        qint16 x,y;
+//        int squareX,squareY;
+//        map->getPlayerPosition(id, x, y);
+//        map->getBlockPosition(x,y,squareX,squareY);
+//        foreach (NetServerClient *client, clients) {
+//        client->bombAdded(id,squareX,squareY,bombId);
+//        }
+//    }
+//}
 
-void NetServer::removeBomb(int bombId)
-{
-	//qDebug()<< "NetServer>removeBomb "<< bombId;
-	foreach (NetServerClient *client, clients) {
-	            client->bombRemoved(bombId);
-	        }
-}
-
-void NetServer::removeFlame(int flameId)
-{
-	//qDebug()<< "NetServer>removeFlame "<< flameId;
-		foreach (NetServerClient *client, clients) {
-		            client->flameRemoved(flameId);
-		        }
-}
-
-void NetServer::addFlame(Flame & flame)
-{
-	//qDebug()<< "NetServer>addFlame ";
-	foreach (NetServerClient *client, clients) {
-		client->flameAdded(flame);
-	}
-}
-
-
-void NetServer::move(int plId, int direction)
-{
-    bool ok = map->movePlayer(plId,direction);
-    if(ok)
-    {
-        //send the move to the clients
-        qint16 x,y;
-        map->getPlayerPosition(plId, x, y);
-        foreach (NetServerClient *client, clients) {
-            client->playerMoved(plId,x,y);
-        }
-    }
-}
+//void NetServer::move(int plId, int direction)
+//{
+//    bool ok = map->movePlayer(plId,direction);
+//    if(ok)
+//    {
+//        //send the move to the clients
+//        qint16 x,y;
+//        map->getPlayerPosition(plId, x, y);
+//        foreach (NetServerClient *client, clients) {
+//            client->playerMoved(plId,x,y);
+//        }
+//    }
+//}
 
 void NetServer::createRandomMap(int w, int h,int squareSize)
 {
@@ -286,4 +262,18 @@ NetServer::~NetServer()
     delete udpSocket;
     delete map;
     delete[] playersInGame;
+}
+
+void NetServer::updateMap(QByteArray updateData) {
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_0);
+	out << (quint16)0;
+	out << (quint16)msg_update_map;
+	out << updateData;
+	out.device()->seek(0);
+	out << (quint16)(block.size() - sizeof(quint16));
+
+	foreach(NetServerClient *client, clients)
+		client->sendUpdate(block);
 }

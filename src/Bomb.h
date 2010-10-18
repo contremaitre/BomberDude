@@ -26,37 +26,36 @@ class Bomb : public QObject
 {
     Q_OBJECT
 
-    static int index;
-private:
-	QTimer blinkTimer;
 public:
-    int x;
-    int y;
+	Bomb();
+	Bomb(int range, qint8 playerId, int duration, qint16 x, qint16 y);
+	Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId);
+	~Bomb();
+
+	void decreaseLifeSpan()					{ duration--; }
+
+	// TODO must also check that the bomb is not in movement
+	bool mustExplode()						{ return duration < 0; }
+
+private:
+	static qint16 index;
+
+public:
+    qint16 x;
+    qint16 y;
     //owner
-    int playerId;
-    //duration in ms
+    qint8 playerId;
+	//duration in heartbeats
     int duration;
     int range;
-    int bombId;
+    qint16 bombId;
 
-public:
-    Bomb(int range, int playerId, int duration, int x, int y);
-    Bomb(int playerId, int x, int y,int bombId);
-    ~Bomb();
-
-
-
-
-//bool operator<(const Bomb & b);
-
-signals:
-     void aspectChanged();
-     void explode(Bomb* b);
-
-private slots:
-	void bombTimeout();
-
-
+	friend QDataStream& operator>>(QDataStream& in, Bomb& f);
+	friend QDataStream& operator<<(QDataStream& out, const Bomb& f);
 };
-#endif
 
+QDataStream& operator>>(QDataStream& in, Bomb& f);
+QDataStream& operator<<(QDataStream& out, const Bomb& f);
+
+
+#endif

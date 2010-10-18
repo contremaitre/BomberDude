@@ -188,6 +188,12 @@ void NetClient::receiveUdp()
 			//qDebug() << "NetClient>flames removed "<<flameId;
 		}
 		break;
+		case msg_update_map: {
+				QByteArray updateBlock;
+				in >> updateBlock;
+				emit updateMap(updateBlock);
+			}
+			break;
 		default:
 			qDebug() << "NetClient readMove discarding unkown message";
 			break;

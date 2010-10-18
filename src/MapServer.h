@@ -30,45 +30,51 @@
 
 class MapServer : public Map
 {
-	 Q_OBJECT
+	Q_OBJECT
+
 private:
-
-
 	void propagateFlame(Flame & f, const QPoint & p, int range);
 	void directedFlameProgagation(Flame & f, const QPoint & p, const QPoint & direction, int range);
     void adjustPlayerPosition(int plId, int xDirection, int yDirection);
     //Test if a coordinate is bellow (-1) on (0) or above (1) the middle of the block
     int coordinatePositionInBlock(int coord);
     int absMin(int a, int b) const;
-    bool movePlayerLeft(int id);
+	bool movePlayer(int id, int direction);
+	bool movePlayerLeft(int id);
     bool movePlayerRight(int id);
     bool movePlayerUp(int id);
     bool movePlayerDown(int id);
     bool movePlayerOld(int id, int direction);
 
+	QTimer timerHeartBeat;
+
 	static const QPoint dirLeft;
 	static const QPoint dirRight;
 	static const QPoint dirUp;
 	static const QPoint dirDown;
+
 public:
-//    MapServer();
+	MapServer();
 //    MapServer(qint16, qint16, qint16);
 //    ~MapServer();
-    void loadRandom();
-    bool movePlayer(int id, int direction);
-    int bomb(int id, int x, int y);
-    int bomb(int id);
-private slots :
-void explosion(Bomb* b);
-void flameEnd(Flame& f);
+	void loadRandom();
+	Bomb* bomb(int id);
+	Bomb* bomb(int id, int x, int y);
+	void requestMovePlayer(int id, int direction);
+	void requestBombPlayer(int id);
+
+	void startHeartBeat(qint32 startValue, int intervals);
+
+private:
+	const Flame* explosion(Bomb* b);
 
 signals:
-	void addFlame(Flame& f);
-    void bombRemoved(int bombId);
-    void flameRemoved(int flameId);
+	void updatedMap(QByteArray data);
+
+public slots:
+	void newHeartBeat();
+
 };
 
 
-
 #endif
-

@@ -19,77 +19,66 @@
 #include <QDebug>
 
 
-int Flame::index=1;
+qint16 Flame::index=1;
 
-void Flame::addFlame(int x, int y) {
-	flames.append(QPoint(x,y));
+
+uint qHash(const QPoint& key) {
+	return qHash((key.x() << 8) + key.y());
 }
 
-QList<QPoint> Flame::getFlamePositions() const{
-	return flames;
-}
+
 Flame::Flame() {
 }
 
 //constructor for server
-Flame::Flame(int playerId, int duration) :
-		blinkTimer(this)
+Flame::Flame(qint8 playerId, int duration)
 {
 	this->playerId=playerId;
 	flameId=index;
 	index++;
-	blinkTimer.setSingleShot(true);
-	connect(&blinkTimer, SIGNAL(timeout()), this, SLOT(flameTimeout()));
-	//blinkTimer.start(duration);
 	this->duration=duration;
-	//qDebug()<< "connect timer to flameTimeOut "<<duration;//<< " "<<blinkTimer.isActive();
-
-}
-
-void Flame::startFlameTimer(){
-	blinkTimer.start(duration);
 }
 
 Flame::~Flame() {
 	// TODO Auto-generated destructor stub
 }
 
+void Flame::addFlame(int x, int y) {
+	flames.insert(QPoint(x,y));
+}
 
-void Flame::flameTimeout()
+void Flame::addBrokenBlock(int x, int y) {
+	brokenBlocks.insert(QPoint(x,y));
+}
+
+QDataStream &operator<<(QDataStream &out, const Flame& flame)
 {
-	//qDebug() << "Flame>flameTimeout";
-	emit flameEnd(*this);
+	out << flame.flameId;
+	out << flame.flames;
+	//out << flame.brokenBlocks;
+
+	qint16 nbBombs = flame.detonatedBombs.size();
+	out << nbBombs;
+	foreach(qint16 bombId, flame.detonatedBombs)
+		out << bombId;
+
+	return out;
 }
 
-
-int Flame::getFlameId() const{
-	return flameId;
-}
-
-void Flame::setFlameId(int id){
-	flameId=id;
-}
-
-QDataStream &operator<<(QDataStream &out, const Flame &flame)
+QDataStream &operator>>(QDataStream & in, Flame& flame)
 {
-    out << (qint16)(flame.getFlamePositions().size()) << (qint16) flame.getFlameId();
-	foreach(const QPoint flamePosition , flame.getFlamePositions())
-    {
-		out << (qint16)flamePosition.x() << (qint16)flamePosition.y();
-    }
-    return out;
+	in >> flame.flameId;
+	in >> flame.flames;
+	//in >> flame.brokenBlocks;
+
+	qint16 nbBombs;
+	in >> nbBombs;
+	for(qint16 i = 0; i < nbBombs; i++) {
+		qint16 bombId;
+		in >> bombId;
+		flame.detonatedBombs.append(bombId);
+	}
+
+	return in;
 }
 
-QDataStream &operator>>(QDataStream & in, Flame &flame)
-{
-    qint16 numberOfFlames, flameId;
-    in >> numberOfFlames >> flameId;
-    flame.setFlameId(flameId);
-    for (int i=0;i<numberOfFlames;i++)
-    {
-    	qint16 x,y;
-    	in >> x >> y;
-    	flame.addFlame(x,y);
-    }
-    return in;
-}
