@@ -28,12 +28,12 @@ Map::Map() :
 	width(0),
 	height(0),
 	blockSize(0),
-    block_list(0),
+    block_list(NULL),
     heartBeat(-999999999)
 {}
 
 Map::Map(qint16 w, qint16 h, qint16 bs) :
-	block_list(0),
+	block_list(NULL),
 	heartBeat(-999999999)
 {
 	setDim(w,h,bs);
@@ -41,13 +41,10 @@ Map::Map(qint16 w, qint16 h, qint16 bs) :
 
 void Map::Init()
 {
-	// FIXME if block_list is not null, we already called Init(), is it supposed to happen?
-	if(block_list != 0)
-		return;
-
     if( width * height <= 0 )
 		return;
 
+    delete[] block_list;
     block_list = new BlockMapProperty[width*height];
 
 	for(qint8 i = 0; i < MAX_NB_PLAYER; i++)
