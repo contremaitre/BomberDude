@@ -55,7 +55,7 @@ QDataStream &operator<<(QDataStream &out, const Flame& flame)
 {
 	out << flame.flameId;
 	out << flame.flames;
-	//out << flame.brokenBlocks;
+	out << flame.brokenBlocks;
 
 	qint16 nbBombs = flame.detonatedBombs.size();
 	out << nbBombs;
@@ -69,7 +69,7 @@ QDataStream &operator>>(QDataStream & in, Flame& flame)
 {
 	in >> flame.flameId;
 	in >> flame.flames;
-	//in >> flame.brokenBlocks;
+	in >> flame.brokenBlocks;
 
 	qint16 nbBombs;
 	in >> nbBombs;

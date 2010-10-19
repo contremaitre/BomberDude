@@ -224,6 +224,16 @@ void GameArena::updateMap(QByteArray& updateBlock) {
 		for( ; itBomb != f->getLastDetonatedBomb(); ++itBomb)
 			removeBomb(*itBomb);
 
+        QSet<QPoint>::const_iterator itBrBlock = f->getFirstBrokenBlock();
+        for( ; itBrBlock != f->getLastBrokenBlock(); ++itBrBlock)
+        {
+            //qDebug() << "GameArena brokenblock";
+            int i = itBrBlock->x();
+            int j = itBrBlock->y();
+            map->setType(BlockMapProperty::empty, i, j);
+            getCase(i,j)->setItem(pixmaps.getPixmap(map->getType(i,j)));
+        }
+
 		addFlame(f);
 	}
 }
