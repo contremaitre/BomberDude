@@ -43,11 +43,6 @@ class NetServerClient : public QObject
       public:
   NetServerClient(QTcpSocket *, QUdpSocket *, int id, NetServer *);
   ~NetServerClient();
-  void playerMoved(int plId, int x, int y);
-  void bombAdded(int plId, int x, int y, int bombId);
-  void bombRemoved(int bombId);
-  void flameAdded(Flame & flame);
-  void flameRemoved(int flameId);
   void sendMap(const Map&);
   void sendUpdate(const QByteArray& block);
   QHostAddress getAddress() const;

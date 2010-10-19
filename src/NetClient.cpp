@@ -157,37 +157,6 @@ void NetClient::receiveUdp()
 			emit moveReceived( player, x, y );
 		}
 		break;
-		case msg_bomb:
-		{
-			qint16 player, x, y, bombId;
-			in >> player >> x >> y >> bombId;
-			//qDebug() << "netclient bomb received " << x << " " << y;
-			emit bombReceived( player, x, y , bombId);
-		}
-		break;
-		case msg_rmbomb:
-		{
-			qint16 bombId;
-			in >> bombId;
-			emit bombRemoved(bombId);
-		}
-		break;
-		case msg_flame:
-		{
-			Flame flame;
-			in >> flame;
-			emit flameReceived(flame);
-			//qDebug() << "NetClient>flames received "<<flame.getFlamePositions().size()<<" "<<flame.getFlamePositions().at(0)->x()<<" "<<flame.getFlamePositions().at(0)->y();
-		}
-		break;
-		case msg_rmflame:
-		{
-			qint16 flameId;
-			in >> flameId;
-			emit flameRemoved(flameId);
-			//qDebug() << "NetClient>flames removed "<<flameId;
-		}
-		break;
 		case msg_update_map: {
 				QByteArray updateBlock;
 				in >> updateBlock;

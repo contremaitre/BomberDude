@@ -86,7 +86,6 @@ void Map::setPlayerPosition(int id, qint16 x, qint16 y)
     int x_oldBlock, y_oldBlock;
 	players[id]->setX(x);
 	players[id]->setY(y);
-    //emit playerMoved(id, x, y); useless?
 }
 
 void Map::flame(Flame* flame)

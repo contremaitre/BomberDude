@@ -27,9 +27,6 @@ NetServer::NetServer(int port) : QThread()
 {
     map = new MapServer;
     connect(map,SIGNAL(updatedMap(QByteArray)),this,SLOT(updateMap(QByteArray)));
-    //connect(map,SIGNAL(bombRemoved(int)),this,SLOT(removeBomb(int)));
-    //connect(map,SIGNAL(flameRemoved(int)),this,SLOT(removeFlame(int)));
-    //connect(map,SIGNAL(addFlame(Flame&)),this,SLOT(addFlame(Flame&)));
     this->port = port;
     tcpServer = NULL;
     udpSocket = NULL;
@@ -204,38 +201,6 @@ int NetServer::readMove(QDataStream &in)
     //qDebug() << "NetServer readMove UDP" << direction;
     return direction;
 }
-
-
-//void NetServer::addBomb(int id)
-//{
-//  int bombId = map->bomb(id);
-//  if(bombId)
-//    {
-//        //qDebug()<<"send bomb to clients";
-//	  	  //send the bomb to the clients
-//        qint16 x,y;
-//        int squareX,squareY;
-//        map->getPlayerPosition(id, x, y);
-//        map->getBlockPosition(x,y,squareX,squareY);
-//        foreach (NetServerClient *client, clients) {
-//        client->bombAdded(id,squareX,squareY,bombId);
-//        }
-//    }
-//}
-
-//void NetServer::move(int plId, int direction)
-//{
-//    bool ok = map->movePlayer(plId,direction);
-//    if(ok)
-//    {
-//        //send the move to the clients
-//        qint16 x,y;
-//        map->getPlayerPosition(plId, x, y);
-//        foreach (NetServerClient *client, clients) {
-//            client->playerMoved(plId,x,y);
-//        }
-//    }
-//}
 
 void NetServer::createRandomMap(int w, int h,int squareSize)
 {

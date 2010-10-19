@@ -44,8 +44,6 @@ public:
     ~NetServer();
     void run();
     void close();
-	//void move(int plId, int direction);
-    //void addBomb(int id);
     //call this function when the game is launched
     void createRandomMap(int w, int h,int squareSize);
 private:

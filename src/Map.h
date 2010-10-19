@@ -88,9 +88,6 @@ public:
 signals:
     void blockChanged(int pos);
 	void blockChanged(int i, int j);
-
-    //void playerMoved(int pl, int x, int y); useless?
-
 };
 
 QDataStream &operator>>(QDataStream & in, Map &map);

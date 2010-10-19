@@ -30,11 +30,8 @@ enum NetMsgType
     msg_moved,
     msg_udp_welcome,
     msg_map,
-    msg_ping,
     msg_bomb,
-    msg_rmbomb,
-    msg_flame,
-    msg_rmflame,
+    msg_ping,
     msg_udp_stat,
 	msg_update_map,
 };
