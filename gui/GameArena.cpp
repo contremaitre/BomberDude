@@ -33,8 +33,6 @@ GameArena::GameArena(QMainWindow * mainw, int s) :
     scene = new QGraphicsScene;
     mainWindow = mainw;
     view = NULL;
-	//connect(&map,SIGNAL(blockChanged(int)),this,SLOT(blockChanged(int)));
-	//connect(&map,SIGNAL(blockChanged(int,int)),this,SLOT(blockChanged(int,int)));
 	loadPixMaps();
 }
 
@@ -177,16 +175,6 @@ void GameArena::initCase(int i, int j)
 	squaresItem[j*width+i] = new QGraphicsSquareItem(x_a,y_a,squareSize);
 }
 
-void GameArena::blockChanged(int pos)
-{
-	QGraphicsSquareItem* tempItem = getCase(pos);
-	qDebug() << "Wall: " << tempItem->getItem()->pixmap().cacheKey() << ", new value: " << pixmaps.getPixmap(map->getType(pos)).cacheKey();
-	tempItem->setItem(pixmaps.getPixmap(map->getType(pos)));
-	scene->removeItem(tempItem);
-	scene->addItem(tempItem);
-	emit pixmapChanged(pos);
-}
-
 void GameArena::updateMap(QByteArray& updateBlock) {
 	// FIXME this method should not be called before the map has been setup,
 	// i.e. the calling method which is a slot should not be connected before
@@ -238,11 +226,6 @@ void GameArena::updateMap(QByteArray& updateBlock) {
 
 		addFlame(f);
 	}
-}
-
-void GameArena::blockChanged(int i, int j)
-{
-	blockChanged(j * width + i);
 }
 
 const Map *GameArena::getMap()
