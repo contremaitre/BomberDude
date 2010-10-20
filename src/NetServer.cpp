@@ -49,7 +49,7 @@ void NetServer::run()
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(receiveUdp()), Qt::DirectConnection);
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(incomingClient()), Qt::DirectConnection);
     emit serverReady();
-	map->startHeartBeat(0, 50);
+	map->startHeartBeat(0, MOVE_TICK_INTERVAL);
     exec();
 }
 
