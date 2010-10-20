@@ -109,6 +109,11 @@ void Map::removeFlame(int flameId)
             {
                 setType(BlockMapProperty::empty,point.x(),point.y());
             }
+			QSet<QPoint>::const_iterator itBroken = f->getFirstBrokenBlock();
+			for(; itBroken != f->getLastBrokenBlock(); ++itBroken) {
+				setType(BlockMapProperty::empty, itBroken->x(), itBroken->y());
+			}
+
             delete f;
             return;
         }

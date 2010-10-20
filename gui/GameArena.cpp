@@ -204,7 +204,7 @@ void GameArena::updateMap(QByteArray& updateBlock) {
             //qDebug() << "GameArena brokenblock";
             int i = itBrBlock->x();
             int j = itBrBlock->y();
-            map->setType(BlockMapProperty::empty, i, j);
+            map->setType(BlockMapProperty::broken, i, j);
             getCase(i,j)->setItem(pixmaps.getPixmap(map->getType(i,j)));
         }
 
