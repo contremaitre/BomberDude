@@ -329,7 +329,7 @@ Bomb* MapServer::bomb(int playerId)
 Bomb* MapServer::bomb(int playerId, int squareX, int squareY)
 {
 	// is there a bomb at the same place ?
-	foreach (Bomb *b, *getBombList())
+	foreach (Bomb *b, bombs)
 	{
 		if((b->x == squareX) && (b->y == squareY))
 			return 0;
@@ -337,22 +337,22 @@ Bomb* MapServer::bomb(int playerId, int squareX, int squareY)
 
 	// add the bomb
 	Bomb *newBomb = new Bomb(3, playerId, 100, squareX, squareY);
-	getBombList()->append(newBomb);
-	qDebug() << " MapServer> AddBomb : " << getBombList()->size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
+	bombs.append(newBomb);
+	qDebug() << " MapServer> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
 	return newBomb;
 }
 
 
 const Flame* MapServer::explosion(Bomb* b)
 {
-	getBombList()->removeOne(b);
+	bombs.removeOne(b);
 	Flame *f = new Flame(b->playerId,20);
 	f->addDetonatedBomb(*b);
 
 	QPoint tempPoint = QPoint(b->x,b->y);
 	propagateFlame(*f, tempPoint, b->range);
 
-	getFlameList()->append(f);
+	flames.append(f);
 
 	qDebug()<<"BOOM !";
 	return f;
@@ -395,11 +395,11 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 			return;
 		}
 
-		foreach(Bomb * b, *getBombList())
+		foreach(Bomb * b, bombs)
 		{
 			if (b->x == pTemp.x() && b->y == pTemp.y())
 			{
-				getBombList()->removeOne(b);
+				bombs.removeOne(b);
 				f.addDetonatedBomb(*b);
 				QPoint newPos = QPoint(b->x, b->y);
 				propagateFlame(f, newPos, b->range);

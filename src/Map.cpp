@@ -181,13 +181,6 @@ BlockMapProperty* Map::getBlockList()
 {
     return block_list;
 }
-QList<Bomb*>* Map::getBombList(){
-	return &bombs;
-}
-
-QList<Flame*>* Map::getFlameList(){
-	return &flames;
-}
 
 qint16 Map::getBlockSize() const
 {

@@ -66,8 +66,6 @@ public:
     void setType(BlockMapProperty::BlockType type, int pos);
     void setType(BlockMapProperty::BlockType type, int x, int y);
     BlockMapProperty* getBlockList() ;
-    QList<Bomb*>* getBombList();
-    QList<Flame*>* getFlameList();
     //get the block number at coordinate x,y
     void getBlockPosition(int, int, int&, int&) const;
     //get the coordinates of the player
