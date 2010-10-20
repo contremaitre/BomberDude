@@ -33,8 +33,6 @@ GameArena::GameArena(QMainWindow * mainw, int s) :
     scene = new QGraphicsScene;
     mainWindow = mainw;
     view = NULL;
-	//connect(&map,SIGNAL(blockChanged(int)),this,SLOT(blockChanged(int)));
-	//connect(&map,SIGNAL(blockChanged(int,int)),this,SLOT(blockChanged(int,int)));
 	loadPixMaps();
 }
 
@@ -101,6 +99,8 @@ void GameArena::setMap(Map *map)
 {
 	this->map = map;
 	init();
+    connect(map,SIGNAL(blockChanged(int)),this,SLOT(blockChanged(int)));
+    connect(map,SIGNAL(blockChanged(int,int)),this,SLOT(blockChanged(int,int)));
 }
 
 void GameArena::movePlayer(int player, int x, int y)
@@ -111,60 +111,25 @@ void GameArena::movePlayer(int player, int x, int y)
 
 void GameArena::addBomb(int player, int squareX, int squareY, int bombId)
 {
-	int x,y;
-	x=squareX*squareSize;
-	y=squareY*squareSize;
-	Bomb* bomb=map->bomb(player, squareX, squareY, bombId);
-	qDebug()<<"add a bomb"<<bomb;
-
-	if (bomb)
-	{
-		QGraphicsSquareItem* bombItem=new QGraphicsSquareItem(x,y,squareSize);
-		bombItem->setItem(pixmaps.getPixmap(BlockMapProperty::bomb));
-
-		bombsItem.insert(bombId,bombItem);
-		scene->addItem(bombItem);
-
-	}
+	map->addBomb(player, squareX, squareY, bombId);
 }
 
 void GameArena::addFlame(Flame* flame)
 {
-	map->flame(flame);
-	QList<QGraphicsSquareItem*> *flameItems=new QList<QGraphicsSquareItem*>();
-
-	foreach (QPoint point, flame->getFlamePositions())
-	{
-		QGraphicsSquareItem* item = new QGraphicsSquareItem(point.x() * squareSize, point.y() * squareSize, squareSize);
-		item->setItem(pixmaps.getPixmap(BlockMapProperty::flame));
-		flameItems->append(item);
-		scene->addItem(item);
-	}
-	flamesItem.insert(flame->getFlameId(),flameItems);
+	map->addFlame(flame);
 }
 
 
 void GameArena::removeBomb(qint16 bombId)
 {
 	map->removeBomb(bombId);
-	QGraphicsSquareItem * itemToRemove=bombsItem.value(bombId);
-    scene->removeItem(itemToRemove);
-	bombsItem.remove(bombId);
-	delete itemToRemove;
 }
 
 void GameArena::removeFlame(int flameId)
 {
 	map->removeFlame(flameId);
-	QList<QGraphicsSquareItem *>* itemsToRemove=flamesItem.value(flameId);
-	qDebug()<< "GameArena> removeFlame";
-    foreach(QGraphicsSquareItem * item, *itemsToRemove)
-	{
-        //qDebug()<< "GameField> flameRemoved(2)";
-        scene->removeItem(item);
-	}
-	flamesItem.remove(flameId);
 }
+
 int GameArena::getCaseSize() const
 {
 	return squareSize;
@@ -180,11 +145,8 @@ void GameArena::initCase(int i, int j)
 void GameArena::blockChanged(int pos)
 {
 	QGraphicsSquareItem* tempItem = getCase(pos);
-	qDebug() << "Wall: " << tempItem->getItem()->pixmap().cacheKey() << ", new value: " << pixmaps.getPixmap(map->getType(pos)).cacheKey();
+	//qDebug() << "Wall: " << tempItem->getItem()->pixmap().cacheKey() << ", new value: " << pixmaps.getPixmap(map->getType(pos)).cacheKey();
 	tempItem->setItem(pixmaps.getPixmap(map->getType(pos)));
-	scene->removeItem(tempItem);
-	scene->addItem(tempItem);
-	emit pixmapChanged(pos);
 }
 
 void GameArena::updateMap(QByteArray& updateBlock) {

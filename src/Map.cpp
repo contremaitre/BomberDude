@@ -79,6 +79,7 @@ void Map::setType(BlockMapProperty::BlockType type, int pos)
 void Map::setType(BlockMapProperty::BlockType type, int x, int y)
 {
     block_list[y*width+x].setType(type);
+    emit blockChanged(x,y);
 }
 
 void Map::setPlayerPosition(int id, qint16 x, qint16 y)
@@ -88,31 +89,38 @@ void Map::setPlayerPosition(int id, qint16 x, qint16 y)
 	players[id]->setY(y);
 }
 
-void Map::flame(Flame* flame)
+void Map::addFlame(Flame* flame)
 {
 	flames.append(flame);
+    foreach (QPoint point, flame->getFlamePositions())
+    {
+        setType(BlockMapProperty::flame,point.x(),point.y());
+    }
 }
 
 void Map::removeFlame(int flameId)
 {
-	foreach (Flame *f, flames)
-	{
-	  if(f->getFlameId() == flameId)
-	  {
-		  flames.removeOne(f);
-		  delete f;
-		  return;
-	  }
+    foreach (Flame *f, flames)
+    {
+        if(f->getFlameId() == flameId)
+        {
+            flames.removeOne(f);
+            foreach (QPoint point, f->getFlamePositions())
+            {
+                setType(BlockMapProperty::empty,point.x(),point.y());
+            }
+            delete f;
+            return;
+        }
 	}
 }
 
-Bomb* Map::bomb(int id, int squareX, int squareY, int bombId)
+void Map::addBomb(int id, int squareX, int squareY, int bombId)
 {
-	Bomb *newBomb=NULL;
-    newBomb = new Bomb(id, squareX, squareY, bombId) ;
+	Bomb *newBomb = new Bomb(id, squareX, squareY, bombId);
     bombs.append(newBomb);
     qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<"bombId: "<<newBomb->bombId;
-    return newBomb;
+    setType(BlockMapProperty::bomb,squareX,squareY);
 }
 
 void Map::removeBomb(qint16 bombId)
@@ -122,6 +130,7 @@ void Map::removeBomb(qint16 bombId)
 	  if(b->bombId == bombId)
 	  {
 		  bombs.removeOne(b);
+		  setType(BlockMapProperty::bomb,b->x,b->y);
 		  delete b;
 		  return;
 	  }

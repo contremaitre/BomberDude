@@ -37,8 +37,6 @@ private:
     PixmapsItems pixmaps;
     QGraphicsSquareItem **squaresItem;
     QGraphicsSquareItem **playersItem;
-    QHash<int,QGraphicsSquareItem*> bombsItem;
-    QHash<int,QList<QGraphicsSquareItem*>* > flamesItem;
     void initCase(int, int);
     void init();
     void loadPixMaps();
@@ -69,9 +67,6 @@ public:
 private slots:
     void blockChanged(int);
 	void blockChanged(int x, int y);
-
-signals:
-    void pixmapChanged(int);
 };
 
 #endif

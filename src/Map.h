@@ -73,9 +73,9 @@ public:
     void setPlayerPosition(int id, qint16 , qint16);
     qint8 getMaxNbPlayers() const;
     qint16 getBlockSize() const;
-    void flame(Flame* f);
+    void addFlame(Flame* f);
     void removeFlame(int flameId);
-    Bomb* bomb(int id, int x, int y,int bombId);
+    void addBomb(int id, int x, int y,int bombId);
     void removeBomb(qint16 bombId);
     bool blockContainsBomb(int x,int y);
     Map & operator=(const Map &);
