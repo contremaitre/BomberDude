@@ -385,12 +385,13 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 	for (int i=0;i<range;i++)
 	{
 		pTemp=pTemp+direction;
-		if (getType(pTemp.x(),pTemp.y())==BlockMapProperty::wall)
+		if (getType(pTemp.x(),pTemp.y())==BlockMapProperty::wall ||
+			getType(pTemp.x(),pTemp.y())==BlockMapProperty::broken )
 			return;
 
 		if (getType(pTemp.x(),pTemp.y())==BlockMapProperty::brick)
 		{
-			setType(BlockMapProperty::empty, pTemp.x(), pTemp.y());
+			setType(BlockMapProperty::broken, pTemp.x(), pTemp.y());
 			f.addBrokenBlock(pTemp.x(),pTemp.y());
 			return;
 		}
@@ -443,6 +444,13 @@ void MapServer::newHeartBeat() {
 		(*itFlame)->decreaseLifeSpan();
 		if( (*itFlame)->isFinished() ) {
 			cleanList.append((*itFlame)->getFlameId());
+			// remove the broken bricks
+			// TODO : drop bonus here
+			QSet<QPoint>::const_iterator itBroken = (*itFlame)->getFirstBrokenBlock();
+			for(; itBroken != (*itFlame)->getLastBrokenBlock(); ++itBroken) {
+				setType(BlockMapProperty::empty, itBroken->x(), itBroken->y());
+			}
+
 			flames.erase(itFlame++);
 		}
 		else
