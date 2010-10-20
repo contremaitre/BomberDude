@@ -64,6 +64,12 @@ void PixmapsItems::loadAll()
     tmp_block.pixmap = ps5;
     tmp_block.type = BlockMapProperty::flame;
     block_pixmaps.push_back(tmp_block);
+
+    QPixmap p6("pictures/broken.png");
+    QPixmap ps6 = p6.scaled(QSizeF(width,height).toSize());
+    tmp_block.pixmap = ps6;
+    tmp_block.type = BlockMapProperty::broken;
+    block_pixmaps.push_back(tmp_block);
 }
 
 QPixmap PixmapsItems::getPixmap(BlockMapProperty::BlockType type)
