@@ -82,6 +82,10 @@ public:
 
 	void setHeartBeat(qint32 hb)							{ heartBeat = hb; }
 	qint32 getHeartBeat() const								{ return heartBeat; }
+
+signals:
+    void blockChanged(int pos);
+	void blockChanged(int i, int j);
 };
 
 QDataStream &operator>>(QDataStream & in, Map &map);
