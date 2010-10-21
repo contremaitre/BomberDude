@@ -77,6 +77,7 @@ public:
     void removeFlame(int flameId);
     void addBomb(int id, int x, int y,int bombId);
     void removeBomb(qint16 bombId);
+    bool blockContainsBomb(int x,int y);
     Map & operator=(const Map &);
 
 	void setHeartBeat(qint32 hb)							{ heartBeat = hb; }
