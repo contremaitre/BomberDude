@@ -351,6 +351,7 @@ const Flame* MapServer::explosion(Bomb* b)
 	QPoint tempPoint = QPoint(b->x,b->y);
 	propagateFlame(*f, tempPoint, b->range);
 
+	delete b;
 	addFlame(f);
 	//flames.append(f);
 
