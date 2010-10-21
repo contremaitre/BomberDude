@@ -31,7 +31,7 @@ Bomb::Bomb() :
 {}
 
 //constructor for server
-Bomb::Bomb(int range, qint8 playerId, int duration, qint16 x, qint16 y)
+Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range)
 {
 	qDebug() << "Bomb constructor";
 	this->range = range;
@@ -50,6 +50,7 @@ Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId)
    this->x=x;
    this->y=y;
    this->bombId=bombId;
+   range = duration = -1;
 }
 
 Bomb::~Bomb()

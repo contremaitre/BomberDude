@@ -162,7 +162,7 @@ bool MapServer::movePlayerOld(int id, int direction)
 	 * Rules for a player move :
 	 * Get the block where the player is and :
 	 * - 1 if the player is at or beyond the middle of the block (wrt the direction of the move),
-	 * and if the next block is empty, we move toward the next block
+	 *     and if the next block is empty, we move toward the next block
 	 * - 2 if the next block is not empty, we try to circle the block if it is possible
 	 * - 3 else the move is rejected
 	 */
@@ -197,8 +197,9 @@ bool MapServer::movePlayerOld(int id, int direction)
 	//qDebug() << "next block" << x_nextBlock << y_nextBlock ;
 	BlockMapProperty::BlockType typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
 
-	//here we test if the next block is empty and if the next block does not contains a bomb or if the next block is the same as the actual block (if we are before the middle of the block)
-	if( typeOfNextBlock == BlockMapProperty::empty && (((x_originalBlock==x_nextBlock) && (y_originalBlock==y_nextBlock))||!blockContainsBomb(x_nextBlock,y_nextBlock)))
+	//here we test if the next block is empty or if the next block is the same as the current block (if we are before the middle of the block)
+	if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame )
+	        || ((x_originalBlock==x_nextBlock) && (y_originalBlock==y_nextBlock)) )
 	{
 		qint16 x,y;
 		getPlayerPosition(id,x,y);
@@ -247,7 +248,7 @@ bool MapServer::movePlayerOld(int id, int direction)
 			{
 				getBlockPosition( x_player, y_player+sign*getBlockSize()/2, x_nextBlock, y_nextBlock );
 				typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
-				if( typeOfNextBlock == BlockMapProperty::empty && !blockContainsBomb(x_nextBlock,y_nextBlock))
+				if( typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame )
 				{
 					setPlayerPosition(id,x+ move_x/2,y+absMin(pos,MOVE_STEP));
 					return true;
@@ -262,7 +263,7 @@ bool MapServer::movePlayerOld(int id, int direction)
 			{
 				getBlockPosition( x_player+sign*getBlockSize()/2, y_player, x_nextBlock, y_nextBlock );
 				typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
-				if( typeOfNextBlock == BlockMapProperty::empty && !blockContainsBomb(x_nextBlock,y_nextBlock))
+				if( typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame )
 				{
 					setPlayerPosition(id,x+absMin(pos,MOVE_STEP),y+ move_y/2);
 					return true;
@@ -316,28 +317,26 @@ int MapServer::coordinatePositionInBlock(int coord)
 	//return 1;
 }
 
-//to be used by server only
-Bomb* MapServer::bomb(int playerId)
+Bomb* MapServer::addBomb(int playerId)
 {
 	int squareX,squareY;
 	qint16 x,y;
 	getPlayerPosition(playerId,x,y);
 	getBlockPosition(x,y,squareX,squareY);
-	return bomb(playerId,squareX,squareY);
+	return addBomb(playerId,squareX,squareY);
 }
 
-Bomb* MapServer::bomb(int playerId, int squareX, int squareY)
+
+Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
 {
 	// is there a bomb at the same place ?
-	foreach (Bomb *b, bombs)
-	{
-		if((b->x == squareX) && (b->y == squareY))
-			return 0;
-	}
+    if(getType(squareX, squareY) == BlockMapProperty::bomb)
+        return NULL;
 
 	// add the bomb
-	Bomb *newBomb = new Bomb(3, playerId, 100, squareX, squareY);
+    Bomb *newBomb = new Bomb(playerId, squareX, squareY, 100, 3);
 	bombs.append(newBomb);
+    setType(BlockMapProperty::bomb,squareX,squareY);
 	qDebug() << " MapServer> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
 	return newBomb;
 }
@@ -461,7 +460,7 @@ void MapServer::newHeartBeat() {
 	foreach(Player* playerN, players) {
 		if(playerN->getLayingBomb()) {
 			playerN->clearLayingBomb();
-			Bomb* newBomb = bomb(playerN->getId());
+			Bomb* newBomb = addBomb(playerN->getId());
 			if(newBomb != 0)
 				newBombs.append(newBomb);
 		}

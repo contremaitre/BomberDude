@@ -28,7 +28,7 @@ class Bomb : public QObject
 
 public:
 	Bomb();
-	Bomb(int range, qint8 playerId, int duration, qint16 x, qint16 y);
+	Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range);
 	Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId);
 	~Bomb();
 

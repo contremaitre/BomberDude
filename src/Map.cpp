@@ -152,21 +152,6 @@ void Map::removeBomb(qint16 bombId)
 	qDebug()<< "nothing has been removed";
 }
 
-
-
-
-bool Map::blockContainsBomb(int x,int y)
-{
-   foreach( Bomb *b, bombs)
-    {
-    	if ((b->x == x) && (b->y == y))
-    		return true;
-    }
-	return false;
-}
-
-
-
 int Map::coordinatePositionInBlock(int coord)
 {
     int block = coord / blockSize;
