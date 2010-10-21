@@ -197,7 +197,6 @@ void GameArena::updateMap(QByteArray& updateBlock) {
 		QList<qint16>::const_iterator itBomb = f->getFirstDetonatedBomb();
 		for( ; itBomb != f->getLastDetonatedBomb(); ++itBomb)
 			removeBomb(*itBomb);
-
         QSet<QPoint>::const_iterator itBrBlock = f->getFirstBrokenBlock();
         for( ; itBrBlock != f->getLastBrokenBlock(); ++itBrBlock)
         {
@@ -207,7 +206,6 @@ void GameArena::updateMap(QByteArray& updateBlock) {
             map->setType(BlockMapProperty::broken, i, j);
             getCase(i,j)->setItem(pixmaps.getPixmap(map->getType(i,j)));
         }
-
 		addFlame(f);
 	}
 }

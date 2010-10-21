@@ -106,15 +106,21 @@ void Map::removeFlame(int flameId)
         if(f->getFlameId() == flameId)
         {
             QSet<QPoint>::const_iterator it = f->getFirstFlame();
+
+            //remove flames
             while(it != f->getLastFlame())
             {
                 setType(BlockMapProperty::empty, (*it).x(), (*it).y());
                 it++;
             }
-			QSet<QPoint>::const_iterator itBroken = f->getFirstBrokenBlock();
-			for(; itBroken != f->getLastBrokenBlock(); ++itBroken) {
-				setType(BlockMapProperty::empty, itBroken->x(), itBroken->y());
-			}
+
+            //remove broken blocks
+            for( it = f->getFirstBrokenBlock(); it != f->getLastBrokenBlock(); it++)
+            {
+                //qDebug() << "GameArena brokenblock";
+                setType(BlockMapProperty::empty, it->x(), it->y());
+                //getCase(i,j)->setItem(pixmaps.getPixmap(map->getType(i,j)));
+            }
             flames.erase(itFlame);
             delete f;
             break;

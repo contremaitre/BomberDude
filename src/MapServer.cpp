@@ -352,7 +352,8 @@ const Flame* MapServer::explosion(Bomb* b)
 	QPoint tempPoint = QPoint(b->x,b->y);
 	propagateFlame(*f, tempPoint, b->range);
 
-	flames.append(f);
+	addFlame(f);
+	//flames.append(f);
 
 	qDebug()<<"BOOM !";
 	return f;
@@ -444,17 +445,13 @@ void MapServer::newHeartBeat() {
 		(*itFlame)->decreaseLifeSpan();
 		if( (*itFlame)->isFinished() ) {
 			cleanList.append((*itFlame)->getFlameId());
-			// remove the broken bricks
-			// TODO : drop bonus here
-			QSet<QPoint>::const_iterator itBroken = (*itFlame)->getFirstBrokenBlock();
-			for(; itBroken != (*itFlame)->getLastBrokenBlock(); ++itBroken) {
-				setType(BlockMapProperty::empty, itBroken->x(), itBroken->y());
-			}
-
-			flames.erase(itFlame++);
+			//TODO, maybe inneficient ? but easier as it correctly deletes broken blocks
+			removeFlame((*itFlame)->getFlameId());
+            ++itFlame;
+			//flames.erase(itFlame++);
 		}
 		else
-			++itFlame;
+		    ++itFlame;
 	}
 	updateOut << cleanList;
 
