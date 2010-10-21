@@ -100,24 +100,27 @@ void Map::addFlame(Flame* flame)
 
 void Map::removeFlame(int flameId)
 {
-    foreach (Flame *f, flames)
-    {
+    QList<Flame*>::iterator itFlame = flames.begin();
+    while(itFlame != flames.end()) {
+        Flame *f = *itFlame;
         if(f->getFlameId() == flameId)
         {
-            flames.removeOne(f);
-            foreach (QPoint point, f->getFlamePositions())
+            QSet<QPoint>::const_iterator it = f->getFirstFlame();
+            while(it != f->getLastFlame())
             {
-                setType(BlockMapProperty::empty,point.x(),point.y());
+                setType(BlockMapProperty::empty, (*it).x(), (*it).y());
+                it++;
             }
 			QSet<QPoint>::const_iterator itBroken = f->getFirstBrokenBlock();
 			for(; itBroken != f->getLastBrokenBlock(); ++itBroken) {
 				setType(BlockMapProperty::empty, itBroken->x(), itBroken->y());
 			}
-
+            flames.erase(itFlame);
             delete f;
-            return;
+            break;
         }
-	}
+        itFlame++;
+    }
 }
 
 void Map::addBomb(int id, int squareX, int squareY, int bombId)
