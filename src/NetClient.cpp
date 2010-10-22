@@ -218,6 +218,7 @@ void NetClient::handleTcpMsg(QDataStream &in)
 	    quint32 cpt;
 	    in >> cpt;
 	    qDebug() << "udp stats : sent" << udpCpt << "packets, server received" << cpt << "packets";
+	    break;
 	}
 	default:
 		//trash the message
