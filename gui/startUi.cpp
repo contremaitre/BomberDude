@@ -86,7 +86,7 @@ void StartUi::start()
 
     gamePlay = new GamePlay(this, settings);
     connect( gamePlay, SIGNAL(connectedToServer()), this, SLOT(slotConnected()) );
-    connect( gamePlay, SIGNAL(connectionError()), this, SLOT(slotConnectionError()) );
+    connect( gamePlay, SIGNAL(connectionError()), this, SLOT(slotConnectionError()), Qt::QueuedConnection );
     connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );
     gamePlay->launch();
 }
@@ -123,8 +123,6 @@ void StartUi::toggleMusic(bool on)
 void StartUi::slotConnected()
 {
     //qDebug("StartUi::slotConnected");
-    //We do not (yet) handle connection errors after this
-    disconnect(gamePlay, SIGNAL(connectionError()), this, SLOT(slotConnectionError()));
 }
 
 void StartUi::closeGame()

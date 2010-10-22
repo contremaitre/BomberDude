@@ -30,7 +30,7 @@ Serverd::Serverd(int port, int mapSize, int blockSize)
 void Serverd::launch()
 {
     //We start the game as soon as a player is connecter to the server
-    //others players can join later (but they may miss movement me can make before they join
+    //others players can join later
     //the way the game is launched will be changed later.
     connect(server, SIGNAL(allPlayersLeft()), this, SLOT(allPlayersLeft()));
     qDebug() << "launch server";
