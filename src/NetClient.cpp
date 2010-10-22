@@ -109,6 +109,19 @@ void NetClient::sendPing()
 	timePing->restart();
 }
 
+void NetClient::sendVersionNumber()
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_net_version;
+    out << (qint16)NET_VERSION;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    tcpSocket->write(block);
+    //qDebug() << "NetClient send version number";
+}
 
 void NetClient::receiveUdp()
 {
@@ -243,6 +256,7 @@ void NetClient::slotTcpConnected()
 	if(b)
 	{
 		//qDebug() << "NetClient slotTcpConnected" << serverAddress << serverPort;
+	    sendVersionNumber();
 		udpCheckCount = 0;
 		udpAckOk = false;
 		timerCheckUdp = new QTimer(this);

@@ -24,6 +24,8 @@
 #ifndef NETMESSAGE_H
 #define NETMESSAGE_H
 
+#define NET_VERSION 1 //update this number if compatibility is broken
+
 enum NetMsgType
 {
     msg_move = 0,
@@ -34,6 +36,7 @@ enum NetMsgType
     msg_ping,
     msg_udp_stat,
 	msg_update_map,
+	msg_net_version,
 };
 
 #endif

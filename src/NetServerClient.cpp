@@ -67,10 +67,22 @@ void NetServerClient::handleMsg(QDataStream &in)
     in >> msg_type;
     switch(msg_type)
     {
-        default:
-            //trash the message
-            qDebug() << "NetServerClient, unexpected tcp message received" << msg_type;
-            in.skipRawData(blockSize);
+    case msg_net_version:
+    {
+        qint16 version;
+        in >> version;
+        //qDebug() << "NetServerClient, received client version number : " << version;
+        if(version != NET_VERSION)
+        {
+            qDebug() << "version mismatch (" << version << NET_VERSION << ")";
+            tcpSocket->close();
+        }
+    }
+    break;
+    default:
+        //trash the message
+        qDebug() << "NetServerClient, unexpected tcp message received" << msg_type;
+        in.skipRawData(blockSize);
         break;
 
     }

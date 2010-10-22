@@ -65,6 +65,7 @@ private:
     void sendUdpWelcome();
     void handleTcpMsg(QDataStream &);
     void sendUdpDatagram(const QByteArray &);
+    void sendVersionNumber();
     int udpCheckCount;
     quint16 blockSize; //size of the current message
     Map *map; //store the map when the server sends it;
