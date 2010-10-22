@@ -194,14 +194,6 @@ void NetClient::handleTcpMsg(QDataStream &in)
 	//qDebug() << "NetClient::handleMsg tcp, type = " << msg_type;
 	switch(msg_type)
 	{
-	case msg_moved:
-	{
-		qint16 player, x, y;
-		in >> player >> x >> y;
-		//qDebug() << "netclient move received " << x << " " << y;
-		emit moveReceived( player, x, y );
-	}
-	break;
 	case msg_map:
 		qDebug("NetClient map received");
 		map = new Map;
@@ -216,6 +208,7 @@ void NetClient::handleTcpMsg(QDataStream &in)
 	}
 	default:
 		//trash the message
+        qDebug() << "NetClient, unexpected tcp message received" << msg_type;
 		in.skipRawData(blockSize);
 		break;
 	}

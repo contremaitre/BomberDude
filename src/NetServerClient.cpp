@@ -67,15 +67,9 @@ void NetServerClient::handleMsg(QDataStream &in)
     in >> msg_type;
     switch(msg_type)
     {
-        case msg_move:
-        {
-            qint16 direction;
-            in >> direction;
-			//server->move(playerNumber, direction);
-        }
-        break;
         default:
             //trash the message
+            qDebug() << "NetServerClient, unexpected tcp message received" << msg_type;
             in.skipRawData(blockSize);
         break;
 
