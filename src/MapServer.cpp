@@ -432,7 +432,8 @@ void MapServer::startHeartBeat(qint32 startValue, int intervals) {
 
 void MapServer::newHeartBeat() {
 	heartBeat++;
-	//qDebug() << "Hearbeat #" << heartBeat;
+    if(heartBeat % 100 == 0)
+        qDebug() << "send Hearbeat #" << heartBeat;
 
 	QByteArray updateArray;
 	QDataStream updateOut(&updateArray,QIODevice::WriteOnly | QIODevice::Truncate);

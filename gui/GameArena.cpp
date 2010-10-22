@@ -162,8 +162,8 @@ void GameArena::updateMap(QByteArray& updateBlock) {
 	qint32 heartBeat;
 	updateIn >> heartBeat;
 	map->setHeartBeat(heartBeat);
-	if(heartBeat % 20 == 0)
-	qDebug() << "Received heartbeat " << heartBeat;
+	if(heartBeat % 100 == 0)
+	    qDebug() << "Received heartbeat " << heartBeat;
 
 	QList<qint16> cleanList;
 	updateIn >> cleanList;
