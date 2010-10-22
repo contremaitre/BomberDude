@@ -45,6 +45,8 @@ private:
     bool movePlayerUp(int id);
     bool movePlayerDown(int id);
     bool movePlayerOld(int id, int direction);
+    Bomb* addBomb(int id);
+    Bomb* addBomb(int id, int x, int y);
 
 	QTimer timerHeartBeat;
 
@@ -58,8 +60,7 @@ public:
 //    MapServer(qint16, qint16, qint16);
 //    ~MapServer();
 	void loadRandom();
-	Bomb* addBomb(int id);
-	Bomb* addBomb(int id, int x, int y);
+
 	void requestMovePlayer(int id, int direction);
 	void requestBombPlayer(int id);
 
