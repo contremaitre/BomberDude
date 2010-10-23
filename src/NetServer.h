@@ -61,6 +61,9 @@ private slots:
     void clientDisconected(NetServerClient *);
     void receiveUdp();
 
+	// to be called when the thread starts (otherwise the QTimer object can fail to send signals)
+	void startHeartBeat();
+
 	// sent by the game loop
 	void updateMap(QByteArray updateData);
 

@@ -27,6 +27,7 @@ NetServer::NetServer(int port) : QThread()
 {
     map = new MapServer;
     connect(map,SIGNAL(updatedMap(QByteArray)),this,SLOT(updateMap(QByteArray)));
+	connect(this, SIGNAL(started()), this, SLOT(startHeartBeat()));
     this->port = port;
     tcpServer = NULL;
     udpSocket = NULL;
@@ -49,8 +50,11 @@ void NetServer::run()
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(receiveUdp()), Qt::DirectConnection);
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(incomingClient()), Qt::DirectConnection);
     emit serverReady();
-	map->startHeartBeat(0, MOVE_TICK_INTERVAL);
     exec();
+}
+
+void NetServer::startHeartBeat() {
+	map->startHeartBeat(0, MOVE_TICK_INTERVAL);
 }
 
 void NetServer::incomingClient()
