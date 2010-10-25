@@ -42,6 +42,8 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     connect(client, SIGNAL(sigConnected()), this, SLOT(slotClientConnected()));
     connect(client, SIGNAL(sigConnectionError()), this, SLOT(slotClientConnectError()));
 	connect(client, SIGNAL(updateMap(QByteArray)), this, SLOT(updateMap(QByteArray)));
+    connect(client, SIGNAL(sigPing(int)), this, SLOT(statPing(int)));
+    connect(client, SIGNAL(sigPacketLoss(double)), this, SLOT(statPacketLoss(double)));
     settings = set;
 }
 
@@ -209,6 +211,16 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
     }
     // standard event processing
     return QObject::eventFilter(obj, event);
+}
+
+void GamePlay::statPing(int ping)
+{
+    emit sigStatPing(ping);
+}
+
+void GamePlay::statPacketLoss(double packet_loss)
+{
+    emit sigStatPacketLoss(packet_loss);
 }
 
 void GamePlay::slotClientConnected()

@@ -31,6 +31,7 @@ private:
     QString serverAddress;
     bool isServer;
     bool sound;
+    bool showIpStats;
 
 public:
     Settings();
@@ -40,11 +41,13 @@ public:
     QString getServerAddress() const;
     int getServerPort() const;
     bool isSound() const;
+    bool getShowIpStats() const;
     void save();
     void setServer(bool);
     void setServerPort(int);
     void setServerAddress(const QString&);
     void setSound(bool);
+    void setShowIpStats(bool);
 
 };
 

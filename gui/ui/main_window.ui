@@ -131,6 +131,78 @@
      </property>
     </widget>
    </widget>
+   <widget class="QWidget" name="ip_stats" native="true">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>0</y>
+      <width>131</width>
+      <height>191</height>
+     </rect>
+    </property>
+    <widget class="QLabel" name="pack_loss_text">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>30</y>
+       <width>81</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Packet loss</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="ping_text">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>50</y>
+       <width>59</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Ping</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="pack_loss_pic">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>30</y>
+       <width>20</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="ping_pic">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>50</y>
+       <width>20</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="stats_check">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>0</y>
+       <width>111</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Show IP stats</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

@@ -74,11 +74,15 @@ private slots:
     void slotClientConnectError();
     void slotServerError();
     void slotServerReady();
+    void statPing(int);
+    void statPacketLoss(double);
 
 signals:
     void connectedToServer();
     void connectionError();
     void quitGame();
+    void sigStatPing(int);
+    void sigStatPacketLoss(double);
 };
 
 #endif

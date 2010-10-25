@@ -158,9 +158,13 @@ void NetClient::receiveUdp()
 			{
 				int e = timePing->elapsed();
 				qDebug() << "Ping :" << e;
+	            emit sigPing(e);
 			}
 			else
+			{
+			    emit sigPing(-1);
 				qDebug() << "Ping : received out of delay";
+			}
 			break;
 		case msg_moved:
 		{
@@ -218,6 +222,7 @@ void NetClient::handleTcpMsg(QDataStream &in)
 	    quint32 cpt;
 	    in >> cpt;
 	    qDebug() << "udp stats : sent" << udpCpt << "packets, server received" << cpt << "packets";
+	    emit sigPacketLoss((double)(udpCpt-cpt)/cpt);
 	    break;
 	}
 	default:

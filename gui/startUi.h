@@ -47,8 +47,15 @@ private:
     Settings *settings;
     QSound *music;
 
+    QPixmap statusGrey;
+    QPixmap statusGreen;
+    QPixmap statusYellow;
+    QPixmap statusRed;
+
+    void loadPixmaps();
     void loadNetWidget();
     void loadSound();
+    void loadIpStats();
     bool setSettings();
     void setAddrFieldEnabled(bool);
     void toggleMusic(bool);
@@ -57,6 +64,9 @@ private slots:
     void start();
     void isServerChanged(int);
     void soundChanged(int);
+    void statPing(int);
+    void statPacketLoss(double);
+    void statsCheckedChanged(int);
     void slotConnectionError();
     void slotConnected();
     void closeGame();

@@ -86,7 +86,8 @@ signals:
 	void updateMap(QByteArray updateBlock);
     void sigConnected();
     void sigConnectionError();
+    void sigPing(int);
+    void sigPacketLoss(double);
 };
 
 #endif
-

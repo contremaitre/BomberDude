@@ -27,6 +27,7 @@ Settings::Settings()
     serverAddress = qsettings->value("serverAddress",SERVER_ADDRESS).toString();
     serverPort = qsettings->value("serverPort",SERVER_PORT).toInt();
     sound = qsettings->value("sound", true).toBool();
+    showIpStats = qsettings->value("showIpStats", true).toBool();
 }
 
 void Settings::save()
@@ -35,11 +36,17 @@ void Settings::save()
     qsettings->setValue("sound",sound);
     qsettings->setValue("serverAddress",serverAddress);
     qsettings->setValue("serverPort",serverPort);
+    qsettings->setValue("showIpStats",showIpStats);
 }
 
 bool Settings::getServer() const
 {
     return isServer;
+}
+
+bool Settings::getShowIpStats() const
+{
+    return showIpStats;
 }
 
 QString Settings::getServerAddress() const
@@ -60,6 +67,11 @@ bool Settings::isSound() const
 void Settings::setServer(bool val)
 {
     isServer = val;
+}
+
+void Settings::setShowIpStats(bool val)
+{
+    showIpStats = val;
 }
 
 void Settings::setServerPort(int port)
