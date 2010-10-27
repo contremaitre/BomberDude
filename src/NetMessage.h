@@ -24,7 +24,7 @@
 #ifndef NETMESSAGE_H
 #define NETMESSAGE_H
 
-#define NET_VERSION 1 //update this number if compatibility is broken
+#define NET_VERSION 2 //update this number if compatibility is broken
 
 enum NetMsgType
 {

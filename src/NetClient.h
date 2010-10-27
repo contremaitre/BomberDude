@@ -64,6 +64,8 @@ private:
     bool udpAckOk;
     void sendUdpWelcome();
     void handleTcpMsg(QDataStream &);
+    void udpGenericStream(QDataStream &);
+    void setBlockSize(const QByteArray &, QDataStream &);
     void sendUdpDatagram(const QByteArray &);
     void sendVersionNumber();
     int udpCheckCount;

@@ -50,15 +50,28 @@ void NetClient::connectToServer(QString ip, int port)
 	tcpSocket->connectToHost(ip,port);
 }
 
+void NetClient::udpGenericStream(QDataStream & out)
+{
+    out.setVersion(QDataStream::Qt_4_0);
+    //size
+    out << (quint16)0;
+    //packet count
+    out << udpCpt++;
+}
+
+void NetClient::setBlockSize(const QByteArray &block, QDataStream & out)
+{
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+}
+
 void NetClient::sendUdpWelcome()
 {
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
-	out.setVersion(QDataStream::Qt_4_0);
-	out << (quint16)0;
+	udpGenericStream(out);
 	out << (quint16)msg_udp_welcome;
-	out.device()->seek(0);
-	out << (quint16)(block.size() - sizeof(quint16));
+	setBlockSize(block, out);
 	//qDebug() << "NetClient sendUdpWelcome" << udpSocket->localPort() << udpSocket->peerPort();
 	sendUdpDatagram(block);
 }
@@ -67,13 +80,10 @@ void NetClient::sendMove(int direction)
 {
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
-	out.setVersion(QDataStream::Qt_4_0);
-	out << (quint16)0;
+	udpGenericStream(out);
 	out << (quint16)msg_move;
 	out << (qint16)direction;
-	out.device()->seek(0);
-	out << (quint16)(block.size() - sizeof(quint16));
-	//tcpSocket->write(block);
+	setBlockSize(block, out);
 	//qDebug() << "NetClient send move udp" << serverAddress << serverPort;
     sendUdpDatagram(block);
 }
@@ -83,11 +93,9 @@ void NetClient::sendBomb()
 {
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
-	out.setVersion(QDataStream::Qt_4_0);
-	out << (quint16)0;
+	udpGenericStream(out);
 	out << (quint16)msg_bomb;
-	out.device()->seek(0);
-	out << (quint16)(block.size() - sizeof(quint16));
+	setBlockSize(block, out);
     sendUdpDatagram(block);
 }
 
@@ -99,12 +107,10 @@ void NetClient::sendPing()
 	cptPing++;
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
-	out.setVersion(QDataStream::Qt_4_0);
-	out << (quint16)0;
+	udpGenericStream(out);
 	out << (quint16)msg_ping;
 	out << cptPing;
-	out.device()->seek(0);
-	out << (quint16)(block.size() - sizeof(quint16));
+	setBlockSize(block, out);
     sendUdpDatagram(block);
 	timePing->restart();
 }
@@ -117,8 +123,7 @@ void NetClient::sendVersionNumber()
     out << (quint16)0;
     out << (quint16)msg_net_version;
     out << (qint16)NET_VERSION;
-    out.device()->seek(0);
-    out << (quint16)(block.size() - sizeof(quint16));
+    setBlockSize(block, out);
     tcpSocket->write(block);
     //qDebug() << "NetClient send version number";
 }
@@ -249,7 +254,6 @@ void NetClient::checkUdp()
 void NetClient::sendUdpDatagram(const QByteArray &block)
 {
     udpSocket->writeDatagram(block, serverAddress, serverPort);
-    udpCpt++;
     //if(udpCpt % 100 == 0)
     //    qDebug() << "Client, sent" << udpCpt << "udp packets";
 }

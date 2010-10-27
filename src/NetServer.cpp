@@ -116,12 +116,14 @@ void NetServer::receiveUdp()
 
         QDataStream in(&datagram, QIODevice::ReadOnly);
         quint16 size, msg;
+        quint32 pckCount;
         in >> size;
         if(datagram.size() - sizeof(size) != size)
         {
-            qDebug() << "NetServer readMove size error" << datagram.size() << size;
+            qDebug() << "NetServer read up size error" << datagram.size() << size;
             continue;
         }
+        in >> pckCount;
         in >> msg;
         NetServerClient *client = NULL;
         //TODO : would it be usefull to use a qmap here ?
