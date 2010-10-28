@@ -120,7 +120,7 @@ void NetServer::receiveUdp()
         in >> size;
         if(datagram.size() - sizeof(size) != size)
         {
-            qDebug() << "NetServer read up size error" << datagram.size() << size;
+            qDebug() << "NetServer udp packet size read error" << datagram.size() << size;
             continue;
         }
         in >> pckCount;
@@ -140,7 +140,7 @@ void NetServer::receiveUdp()
             qDebug("Received a udp message from an unknown client !");
             continue;
         }
-        client->udpReceived();
+        client->udpReceived(pckCount);
         switch(msg)
         {
         case msg_udp_welcome:

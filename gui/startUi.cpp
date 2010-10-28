@@ -164,7 +164,7 @@ void StartUi::statPacketLoss(double packet_loss)
     {
         if(packet_loss == 0)
             mainWindow->pack_loss_pic->setPixmap(statusGreen);
-        else if(packet_loss < 0.01)
+        else if(packet_loss <= 0.01)
             mainWindow->pack_loss_pic->setPixmap(statusYellow);
         else
             mainWindow->pack_loss_pic->setPixmap(statusRed);

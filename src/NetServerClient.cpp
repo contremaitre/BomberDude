@@ -36,6 +36,8 @@ NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, NetServer
     playerNumber = -1;
     blockSize = 0;
     udpCpt = 0;
+    packetErrors = 0;
+    lastReceivedPckt = 0;
     server = s;
     qDebug() << "new NetServerClient " << id << peerAddress;
 }
@@ -108,7 +110,7 @@ void NetServerClient::sendUdpStats()
     out.setVersion(QDataStream::Qt_4_0);
     out << (quint16)0;
     out << (quint16)msg_udp_stat;
-    out << udpCpt;
+    out << packetErrors;
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
     tcpSocket->write(block);
@@ -129,13 +131,20 @@ quint16 NetServerClient::getPeerUdpPort() const
     return peerUdpPort;
 }
 
-void NetServerClient::udpReceived()
+void NetServerClient::udpReceived(quint32 pckNum)
 {
+    if(pckNum != lastReceivedPckt + 1)
+    {
+        qDebug() << "NetServerClient, udp receive number mismatch" << pckNum << lastReceivedPckt + 1;
+        packetErrors++;
+    }
+    lastReceivedPckt = pckNum;
     udpCpt++;
-    if(udpCpt % 100 == 0)
+    if(udpCpt % UDP_STATS_INTERVAL == 0)
     {
         //qDebug() << "player" << playerId << "received" << udpCpt << "udp packets";
         sendUdpStats();
+        packetErrors = 0;
     }
 }
 

@@ -56,7 +56,7 @@ void NetClient::udpGenericStream(QDataStream & out)
     //size
     out << (quint16)0;
     //packet count
-    out << udpCpt++;
+    out << ++udpCpt;
 }
 
 void NetClient::setBlockSize(const QByteArray &block, QDataStream & out)
@@ -224,10 +224,10 @@ void NetClient::handleTcpMsg(QDataStream &in)
 		break;
 	case msg_udp_stat:
 	{
-	    quint32 cpt;
-	    in >> cpt;
-	    qDebug() << "udp stats : sent" << udpCpt << "packets, server received" << cpt << "packets";
-	    emit sigPacketLoss((double)(udpCpt-cpt)/cpt);
+	    quint16 nbErrors;
+	    in >> nbErrors;
+	    qDebug() << "udp stats" << nbErrors << "packets error";
+	    emit sigPacketLoss((double)nbErrors/UDP_STATS_INTERVAL);
 	    break;
 	}
 	default:

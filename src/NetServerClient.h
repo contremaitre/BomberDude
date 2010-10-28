@@ -48,7 +48,7 @@ class NetServerClient : public QObject
   QHostAddress getAddress() const;
   quint16 getPeerUdpPort() const;
   int getId() const;
-  void udpReceived();
+  void udpReceived(quint32 pckNum);
   void sendUdpStats();
 
  private:
@@ -58,6 +58,8 @@ class NetServerClient : public QObject
   QHostAddress peerAddress;
   quint16 peerUdpPort;
   quint32 udpCpt;
+  quint32 lastReceivedPckt;
+  quint16 packetErrors; //udp packet errors since last report
   void handleMsg(QDataStream &);
   int playerId;
   int playerNumber;
