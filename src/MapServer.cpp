@@ -67,7 +67,7 @@ void MapServer::loadRandom()
 	qDebug() << "add players";
 
     //randomly add players
-    for (int i = 0; i < getMaxNbPlayers(); i++)
+    for (int i = 0; i < MAX_NB_PLAYER; i++)
     {
         int x, y;
         int w = (qrand() % (getWidth() - 2)) + 1;
@@ -75,10 +75,34 @@ void MapServer::loadRandom()
         qDebug() << "Player" << i << ", pos " << w << h;
         w = w * getBlockSize() + getBlockSize() / 2;
         h = h * getBlockSize() + getBlockSize() / 2;
-        setPlayerPosition(i, w, h);
+        addPlayerSlot(w,h);
         getBlockPosition(w, h, x, y);
         setType(BlockMapProperty::empty, x, y);
     }
+}
+
+int MapServer::getFreePlayerSlot()
+{
+    int ret = -1;
+    QList<initialPlayerPosition>::iterator it = startPlayerSlots.begin();
+    for(int cpt = 0; it != startPlayerSlots.end(); ++it, ++cpt)
+    {
+        if(it->freeSlot)
+        {
+            ret = cpt;
+            it->freeSlot = false;
+            setPlayerPosition(ret, it->coord.x(), it->coord.y());
+            break;
+        }
+    }
+    return ret;
+}
+
+void MapServer::addPlayerSlot(int x, int y)
+{
+    initialPlayerPosition tmp = {QPoint(x,y), true};
+    startPlayerSlots.append(tmp);
+    newPlayer(startPlayerSlots.size()-1); //update Map Subclass
 }
 
 void MapServer::requestBombPlayer(int id) {

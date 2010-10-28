@@ -31,7 +31,6 @@ NetServer::NetServer(int port) : QThread()
     this->port = port;
     tcpServer = NULL;
     udpSocket = NULL;
-    playersInGame = NULL;
 }
 
 void NetServer::run()
@@ -61,16 +60,7 @@ void NetServer::incomingClient()
 {
     QTcpSocket *clientConnection = tcpServer->nextPendingConnection();
 
-    int playerId = -1;
-    for(int i = 0; i < map->getMaxNbPlayers(); i++)
-    {
-        if(playersInGame[i] == -1)
-        {
-            playerId = i;
-            playersInGame[i] = playerId;
-            break;
-        }
-    }
+    int playerId = map->getFreePlayerSlot();
     if(playerId != -1)
     {
         NetServerClient *client = new NetServerClient(clientConnection,udpSocket,playerId,this);
@@ -94,7 +84,6 @@ void NetServer::clientDisconected(NetServerClient *client)
         if (clients.at(i) == client)
         {
             clients.removeAt(i);
-            playersInGame[client->getId()] = -1;
             delete client;
             if(clients.empty())
                 emit allPlayersLeft();
@@ -216,11 +205,6 @@ void NetServer::createRandomMap(int w, int h,int squareSize)
     map->setDim(w,h,squareSize);
     qDebug() << "set Dimensions "<<w<<" "<<h<<" "<<squareSize;
     map->loadRandom();
-    qDebug() << "random map created";
-    delete[] playersInGame;
-    playersInGame = new int[map->getMaxNbPlayers()];
-    for(int i = 0; i < map->getMaxNbPlayers(); i++)
-        playersInGame[i] = -1;
 }
 
 NetServer::~NetServer()
@@ -232,7 +216,6 @@ NetServer::~NetServer()
     delete tcpServer;
     delete udpSocket;
     delete map;
-    delete[] playersInGame;
 }
 
 void NetServer::updateMap(QByteArray updateData) {

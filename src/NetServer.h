@@ -48,7 +48,6 @@ public:
     void createRandomMap(int w, int h,int squareSize);
 private:
     MapServer *map;
-    int *playersInGame;
     int port;
     QTcpServer *tcpServer;
     QUdpSocket *udpSocket;

@@ -29,11 +29,13 @@ Map::Map() :
 	height(0),
 	blockSize(0),
     block_list(NULL),
+    maxNbPlayers(0),
     heartBeat(-999999999)
 {}
 
 Map::Map(qint16 w, qint16 h, qint16 bs) :
 	block_list(NULL),
+	maxNbPlayers(0),
 	heartBeat(-999999999)
 {
 	setDim(w,h,bs);
@@ -47,17 +49,14 @@ void Map::Init()
     delete[] block_list;
     block_list = new BlockMapProperty[width*height];
 
-	for(qint8 i = 0; i < MAX_NB_PLAYER; i++)
-		players.append(new Player(i));
-
     qDebug() << "init";
 }
 
-void Map::setDim(qint16 w, qint16 h, qint16 bs)
+void Map::setDim(qint16 w, qint16 h, qint16 block_size)
 {
     width = w;
     height = h;
-    blockSize = bs;
+    blockSize = block_size;
     Init();
 }
 
@@ -212,14 +211,20 @@ qint16 Map::getBlockSize() const
 
 qint8 Map::getMaxNbPlayers() const
 {
-    return MAX_NB_PLAYER;
+    return maxNbPlayers;
 }
 
+void Map::newPlayer(int id)
+{
+    maxNbPlayers++;
+    players.append(new Player(id));
+}
 
 
 Map::~Map()
 {
     delete[] block_list;
+    //TODO clean players list
 }
 
 QDataStream &operator<<(QDataStream &out, const Map &map)
@@ -251,6 +256,7 @@ QDataStream &operator>>(QDataStream & in, Map &map)
     for(int i = 0; i < maxNbPlayers; i++)
     {
         in >> x >> y;
+        map.newPlayer(i);
         map.setPlayerPosition(i,x,y);
     }
     //retreive block types from the data stream

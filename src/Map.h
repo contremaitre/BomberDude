@@ -38,18 +38,16 @@ class Map : public QObject
 private:
     qint16 width;
     qint16 height;
+    //There are "blockSize" pixels in one block
     qint16 blockSize;
     BlockMapProperty *block_list;
-    //player position coordinates is in "pixel". And there is "blockSize" pixels in one block
-	//Player playersPositions[MAX_NB_PLAYER];
-
+    quint8 maxNbPlayers;
     void Init();
     //Test if a coordinate is bellow (-1) on (0) or above (1) the middle of the block
     int coordinatePositionInBlock(int coord);
 
 protected:
 	qint32 heartBeat;						///< timestamp of the game
-
 	QList<Player*> players;					///< list of players currently on the field
 	QList<Bomb*> bombs;						///< list of bombs yet to explode
 	QList<Flame*> flames;					///< list of explosions
@@ -58,7 +56,7 @@ public:
     Map();
     Map(qint16, qint16, qint16);
     ~Map();
-    void setDim(qint16,qint16,qint16);
+    void setDim(qint16,qint16,qint16 block_size = BLOCK_SIZE);
     qint16 getWidth() const ;
     qint16 getHeight() const;
     BlockMapProperty::BlockType getType(int,int) const;
@@ -71,6 +69,7 @@ public:
     //get the coordinates of the player
     void getPlayerPosition(int, qint16&, qint16&) const;
     void setPlayerPosition(int id, qint16 , qint16);
+    void newPlayer(int id);                            //add a player to the game
     qint8 getMaxNbPlayers() const;
     qint16 getBlockSize() const;
     void addFlame(Flame* f);

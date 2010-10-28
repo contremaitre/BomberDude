@@ -21,13 +21,6 @@
 
 #include "Map.h"
 
-
-/**
- * This class represent a bomberman game map
- * For now, the map create can only be a random map
- * Todo : add a load function, so we can load a map from a file
- */
-
 class MapServer : public Map
 {
 	Q_OBJECT
@@ -50,6 +43,13 @@ private:
 
 	QTimer timerHeartBeat;
 
+	struct initialPlayerPosition
+	{
+	    QPoint coord;
+	    bool freeSlot;
+	};
+	QList <initialPlayerPosition> startPlayerSlots;
+
 	static const QPoint dirLeft;
 	static const QPoint dirRight;
 	static const QPoint dirUp;
@@ -60,7 +60,8 @@ public:
 //    MapServer(qint16, qint16, qint16);
 //    ~MapServer();
 	void loadRandom();
-
+	void addPlayerSlot(int, int);
+	int getFreePlayerSlot();
 	void requestMovePlayer(int id, int direction);
 	void requestBombPlayer(int id);
 
