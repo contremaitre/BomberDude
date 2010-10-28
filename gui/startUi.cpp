@@ -40,6 +40,8 @@ StartUi::StartUi()
 
 void StartUi::loadIpStats()
 {
+    Qt::CheckState checked = settings->getShowIpStats() ? Qt::Checked : Qt::Unchecked;
+    mainWindow->stats_check->setCheckState(checked);
     mainWindow->ping_pic->setPixmap(statusGrey);
     mainWindow->pack_loss_pic->setPixmap(statusGrey);
 }
