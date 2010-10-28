@@ -14,20 +14,18 @@ done :
 - random map creation
 - pixmaps loading
 - player movements with arrow keys
-- client/server model
+- network communication
 
 started :
 - Player animation (QPropertyAnimation)
 
 todo :
 - players more sophisticated (create a class with attributes like speed, bomb capacity etc...)
-- bombs break bricks
 - auto configuration scripts to build the project (CMAKE ?)
 - menu
 - configuration screen (to change the gameplay, keys, connect or launch a server) etc...
 - bonus
 - custom map creation (with xml files)
 - find another name for the game
-- send udp stats at the end of the game, or from time to time
 ----------------------------------------------------------------------------------
 
