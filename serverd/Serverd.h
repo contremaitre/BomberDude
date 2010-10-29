@@ -36,6 +36,7 @@ class Serverd : public QObject
 
 public:
     Serverd(int port, int mapSize, int blockSize);
+    Serverd(int port, const char *mapFile);
     ~Serverd();
     void launch();
 

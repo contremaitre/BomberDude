@@ -27,6 +27,12 @@ Serverd::Serverd(int port, int mapSize, int blockSize)
     server->createRandomMap(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
 }
 
+Serverd::Serverd(int port, const char *mapFile)
+{
+    server = new NetServer(port);
+    server->loadMap(mapFile);
+}
+
 void Serverd::launch()
 {
     //We start the game as soon as a player is connecter to the server
@@ -40,7 +46,8 @@ void Serverd::launch()
 void Serverd::allPlayersLeft()
 {
     qDebug() << "allPlayersLeft, restart";
-    server->createRandomMap(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
+    server->reloadMap();
+    //server->createRandomMap(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
 
 }
 

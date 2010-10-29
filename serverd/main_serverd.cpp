@@ -24,10 +24,20 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv, false);
 
-    Serverd serverd(SERVER_PORT,MAP_SIZE,BLOCK_SIZE);
-    serverd.launch();
+    Serverd *serverd;
+    const char *mapFile = NULL;
+    if(argc > 2 && !strcmp(argv[1],"--mapfile"))
+        mapFile = argv[2];
+
+    if(mapFile)
+        serverd = new Serverd(SERVER_PORT,mapFile);
+    else
+        serverd = new Serverd(SERVER_PORT,MAP_SIZE,BLOCK_SIZE);
+
+    serverd->launch();
     app.exec();
 
+    delete serverd;
     return 0;
 }
 
