@@ -3,7 +3,7 @@
 # #####################################################################
 DEPENDENCY_LIBRARIES = src
 include(../lib_dep.pri)
-QT += network
+QT += network xml
 CONFIG += DEBUG
 TEMPLATE = app
 TARGET = ../QtBomberman
