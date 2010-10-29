@@ -15,22 +15,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QtNetwork>
+#include <unistd.h> // for usleep
 #include "NetServer.h"
 #include "constant.h"
 #include "NetServerClient.h"
 #include "MapServer.h"
 #include "NetMessage.h"
-#include <QtNetwork>
-#include <unistd.h> // for usleep
+#include "MapParser.h"
 
 NetServer::NetServer(int port) : QThread()
 {
-    map = new MapServer;
-    connect(map,SIGNAL(updatedMap(QByteArray)),this,SLOT(updateMap(QByteArray)));
-	connect(this, SIGNAL(started()), this, SLOT(startHeartBeat()));
+    map = NULL;
     this->port = port;
     tcpServer = NULL;
     udpSocket = NULL;
+    connect(this,SIGNAL(sigStartHeartBeat()), this, SLOT(startHeartBeat()), Qt::QueuedConnection);
 }
 
 void NetServer::run()
@@ -53,6 +53,7 @@ void NetServer::run()
 }
 
 void NetServer::startHeartBeat() {
+    qDebug() << "NetServer::startHeartBeat";
 	map->startHeartBeat(0, MOVE_TICK_INTERVAL);
 }
 
@@ -197,14 +198,52 @@ int NetServer::readMove(QDataStream &in)
     return direction;
 }
 
+void NetServer::allocMap()
+{
+    delete map;
+    map = new MapServer;
+    connect(map,SIGNAL(updatedMap(QByteArray)),this,SLOT(updateMap(QByteArray)));
+    emit sigStartHeartBeat();
+    //connect(this, SIGNAL(started()), this, SLOT(startHeartBeat()));
+}
+
+
+void NetServer::reloadMap()
+{
+    if(!mapFile.isEmpty())
+        loadMap(mapFile);
+    else
+        createRandomMap(map->getWidth(), map->getHeight(), map->getBlockSize());
+}
+
 void NetServer::createRandomMap(int w, int h,int squareSize)
 {
+    allocMap();
     if(!clients.empty())
         qFatal("create map, and player already in game");
     qDebug() << "going to create random map";
     map->setDim(w,h,squareSize);
     qDebug() << "set Dimensions "<<w<<" "<<h<<" "<<squareSize;
     map->loadRandom();
+}
+
+bool NetServer::loadMap(const QString file)
+{
+    allocMap();
+    if(!clients.empty())
+        qFatal("create map, and player already in game");
+    qDebug() << "going to load map" << file;
+    mapFile = file;
+    MapParser mapParser(map);
+    QFile mapXmlFile(file);
+    QXmlInputSource source(&mapXmlFile);
+    // Create the XML file reader
+    QXmlSimpleReader reader;
+    reader.setContentHandler(&mapParser);
+    // Parse the XML file
+    reader.parse(source);
+    qDebug() << "map loaded";
+    return true;
 }
 
 NetServer::~NetServer()

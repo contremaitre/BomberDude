@@ -46,21 +46,25 @@ public:
     void close();
     //call this function when the game is launched
     void createRandomMap(int w, int h,int squareSize);
+    bool loadMap(QString file);
+    void reloadMap();
 private:
     MapServer *map;
     int port;
     QTcpServer *tcpServer;
     QUdpSocket *udpSocket;
     QList<NetServerClient *> clients;
+    QString mapFile; //path of the map file, if it's not a random map
     int readMove(QDataStream &in);
     void sendUdpWelcomeAck(QHostAddress sender, quint16 senderPort);
     void sendPingBack(quint32 cpt, QHostAddress sender, quint16 senderPort);
+    void allocMap();
 private slots:
     void incomingClient();
     void clientDisconected(NetServerClient *);
     void receiveUdp();
 
-	// to be called when the thread starts (otherwise the QTimer object can fail to send signals)
+	// to be called in it's own thread (otherwise the QTimer object can fail to send signals)
 	void startHeartBeat();
 
 	// sent by the game loop
@@ -71,6 +75,7 @@ signals:
     void allPlayersLeft();
     void serverError();
     void serverReady();
+    void sigStartHeartBeat();
 };
 
 #endif
