@@ -291,6 +291,7 @@ void NetClient::slotTcpError(QAbstractSocket::SocketError error)
 NetClient::~NetClient()
 {
 	delete timerCheckUdp;
+	delete timePing;
 	delete udpSocket;
 	delete tcpSocket;
 	delete map;

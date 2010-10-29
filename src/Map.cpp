@@ -220,11 +220,15 @@ void Map::newPlayer(int id)
     players.append(new Player(id));
 }
 
-
 Map::~Map()
 {
     delete[] block_list;
-    //TODO clean players list
+    Player *p;
+    while(!players.empty())
+    {
+        p = players.takeFirst();
+        delete p;
+    }
 }
 
 QDataStream &operator<<(QDataStream &out, const Map &map)
