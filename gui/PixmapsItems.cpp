@@ -36,7 +36,7 @@ void PixmapsItems::loadAll()
     option_pixmaps_t tmp_option;
     QPixmap p("pictures/tux.png");
     QPixmap ps = p.scaled(QSizeF(width,height).toSize());
-    for(int i = 0; i < MAX_NB_PLAYER; i++)
+    for(int i = 0; i < 1; i++)
     {
         bomberman[i] = ps;
     }
@@ -83,7 +83,7 @@ QPixmap PixmapsItems::getPixmap(BlockMapProperty::BlockType type)
 
 QPixmap PixmapsItems::getPixmap(int player)
 {
-    return bomberman[player];
+    return bomberman[0];
 }
 
 QPixmap PixmapsItems::getPixmap(BlockMapProperty::Option type)
