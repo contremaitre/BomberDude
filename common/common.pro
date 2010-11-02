@@ -15,7 +15,6 @@ HEADERS += BlockMapProperty.h \
     Map.h \
     MapParser.h \
     MapServer.h \
-    NetClient.h \
     NetMessage.h \
     NetServer.h \
     NetServerClient.h \
@@ -28,7 +27,6 @@ HEADERS += BlockMapProperty.h \
     Map.h \
     MapParser.h \
     BlockMapProperty.h \
-    NetClient.h \
     NetMessage.h \
     NetServer.h \
     NetServerClient.h \
@@ -39,7 +37,6 @@ SOURCES += BlockMapProperty.cpp \
     Map.cpp \
     MapParser.cpp \
     MapServer.cpp \
-    NetClient.cpp \
     NetServer.cpp \
     NetServerClient.cpp \
     Player.cpp \
@@ -48,7 +45,6 @@ SOURCES += BlockMapProperty.cpp \
     Bomb.cpp \
     Map.cpp \
     MapParser.cpp \
-    NetClient.cpp \
     NetServer.cpp \
     NetServerClient.cpp \
     BlockMapProperty.cpp \

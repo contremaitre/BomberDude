@@ -1,4 +1,6 @@
 TEMPLATE = subdirs
-SUBDIRS = common gui serverd
-gui.depends = common
+SUBDIRS = common client gui serverd
+client.depends = common
+gui.depends = common client
 serverd.depends = common
+
