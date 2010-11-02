@@ -3,7 +3,7 @@
 ######################################################################
 
 
-DEPENDENCY_LIBRARIES = src
+DEPENDENCY_LIBRARIES = common
 include(../lib_dep.pri)
 
 QT += network xml
@@ -11,8 +11,8 @@ CONFIG += DEBUG
 TEMPLATE = app
 TARGET = ../Serverd
 DEPENDPATH += .
-INCLUDEPATH += . ../src
-LIBS += -L../src -lsrc
+INCLUDEPATH += . ../common
+LIBS += -L../common -lcommon
 
 # Input
 HEADERS += Serverd.h Serverd.cpp
