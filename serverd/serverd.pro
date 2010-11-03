@@ -14,8 +14,8 @@ INCLUDEPATH += . \
     ../server
 LIBS += -L../common \
     -L../server \
-    -lcommon \
-    -lserver
+    -lserver \
+    -lcommon
 
 # Input
 HEADERS += Serverd.h \
