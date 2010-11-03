@@ -13,39 +13,23 @@ HEADERS += BlockMapProperty.h \
     Bomb.h \
     Flame.h \
     Map.h \
-    MapParser.h \
-    MapServer.h \
     NetMessage.h \
-    NetServer.h \
-    NetServerClient.h \
     Player.h \
     constant.h \
     Flame.h \
-    MapServer.h \
     Bomb.h \
     constant.h \
     Map.h \
-    MapParser.h \
     BlockMapProperty.h \
     NetMessage.h \
-    NetServer.h \
-    NetServerClient.h \
     Player.h
 SOURCES += BlockMapProperty.cpp \
     Bomb.cpp \
     Flame.cpp \
     Map.cpp \
-    MapParser.cpp \
-    MapServer.cpp \
-    NetServer.cpp \
-    NetServerClient.cpp \
     Player.cpp \
     Flame.cpp \
-    MapServer.cpp \
     Bomb.cpp \
     Map.cpp \
-    MapParser.cpp \
-    NetServer.cpp \
-    NetServerClient.cpp \
     BlockMapProperty.cpp \
     Player.cpp
