@@ -14,7 +14,7 @@ INCLUDEPATH += . \
     ../server
 LIBS += -L../common \
     -L../server \
-    -lcommon
+    -lcommon \
     -lserver
 
 # Input
