@@ -12,6 +12,6 @@ win32 {
 for(dep, DEPENDENCY_LIBRARIES) {
     #message($$TARGET depends on $$dep ($${DESTDIR}/$${dep}.$${LIBNAME}))
     #LIBS += $${DESTDIR}/lib$${dep}.$${LIBNAME}
-    PRE_TARGETDEPS += ../$${dep}/lib$${dep}.$${LIBNAME}
+    PRE_TARGETDEPS += $${ROOT_PWD}$${dep}/lib$${dep}.$${LIBNAME}
 }
 
