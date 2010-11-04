@@ -15,21 +15,9 @@ HEADERS += BlockMapProperty.h \
     Map.h \
     NetMessage.h \
     Player.h \
-    constant.h \
-    Flame.h \
-    Bomb.h \
-    constant.h \
-    Map.h \
-    BlockMapProperty.h \
-    NetMessage.h \
-    Player.h
+    constant.h
 SOURCES += BlockMapProperty.cpp \
     Bomb.cpp \
     Flame.cpp \
     Map.cpp \
     Player.cpp \
-    Flame.cpp \
-    Bomb.cpp \
-    Map.cpp \
-    BlockMapProperty.cpp \
-    Player.cpp
