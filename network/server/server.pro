@@ -1,15 +1,17 @@
+ROOT_PWD = ../../
 DEPENDENCY_LIBRARIES = common
-include(../lib_dep.pri)
+include($${ROOT_PWD}lib_dep.pri)
+
 QT += network \
     xml
 CONFIG += DEBUG \
     staticlib
 TEMPLATE = lib
 INCLUDEPATH += . \
-    ../common
+    $${ROOT_PWD}common
 DEPENDPATH += . \
     ../common
-LIBS += -L../common \
+LIBS += -L$${ROOT_PWD}common \
     -lcommon
 HEADERS = MapParser.h \
     MapServer.h \
