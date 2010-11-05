@@ -17,7 +17,6 @@ LIBS += -L$${ROOT_PWD}common \
     -lcommon
 
 # Input
-HEADERS += Serverd.h \
-    Serverd.cpp
+HEADERS += Serverd.h
 SOURCES += main_serverd.cpp \
     Serverd.cpp
