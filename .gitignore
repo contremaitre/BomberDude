@@ -1,4 +1,5 @@
 *.o
+*.a
 Makefile
 bomb
 moc_*
