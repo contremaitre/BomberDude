@@ -44,39 +44,17 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
 	connect(client, SIGNAL(updateMap(QByteArray)), this, SLOT(updateMap(QByteArray)));
     connect(client, SIGNAL(sigPing(int)), this, SLOT(statPing(int)));
     connect(client, SIGNAL(sigPacketLoss(double)), this, SLOT(statPacketLoss(double)));
+    connect(client,SIGNAL(mapReceived(Map*)),this,SLOT(mapReceived(Map*)));
     settings = set;
 }
 
 void GamePlay::launch()
 {
-    connect(client,SIGNAL(mapReceived(Map*)),this,SLOT(mapReceived(Map*)));
-    /**
-     * If we act as a server we must create the map
-     * We wait to receive the map from the server to display the graphics
-     */
-    if( settings->getServer() )
-    {
-        qDebug()<< "going to create server";
-    	//we are the server
-        //gameField->createRandomMap(MAP_SIZE,MAP_SIZE);
-        //const MapServer *m = gameField->getMap();
-
-        server = new NetServer(settings->getServerPort());
-        qDebug()<< "server created";
-        server->createRandomMap(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
-        //We start the game as soon as a player is connecter to the server (ourselves actualy)
-        //others players can join later (but they may miss movement me can make before they join
-        //the way the game is launched will be changed later.
-        connect(server,SIGNAL(serverError()),this,SLOT(slotServerError()),Qt::QueuedConnection);
-        connect(server,SIGNAL(serverReady()),this,SLOT(slotServerReady()),Qt::QueuedConnection);
-        server->start();
-    }
+    //we will need the map before we can start
+    if( settings->isServer() )
+        client->connectToServer("127.0.0.1", settings->getServerPort());
     else
-    {
-        server = NULL;
-        //we will need the map before we can start
         client->connectToServer(settings->getServerAddress(), settings->getServerPort());
-    }
 }
 
 void GamePlay::mapReceived(Map *map)
@@ -238,12 +216,6 @@ GamePlay::~GamePlay()
 {
     delete gameArena;
     delete timerPing;
-    if(server)
-    {
-        server->quit();
-        server->wait();
-        delete server;
-    }
     delete client;
     delete timer;
 }

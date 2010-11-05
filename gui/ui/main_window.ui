@@ -20,32 +20,13 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="startButton">
-    <property name="geometry">
-     <rect>
-      <x>580</x>
-      <y>510</y>
-      <width>92</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="text">
-     <string>Start</string>
-    </property>
-   </widget>
    <widget class="QWidget" name="network_pref" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>10</y>
       <width>271</width>
-      <height>161</height>
+      <height>191</height>
      </rect>
     </property>
     <widget class="QCheckBox" name="isServer">
@@ -105,6 +86,19 @@
        <width>131</width>
        <height>31</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="serverButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>150</y>
+       <width>92</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </widget>

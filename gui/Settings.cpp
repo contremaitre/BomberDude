@@ -23,7 +23,7 @@ Settings::Settings()
 {
     qsettings = new QSettings("QtBomberman", "QtBomberman");
     qsettings->beginGroup("Network");
-    isServer = qsettings->value("isServer",false).toBool();
+    b_isServer = qsettings->value("isServer",false).toBool();
     serverAddress = qsettings->value("serverAddress",SERVER_ADDRESS).toString();
     serverPort = qsettings->value("serverPort",SERVER_PORT).toInt();
     sound = qsettings->value("sound", true).toBool();
@@ -32,16 +32,16 @@ Settings::Settings()
 
 void Settings::save()
 {
-    qsettings->setValue("isServer",isServer);
+    qsettings->setValue("isServer",b_isServer);
     qsettings->setValue("sound",sound);
     qsettings->setValue("serverAddress",serverAddress);
     qsettings->setValue("serverPort",serverPort);
     qsettings->setValue("showIpStats",showIpStats);
 }
 
-bool Settings::getServer() const
+bool Settings::isServer() const
 {
-    return isServer;
+    return b_isServer;
 }
 
 bool Settings::getShowIpStats() const
@@ -66,7 +66,7 @@ bool Settings::isSound() const
 
 void Settings::setServer(bool val)
 {
-    isServer = val;
+    b_isServer = val;
 }
 
 void Settings::setShowIpStats(bool val)

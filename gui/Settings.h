@@ -29,7 +29,7 @@ private:
     QSettings *qsettings;
     int serverPort;
     QString serverAddress;
-    bool isServer;
+    bool b_isServer;
     bool sound;
     bool showIpStats;
 
@@ -37,7 +37,7 @@ public:
     Settings();
     ~Settings();
 
-    bool getServer() const;
+    bool isServer() const;
     QString getServerAddress() const;
     int getServerPort() const;
     bool isSound() const;

@@ -48,7 +48,6 @@ public:
 private:
     GameArena *gameArena;
     NetClient *client;
-    NetServer *server; //instanciated if we are the server
     Settings *settings;
 
     bool leftK, rightK, upK, downK;

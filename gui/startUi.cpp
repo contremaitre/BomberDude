@@ -24,6 +24,7 @@
 StartUi::StartUi()
 {
     gamePlay = NULL;
+    server = NULL;
     settings = new Settings;
     mainWindow = new Ui_MainWindow;
     mainWindow->setupUi(this);
@@ -31,7 +32,7 @@ StartUi::StartUi()
     loadNetWidget();
     loadSound();
     loadIpStats();
-    connect(mainWindow->startButton,SIGNAL(clicked()),this,SLOT(start()));
+    connect(mainWindow->serverButton,SIGNAL(clicked()),this,SLOT(startServer()));
     connect(mainWindow->isServer, SIGNAL(stateChanged(int)), this, SLOT(isServerChanged(int)));
     connect(mainWindow->sound, SIGNAL(stateChanged(int)), this, SLOT(soundChanged(int)));
     connect(mainWindow->stats_check, SIGNAL(stateChanged(int)), this, SLOT(statsCheckedChanged(int)));
@@ -80,14 +81,14 @@ void StartUi::loadSound()
 
 void StartUi::loadNetWidget()
 {
-    Qt::CheckState checked = settings->getServer() ? Qt::Checked : Qt::Unchecked;
+    Qt::CheckState checked = settings->isServer() ? Qt::Checked : Qt::Unchecked;
 
     mainWindow->isServer->setCheckState(checked);
     mainWindow->serverIp->setPlainText(settings->getServerAddress());
     QString port;
     port.setNum(settings->getServerPort());
     mainWindow->serverPort->setPlainText(QString(port));
-    setAddrFieldEnabled(checked == 0);
+    updateNetWidgetState(checked == 0);
 }
 
 bool StartUi::setSettings()
@@ -107,18 +108,29 @@ bool StartUi::setSettings()
     return true;
 }
 
-void StartUi::start()
+void StartUi::startServer()
 {
     if(!setSettings())
         return;
-    mainWindow->startButton->hide();
     mainWindow->network_pref->hide();
     mainWindow->sound_pref->hide();
     if(!settings->getShowIpStats())
         mainWindow->ip_stats->hide();
 
+    if(settings->isServer())
+    {
+        if(server)
+        {
+            server->kill();
+            delete server;
+        }
+        server = new QProcess(this);
+        connect(server, SIGNAL(started()), this, SLOT(slotServerLaunched()));
+        connect(server, SIGNAL(error(QProcess::ProcessError)), this, SLOT(slotServerLaunchedError(QProcess::ProcessError)));
+        server->start("./Serverd");
+    }
     gamePlay = new GamePlay(this, settings);
-    connect( gamePlay, SIGNAL(connectedToServer()), this, SLOT(slotConnected()) );
+    connect( gamePlay, SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()) );
     connect( gamePlay, SIGNAL(connectionError()), this, SLOT(slotConnectionError()), Qt::QueuedConnection );
     connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );
     connect( gamePlay, SIGNAL(sigStatPing(int)), this, SLOT(statPing(int)));
@@ -126,15 +138,23 @@ void StartUi::start()
     gamePlay->launch();
 }
 
-void StartUi::setAddrFieldEnabled(bool en)
+void StartUi::updateNetWidgetState(bool en)
 {
     mainWindow->serverIp->setEnabled(en);
     mainWindow->ipLabel->setEnabled(en);
+    if(en)
+    {
+        mainWindow->serverButton->setText("Connect");
+    }
+    else
+    {
+        mainWindow->serverButton->setText("Launch");
+    }
 }
 
 void StartUi::isServerChanged(int state)
 {
-    setAddrFieldEnabled(state == 0);
+    updateNetWidgetState(state == 0);
 }
 
 void StartUi::statsCheckedChanged(int state)
@@ -187,7 +207,7 @@ void StartUi::statPing(int ping)
 }
 
 
-void StartUi::slotConnected()
+void StartUi::slotConnectedToServer()
 {
     //qDebug("StartUi::slotConnected");
 }
@@ -197,10 +217,19 @@ void StartUi::closeGame()
     delete gamePlay;
     gamePlay = NULL;
     loadIpStats();
-    mainWindow->startButton->show();
     mainWindow->network_pref->show();
     mainWindow->sound_pref->show();
     mainWindow->ip_stats->show();
+}
+
+void StartUi::slotServerLaunched()
+{
+    qDebug("StartUi::slotServerLaunched");
+}
+
+void StartUi::slotServerLaunchedError(QProcess::ProcessError error)
+{
+    qDebug() << "StartUi::slotServerLaunchedError" << error;
 }
 
 void StartUi::slotConnectionError()
@@ -212,6 +241,11 @@ void StartUi::slotConnectionError()
 StartUi::~StartUi()
 {
     setSettings();
+    if(server)
+    {
+        server->kill(); //todo
+        delete server;
+    }
     delete gamePlay;
     delete mainWindow;
     delete settings;

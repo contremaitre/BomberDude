@@ -27,6 +27,7 @@
 #include <QObject>
 #include <QMainWindow>
 #include <QLayout>
+#include <QProcess>
 
 class Ui_MainWindow;
 class GamePlay;
@@ -46,6 +47,7 @@ private:
     GamePlay *gamePlay;
     Settings *settings;
     QSound *music;
+    QProcess *server;
 
     QPixmap statusGrey;
     QPixmap statusGreen;
@@ -57,18 +59,20 @@ private:
     void loadSound();
     void loadIpStats();
     bool setSettings();
-    void setAddrFieldEnabled(bool);
+    void updateNetWidgetState(bool);
     void toggleMusic(bool);
 
 private slots:
-    void start();
+    void startServer();
     void isServerChanged(int);
     void soundChanged(int);
     void statPing(int);
     void statPacketLoss(double);
     void statsCheckedChanged(int);
     void slotConnectionError();
-    void slotConnected();
+    void slotConnectedToServer();
+    void slotServerLaunched();
+    void slotServerLaunchedError(QProcess::ProcessError error);
     void closeGame();
 };
 
