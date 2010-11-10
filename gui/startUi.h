@@ -53,6 +53,7 @@ private:
     QPixmap statusGreen;
     QPixmap statusYellow;
     QPixmap statusRed;
+    QPixmap loading;
 
     void loadPixmaps();
     void loadNetWidget();

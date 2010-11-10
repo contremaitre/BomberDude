@@ -62,6 +62,9 @@ void StartUi::loadPixmaps()
     QPixmap red = QPixmap("pictures/status_red.png");
     statusRed = red.scaled(size);
 
+    QSize size2(mainWindow->serverStatus->width(),mainWindow->serverStatus->height());
+    QPixmap load = QPixmap("pictures/loading.png");
+    loading = load.scaled(size2);
 }
 
 void StartUi::loadSound()
@@ -89,6 +92,8 @@ void StartUi::loadNetWidget()
     port.setNum(settings->getServerPort());
     mainWindow->serverPort->setPlainText(QString(port));
     updateNetWidgetState(checked == 0);
+    //mainWindow->serverStatus->setPixmap(loading);
+    mainWindow->serverStatus->setPixmap(NULL);
 }
 
 bool StartUi::setSettings()

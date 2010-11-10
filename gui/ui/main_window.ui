@@ -101,6 +101,29 @@
       <string/>
      </property>
     </widget>
+    <widget class="QLabel" name="serverStatus">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>140</y>
+       <width>41</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="serverStatus2" native="true">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>140</y>
+       <width>51</width>
+       <height>51</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="sound_pref" native="true">
     <property name="geometry">
@@ -172,6 +195,9 @@
        <height>20</height>
       </rect>
      </property>
+     <property name="text">
+      <string>0</string>
+     </property>
     </widget>
     <widget class="QLabel" name="ping_pic">
      <property name="geometry">
@@ -181,6 +207,9 @@
        <width>20</width>
        <height>20</height>
       </rect>
+     </property>
+     <property name="text">
+      <string>0</string>
      </property>
     </widget>
     <widget class="QCheckBox" name="stats_check">
