@@ -132,6 +132,9 @@ void StartUi::startServer()
         server = new QProcess(this);
         connect(server, SIGNAL(started()), this, SLOT(slotServerLaunched()));
         connect(server, SIGNAL(error(QProcess::ProcessError)), this, SLOT(slotServerLaunchedError(QProcess::ProcessError)));
+        //read debug ouputs
+        connect(server,SIGNAL(readyReadStandardOutput()),this,SLOT(slotReadServerDebug()));
+        server->setReadChannelMode(QProcess::MergedChannels);
         server->start("./Serverd");
     }
     gamePlay = new GamePlay(this, settings);
@@ -241,6 +244,11 @@ void StartUi::slotConnectionError()
 {
     //qDebug("StartUi::slotConnectionError");
     closeGame();
+}
+
+void StartUi::slotReadServerDebug()
+{
+    qDebug() << "Server : " << server->readAllStandardOutput();
 }
 
 StartUi::~StartUi()

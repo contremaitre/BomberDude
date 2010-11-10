@@ -74,6 +74,7 @@ private slots:
     void slotConnectedToServer();
     void slotServerLaunched();
     void slotServerLaunchedError(QProcess::ProcessError error);
+    void slotReadServerDebug();
     void closeGame();
 };
 
