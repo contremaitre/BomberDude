@@ -1,9 +1,9 @@
 # 
 win32 {
- LIBNAME=dll
+ LIB_EXT=dll
 }
 !win32 {
- LIBNAME=a
+ LIB_EXT=a
 }
 
 # This function sets up the dependencies for libraries that are built with
@@ -12,6 +12,9 @@ win32 {
 for(dep, DEPENDENCY_LIBRARIES) {
     #message($$TARGET depends on $$dep ($${DESTDIR}/$${dep}.$${LIBNAME}))
     #LIBS += $${DESTDIR}/lib$${dep}.$${LIBNAME}
-    PRE_TARGETDEPS += $${ROOT_PWD}$${dep}/lib$${dep}.$${LIBNAME}
+    LIB_NAME = $${dep}
+    #remove the path of the lib
+    LIB_NAME ~= s,.*/,
+    PRE_TARGETDEPS += $${ROOT_PWD}$${dep}/lib$${LIB_NAME}.$${LIB_EXT}
 }
 

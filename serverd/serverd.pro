@@ -1,5 +1,5 @@
 ROOT_PWD = ../
-DEPENDENCY_LIBRARIES = common
+DEPENDENCY_LIBRARIES = common network/server
 include($${ROOT_PWD}lib_dep.pri)
 
 QT += network \
