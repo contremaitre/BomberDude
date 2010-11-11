@@ -135,7 +135,12 @@ void StartUi::startServer()
         //read debug ouputs
         connect(server,SIGNAL(readyReadStandardOutput()),this,SLOT(slotReadServerDebug()));
         server->setReadChannelMode(QProcess::MergedChannels);
-        server->start("./Serverd");
+
+		QString serverCmdLine("./Serverd");
+		serverCmdLine += " --port ";
+		serverCmdLine += mainWindow->serverPort->toPlainText();
+
+        server->start(serverCmdLine);
     }
     gamePlay = new GamePlay(this, settings);
     connect( gamePlay, SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()) );
