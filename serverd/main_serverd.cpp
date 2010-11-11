@@ -16,23 +16,59 @@
 */
 
 #include <QApplication>
+#include <iostream>
+#include <sstream>
 #include "constant.h"
-#include "Serverd.cpp"
+#include "Serverd.h"
 #include "constant.h"
+
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv, false);
 
-    Serverd *serverd;
-    const char *mapFile = NULL;
-    if(argc > 2 && !strcmp(argv[1],"--mapfile"))
-        mapFile = argv[2];
+    const char *mapFile = 0;
+	int portNumber = SERVER_PORT;
 
+	int index_arg = 1;
+
+	// parse the command line parameters
+	// each option section must increment index_arg by itself and finish by "continue"
+	while(index_arg < argc) {
+		if(strcmp(argv[index_arg], "--mapfile") == 0) {
+			if(++index_arg >= argc) {
+				std::cerr << "Parameter --mapfile: missing argument" << std::endl;
+				return 42;
+			}
+			mapFile = argv[index_arg++];
+			continue;
+		}
+
+		if(strcmp(argv[index_arg], "--port") == 0) {
+			if(++index_arg >= argc) {
+				std::cerr << "Parameter --port: missing argument" << std::endl;
+				return 42;
+			}
+			std::istringstream iss(argv[index_arg++]);
+			iss >> portNumber;
+			if(portNumber < 1 || portNumber > 65535) {
+				std::cerr << "Parameter --port: invalid port number " << portNumber << std::endl;
+				return 42;
+			}
+			continue;
+		}
+
+		std::cout << "Unknown parameter: " << argv[index_arg] << std::endl;
+		++index_arg;
+	}
+
+	std::cout << "Using port number: " << portNumber << std::endl;
+
+    Serverd *serverd;
     if(mapFile)
-        serverd = new Serverd(SERVER_PORT,mapFile);
+        serverd = new Serverd(portNumber,mapFile);
     else
-        serverd = new Serverd(SERVER_PORT,MAP_SIZE,BLOCK_SIZE);
+        serverd = new Serverd(portNumber,MAP_SIZE,BLOCK_SIZE);
 
     serverd->launch();
     app.exec();
