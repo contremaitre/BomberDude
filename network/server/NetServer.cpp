@@ -108,7 +108,15 @@ void NetServer::startGame()
 void NetServer::setMaxPlayers(int value)
 {
     maxNbPlayers = value;
-    //TODO disconnect some clients if too many
+    //disconnect some clients if too many
+    while( clients.size() > maxNbPlayers )
+    {
+        qDebug() << "setMaxPlayers, too many players, disconnecting one";
+        NetServerClient *last = clients.takeLast();
+        delete last;
+
+    }
+
     foreach(NetServerClient *client, clients)
         client->sendMaxPlayers(maxNbPlayers);
 }
