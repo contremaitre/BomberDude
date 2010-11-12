@@ -41,7 +41,7 @@ class NetServerClient : public QObject
     Q_OBJECT
 
       public:
-  NetServerClient(QTcpSocket *, QUdpSocket *, int id, NetServer *);
+  NetServerClient(QTcpSocket *, QUdpSocket *, int id, bool admin, int maxPl, NetServer *);
   ~NetServerClient();
   void sendMap(const Map&);
   void sendUpdate(const QByteArray& block);
@@ -50,6 +50,7 @@ class NetServerClient : public QObject
   int getId() const;
   void udpReceived(quint32 pckNum);
   void sendUdpStats();
+  void sendMaxPlayers(int);
 
  private:
   QTcpSocket *tcpSocket;
@@ -60,7 +61,9 @@ class NetServerClient : public QObject
   quint32 udpCpt;
   quint32 lastReceivedPckt;
   quint16 packetErrors; //udp packet errors since last report
+  bool isAdmin;
   void handleMsg(QDataStream &);
+  void sendIsAdmin(int max);
   int playerId;
   int playerNumber;
   quint16 blockSize; //size of the current message

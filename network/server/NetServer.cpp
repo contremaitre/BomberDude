@@ -30,6 +30,8 @@ NetServer::NetServer(int port) : QThread()
     this->port = port;
     tcpServer = NULL;
     udpSocket = NULL;
+    gameStarted = false;
+    maxNbPlayers = 2; //1
     connect(this,SIGNAL(sigStartHeartBeat()), this, SLOT(startHeartBeat()), Qt::QueuedConnection);
 }
 
@@ -60,15 +62,27 @@ void NetServer::startHeartBeat() {
 void NetServer::incomingClient()
 {
     QTcpSocket *clientConnection = tcpServer->nextPendingConnection();
-
-    int playerId = map->getFreePlayerSlot();
-    if(playerId != -1)
+    qDebug() << "NetServer::incomingClient" << map;
+    if(clients.size() < maxNbPlayers)
     {
-        NetServerClient *client = new NetServerClient(clientConnection,udpSocket,playerId,this);
+        int freeIndex;
+        //search for the minimum free index in players list
+        for (freeIndex = 0; freeIndex < clients.size(); ++freeIndex)
+        {
+            if (clients.at(freeIndex)->getId() > freeIndex)
+            {
+                //we will insert the client here
+                break;
+            }
+        }
+        Q_ASSERT(freeIndex < maxNbPlayers);
+        //if freeIndex == 0, this client will be the admin of the server
+        NetServerClient *client = new NetServerClient(clientConnection,udpSocket,freeIndex, freeIndex == 0, maxNbPlayers, this);
         connect(client, SIGNAL(disconected(NetServerClient*)), this, SLOT(clientDisconected(NetServerClient*)));
-        clients.append(client);
-        client->sendMap(*map);
-        qDebug() << "NetServer new client " << clients.size();
+        clients.insert(freeIndex,client);
+        if(gameStarted) //we allow clients to join a game already started
+            client->sendMap(*map);
+        qDebug() << "NetServer new client " << client->getId() << clients.size();
         emit newPlayer();
     }
     else
@@ -76,6 +90,27 @@ void NetServer::incomingClient()
         qDebug() << "New client. No place left";
         clientConnection->disconnectFromHost();
     }
+}
+
+void NetServer::startGame()
+{
+    if(!gameStarted)
+    {
+        loadMap();
+        foreach(NetServerClient *client, clients)
+            map->assignPlayer(client->getId());
+        foreach(NetServerClient *client, clients)
+            client->sendMap(*map);
+        gameStarted = true;
+    }
+}
+
+void NetServer::setMaxPlayers(int value)
+{
+    maxNbPlayers = value;
+    //TODO disconnect some clients if too many
+    foreach(NetServerClient *client, clients)
+        client->sendMaxPlayers(maxNbPlayers);
 }
 
 void NetServer::clientDisconected(NetServerClient *client)
@@ -139,7 +174,8 @@ void NetServer::receiveUdp()
         case msg_move:
         {
             int direction = readMove(in);
-			map->requestMovePlayer(client->getId(), direction);
+            if(gameStarted)
+                map->requestMovePlayer(client->getId(), direction);
         }
             break;
         case msg_ping:
@@ -152,7 +188,8 @@ void NetServer::receiveUdp()
           break;
         }
         case msg_bomb:
-			map->requestBombPlayer(client->getId());
+            if(gameStarted)
+                map->requestBombPlayer(client->getId());
 			break;
         default:
             qDebug() << "NetServer readMove discarding unkown message";
@@ -207,42 +244,42 @@ void NetServer::allocMap()
     //connect(this, SIGNAL(started()), this, SLOT(startHeartBeat()));
 }
 
-
-void NetServer::reloadMap()
+void NetServer::setMapSize(int w, int h,int squareSize)
 {
-    if(!mapFile.isEmpty())
-        loadMap(mapFile);
-    else
-        createRandomMap(map->getWidth(), map->getHeight(), map->getBlockSize());
+    mapW = w;
+    mapH = h;
+    blockSize = squareSize;
 }
 
-void NetServer::createRandomMap(int w, int h,int squareSize)
+void NetServer::setMapFile(const QString file)
 {
-    allocMap();
-    if(!clients.empty())
-        qFatal("create map, and player already in game");
-    qDebug() << "going to create random map";
-    map->setDim(w,h,squareSize);
-    qDebug() << "set Dimensions "<<w<<" "<<h<<" "<<squareSize;
-    map->loadRandom();
-}
-
-bool NetServer::loadMap(const QString file)
-{
-    allocMap();
-    if(!clients.empty())
-        qFatal("create map, and player already in game");
-    qDebug() << "going to load map" << file;
     mapFile = file;
-    MapParser mapParser(map);
-    QFile mapXmlFile(file);
-    QXmlInputSource source(&mapXmlFile);
-    // Create the XML file reader
-    QXmlSimpleReader reader;
-    reader.setContentHandler(&mapParser);
-    // Parse the XML file
-    reader.parse(source);
-    qDebug() << "map loaded";
+}
+bool NetServer::loadMap()
+{
+    allocMap();
+    if(gameStarted)
+        qFatal("create map, and game already started");
+
+    if(!mapFile.isEmpty())
+    {
+        qDebug() << "going to load map" << mapFile;
+        MapParser mapParser(map);
+        QFile mapXmlFile(mapFile);
+        QXmlInputSource source(&mapXmlFile);
+        // Create the XML file reader
+        QXmlSimpleReader reader;
+        reader.setContentHandler(&mapParser);
+        // Parse the XML file
+        reader.parse(source);
+        qDebug() << "map loaded";
+    }
+    else
+    {
+        qDebug() << "set Dimensions "<< mapW << mapH << blockSize;
+        map->setDim(mapW,mapH,blockSize);
+        map->loadRandom();
+    }
     return true;
 }
 

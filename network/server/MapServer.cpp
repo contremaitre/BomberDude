@@ -81,6 +81,7 @@ void MapServer::loadRandom()
     }
 }
 
+/*
 int MapServer::getFreePlayerSlot()
 {
     int ret = -1;
@@ -96,6 +97,16 @@ int MapServer::getFreePlayerSlot()
         }
     }
     return ret;
+}
+*/
+
+bool MapServer::assignPlayer(int id)
+{
+    if(id >= startPlayerSlots.size() || !startPlayerSlots.at(id).freeSlot )
+        return false;
+    startPlayerSlots[id].freeSlot = false;
+    setPlayerPosition(id, startPlayerSlots.at(id).coord.x(), startPlayerSlots.at(id).coord.y());
+    return true;
 }
 
 void MapServer::addPlayerSlot(int x, int y)

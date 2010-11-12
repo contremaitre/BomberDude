@@ -33,6 +33,7 @@ class Ui_MainWindow;
 class GamePlay;
 class Settings;
 class QSound;
+class NetClient;
 
 class StartUi : public QMainWindow
 {
@@ -47,6 +48,7 @@ private:
     GamePlay *gamePlay;
     Settings *settings;
     QSound *music;
+    NetClient *netclient;
     QProcess *server;
 
     QPixmap statusGrey;
@@ -66,6 +68,7 @@ private:
 private slots:
     void startServer();
     void isServerChanged(int);
+    void maxPlayersValueChanged(int);
     void soundChanged(int);
     void statPing(int);
     void statPacketLoss(double);
@@ -75,6 +78,9 @@ private slots:
     void slotServerLaunched();
     void slotServerLaunchedError(QProcess::ProcessError error);
     void slotReadServerDebug();
+    void slotIsServerAdmin(int);
+    void slotMaxPlayersChanged(int);
+    void slotStartGame();
     void closeGame();
 };
 

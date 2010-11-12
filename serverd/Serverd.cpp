@@ -24,13 +24,13 @@
 Serverd::Serverd(int port, int mapSize, int blockSize)
 {
     server = new NetServer(port);
-    server->createRandomMap(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
+    server->setMapSize(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
 }
 
 Serverd::Serverd(int port, const char *mapFile)
 {
     server = new NetServer(port);
-    server->loadMap(mapFile);
+    server->setMapFile(mapFile);
 }
 
 void Serverd::launch()
@@ -45,8 +45,8 @@ void Serverd::launch()
 
 void Serverd::allPlayersLeft()
 {
-    qDebug() << "allPlayersLeft, restart";
-    server->reloadMap();
+    qDebug() << "allPlayersLeft";
+    //server->loadMap();
     //server->createRandomMap(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
 
 }

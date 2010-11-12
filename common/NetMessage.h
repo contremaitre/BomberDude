@@ -24,7 +24,7 @@
 #ifndef NETMESSAGE_H
 #define NETMESSAGE_H
 
-#define NET_VERSION 4 //update this number if network compatibility is broken
+#define NET_VERSION 5 //update this number if network compatibility is broken
 
 enum NetMsgType
 {
@@ -37,6 +37,9 @@ enum NetMsgType
     msg_udp_stat,
 	msg_update_map,
 	msg_net_version,
+	msg_is_admin,
+	msg_max_players,
+	msg_start_game,
 };
 
 #endif

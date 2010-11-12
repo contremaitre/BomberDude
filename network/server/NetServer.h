@@ -44,17 +44,23 @@ public:
     ~NetServer();
     void run();
     void close();
+    void setMapSize(int w, int h,int squareSize);
+    void setMapFile(QString);
     //call this function when the game is launched
-    void createRandomMap(int w, int h,int squareSize);
-    bool loadMap(QString file);
-    void reloadMap();
+    bool loadMap();
+    void setMaxPlayers(int);
+    void startGame();
 private:
     MapServer *map;
     int port;
+    bool gameStarted;
+    int maxNbPlayers;
     QTcpServer *tcpServer;
     QUdpSocket *udpSocket;
+    /* Connected client list, sorted by id */
     QList<NetServerClient *> clients;
     QString mapFile; //path of the map file, if it's not a random map
+    int mapW, mapH, blockSize; //map size if it's a random map
     int readMove(QDataStream &in);
     void sendUdpWelcomeAck(QHostAddress sender, quint16 senderPort);
     void sendPingBack(quint32 cpt, QHostAddress sender, quint16 senderPort);

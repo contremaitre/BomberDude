@@ -44,6 +44,7 @@ public:
     GamePlay(QMainWindow *, Settings *);
     ~GamePlay();
     void launch();
+    NetClient *getNetClient();
 
 private:
     GameArena *gameArena;
@@ -73,8 +74,6 @@ private slots:
     void slotClientConnectError();
     void slotServerError();
     void slotServerReady();
-    void statPing(int);
-    void statPacketLoss(double);
 
 signals:
     void connectedToServer();
@@ -82,7 +81,7 @@ signals:
     void quitGame();
     void sigStatPing(int);
     void sigStatPacketLoss(double);
+    void sigIsServerAdmin(int);
 };
 
 #endif
-

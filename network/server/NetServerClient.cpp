@@ -22,10 +22,11 @@
 #include <QTcpSocket>
 #include <QUdpSocket>
 
-NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, NetServer *s) 
+NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, bool admin, int maxPl, NetServer *s)
 {
     tcpSocket = t;
     udpSocket = u;
+    isAdmin = admin;
     //Had to add DirectConnection, to avoid a Qobject / qthread parenting error.
     //need to check this (cf http://forum.qtfr.org/viewtopic.php?id=10104)
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(incomingTcpData()), Qt::DirectConnection);
@@ -39,6 +40,10 @@ NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, NetServer
     packetErrors = 0;
     lastReceivedPckt = 0;
     server = s;
+    if(admin)
+        sendIsAdmin(maxPl);
+    else
+        sendMaxPlayers(maxPl);
     qDebug() << "new NetServerClient " << id << peerAddress;
 }
 
@@ -79,8 +84,19 @@ void NetServerClient::handleMsg(QDataStream &in)
             qDebug() << "version mismatch (" << version << NET_VERSION << ")";
             tcpSocket->close();
         }
+        break;
     }
-    break;
+    case msg_max_players:
+    {
+        quint16 value;
+        in >> value;
+        if(isAdmin)
+            server->setMaxPlayers(value);
+        break;
+    }
+    case msg_start_game:
+        if(isAdmin)
+            server->startGame();
     default:
         //trash the message
         qDebug() << "NetServerClient, unexpected tcp message received" << msg_type;
@@ -88,6 +104,20 @@ void NetServerClient::handleMsg(QDataStream &in)
         break;
 
     }
+}
+
+
+void NetServerClient::sendMaxPlayers(int value)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_max_players;
+    out << (quint16)value;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    tcpSocket->write(block);
 }
 
 void NetServerClient::sendMap(const Map &map)
@@ -146,6 +176,19 @@ void NetServerClient::udpReceived(quint32 pckNum)
         sendUdpStats();
         packetErrors = 0;
     }
+}
+
+void NetServerClient::sendIsAdmin(int max)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_is_admin;
+    out << (quint16)max;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    tcpSocket->write(block);
 }
 
 void NetServerClient::sendUpdate(const QByteArray& block) {

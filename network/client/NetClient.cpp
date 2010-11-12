@@ -163,11 +163,11 @@ void NetClient::receiveUdp()
 			{
 				int e = timePing->elapsed();
 				qDebug() << "Ping :" << e;
-	            emit sigPing(e);
+	            emit sigStatPing(e);
 			}
 			else
 			{
-			    emit sigPing(-1);
+			    emit sigStatPing(-1);
 				qDebug() << "Ping : received out of delay";
 			}
 			break;
@@ -227,7 +227,22 @@ void NetClient::handleTcpMsg(QDataStream &in)
 	    quint16 nbErrors;
 	    in >> nbErrors;
 	    qDebug() << "udp stats" << nbErrors << "packets error";
-	    emit sigPacketLoss((double)nbErrors/UDP_STATS_INTERVAL);
+	    emit sigStatPacketLoss((double)nbErrors/UDP_STATS_INTERVAL);
+	    break;
+	}
+	case msg_is_admin:
+	{
+        quint16 maxPl;
+        in >> maxPl;
+	    qDebug() << "NetClient, msg_is_admin";
+	    emit sigIsServerAdmin((int)maxPl);
+	    break;
+	}
+	case msg_max_players:
+	{
+        quint16 maxPl;
+        in >> maxPl;
+        emit sigMaxPlayersChanged((int)maxPl);
 	    break;
 	}
 	default:
@@ -236,6 +251,29 @@ void NetClient::handleTcpMsg(QDataStream &in)
 		in.skipRawData(blockSize);
 		break;
 	}
+}
+
+void NetClient::startGame()
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_start_game;
+    setBlockSize(block, out);
+    tcpSocket->write(block);
+}
+
+void NetClient::setMaxPlayers(int value)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_max_players;
+    out << (qint16)value;
+    setBlockSize(block, out);
+    tcpSocket->write(block);
 }
 
 void NetClient::checkUdp()

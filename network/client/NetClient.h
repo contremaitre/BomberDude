@@ -49,6 +49,8 @@ public:
     void sendMove(int direction);
     void sendPing();
     void sendBomb();
+    void setMaxPlayers(int);
+    void startGame();
 
 private:
     QTcpSocket *tcpSocket;
@@ -88,8 +90,10 @@ signals:
 	void updateMap(QByteArray updateBlock);
     void sigConnected();
     void sigConnectionError();
-    void sigPing(int);
-    void sigPacketLoss(double);
+    void sigStatPing(int);
+    void sigStatPacketLoss(double);
+    void sigIsServerAdmin(int);
+    void sigMaxPlayersChanged(int);
 };
 
 #endif

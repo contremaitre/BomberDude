@@ -19,12 +19,14 @@
 #include "ui_main_window.h"
 #include "Settings.h"
 #include "GamePlay.h"
+#include "NetClient.h"
 #include <QSound>
 
 StartUi::StartUi()
 {
     gamePlay = NULL;
     server = NULL;
+    netclient = NULL;
     settings = new Settings;
     mainWindow = new Ui_MainWindow;
     mainWindow->setupUi(this);
@@ -36,7 +38,7 @@ StartUi::StartUi()
     connect(mainWindow->isServer, SIGNAL(stateChanged(int)), this, SLOT(isServerChanged(int)));
     connect(mainWindow->sound, SIGNAL(stateChanged(int)), this, SLOT(soundChanged(int)));
     connect(mainWindow->stats_check, SIGNAL(stateChanged(int)), this, SLOT(statsCheckedChanged(int)));
-
+    connect(mainWindow->startGameButton,SIGNAL(clicked()),this,SLOT(slotStartGame()));
 }
 
 void StartUi::loadIpStats()
@@ -94,6 +96,8 @@ void StartUi::loadNetWidget()
     updateNetWidgetState(checked == 0);
     //mainWindow->serverStatus->setPixmap(loading);
     mainWindow->serverStatus->setPixmap(NULL);
+    mainWindow->maxPlayersBox->setValue(0);
+    mainWindow->adminWidget->setEnabled(false);
 }
 
 bool StartUi::setSettings()
@@ -117,8 +121,8 @@ void StartUi::startServer()
 {
     if(!setSettings())
         return;
-    mainWindow->network_pref->hide();
-    mainWindow->sound_pref->hide();
+    mainWindow->network_pref->setEnabled(false);
+    mainWindow->sound_pref->setEnabled(false);
     if(!settings->getShowIpStats())
         mainWindow->ip_stats->hide();
 
@@ -143,11 +147,15 @@ void StartUi::startServer()
         server->start(serverCmdLine);
     }
     gamePlay = new GamePlay(this, settings);
+    netclient = gamePlay->getNetClient();
+
     connect( gamePlay, SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()) );
     connect( gamePlay, SIGNAL(connectionError()), this, SLOT(slotConnectionError()), Qt::QueuedConnection );
     connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );
-    connect( gamePlay, SIGNAL(sigStatPing(int)), this, SLOT(statPing(int)));
-    connect( gamePlay, SIGNAL(sigStatPacketLoss(double)), this, SLOT(statPacketLoss(double)));
+    connect( netclient, SIGNAL(sigStatPing(int)), this, SLOT(statPing(int)));
+    connect( netclient, SIGNAL(sigStatPacketLoss(double)), this, SLOT(statPacketLoss(double)));
+    connect( netclient, SIGNAL(sigIsServerAdmin(int)), this, SLOT(slotIsServerAdmin(int)));
+    connect( netclient, SIGNAL(sigMaxPlayersChanged(int)), this, SLOT(slotMaxPlayersChanged(int)));
     gamePlay->launch();
 }
 
@@ -178,6 +186,12 @@ void StartUi::statsCheckedChanged(int state)
 void StartUi::soundChanged(int state)
 {
     toggleMusic(state != 0);
+}
+
+void StartUi::maxPlayersValueChanged(int value)
+{
+    qDebug() << "maxPlayersValueChanged" << value;
+    netclient->setMaxPlayers(value);
 }
 
 void StartUi::toggleMusic(bool on)
@@ -222,7 +236,8 @@ void StartUi::statPing(int ping)
 
 void StartUi::slotConnectedToServer()
 {
-    //qDebug("StartUi::slotConnected");
+    qDebug("StartUi::slotConnected");
+    mainWindow->serverStatus->setPixmap(loading);
 }
 
 void StartUi::closeGame()
@@ -251,6 +266,24 @@ void StartUi::slotConnectionError()
     closeGame();
 }
 
+void StartUi::slotStartGame()
+{
+    netclient->startGame();
+}
+
+void StartUi::slotIsServerAdmin(int maxPlayers)
+{
+    mainWindow->maxPlayersBox->setValue(maxPlayers);
+    mainWindow->maxPlayersBox->setMinimum(1);
+    mainWindow->adminWidget->setEnabled(true);
+    connect(mainWindow->maxPlayersBox, SIGNAL(valueChanged(int)), this, SLOT(maxPlayersValueChanged(int)));
+}
+
+void StartUi::slotMaxPlayersChanged(int maxPlayers)
+{
+    mainWindow->maxPlayersBox->setValue(maxPlayers);
+}
+
 void StartUi::slotReadServerDebug()
 {
     qDebug() << "Server : " << server->readAllStandardOutput();
@@ -269,4 +302,3 @@ StartUi::~StartUi()
     delete settings;
     delete music;
 }
-

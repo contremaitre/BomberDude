@@ -61,7 +61,8 @@ public:
 //    ~MapServer();
 	void loadRandom();
 	void addPlayerSlot(int, int);
-	int getFreePlayerSlot();
+	bool assignPlayer(int id);
+	//int getFreePlayerSlot();
 	void requestMovePlayer(int id, int direction);
 	void requestBombPlayer(int id);
 
