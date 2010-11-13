@@ -40,6 +40,7 @@ enum NetMsgType
 	msg_is_admin,
 	msg_max_players,
 	msg_start_game,
+    msg_player_data,
 };
 
 #endif

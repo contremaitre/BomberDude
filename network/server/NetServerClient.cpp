@@ -97,10 +97,19 @@ void NetServerClient::handleMsg(QDataStream &in)
     case msg_start_game:
         if(isAdmin)
             server->startGame();
+        break;
+
+    case msg_player_data: {
+            QString playerName;
+            in >> playerName;
+            qDebug() << "Player id: " << playerId << " number: " << playerNumber << " name: " << playerName;
+        }
+        break;
+
     default:
         //trash the message
         qDebug() << "NetServerClient, unexpected tcp message received" << msg_type;
-        in.skipRawData(blockSize);
+        in.skipRawData(blockSize - 2);      // blockSize contains the message type and we already popped it
         break;
 
     }

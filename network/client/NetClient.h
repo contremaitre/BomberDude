@@ -51,6 +51,7 @@ public:
     void sendBomb();
     void setMaxPlayers(int);
     void startGame();
+    void sendPlayerData(const QString& playerName);
 
 private:
     QTcpSocket *tcpSocket;

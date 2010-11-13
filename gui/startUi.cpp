@@ -244,6 +244,7 @@ void StartUi::slotConnectedToServer()
 {
     qDebug("StartUi::slotConnected");
     mainWindow->serverStatus->setPixmap(loading);
+    gamePlay->getNetClient()->sendPlayerData(mainWindow->playerName->text());
 }
 
 void StartUi::closeGame()

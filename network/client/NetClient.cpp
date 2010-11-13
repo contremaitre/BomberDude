@@ -128,6 +128,18 @@ void NetClient::sendVersionNumber()
     //qDebug() << "NetClient send version number";
 }
 
+void NetClient::sendPlayerData(const QString& playerName) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << static_cast<quint16>(0);
+    out << static_cast<quint16>(msg_player_data);
+    out << playerName;
+    setBlockSize(block, out);
+    tcpSocket->write(block);
+    qDebug() << "NetClient send player data";
+}
+
 void NetClient::receiveUdp()
 {
 	//qDebug() << "NetClient receive udp";
