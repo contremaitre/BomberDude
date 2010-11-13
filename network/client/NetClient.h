@@ -80,12 +80,8 @@ private slots:
     void slotTcpConnected();
     void slotTcpError(QAbstractSocket::SocketError);
     void checkUdp();
+
 signals:
-	void flameReceived(Flame & flame);
-	void flameRemoved(qint16 flameId);
-    void moveReceived(qint16 plId, qint16 x, qint16 y);
-    void bombReceived(qint16 plId, qint16 x, qint16 y, qint16 bombId);
-    void bombRemoved(qint16 bombId);
     void mapReceived(Map *);
 	void updateMap(QByteArray updateBlock);
     void sigConnected();

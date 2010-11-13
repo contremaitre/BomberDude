@@ -171,14 +171,6 @@ void NetClient::receiveUdp()
 				qDebug() << "Ping : received out of delay";
 			}
 			break;
-		case msg_moved:
-		{
-			qint16 player, x, y;
-			in >> player >> x >> y;
-			//qDebug() << "netclient move received " << x << " " << y;
-			emit moveReceived( player, x, y );
-		}
-		break;
 		case msg_update_map: {
 				QByteArray updateBlock;
 				in >> updateBlock;
