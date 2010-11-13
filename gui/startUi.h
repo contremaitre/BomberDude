@@ -61,6 +61,7 @@ private:
     void loadNetWidget();
     void loadSound();
     void loadIpStats();
+    void loadPlayerData();
     bool setSettings();
     void updateNetWidgetState(bool);
     void toggleMusic(bool);

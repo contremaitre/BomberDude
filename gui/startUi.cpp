@@ -34,6 +34,7 @@ StartUi::StartUi()
     loadNetWidget();
     loadSound();
     loadIpStats();
+    loadPlayerData();
     connect(mainWindow->serverButton,SIGNAL(clicked()),this,SLOT(startServer()));
     connect(mainWindow->isServer, SIGNAL(stateChanged(int)), this, SLOT(isServerChanged(int)));
     connect(mainWindow->sound, SIGNAL(stateChanged(int)), this, SLOT(soundChanged(int)));
@@ -100,6 +101,10 @@ void StartUi::loadNetWidget()
     mainWindow->adminWidget->setEnabled(false);
 }
 
+void StartUi::loadPlayerData() {
+    mainWindow->playerName->setText(settings->getPlayerName());
+}
+
 bool StartUi::setSettings()
 {
     bool ok, checked;
@@ -114,6 +119,7 @@ bool StartUi::setSettings()
     settings->setServerAddress(mainWindow->serverIp->toPlainText());
     checked = mainWindow->sound->checkState() == 0 ? false : true;
     settings->setSound(checked);
+    settings->setPlayerName(mainWindow->playerName->text());
     return true;
 }
 

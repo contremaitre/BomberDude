@@ -32,23 +32,27 @@ private:
     bool b_isServer;
     bool sound;
     bool showIpStats;
+    QString playerName;
 
 public:
     Settings();
     ~Settings();
+
+    void save();
 
     bool isServer() const;
     QString getServerAddress() const;
     int getServerPort() const;
     bool isSound() const;
     bool getShowIpStats() const;
-    void save();
+    QString getPlayerName() const;
+
     void setServer(bool);
     void setServerPort(int);
     void setServerAddress(const QString&);
     void setSound(bool);
     void setShowIpStats(bool);
-
+    void setPlayerName(const QString&);
 };
 
 #endif
