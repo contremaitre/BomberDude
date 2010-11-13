@@ -45,6 +45,7 @@ class NetServerClient : public QObject
   ~NetServerClient();
   void sendMap(const Map&);
   void sendUpdate(const QByteArray& block);
+  void sendPlayersList(const QByteArray& block);
   QHostAddress getAddress() const;
   quint16 getPeerUdpPort() const;
 

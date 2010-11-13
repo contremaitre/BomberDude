@@ -201,16 +201,18 @@ void NetClient::readTcpMsgFromServer()
 	QDataStream in(tcpSocket);
 	in.setVersion(QDataStream::Qt_4_0);
 
-	if (blockSize == 0) {
-		if (tcpSocket->bytesAvailable() < (int)sizeof(quint16))
-			return;
-		in >> blockSize;
-	}
-
-	if (tcpSocket->bytesAvailable() < blockSize)
-		return;
-	handleTcpMsg(in);
-	blockSize = 0;
+    do {
+        if (blockSize == 0) {
+            if (tcpSocket->bytesAvailable() < (int)sizeof(quint16))
+                return;
+            in >> blockSize;
+        }
+    
+        if (tcpSocket->bytesAvailable() < blockSize)
+            return;
+        handleTcpMsg(in);
+        blockSize = 0;
+    } while(! tcpSocket->atEnd());
 }
 
 void NetClient::handleTcpMsg(QDataStream &in)
@@ -249,10 +251,26 @@ void NetClient::handleTcpMsg(QDataStream &in)
         emit sigMaxPlayersChanged((int)maxPl);
 	    break;
 	}
+
+    case msg_players_list: {
+            quint8 nbPlayers;
+            in >> nbPlayers;
+
+            qint32 playerId;
+            QString playerName;
+
+            for(int i = 0; i < nbPlayers; i++) {
+                in >> playerId;
+                in >> playerName;
+                qDebug() << "Id: " << playerId << ", name: " << playerName;
+            }
+        }
+        break;
+
 	default:
 		//trash the message
         qDebug() << "NetClient, unexpected tcp message received" << msg_type;
-		in.skipRawData(blockSize);
+		in.skipRawData(blockSize - sizeof(qint16));     // blockSize contains the message type and we already popped it
 		break;
 	}
 }

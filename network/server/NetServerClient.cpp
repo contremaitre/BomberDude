@@ -56,16 +56,19 @@ void NetServerClient::incomingTcpData()
 {
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_0);
-    if (blockSize == 0) {
-        if (tcpSocket->bytesAvailable() < (int)sizeof(quint16))
-            return;
-        in >> blockSize;
-    }
 
-    if (tcpSocket->bytesAvailable() < blockSize)
-        return;
-    handleMsg(in);
-    blockSize = 0;
+    do {
+        if (blockSize == 0) {
+            if (tcpSocket->bytesAvailable() < (int)sizeof(quint16))
+                return;
+            in >> blockSize;
+        }
+    
+        if (tcpSocket->bytesAvailable() < blockSize)
+            return;
+        handleMsg(in);
+        blockSize = 0;
+    } while(! tcpSocket->atEnd());
 }
 
 void NetServerClient::handleMsg(QDataStream &in)
@@ -111,7 +114,7 @@ void NetServerClient::handleMsg(QDataStream &in)
     default:
         //trash the message
         qDebug() << "NetServerClient, unexpected tcp message received" << msg_type;
-        in.skipRawData(blockSize - 2);      // blockSize contains the message type and we already popped it
+        in.skipRawData(blockSize - sizeof(qint16));      // blockSize contains the message type and we already popped it
         break;
 
     }
@@ -142,6 +145,7 @@ void NetServerClient::sendMap(const Map &map)
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
     tcpSocket->write(block);
+    //qDebug() << "NetServerClient sending map to client " << playerId;
 }
 
 void NetServerClient::sendUdpStats()
@@ -205,6 +209,10 @@ void NetServerClient::sendIsAdmin(int max)
 void NetServerClient::sendUpdate(const QByteArray& block) {
 	//qDebug() << "Sending update";
 	udpSocket->writeDatagram(block,peerAddress,peerUdpPort);
+}
+
+void NetServerClient::sendPlayersList(const QByteArray& block) {
+    tcpSocket->write(block);
 }
 
 NetServerClient::~NetServerClient()

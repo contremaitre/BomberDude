@@ -65,6 +65,8 @@ private:
     void sendUdpWelcomeAck(QHostAddress sender, quint16 senderPort);
     void sendPingBack(quint32 cpt, QHostAddress sender, quint16 senderPort);
     void allocMap();
+    void setBlockSize(const QByteArray &block, QDataStream & out);
+
 private slots:
     void incomingClient();
     void clientDisconected(NetServerClient *);
