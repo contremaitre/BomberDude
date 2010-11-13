@@ -20,6 +20,7 @@
 #include "Settings.h"
 #include "GamePlay.h"
 #include "NetClient.h"
+#include "constant.h"
 #include <QSound>
 
 StartUi::StartUi()
@@ -30,6 +31,7 @@ StartUi::StartUi()
     settings = new Settings;
     mainWindow = new Ui_MainWindow;
     mainWindow->setupUi(this);
+    mainWindow->playerName->setMaxLength(MAX_PLAYER_NAME_LENGTH);
     loadPixmaps();
     loadNetWidget();
     loadSound();

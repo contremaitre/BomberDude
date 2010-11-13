@@ -44,4 +44,7 @@
 #define MOVE_STEP (int)(BLOCK_SIZE/7)
 
 
+const int MAX_PLAYER_NAME_LENGTH = 16;
+
+
 #endif // CONSTANT_H_

@@ -47,7 +47,10 @@ class NetServerClient : public QObject
   void sendUpdate(const QByteArray& block);
   QHostAddress getAddress() const;
   quint16 getPeerUdpPort() const;
+
   int getId() const;
+  const QString& getPlayerName() const      { return playerName; }
+
   void udpReceived(quint32 pckNum);
   void sendUdpStats();
   void sendMaxPlayers(int);
@@ -64,8 +67,11 @@ class NetServerClient : public QObject
   bool isAdmin;
   void handleMsg(QDataStream &);
   void sendIsAdmin(int max);
+
   int playerId;
   int playerNumber;
+  QString playerName;
+
   quint16 blockSize; //size of the current message
 
 private slots:

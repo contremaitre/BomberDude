@@ -100,9 +100,11 @@ void NetServerClient::handleMsg(QDataStream &in)
         break;
 
     case msg_player_data: {
-            QString playerName;
-            in >> playerName;
-            qDebug() << "Player id: " << playerId << " number: " << playerNumber << " name: " << playerName;
+            QString name;
+            in >> name;
+            if(name.size() <= MAX_PLAYER_NAME_LENGTH)
+                playerName = name;
+            //qDebug() << "Player id: " << playerId << " name: " << name;
         }
         break;
 
