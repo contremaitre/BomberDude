@@ -94,18 +94,17 @@ void NetServer::incomingClient()
         qDebug() << "NetServer new client " << client->getId() << clients.size();
 
         // we send him the list of all clients (including himself) already connected
-        QByteArray block;
-        QDataStream out(&block, QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_4_0);
-        out << static_cast<quint16>(0);
-        out << static_cast<quint16>(msg_players_list);
-        out << static_cast<quint8>(clients.size());
         foreach(NetServerClient* Nclient, clients) {
+            QByteArray block;
+            QDataStream out(&block, QIODevice::WriteOnly);
+            out.setVersion(QDataStream::Qt_4_0);
+            out << static_cast<quint16>(0);
+            out << static_cast<quint16>(msg_update_player_data);
             out << static_cast<qint32>(Nclient->getId());
             out << Nclient->getPlayerName();
+            setBlockSize(block, out);
+            client->sendTcpBlock(block);
         }
-        setBlockSize(block, out);
-        client->sendTcpBlock(block);
 
         emit newPlayer();
     }

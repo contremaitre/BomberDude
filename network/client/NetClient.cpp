@@ -252,27 +252,6 @@ void NetClient::handleTcpMsg(QDataStream &in)
 	    break;
 	}
 
-    case msg_players_list: {
-            quint8 nbPlayers;
-            in >> nbPlayers;
-
-            qint32 playerId;
-            QString playerName;
-
-            for(int i = 0; i < nbPlayers; i++) {
-                in >> playerId;
-                in >> playerName;
-                if(playerName.size() > MAX_PLAYER_NAME_LENGTH) {
-                    qDebug() << "Error, player #" << playerId << "'s name is too long, " << playerName.size()
-                            << " instead of " << MAX_PLAYER_NAME_LENGTH;
-                    playerName.clear();
-                }
-                //qDebug() << "Id: " << playerId << ", name: " << playerName;
-                emit sigUpdatePlayerData(playerId, playerName);
-            }
-        }
-        break;
-
     case msg_update_player_data: {
             qint32 playerId;
             QString playerName;
