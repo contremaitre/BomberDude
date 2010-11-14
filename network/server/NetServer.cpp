@@ -237,7 +237,7 @@ void NetServer::slotUpdatePlayerData(int playerId, QString playerName) {
     out.setVersion(QDataStream::Qt_4_0);
     out << static_cast<quint16>(0);
     out << static_cast<quint16>(msg_update_player_data);
-    out << static_cast<quint8>(playerId);
+    out << static_cast<qint32>(playerId);
     out << playerName;
     setBlockSize(block, out);
 
