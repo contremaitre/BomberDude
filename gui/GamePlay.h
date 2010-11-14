@@ -52,8 +52,8 @@ private:
     Settings *settings;
 
     bool leftK, rightK, upK, downK;
-    QTimer *timer;
-    QTimer *timerPing;
+    QTimer timer;
+    QTimer timerPing;
     
     //inherited from QObject and redefined
     bool eventFilter(QObject *obj, QEvent *event);

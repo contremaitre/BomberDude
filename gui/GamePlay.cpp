@@ -23,11 +23,10 @@
 
 GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
 {
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()),this,SLOT(slotMoveTimer()));
-    timerPing = new QTimer(this);
-    connect(timerPing, SIGNAL(timeout()),this,SLOT(slotPingTimer()));
-    timerPing->start(2000); // Ping every 2s
+    connect(&timer, SIGNAL(timeout()),this,SLOT(slotMoveTimer()));
+    connect(&timerPing, SIGNAL(timeout()),this,SLOT(slotPingTimer()));
+    timerPing.start(2000); // Ping every 2s
+
     leftK = rightK = upK = downK = false;
     gameArena = new GameArena(mainw, BLOCK_SIZE);
     gameArena->getEventFilter(this);
@@ -167,14 +166,14 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
             downK = press;
         else
             return QObject::eventFilter(obj, event);
-        if(press && !timer->isActive())
+        if(press && !timer.isActive())
         {
-            timer->start(MOVE_TICK_INTERVAL);
+            timer.start(MOVE_TICK_INTERVAL);
             slotMoveTimer();
         }
-        if(!press && !leftK && !upK && !rightK && !downK && timer->isActive())
+        if(!press && !leftK && !upK && !rightK && !downK && timer.isActive())
         {
-            timer->stop();
+            timer.stop();
         }
         return true;
     }
@@ -201,7 +200,5 @@ void GamePlay::slotClientConnectError()
 GamePlay::~GamePlay()
 {
     delete gameArena;
-    delete timerPing;
     delete client;
-    delete timer;
 }
