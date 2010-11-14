@@ -18,7 +18,7 @@
 #include <QApplication>
 #include <iostream>
 #include <sstream>
-#include "constant.h"
+
 #include "Serverd.h"
 #include "constant.h"
 

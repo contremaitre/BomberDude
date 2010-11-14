@@ -15,9 +15,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QDebug>
 #include <QDateTime>
+
 #include "MapParser.h"
-#include "MapServer.h"
+#include "BlockMapProperty.h"
 
 MapParser::MapParser(MapServer* m)
 {

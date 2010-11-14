@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BLOCKMAPPROPERTY_H
-#define BLOCKMAPPROPERTY_H
+#ifndef QTB_BLOCKMAPPROPERTY_H
+#define QTB_BLOCKMAPPROPERTY_H
+
 
 class BlockMapProperty
 {
@@ -36,5 +37,5 @@ private:
 
 };
 
-#endif
 
+#endif // QTB_BLOCKMAPPROPERTY_H

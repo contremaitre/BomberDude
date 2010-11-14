@@ -24,17 +24,19 @@
  *
  */
 
-#ifndef NETSERVER_H
-#define NETSERVER_H
+#ifndef QTB_NETSERVER_H
+#define QTB_NETSERVER_H
+
 
 #include <QThread>
 #include <QHostAddress>
+#include <QTcpServer>
+#include <QUdpSocket>
 
 #include "Flame.h"
-class MapServer;
-class QTcpServer;
-class QUdpSocket;
-class NetServerClient;
+#include "MapServer.h"
+#include "NetServerClient.h"
+
 
 class NetServer : public QThread
 {
@@ -87,5 +89,5 @@ signals:
     void sigStartHeartBeat();
 };
 
-#endif
 
+#endif // QTB_NETSERVER_H

@@ -17,14 +17,9 @@
 
 #include <QKeyEvent>
 #include <QDebug>
-#include <QTimer>
 
 #include "GamePlay.h"
-#include "GameArena.h"
-#include "NetClient.h"
 #include "constant.h"
-#include "Map.h"
-#include "Settings.h"
 
 GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
 {

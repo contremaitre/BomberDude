@@ -15,16 +15,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CASELIST_H
-#define CASELIST_H
+#ifndef QTB_GAMEARENA_H
+#define QTB_GAMEARENA_H
+
+
+#include <QObject>
+#include <QList>
+#include <QGraphicsView>
+#include <QMainWindow>
+
 #include "QGraphicsSquareItem.h"
 #include "Map.h"
 #include "PixmapsItems.h"
-#include <QObject>
-#include <QList>
 
-class QMainWindow;
-class QGraphicsView;
 
 class GameArena : public QObject
 {
@@ -69,5 +72,5 @@ private slots:
 	void blockChanged(int x, int y);
 };
 
-#endif
 
+#endif // QTB_GAMEARENA_H

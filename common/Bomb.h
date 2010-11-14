@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BOMB_H
-#define BOMB_H
+#ifndef QTB_BOMB_H
+#define QTB_BOMB_H
+
 
 #include <QObject>
 #include <QTimer>
@@ -58,4 +59,4 @@ QDataStream& operator>>(QDataStream& in, Bomb& f);
 QDataStream& operator<<(QDataStream& out, const Bomb& f);
 
 
-#endif
+#endif // QTB_BOMB_H

@@ -15,13 +15,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef FLAME_H
-#define FLAME_H
+#ifndef QTB_FLAME_H
+#define QTB_FLAME_H
+
 
 #include <QObject>
-#include <QDebug>
+#include <QSet>
 #include <QPoint>
 #include <QDataStream>
+
 #include "Bomb.h"
 
 
@@ -95,4 +97,4 @@ QDataStream &operator>>(QDataStream & in, Flame& f);
 QDataStream &operator<<(QDataStream &out, const Flame& f);
 
 
-#endif /* FLAME_H */
+#endif // QTB_FLAME_H

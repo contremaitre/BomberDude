@@ -16,12 +16,7 @@
 */
 
 #include "startUi.h"
-#include "ui_main_window.h"
-#include "Settings.h"
-#include "GamePlay.h"
-#include "NetClient.h"
 #include "constant.h"
-#include <QSound>
 
 StartUi::StartUi()
 {

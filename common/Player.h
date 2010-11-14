@@ -1,5 +1,5 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef QTB_PLAYER_H
+#define QTB_PLAYER_H
 
 
 #include <QDataStream>
@@ -43,4 +43,4 @@ QDataStream& operator>>(QDataStream& in, Player& f);
 QDataStream& operator<<(QDataStream& out, const Player& f);
 
 
-#endif // PLAYER_H
+#endif // QTB_PLAYER_H

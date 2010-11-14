@@ -15,11 +15,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef QGRAPHICSSQUAREITEM_H
-#define QGRAPHICSSQUAREITEM_H
+#ifndef QTB_QGRAPHICSSQUAREITEM_H
+#define QTB_QGRAPHICSSQUAREITEM_H
+
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsObject>
+
 
 enum caseType
 {
@@ -45,5 +47,5 @@ public:
     QGraphicsPixmapItem *getItem();
 };
 
-#endif
 
+#endif // QTB_QGRAPHICSSQUAREITEM_H

@@ -16,11 +16,9 @@
 */
 
 #include <QtNetwork>
-#include <unistd.h> // for usleep
+
 #include "NetServer.h"
 #include "constant.h"
-#include "NetServerClient.h"
-#include "MapServer.h"
 #include "NetMessage.h"
 #include "MapParser.h"
 

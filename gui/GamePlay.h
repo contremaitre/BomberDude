@@ -22,18 +22,18 @@
  */
 
 
-#ifndef GAMEPLAY_H
-#define GAMEPLAY_H
+#ifndef QTB_GAMEPLAY_H
+#define QTB_GAMEPLAY_H
+
 
 #include <QObject>
-#include "Flame.h"
-class GameArena;
-class NetClient;
-class NetServer;
-class Map;
-class QMainWindow;
-class Settings;
-class QTimer;
+#include <QTimer>
+#include <QMainWindow>
+
+#include "GameArena.h"
+#include "NetClient.h"
+#include "Map.h"
+#include "Settings.h"
 
 
 class GamePlay : public QObject
@@ -84,4 +84,5 @@ signals:
     void sigIsServerAdmin(int);
 };
 
-#endif
+
+#endif // QTB_GAMEPLAY_H

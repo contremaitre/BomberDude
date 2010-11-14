@@ -17,9 +17,7 @@
 #include <QDebug>
 
 #include "Serverd.h"
-#include "NetServer.h"
 #include "constant.h"
-#include "MapServer.h"
 
 Serverd::Serverd(int port, int mapSize, int blockSize)
 {

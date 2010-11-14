@@ -15,11 +15,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MAP_H
-#define MAP_H
+#ifndef QTB_MAP_H
+#define QTB_MAP_H
+
 
 #include <QList> 
 #include <QObject>
+
 #include "BlockMapProperty.h"
 #include "constant.h"
 #include "Bomb.h"
@@ -90,5 +92,5 @@ signals:
 QDataStream &operator>>(QDataStream & in, Map &map);
 QDataStream &operator<<(QDataStream &out, const Map &map);
 
-#endif
 
+#endif // QTB_MAP_H

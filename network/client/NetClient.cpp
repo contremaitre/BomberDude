@@ -17,12 +17,7 @@
 
 #include "NetClient.h"
 #include "NetMessage.h"
-#include "Map.h"
 
-#include <QTcpSocket>
-#include <QUdpSocket>
-#include <QTimer>
-#include <QTime>
 
 NetClient::NetClient()
 {

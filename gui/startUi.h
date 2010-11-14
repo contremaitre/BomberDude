@@ -22,18 +22,21 @@
  *
  */
 
-#ifndef STARTUI_H
-#define STARTUI_H
+#ifndef QTB_STARTUI_H
+#define QTB_STARTUI_H
+
+
 #include <QObject>
 #include <QMainWindow>
 #include <QLayout>
 #include <QProcess>
+#include <QSound>
 
-class Ui_MainWindow;
-class GamePlay;
-class Settings;
-class QSound;
-class NetClient;
+#include "Settings.h"
+#include "GamePlay.h"
+#include "NetClient.h"
+#include "ui_main_window.h"
+
 
 class StartUi : public QMainWindow
 {
@@ -86,5 +89,5 @@ private slots:
     void closeGame();
 };
 
-#endif
 
+#endif // QTB_STARTUI_H

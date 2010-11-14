@@ -15,12 +15,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MAPPARSER_H
-#define MAPPARSER_H
+#ifndef QTB_MAPPARSER_H
+#define QTB_MAPPARSER_H
+
 
 #include <QtXml/QXmlDefaultHandler>
 
-class MapServer;
+#include "MapServer.h"
 
 /**
  * @brief This class handles XML reader events in order to initialize the Arena properties.
@@ -68,4 +69,5 @@ public:
 
 };
 
-#endif
+
+#endif // QTB_MAPPARSER_H

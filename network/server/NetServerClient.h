@@ -21,20 +21,21 @@
 *
 */
 
-#ifndef NETSERVERCLIENT_H
-#define NETSERVERCLIENT_H
+#ifndef QTB_NETSERVERCLIENT_H
+#define QTB_NETSERVERCLIENT_H
 
 #include <QObject>
 #include <QHostAddress>
+#include <QTcpSocket>
+#include <QUdpSocket>
 #include <QList>
 #include <QPoint>
-#include "Flame.h"
-class QTcpSocket;
-class QUdpSocket;
-class NetServer;
-class Map;
 
-typedef struct NetHeader NetHeader;
+#include "Flame.h"
+#include "Map.h"
+
+
+class NetServer;
 
 class NetServerClient : public QObject
 {
@@ -84,5 +85,5 @@ signals:
     void sigUpdatePlayerData(int playerId, QString playerName);
 };
 
-#endif
 
+#endif // QTB_NETSERVERCLIENT_H

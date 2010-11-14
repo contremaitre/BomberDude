@@ -15,7 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QSettings>
+
 #include "Settings.h"
 #include "constant.h"
 

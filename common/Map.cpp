@@ -20,9 +20,6 @@
 #include <QDebug>
 
 #include "Map.h"
-#include <stdlib.h> //Temporary (NULL)
-#include <string.h>
-#include <time.h> //qrand seed
 
 Map::Map() :
 	width(0),

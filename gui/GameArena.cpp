@@ -16,10 +16,8 @@
  */
 
 #include <QDebug>
-#include <QGraphicsView>
-#include <QMainWindow>
 #include <QDataStream>
-#include <QList>
+
 #include "Flame.h"
 #include "GameArena.h"
 

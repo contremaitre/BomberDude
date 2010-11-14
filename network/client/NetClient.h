@@ -23,21 +23,18 @@
  *
  */
 
-#ifndef NETCLIENT_H
-#define NETCLIENT_H
+#ifndef QTB_NETCLIENT_H
+#define QTB_NETCLIENT_H
+
 
 #include <QObject>
-#include <QAbstractSocket>
-#include <QHostAddress>
-#include "Flame.h"
+#include <QTcpSocket>
+#include <QUdpSocket>
+#include <QTimer>
+#include <QTime>
 
-class QTcpSocket;
-class QUdpSocket;
-class QTimer;
-class QTime;
-class Map;
+#include "Map.h"
 
-typedef struct NetHeader NetHeader;
 
 class NetClient : public QObject
 {
@@ -95,4 +92,5 @@ signals:
     void sigMaxPlayersChanged(int);
 };
 
-#endif
+
+#endif // QTB_NETCLIENT_H

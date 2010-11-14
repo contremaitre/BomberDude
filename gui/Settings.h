@@ -15,12 +15,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#ifndef QTB_SETTINGS_H
+#define QTB_SETTINGS_H
+
 
 #include <QObject>
+#include <QSettings>
 
-class QSettings;
 
 class Settings : public QObject
 {
@@ -55,5 +56,5 @@ public:
     void setPlayerName(const QString&);
 };
 
-#endif
 
+#endif // QTB_SETTINGS_H

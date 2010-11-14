@@ -22,13 +22,15 @@
  */
 
 
-#ifndef SERVERD_H
-#define SERVERD_H
+#ifndef QTB_SERVERD_H
+#define QTB_SERVERD_H
+
 
 #include <QObject>
 
-class NetServer;
-class MapServer;
+#include "NetServer.h"
+#include "MapServer.h"
+
 
 class Serverd : public QObject
 {
@@ -48,5 +50,5 @@ private slots:
     void allPlayersLeft();
 };
 
-#endif
 
+#endif // QTB_SERVERD_H

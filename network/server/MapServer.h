@@ -15,11 +15,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MAPSERVER_H
-#define MAPSERVER_H
+#ifndef QTB_MAPSERVER_H
+#define QTB_MAPSERVER_H
 
 
 #include "Map.h"
+
 
 class MapServer : public Map
 {
@@ -80,4 +81,4 @@ public slots:
 };
 
 
-#endif
+#endif // QTB_MAPSERVER_H

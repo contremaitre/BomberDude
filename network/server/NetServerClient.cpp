@@ -18,9 +18,7 @@
 #include "NetServerClient.h"
 #include "NetServer.h"
 #include "NetMessage.h"
-#include "Map.h"
-#include <QTcpSocket>
-#include <QUdpSocket>
+
 
 NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, bool admin, int maxPl, NetServer *s)
 {

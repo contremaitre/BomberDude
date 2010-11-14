@@ -15,16 +15,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PIXMAPSITEMS_H
-#define PIXMAPSITEMS_H
+#ifndef QTB_PIXMAPSITEMS_H
+#define QTB_PIXMAPSITEMS_H
+
 
 #include <QPixmap>
+
 #include "BlockMapProperty.h"
-#include "constant.h"
+
 /**
  * For now, we load one picture for each block type. And this is done manualy
  * In the future, we will have something like a xml file with an association of block type and pictures
  */
+
 class PixmapsItems
 {
 private:
@@ -46,5 +49,5 @@ public:
     QPixmap getPixmap(BlockMapProperty::Option);
 };
 
-#endif
 
+#endif // QTB_PIXMAPSITEMS_H
