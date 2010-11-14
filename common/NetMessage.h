@@ -42,6 +42,7 @@ enum NetMsgType
 	msg_start_game,
     msg_player_data,        // TCP client -> server, player's profile
     msg_players_list,       // TCP server -> client, list of players' profiles
+    msg_update_player_data, // TCP server -> client, players' profiles
 };
 
 #endif

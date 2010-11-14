@@ -71,6 +71,7 @@ private slots:
     void incomingClient();
     void clientDisconected(NetServerClient *);
     void receiveUdp();
+    void slotUpdatePlayerData(int playerId, QString playerName);
 
 	// to be called in it's own thread (otherwise the QTimer object can fail to send signals)
 	void startHeartBeat();

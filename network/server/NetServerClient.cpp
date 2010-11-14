@@ -105,8 +105,10 @@ void NetServerClient::handleMsg(QDataStream &in)
     case msg_player_data: {
             QString name;
             in >> name;
-            if(name.size() <= MAX_PLAYER_NAME_LENGTH)
+            if(name.size() <= MAX_PLAYER_NAME_LENGTH) {
                 playerName = name;
+                emit sigUpdatePlayerData(playerId, playerName);
+            }
             //qDebug() << "Player id: " << playerId << " name: " << name;
         }
         break;
@@ -211,7 +213,7 @@ void NetServerClient::sendUpdate(const QByteArray& block) {
 	udpSocket->writeDatagram(block,peerAddress,peerUdpPort);
 }
 
-void NetServerClient::sendPlayersList(const QByteArray& block) {
+void NetServerClient::sendTcpBlock(const QByteArray& block) {
     tcpSocket->write(block);
 }
 

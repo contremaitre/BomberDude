@@ -82,9 +82,12 @@ void NetServer::incomingClient()
             }
         }
         Q_ASSERT(freeIndex < maxNbPlayers);
+
         //if freeIndex == 0, this client will be the admin of the server
         NetServerClient *client = new NetServerClient(clientConnection,udpSocket,freeIndex, freeIndex == 0, maxNbPlayers, this);
         connect(client, SIGNAL(disconected(NetServerClient*)), this, SLOT(clientDisconected(NetServerClient*)));
+        connect(client, SIGNAL(sigUpdatePlayerData(int,QString)), this, SLOT(slotUpdatePlayerData(int,QString)));
+
         clients.insert(freeIndex,client);
         if(gameStarted) //we allow clients to join a game already started
             client->sendMap(*map);
@@ -102,7 +105,7 @@ void NetServer::incomingClient()
             out << Nclient->getPlayerName();
         }
         setBlockSize(block, out);
-        client->sendPlayersList(block);
+        client->sendTcpBlock(block);
 
         emit newPlayer();
     }
@@ -226,6 +229,20 @@ void NetServer::receiveUdp()
         }
 
     }
+}
+
+void NetServer::slotUpdatePlayerData(int playerId, QString playerName) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << static_cast<quint16>(0);
+    out << static_cast<quint16>(msg_update_player_data);
+    out << static_cast<quint8>(playerId);
+    out << playerName;
+    setBlockSize(block, out);
+
+    foreach(NetServerClient* Nclient, clients)
+        Nclient->sendTcpBlock(block);
 }
 
 void NetServer::sendUdpWelcomeAck(QHostAddress sender, quint16 senderPort)
