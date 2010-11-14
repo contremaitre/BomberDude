@@ -81,6 +81,7 @@ private slots:
     void slotReadServerDebug();
     void slotIsServerAdmin(int);
     void slotMaxPlayersChanged(int);
+    void slotUpdatePlayerData(qint32 playerId, QString playerName);
     void slotStartGame();
     void closeGame();
 };

@@ -164,6 +164,7 @@ void StartUi::startServer()
     connect( netclient, SIGNAL(sigStatPacketLoss(double)), this, SLOT(statPacketLoss(double)));
     connect( netclient, SIGNAL(sigIsServerAdmin(int)), this, SLOT(slotIsServerAdmin(int)));
     connect( netclient, SIGNAL(sigMaxPlayersChanged(int)), this, SLOT(slotMaxPlayersChanged(int)));
+    connect( netclient, SIGNAL(sigUpdatePlayerData(qint32,QString)), this, SLOT(slotUpdatePlayerData(qint32,QString)));
     gamePlay->launch();
 }
 
@@ -291,6 +292,13 @@ void StartUi::slotIsServerAdmin(int maxPlayers)
 void StartUi::slotMaxPlayersChanged(int maxPlayers)
 {
     mainWindow->maxPlayersBox->setValue(maxPlayers);
+}
+
+void StartUi::slotUpdatePlayerData(qint32 playerId, QString playerName) {
+    QTableWidgetItem *newItem = new QTableWidgetItem(tr("%1").arg(playerId));
+    mainWindow->playersList->setItem(playerId, 0, newItem);
+    newItem = new QTableWidgetItem(playerName);
+    mainWindow->playersList->setItem(playerId, 1, newItem);
 }
 
 void StartUi::slotReadServerDebug()

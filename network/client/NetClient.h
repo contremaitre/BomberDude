@@ -85,6 +85,8 @@ private slots:
 signals:
     void mapReceived(Map *);
 	void updateMap(QByteArray updateBlock);
+    void sigUpdatePlayerData(qint32 playerId, QString playerName);
+
     void sigConnected();
     void sigConnectionError();
     void sigStatPing(int);
