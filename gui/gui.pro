@@ -1,5 +1,5 @@
 ROOT_PWD = ../
-DEPENDENCY_LIBRARIES = common
+DEPENDENCY_LIBRARIES = common network/client
 include($${ROOT_PWD}lib_dep.pri)
 
 QT += network xml
@@ -9,18 +9,14 @@ TARGET = ../QtBomberman
 DEPENDPATH += . \
     ui \
     $${ROOT_PWD}common \
-    $${ROOT_PWD}network/client \
-    $${ROOT_PWD}network/server
+    $${ROOT_PWD}network/client
 INCLUDEPATH += . \
     $${ROOT_PWD}/common \
-    $${ROOT_PWD}network/client \
-    $${ROOT_PWD}network/server
+    $${ROOT_PWD}network/client
 LIBS += -L$${ROOT_PWD}common \
     -L$${ROOT_PWD}network/client \
-    -L$${ROOT_PWD}network/server \
     -lcommon \
-    -lclient \
-    -lserver
+    -lclient
 
 # Input
 HEADERS += QGraphicsSquareItem.h \

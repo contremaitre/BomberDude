@@ -22,7 +22,6 @@
 #include "GamePlay.h"
 #include "GameArena.h"
 #include "NetClient.h"
-#include "NetServer.h"
 #include "constant.h"
 #include "Map.h"
 #include "Settings.h"
