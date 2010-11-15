@@ -253,6 +253,11 @@ QGraphicsSquareItem *GameArena::getPlayer(int id)
 
 void GameArena::slotHearbeatUpdated(qint32 value) {
     int newTime = value / (1000 / MOVE_TICK_INTERVAL);
+
+    // rounding for negative values offset by 1
+    if(value < 0)
+        --newTime;
+
     if(newTime != timeInSeconds) {
         timeInSeconds = newTime;
         emit sigTimeUpdated(newTime);

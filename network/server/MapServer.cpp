@@ -491,21 +491,23 @@ void MapServer::newHeartBeat() {
 	updateOut << cleanList;
 
 	// now let each alive player lay a bomb, then move
-	QList<Player*> movedPlayers;
-	QList<Bomb*> newBombs;
-	foreach(Player* playerN, players) {
-		if(playerN->getLayingBomb()) {
-			playerN->clearLayingBomb();
-			Bomb* newBomb = addBomb(playerN->getId());
-			if(newBomb != 0)
-				newBombs.append(newBomb);
-		}
-		if(playerN->getDirection() != -1) {
-			movePlayer(playerN->getId(), playerN->getDirection());
-			playerN->setDirection(-1);
-			movedPlayers.append(playerN);
-		}
-	}
+    QList<Player*> movedPlayers;
+    QList<Bomb*> newBombs;
+    if(heartBeat >= 0) {
+        foreach(Player* playerN, players) {
+            if(playerN->getLayingBomb()) {
+                playerN->clearLayingBomb();
+                Bomb* newBomb = addBomb(playerN->getId());
+                if(newBomb != 0)
+                    newBombs.append(newBomb);
+            }
+            if(playerN->getDirection() != -1) {
+                movePlayer(playerN->getId(), playerN->getDirection());
+                playerN->setDirection(-1);
+                movedPlayers.append(playerN);
+            }
+        }
+    }
 
 	// serialize the new positions for the players who moved
 	updateOut << static_cast<qint8>(movedPlayers.size());
