@@ -34,8 +34,6 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
 
     //MAP_SIZE
     client = new NetClient;
-    connect(client, SIGNAL(sigConnected()), this, SLOT(slotClientConnected()));
-    connect(client, SIGNAL(sigConnectionError()), this, SLOT(slotClientConnectError()));
 	connect(client, SIGNAL(updateMap(QByteArray)), this, SLOT(updateMap(QByteArray)));
     connect(client,SIGNAL(mapReceived(Map*)),this,SLOT(mapReceived(Map*)));
 
@@ -61,17 +59,6 @@ void GamePlay::mapReceived(Map *map)
 
 void GamePlay::updateMap(QByteArray updateBlock) {
 	gameArena->updateMap(updateBlock);
-}
-
-void GamePlay::slotServerReady()
-{
-    //we are the server, so we connect with localhost
-    client->connectToServer(LOCAL_ADDRESS, settings->getServerPort());
-}
-
-void GamePlay::slotServerError()
-{
-    emit connectionError();
 }
 
 void GamePlay::slotTimeUpdated(int timeInSeconds) {
@@ -190,17 +177,6 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
 NetClient *GamePlay::getNetClient()
 {
     return client;
-}
-
-void GamePlay::slotClientConnected()
-{
-    //qDebug() << "slotClientConnected";
-    emit connectedToServer();
-}
-
-void GamePlay::slotClientConnectError()
-{
-    emit connectionError();
 }
 
 GamePlay::~GamePlay()

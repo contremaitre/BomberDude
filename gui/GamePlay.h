@@ -70,10 +70,6 @@ private slots:
     void slotPingTimer();
     void mapReceived(Map*);
 	void updateMap(QByteArray updateBlock);
-    void slotClientConnected();
-    void slotClientConnectError();
-    void slotServerError();
-    void slotServerReady();
     void slotTimeUpdated(int timeInSeconds);
 
 signals:
