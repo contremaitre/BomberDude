@@ -46,6 +46,8 @@ private:
     int width;
     int height;
     int squareSize;
+    int timeInSeconds;
+
 public:
     GameArena(QMainWindow *, int blockSize);
     ~GameArena();
@@ -70,6 +72,10 @@ public:
 private slots:
     void blockChanged(int);
 	void blockChanged(int x, int y);
+    void slotHearbeatUpdated(qint32 value);
+
+signals:
+    void sigTimeUpdated(int valueInSeconds);
 };
 
 

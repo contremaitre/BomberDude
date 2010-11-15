@@ -81,12 +81,13 @@ public:
     bool blockContainsBomb(int x,int y);
     Map & operator=(const Map &);
 
-	void setHeartBeat(qint32 hb)							{ heartBeat = hb; }
+	void setHeartBeat(qint32 hb);
 	qint32 getHeartBeat() const								{ return heartBeat; }
 
 signals:
     void blockChanged(int pos);
 	void blockChanged(int i, int j);
+    void sigHeartbeatUpdated(qint32 value);
 };
 
 QDataStream &operator>>(QDataStream & in, Map &map);

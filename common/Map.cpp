@@ -217,6 +217,12 @@ void Map::newPlayer(int id)
     players.append(new Player(id));
 }
 
+void Map::setHeartBeat(qint32 hb) {
+    heartBeat = hb;
+    //emit sigHeartbeatUpdated(hb / (1000 / MOVE_TICK_INTERVAL));
+    emit sigHeartbeatUpdated(hb);
+}
+
 Map::~Map()
 {
     delete[] block_list;

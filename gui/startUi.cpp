@@ -155,6 +155,7 @@ void StartUi::startServer()
     connect( gamePlay, SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()) );
     connect( gamePlay, SIGNAL(connectionError()), this, SLOT(slotConnectionError()), Qt::QueuedConnection );
     connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );
+    connect( gamePlay, SIGNAL(sigTimeUpdated(int)), mainWindow->gameClock, SLOT(display(int)));
     connect( netclient, SIGNAL(sigStatPing(int)), this, SLOT(statPing(int)));
     connect( netclient, SIGNAL(sigStatPacketLoss(double)), this, SLOT(statPacketLoss(double)));
     connect( netclient, SIGNAL(sigIsServerAdmin(int)), this, SLOT(slotIsServerAdmin(int)));

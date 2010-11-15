@@ -74,6 +74,7 @@ private slots:
     void slotClientConnectError();
     void slotServerError();
     void slotServerReady();
+    void slotTimeUpdated(int timeInSeconds);
 
 signals:
     void connectedToServer();
@@ -82,6 +83,7 @@ signals:
     void sigStatPing(int);
     void sigStatPacketLoss(double);
     void sigIsServerAdmin(int);
+    void sigTimeUpdated(int timeInSeconds);
 };
 
 

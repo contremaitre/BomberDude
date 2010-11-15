@@ -30,6 +30,8 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     leftK = rightK = upK = downK = false;
     gameArena = new GameArena(mainw, BLOCK_SIZE);
     gameArena->getEventFilter(this);
+    connect(gameArena, SIGNAL(sigTimeUpdated(int)), this, SLOT(slotTimeUpdated(int)));
+
     //MAP_SIZE
     client = new NetClient;
     connect(client, SIGNAL(sigConnected()), this, SLOT(slotClientConnected()));
@@ -70,6 +72,10 @@ void GamePlay::slotServerReady()
 void GamePlay::slotServerError()
 {
     emit connectionError();
+}
+
+void GamePlay::slotTimeUpdated(int timeInSeconds) {
+    emit sigTimeUpdated(timeInSeconds);
 }
 
 void GamePlay::move(int direction)

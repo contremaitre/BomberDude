@@ -18,11 +18,13 @@
 #include <QDebug>
 #include <QDataStream>
 
+#include "startUi.h"
 #include "Flame.h"
 #include "GameArena.h"
 
 GameArena::GameArena(QMainWindow * mainw, int s) :
-	map(0)
+	map(0),
+    timeInSeconds(-999)
 {
 	width = height = 0;
 	squareSize = s;
@@ -99,6 +101,7 @@ void GameArena::setMap(Map *map)
 	init();
     connect(map,SIGNAL(blockChanged(int)),this,SLOT(blockChanged(int)));
     connect(map,SIGNAL(blockChanged(int,int)),this,SLOT(blockChanged(int,int)));
+    connect(map, SIGNAL(sigHeartbeatUpdated(qint32)), this, SLOT(slotHearbeatUpdated(qint32)));
 }
 
 void GameArena::movePlayer(int player, int x, int y)
@@ -246,6 +249,14 @@ QGraphicsSquareItem *GameArena::getCase(int pos)
 QGraphicsSquareItem *GameArena::getPlayer(int id)
 {
 	return playersItem[id];
+}
+
+void GameArena::slotHearbeatUpdated(qint32 value) {
+    int newTime = value / (1000 / MOVE_TICK_INTERVAL);
+    if(newTime != timeInSeconds) {
+        timeInSeconds = newTime;
+        emit sigTimeUpdated(newTime);
+    }
 }
 
 GameArena::~GameArena()
