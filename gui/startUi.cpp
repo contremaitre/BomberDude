@@ -255,6 +255,8 @@ void StartUi::closeGame()
     mainWindow->network_pref->show();
     mainWindow->sound_pref->show();
     mainWindow->ip_stats->show();
+    mainWindow->network_pref->setEnabled(true);
+    mainWindow->sound_pref->setEnabled(true);
 }
 
 void StartUi::slotServerLaunched()
