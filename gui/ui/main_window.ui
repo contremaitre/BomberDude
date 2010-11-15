@@ -287,7 +287,7 @@
       <number>10</number>
      </property>
      <property name="columnCount">
-      <number>4</number>
+      <number>2</number>
      </property>
      <attribute name="horizontalHeaderHighlightSections">
       <bool>false</bool>
@@ -327,8 +327,6 @@
        <string>Name</string>
       </property>
      </column>
-     <column/>
-     <column/>
     </widget>
    </widget>
    <widget class="QLabel" name="serverStatus">
@@ -438,7 +436,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>26</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
