@@ -31,16 +31,15 @@ void PixmapsItems::init(int w, int h)
 
 void PixmapsItems::loadAll()
 {
-//    enum BlockType {wall,brick,empty};
-    block_pixmaps_t tmp_block;
-    option_pixmaps_t tmp_option;
-    QPixmap p("pictures/tux.png");
-    QPixmap ps = p.scaled(QSizeF(width,height).toSize());
-    for(int i = 0; i < 1; i++)
-    {
+    for(int i = 0; i < 10; i++) {
+        QString pixPath = "pictures/tux_0" + QString::number(i) + ".png";
+        QPixmap p(pixPath);
+        QPixmap ps = p.scaled(QSizeF(width,height).toSize());
         bomberman[i] = ps;
     }
 
+    block_pixmaps_t tmp_block;
+    
     QPixmap p2("pictures/brick.png");
     QPixmap ps2 = p2.scaled(QSizeF(width,height).toSize());
     tmp_block.pixmap = ps2;
@@ -83,7 +82,7 @@ QPixmap PixmapsItems::getPixmap(BlockMapProperty::BlockType type)
 
 QPixmap PixmapsItems::getPixmap(int player)
 {
-    return bomberman[0];
+    return bomberman[player];
 }
 
 QPixmap PixmapsItems::getPixmap(BlockMapProperty::Option type)

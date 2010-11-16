@@ -35,7 +35,7 @@ private:
     struct option_pixmaps_t{QPixmap pixmap; BlockMapProperty::Option type;};
     QList <block_pixmaps_t> block_pixmaps;
     QList <option_pixmaps_t> option_pixmaps;
-    QPixmap bomberman[1]; //For now, only one player pixmap is available
+    QPixmap bomberman[10]; //For now, only one player pixmap is available
     QPixmap none;
     void loadAll();
     //width and height to scale the pixmaps to the good size
