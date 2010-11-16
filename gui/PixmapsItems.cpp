@@ -82,6 +82,8 @@ QPixmap PixmapsItems::getPixmap(BlockMapProperty::BlockType type)
 
 QPixmap PixmapsItems::getPixmap(int player)
 {
+    //for now, the max number of differents player graphic is 10
+    Q_ASSERT(player < 10);
     return bomberman[player];
 }
 
