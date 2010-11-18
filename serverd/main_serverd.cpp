@@ -80,6 +80,7 @@ int main(int argc, char *argv[])
     else
         serverd = new Serverd(portNumber,adminPasswd,MAP_SIZE,BLOCK_SIZE);
 
+    QObject::connect(serverd,SIGNAL(sigQuit()), &app, SLOT(quit()));
     serverd->launch();
     app.exec();
 

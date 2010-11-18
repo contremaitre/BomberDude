@@ -18,11 +18,12 @@
 #include "startUi.h"
 #include "constant.h"
 
-StartUi::StartUi()
+StartUi::StartUi(QApplication *a)
 {
     gamePlay = NULL;
     server = NULL;
     netclient = NULL;
+    qapp = a;
     settings = new Settings;
     mainWindow = new Ui_MainWindow;
     mainWindow->setupUi(this);
@@ -311,7 +312,13 @@ StartUi::~StartUi()
     setSettings();
     if(server)
     {
-        server->kill(); //todo
+        if(netclient)
+        {
+            netclient->stopServer();
+            /* waitForFinished is blocking, so let the event loop run before it */
+            qapp->processEvents();
+        }
+        server->waitForFinished();
         delete server;
     }
     delete gamePlay;

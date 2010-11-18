@@ -42,7 +42,7 @@ class StartUi : public QMainWindow
 {
   Q_OBJECT
 public:
-    StartUi();
+    StartUi(QApplication *);
     ~StartUi();
 
 private:
@@ -53,6 +53,7 @@ private:
     QSound *music;
     NetClient *netclient;
     QProcess *server;
+    QApplication *qapp;
 
     QPixmap statusGrey;
     QPixmap statusGreen;

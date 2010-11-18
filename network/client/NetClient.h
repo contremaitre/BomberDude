@@ -50,6 +50,7 @@ public:
     void startGame();
     void sendPlayerData(const QString& playerName);
     void setAdminPasswd(const QString &);
+    void stopServer();
 
 private:
     QTcpSocket *tcpSocket;

@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    StartUi startui;
+    StartUi startui(&app);
     startui.show();
     app.exec();
 

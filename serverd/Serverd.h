@@ -49,6 +49,10 @@ private:
 
 private slots:
     void allPlayersLeft();
+    void slotQuit();
+
+signals:
+    void sigQuit();
 };
 
 

@@ -140,6 +140,19 @@ void NetClient::sendPlayerData(const QString& playerName) {
     qDebug() << "NetClient send player data";
 }
 
+
+void NetClient::stopServer()
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_shutdown_server;
+    setBlockSize(block, out);
+    qDebug("NetClient send msg_shutdown_server");
+    tcpSocket->write(block);
+}
+
 void NetClient::receiveUdp()
 {
 	//qDebug() << "NetClient receive udp";

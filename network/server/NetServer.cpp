@@ -118,6 +118,11 @@ void NetServer::incomingClient()
     }
 }
 
+void NetServer::shutdown()
+{
+    emit sigQuit();
+}
+
 void NetServer::passwordReceived(int id, QString &pass)
 {
     if(adminConnected)

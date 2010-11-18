@@ -34,6 +34,7 @@ Serverd::Serverd(int port, const char *adminPasswd, const char *mapFile)
 void Serverd::init(int port, const char *adminPasswd)
 {
     server = new NetServer(port, adminPasswd);
+    connect(server,SIGNAL(sigQuit()), this, SLOT(slotQuit()), Qt::QueuedConnection);
 }
 
 void Serverd::launch()
@@ -52,6 +53,12 @@ void Serverd::allPlayersLeft()
     //server->loadMap();
     //server->createRandomMap(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
 
+}
+
+void Serverd::slotQuit()
+{
+    qDebug("Serverd::slotQuit()");
+    emit sigQuit();
 }
 
 Serverd::~Serverd()

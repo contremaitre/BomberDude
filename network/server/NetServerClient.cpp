@@ -117,6 +117,11 @@ void NetServerClient::handleMsg(QDataStream &in)
         server->passwordReceived(playerId,pass);
         break;
     }
+    case msg_shutdown_server:
+        qDebug() << "NetServerClient msg_shutdown_server" << isAdmin;
+        if(isAdmin)
+            server->shutdown();
+        break;
     default:
         //trash the message
         qDebug() << "NetServerClient, unexpected tcp message received" << msg_type;

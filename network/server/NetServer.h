@@ -53,6 +53,7 @@ public:
     void setMaxPlayers(int);
     void startGame();
     void passwordReceived(int id, QString &pass);
+    void shutdown();
 
 private:
     MapServer *map;
@@ -91,6 +92,7 @@ signals:
     void serverError();
     void serverReady();
     void sigStartHeartBeat();
+    void sigQuit();
 };
 
 
