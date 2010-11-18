@@ -19,16 +19,21 @@
 #include "Serverd.h"
 #include "constant.h"
 
-Serverd::Serverd(int port, int mapSize, int blockSize)
+Serverd::Serverd(int port, const char *adminPasswd, int mapSize, int blockSize)
 {
-    server = new NetServer(port);
+    init(port, adminPasswd);
     server->setMapSize(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
 }
 
-Serverd::Serverd(int port, const char *mapFile)
+Serverd::Serverd(int port, const char *adminPasswd, const char *mapFile)
 {
-    server = new NetServer(port);
+    init(port, adminPasswd);
     server->setMapFile(mapFile);
+}
+
+void Serverd::init(int port, const char *adminPasswd)
+{
+    server = new NetServer(port, adminPasswd);
 }
 
 void Serverd::launch()

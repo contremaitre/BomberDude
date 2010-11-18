@@ -49,6 +49,7 @@ public:
     void setMaxPlayers(int);
     void startGame();
     void sendPlayerData(const QString& playerName);
+    void setAdminPasswd(const QString &);
 
 private:
     QTcpSocket *tcpSocket;
@@ -61,6 +62,7 @@ private:
     quint32 cptPing;
     quint32 lastPingAck;
     quint32 udpCpt;
+    QString adminPasswd;
     bool udpAckOk;
     void sendUdpWelcome();
     void handleTcpMsg(QDataStream &);
@@ -68,6 +70,7 @@ private:
     void setBlockSize(const QByteArray &, QDataStream &);
     void sendUdpDatagram(const QByteArray &);
     void sendVersionNumber();
+    void sendAdminPasswd();
     int udpCheckCount;
     quint16 blockSize; //size of the current message
     Map *map; //store the map when the server sends it;
@@ -88,7 +91,7 @@ signals:
     void sigConnectionError();
     void sigStatPing(int);
     void sigStatPacketLoss(double);
-    void sigIsServerAdmin(int);
+    void sigIsServerAdmin();
     void sigMaxPlayersChanged(int);
 };
 

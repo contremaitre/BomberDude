@@ -42,7 +42,7 @@ class NetServer : public QThread
 {
     Q_OBJECT
 public:
-    NetServer(int port);
+    NetServer(int port, QString adminPasswd);
     ~NetServer();
     void run();
     void close();
@@ -52,6 +52,8 @@ public:
     bool loadMap();
     void setMaxPlayers(int);
     void startGame();
+    void passwordReceived(int id, QString &pass);
+
 private:
     MapServer *map;
     int port;
@@ -62,6 +64,8 @@ private:
     /* Connected client list, sorted by id */
     QList<NetServerClient *> clients;
     QString mapFile; //path of the map file, if it's not a random map
+    QString adminPasswd; //optional admin password
+    bool adminConnected;
     int mapW, mapH, blockSize; //map size if it's a random map
     int readMove(QDataStream &in);
     void sendUdpWelcomeAck(QHostAddress sender, quint16 senderPort);

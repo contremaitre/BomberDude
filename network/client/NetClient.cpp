@@ -40,9 +40,14 @@ NetClient::NetClient()
 
 }
 
+void NetClient::setAdminPasswd(const QString &p)
+{
+    adminPasswd = p;
+}
+
 void NetClient::connectToServer(QString ip, int port)
 {
-	tcpSocket->connectToHost(ip,port);
+    tcpSocket->connectToHost(ip,port);
 }
 
 void NetClient::udpGenericStream(QDataStream & out)
@@ -233,10 +238,8 @@ void NetClient::handleTcpMsg(QDataStream &in)
 	}
 	case msg_is_admin:
 	{
-        quint16 maxPl;
-        in >> maxPl;
 	    qDebug() << "NetClient, msg_is_admin";
-	    emit sigIsServerAdmin((int)maxPl);
+	    emit sigIsServerAdmin();
 	    break;
 	}
 	case msg_max_players:
@@ -282,6 +285,18 @@ void NetClient::startGame()
     tcpSocket->write(block);
 }
 
+void NetClient::sendAdminPasswd()
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_admin_passwd;
+    out << adminPasswd;
+    setBlockSize(block, out);
+    tcpSocket->write(block);
+}
+
 void NetClient::setMaxPlayers(int value)
 {
     QByteArray block;
@@ -323,6 +338,8 @@ void NetClient::slotTcpConnected()
 	{
 		//qDebug() << "NetClient slotTcpConnected" << serverAddress << serverPort;
 	    sendVersionNumber();
+	    if(!adminPasswd.isEmpty())
+	        sendAdminPasswd();
 		udpCheckCount = 0;
 		udpAckOk = false;
 		timerCheckUdp = new QTimer(this);

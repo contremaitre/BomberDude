@@ -37,12 +37,13 @@ class Serverd : public QObject
   Q_OBJECT
 
 public:
-    Serverd(int port, int mapSize, int blockSize);
-    Serverd(int port, const char *mapFile);
+    Serverd(int port, const char *adminPasswd, int mapSize, int blockSize);
+    Serverd(int port, const char *adminPasswd, const char *mapFile);
     ~Serverd();
     void launch();
 
 private:
+    void init(int port, const char *adminPasswd);
     NetServer *server;
     MapServer *map;
 

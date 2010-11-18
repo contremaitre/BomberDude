@@ -40,11 +40,14 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     settings = set;
 }
 
-void GamePlay::launch()
+void GamePlay::cliConnect(const QString &pass)
 {
     //we will need the map before we can start
     if( settings->isServer() )
+    {
+        client->setAdminPasswd(pass);
         client->connectToServer("127.0.0.1", settings->getServerPort());
+    }
     else
         client->connectToServer(settings->getServerAddress(), settings->getServerPort());
 }

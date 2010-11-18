@@ -27,7 +27,8 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv, false);
 
-    const char *mapFile = 0;
+    const char *mapFile = NULL;
+    const char *adminPasswd = NULL;
 	int portNumber = SERVER_PORT;
 
 	int index_arg = 1;
@@ -58,6 +59,15 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
+        if(strcmp(argv[index_arg], "--admin-password") == 0) {
+            if(++index_arg >= argc) {
+                std::cerr << "Parameter --admin-password: missing argument" << std::endl;
+                return 42;
+            }
+            adminPasswd = argv[index_arg++];
+            continue;
+        }
+
 		std::cout << "Unknown parameter: " << argv[index_arg] << std::endl;
 		++index_arg;
 	}
@@ -66,9 +76,9 @@ int main(int argc, char *argv[])
 
     Serverd *serverd;
     if(mapFile)
-        serverd = new Serverd(portNumber,mapFile);
+        serverd = new Serverd(portNumber,adminPasswd,mapFile);
     else
-        serverd = new Serverd(portNumber,MAP_SIZE,BLOCK_SIZE);
+        serverd = new Serverd(portNumber,adminPasswd,MAP_SIZE,BLOCK_SIZE);
 
     serverd->launch();
     app.exec();

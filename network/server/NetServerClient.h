@@ -56,6 +56,7 @@ class NetServerClient : public QObject
   void udpReceived(quint32 pckNum);
   void sendUdpStats();
   void sendMaxPlayers(int);
+  void setAdmin();
 
  private:
   QTcpSocket *tcpSocket;
@@ -68,7 +69,7 @@ class NetServerClient : public QObject
   quint16 packetErrors; //udp packet errors since last report
   bool isAdmin;
   void handleMsg(QDataStream &);
-  void sendIsAdmin(int max);
+  void sendIsAdmin();
 
   int playerId;
   int playerNumber;

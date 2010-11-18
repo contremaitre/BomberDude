@@ -38,10 +38,9 @@ NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, bool admi
     packetErrors = 0;
     lastReceivedPckt = 0;
     server = s;
+    sendMaxPlayers(maxPl);
     if(admin)
-        sendIsAdmin(maxPl);
-    else
-        sendMaxPlayers(maxPl);
+        sendIsAdmin();
     qDebug() << "new NetServerClient " << id << peerAddress;
 }
 
@@ -111,6 +110,13 @@ void NetServerClient::handleMsg(QDataStream &in)
         }
         break;
 
+    case msg_admin_passwd:
+    {
+        QString pass;
+        in >> pass;
+        server->passwordReceived(playerId,pass);
+        break;
+    }
     default:
         //trash the message
         qDebug() << "NetServerClient, unexpected tcp message received" << msg_type;
@@ -120,6 +126,11 @@ void NetServerClient::handleMsg(QDataStream &in)
     }
 }
 
+void NetServerClient::setAdmin()
+{
+    isAdmin = true;
+    sendIsAdmin();
+}
 
 void NetServerClient::sendMaxPlayers(int value)
 {
@@ -193,14 +204,13 @@ void NetServerClient::udpReceived(quint32 pckNum)
     }
 }
 
-void NetServerClient::sendIsAdmin(int max)
+void NetServerClient::sendIsAdmin()
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
     out << (quint16)0;
     out << (quint16)msg_is_admin;
-    out << (quint16)max;
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
     tcpSocket->write(block);

@@ -129,6 +129,7 @@ void StartUi::startServer()
     if(!settings->getShowIpStats())
         mainWindow->ip_stats->hide();
 
+    QString password = "password"; //Todo random password
     if(settings->isServer())
     {
         if(server)
@@ -146,6 +147,7 @@ void StartUi::startServer()
 		QString serverCmdLine("./Serverd");
 		serverCmdLine += " --port ";
 		serverCmdLine += mainWindow->serverPort->toPlainText();
+		serverCmdLine += " --admin-password " + password;
 
         server->start(serverCmdLine);
     }
@@ -158,10 +160,10 @@ void StartUi::startServer()
     connect( netclient, SIGNAL(sigConnectionError()), this, SLOT(slotConnectionError()), Qt::QueuedConnection);
     connect( netclient, SIGNAL(sigStatPing(int)), this, SLOT(statPing(int)));
     connect( netclient, SIGNAL(sigStatPacketLoss(double)), this, SLOT(statPacketLoss(double)));
-    connect( netclient, SIGNAL(sigIsServerAdmin(int)), this, SLOT(slotIsServerAdmin(int)));
+    connect( netclient, SIGNAL(sigIsServerAdmin()), this, SLOT(slotIsServerAdmin()));
     connect( netclient, SIGNAL(sigMaxPlayersChanged(int)), this, SLOT(slotMaxPlayersChanged(int)));
     connect( netclient, SIGNAL(sigUpdatePlayerData(qint32,QString)), this, SLOT(slotUpdatePlayerData(qint32,QString)));
-    gamePlay->launch();
+    gamePlay->cliConnect(password);
 }
 
 void StartUi::updateNetWidgetState(bool en)
@@ -280,9 +282,8 @@ void StartUi::slotStartGame()
     netclient->startGame();
 }
 
-void StartUi::slotIsServerAdmin(int maxPlayers)
+void StartUi::slotIsServerAdmin()
 {
-    mainWindow->maxPlayersBox->setValue(maxPlayers);
     mainWindow->maxPlayersBox->setMinimum(1);
     mainWindow->adminWidget->setEnabled(true);
     connect(mainWindow->maxPlayersBox, SIGNAL(valueChanged(int)), this, SLOT(maxPlayersValueChanged(int)));

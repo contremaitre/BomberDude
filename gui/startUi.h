@@ -82,7 +82,7 @@ private slots:
     void slotServerLaunched();
     void slotServerLaunchedError(QProcess::ProcessError error);
     void slotReadServerDebug();
-    void slotIsServerAdmin(int);
+    void slotIsServerAdmin();
     void slotMaxPlayersChanged(int);
     void slotUpdatePlayerData(qint32 playerId, QString playerName);
     void slotStartGame();

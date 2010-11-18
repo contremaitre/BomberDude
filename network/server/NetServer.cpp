@@ -22,20 +22,22 @@
 #include "NetMessage.h"
 #include "MapParser.h"
 
-NetServer::NetServer(int port) : QThread()
+NetServer::NetServer(int port, QString adminPasswd) : QThread()
 {
     map = NULL;
     this->port = port;
+    this->adminPasswd = adminPasswd;
     tcpServer = NULL;
     udpSocket = NULL;
     gameStarted = false;
     maxNbPlayers = 2; //1
+    adminConnected = false;
     connect(this,SIGNAL(sigStartHeartBeat()), this, SLOT(startHeartBeat()), Qt::QueuedConnection);
 }
 
 void NetServer::run()
 {
-    qDebug("NetServer run");
+    qDebug() << "NetServer run, admin passord : " << adminPasswd;
     tcpServer = new QTcpServer();
     if (!tcpServer->listen(QHostAddress::Any, port)) {
         qDebug() << "server tcp error :" << tcpServer->errorString();
@@ -84,8 +86,8 @@ void NetServer::incomingClient()
         }
         Q_ASSERT(freeIndex < maxNbPlayers);
 
-        //if freeIndex == 0, this client will be the admin of the server
-        NetServerClient *client = new NetServerClient(clientConnection,udpSocket,freeIndex, freeIndex == 0, maxNbPlayers, this);
+        //if freeIndex == 0 && !adminPasswd, this client will be the admin of the server
+        NetServerClient *client = new NetServerClient(clientConnection,udpSocket,freeIndex, freeIndex == 0 && adminPasswd.isEmpty(), maxNbPlayers, this);
         connect(client, SIGNAL(disconected(NetServerClient*)), this, SLOT(clientDisconected(NetServerClient*)));
         connect(client, SIGNAL(sigUpdatePlayerData(int,QString)), this, SLOT(slotUpdatePlayerData(int,QString)));
 
@@ -113,6 +115,23 @@ void NetServer::incomingClient()
     {
         qDebug() << "New client. No place left";
         clientConnection->disconnectFromHost();
+    }
+}
+
+void NetServer::passwordReceived(int id, QString &pass)
+{
+    if(adminConnected)
+        return;
+    if(!adminPasswd.isEmpty() && pass == adminPasswd )
+    {
+        foreach(NetServerClient *client, clients)
+        {
+            if(client->getId() == id)
+            {
+                adminConnected = true;
+                client->setAdmin();
+            }
+        }
     }
 }
 

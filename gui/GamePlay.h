@@ -43,7 +43,7 @@ class GamePlay : public QObject
 public:
     GamePlay(QMainWindow *, Settings *);
     ~GamePlay();
-    void launch();
+    void cliConnect(const QString &pass);
     NetClient *getNetClient();
 
 private:
