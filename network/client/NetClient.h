@@ -33,7 +33,7 @@
 #include <QTimer>
 #include <QTime>
 
-#include "Map.h"
+#include "MapClient.h"
 
 
 class NetClient : public QObject
@@ -74,7 +74,7 @@ private:
     void sendAdminPasswd();
     int udpCheckCount;
     quint16 blockSize; //size of the current message
-    Map *map; //store the map when the server sends it;
+    MapClient *map; //store the map when the server sends it;
 
 private slots:
     void readTcpMsgFromServer();
@@ -84,7 +84,7 @@ private slots:
     void checkUdp();
 
 signals:
-    void mapReceived(Map *);
+    void mapReceived(MapClient*);
 	void updateMap(QByteArray updateBlock);
     void sigUpdatePlayerData(qint32 playerId, QString playerName);
 

@@ -95,12 +95,12 @@ void GameArena::getEventFilter(QObject *obj)
     scene->installEventFilter(obj);
 }
 
-void GameArena::setMap(Map *map)
+void GameArena::setMap(MapClient *map)
 {
 	this->map = map;
 	init();
-    connect(map,SIGNAL(blockChanged(int)),this,SLOT(blockChanged(int)));
-    connect(map,SIGNAL(blockChanged(int,int)),this,SLOT(blockChanged(int,int)));
+    connect(map, SIGNAL(sigBlockChanged(int)), this, SLOT(blockChanged(int)));
+    connect(map, SIGNAL(sigBlockChanged(int,int)), this, SLOT(blockChanged(int,int)));
     connect(map, SIGNAL(sigHeartbeatUpdated(qint32)), this, SLOT(slotHearbeatUpdated(qint32)));
 }
 
@@ -216,7 +216,7 @@ void GameArena::blockChanged(int i, int j)
 	blockChanged(j * width + i);
 }
 
-const Map *GameArena::getMap()
+const MapClient *GameArena::getMap()
 {
 	return map;
 }

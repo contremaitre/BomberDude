@@ -20,9 +20,10 @@
 
 
 #include "Map.h"
+#include "PlayerServer.h"
 
 
-class MapServer : public Map
+class MapServer : public QObject, public Map<PlayerServer>
 {
 	Q_OBJECT
 
@@ -44,8 +45,6 @@ private:
 
 	QTimer timerHeartBeat;
 
-    virtual void newPlayer(int id);
-
 	struct initialPlayerPosition
 	{
 	    QPoint coord;
@@ -61,7 +60,7 @@ private:
 public:
 	MapServer();
 //    MapServer(qint16, qint16, qint16);
-//    ~MapServer();
+    ~MapServer() {}
 	void loadRandom();
 	void addPlayerSlot(int, int);
 	bool assignPlayer(int id);
@@ -74,8 +73,16 @@ public:
 private:
 	const Flame* explosion(Bomb* b);
 
+    virtual void emitSigBlockChanged(int pos)               { emit sigBlockChanged(pos); }
+	virtual void emitSigBlockChanged(int i, int j)          { emit sigBlockChanged(i, j); }
+    virtual void emitSigHeartbeatUpdated(qint32 value)      { emit sigHeartbeatUpdated(value); }
+
 signals:
 	void updatedMap(QByteArray data);
+
+    void sigBlockChanged(int pos);
+	void sigBlockChanged(int i, int j);
+    void sigHeartbeatUpdated(qint32 value);
 
 public slots:
 	void newHeartBeat();

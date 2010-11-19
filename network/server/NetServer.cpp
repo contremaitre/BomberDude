@@ -308,7 +308,7 @@ int NetServer::readMove(QDataStream &in)
 void NetServer::allocMap()
 {
     delete map;
-    map = new MapServer;
+    map = new MapServer();
     connect(map,SIGNAL(updatedMap(QByteArray)),this,SLOT(updateMap(QByteArray)));
     emit sigStartHeartBeat();
     //connect(this, SIGNAL(started()), this, SLOT(startHeartBeat()));

@@ -9,7 +9,6 @@ class PlayerServer: public Player
 {
 public:
     PlayerServer(int playerId);
-    ~PlayerServer();
 
     // these methods modify the variables inherited from Player
 	void setX(qint16 x)					{ this->x = x; }

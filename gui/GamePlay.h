@@ -68,7 +68,7 @@ private slots:
     void slotMoveTimer();
     void dropBomb();
     void slotPingTimer();
-    void mapReceived(Map*);
+    void mapReceived(MapClient*);
 	void updateMap(QByteArray updateBlock);
     void slotTimeUpdated(int timeInSeconds);
 

@@ -117,7 +117,7 @@ void MapServer::addPlayerSlot(int x, int y)
 }
 
 void MapServer::requestBombPlayer(int id) {
-	QList<Player*>::iterator itPlayer = players.begin();
+	QList<PlayerServer*>::iterator itPlayer = players.begin();
 	for(; itPlayer != players.end(); ++itPlayer)
 		if((*itPlayer)->getId() == id)
 			break;
@@ -137,7 +137,7 @@ void MapServer::requestBombPlayer(int id) {
  *   7  6  5
  */
 void MapServer::requestMovePlayer(int id, int direction) {
-	QList<Player*>::iterator itPlayer = players.begin();
+	QList<PlayerServer*>::iterator itPlayer = players.begin();
 	for(; itPlayer != players.end(); ++itPlayer)
 		if((*itPlayer)->getId() == id)
 			break;
@@ -460,12 +460,6 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 	}
 }
 
-void MapServer::newPlayer(int id)
-{
-    maxNbPlayers++;
-    players.append(new PlayerServer(id));
-}
-
 void MapServer::startHeartBeat(qint32 startValue, int intervals) {
 	setHeartBeat(startValue);
 	timerHeartBeat.start(intervals);
@@ -501,7 +495,7 @@ void MapServer::newHeartBeat() {
     QList<Player*> movedPlayers;
     QList<Bomb*> newBombs;
     if(heartBeat >= 0) {
-        foreach(Player* playerN, players) {
+        foreach(PlayerServer* playerN, players) {
             if(playerN->getLayingBomb()) {
                 playerN->clearLayingBomb();
                 Bomb* newBomb = addBomb(playerN->getId());

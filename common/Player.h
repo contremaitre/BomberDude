@@ -18,7 +18,6 @@ public:
 	Player();
 	Player(qint8 playerId);
 
-	void setId(qint8 id)				{ this->id = id; }
 	qint8 getId() const					{ return id; }
 
 	void setX(qint16 x)					{ this->x = x; }

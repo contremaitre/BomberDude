@@ -25,7 +25,7 @@
 #include <QMainWindow>
 
 #include "QGraphicsSquareItem.h"
-#include "Map.h"
+#include "MapClient.h"
 #include "PixmapsItems.h"
 
 
@@ -36,7 +36,7 @@ private:
     QGraphicsView *view;
     QGraphicsScene *scene;
     QMainWindow *mainWindow;
-    Map* map;
+    MapClient* map;
     PixmapsItems pixmaps;
     QGraphicsSquareItem **squaresItem;
     QGraphicsSquareItem **playersItem;
@@ -66,8 +66,8 @@ public:
     void removeBomb(qint16 bombId);
 	void updateMap(QByteArray& updateBlock);
     int getNbPlayers() const;
-    const Map *getMap();
-    void setMap(Map *);
+    const MapClient *getMap();
+    void setMap(MapClient *);
 
 private slots:
     void blockChanged(int);

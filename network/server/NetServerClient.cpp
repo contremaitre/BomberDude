@@ -150,7 +150,7 @@ void NetServerClient::sendMaxPlayers(int value)
     tcpSocket->write(block);
 }
 
-void NetServerClient::sendMap(const Map &map)
+void NetServerClient::sendMap(const Map<PlayerServer>& map)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);

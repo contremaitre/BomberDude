@@ -19,5 +19,4 @@ HEADERS += BlockMapProperty.h \
 SOURCES += BlockMapProperty.cpp \
     Bomb.cpp \
     Flame.cpp \
-    Map.cpp \
-    Player.cpp \
+    Player.cpp

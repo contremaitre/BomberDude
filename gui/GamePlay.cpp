@@ -35,7 +35,7 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     //MAP_SIZE
     client = new NetClient;
 	connect(client, SIGNAL(updateMap(QByteArray)), this, SLOT(updateMap(QByteArray)));
-    connect(client,SIGNAL(mapReceived(Map*)),this,SLOT(mapReceived(Map*)));
+    connect(client,SIGNAL(mapReceived(MapClient*)),this,SLOT(mapReceived(MapClient*)));
 
     settings = set;
 }
@@ -50,7 +50,7 @@ void GamePlay::cliConnect(const QString &pass)
         client->connectToServer(settings->getServerAddress(), settings->getServerPort());
 }
 
-void GamePlay::mapReceived(Map *map)
+void GamePlay::mapReceived(MapClient *map)
 {
     //todo. If we are the server we recreate the map. It's useless
     //qDebug() << "map received, create graphics";

@@ -17,7 +17,6 @@
 
 #include "NetClient.h"
 #include "NetMessage.h"
-#include "MapClient.h"
 
 
 NetClient::NetClient()
