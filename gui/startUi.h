@@ -51,7 +51,6 @@ private:
     GamePlay *gamePlay;
     Settings *settings;
     QSound *music;
-    NetClient *netclient;
     QProcess *server;
     QApplication *qapp;
 

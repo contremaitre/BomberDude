@@ -22,7 +22,6 @@ StartUi::StartUi(QApplication *a)
 {
     gamePlay = NULL;
     server = NULL;
-    netclient = NULL;
     qapp = a;
     settings = new Settings;
     mainWindow = new Ui_MainWindow;
@@ -159,7 +158,7 @@ void StartUi::startServer()
         password = mainWindow->password->toPlainText();
     }
     gamePlay = new GamePlay(this, settings);
-    netclient = gamePlay->getNetClient();
+    NetClient *netclient = gamePlay->getNetClient();
 
     connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );
     connect( gamePlay, SIGNAL(sigTimeUpdated(int)), mainWindow->gameClock, SLOT(display(int)));
@@ -207,7 +206,8 @@ void StartUi::soundChanged(int state)
 void StartUi::maxPlayersValueChanged(int value)
 {
     qDebug() << "maxPlayersValueChanged" << value;
-    netclient->setMaxPlayers(value);
+    if(gamePlay)
+        gamePlay->getNetClient()->setMaxPlayers(value);
 }
 
 void StartUi::toggleMusic(bool on)
@@ -254,14 +254,27 @@ void StartUi::slotConnectedToServer()
 {
     qDebug("StartUi::slotConnected");
     mainWindow->serverStatus->setPixmap(loading);
-    gamePlay->getNetClient()->sendPlayerData(mainWindow->playerName->text());
+    if(gamePlay)
+        gamePlay->getNetClient()->sendPlayerData(mainWindow->playerName->text());
 }
 
 void StartUi::closeGame()
 {
     qDebug("StartUi closeGame");
-    delete gamePlay;
-    gamePlay = NULL;
+    if(gamePlay)
+    {
+        if(server)
+        {
+            gamePlay->getNetClient()->stopServer();
+            /* waitForFinished is blocking, so let the event loop run before it */
+            qapp->processEvents();
+            server->waitForFinished();
+            delete server;
+            server = NULL;
+        }
+        delete gamePlay;
+        gamePlay = NULL;
+    }
     loadIpStats();
     mainWindow->network_pref->show();
     mainWindow->sound_pref->show();
@@ -288,7 +301,7 @@ void StartUi::slotConnectionError()
 
 void StartUi::slotStartGame()
 {
-    netclient->startGame();
+    gamePlay->getNetClient()->startGame();
 }
 
 void StartUi::slotIsServerAdmin()
@@ -320,9 +333,9 @@ StartUi::~StartUi()
     setSettings();
     if(server)
     {
-        if(netclient)
+        if(gamePlay)
         {
-            netclient->stopServer();
+            gamePlay->getNetClient()->stopServer();
             /* waitForFinished is blocking, so let the event loop run before it */
             qapp->processEvents();
         }
