@@ -35,6 +35,11 @@
  * Todo : add a load function, so we can load a map from a file
  */
 
+// WARNING! This class inherits from QObject but does not use the Q_OBJECT macro
+// WARNING! This is needed to allow the use of a template class, and should not
+// WARNING! pose a problem since it is an abstract one (the methods to be used
+// WARNING! as signals are pure virtual ones).
+
 template<typename P>
 class Map : public QObject
 {
@@ -44,7 +49,6 @@ protected:
 
 public:
     virtual ~Map();
-    Map & operator=(const Map &);
     
     void Init();
     void setDim(qint16 w, qint16 h, qint16 block_size = BLOCK_SIZE);
@@ -134,23 +138,6 @@ Map<P>::~Map()
     foreach(Flame* f, flames)
         delete f;
 }
-
-template<typename P>
-Map<P>& Map<P>::operator=(const Map<P>& oldMap)
-{
-    if(this == &oldMap)
-        return *this;
-    setDim(oldMap.width, oldMap.height, oldMap.blockSize);
-    for(int i = 0; i < width*height; i++)
-        block_list[i].setType(oldMap.block_list[i].getType());
-
-	//do not copy the pointers but the objects themselves
-	foreach(const P* playerN, oldMap.players)
-		players.append(new P(*playerN));
-
-    return *this;
-}
-
 
 template<typename P>
 void Map<P>::setDim(qint16 w, qint16 h, qint16 block_size)
