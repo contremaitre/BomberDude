@@ -130,9 +130,10 @@ void StartUi::startServer()
     if(!settings->getShowIpStats())
         mainWindow->ip_stats->hide();
 
-    QString password = "password"; //Todo random password
+    QString password;
     if(settings->isServer())
     {
+        password = "password"; //Todo random password
         if(server)
         {
             server->kill();
@@ -151,6 +152,10 @@ void StartUi::startServer()
 		serverCmdLine += " --admin-password " + password;
 
         server->start(serverCmdLine);
+    }
+    else
+    {
+        password = mainWindow->password->toPlainText();
     }
     gamePlay = new GamePlay(this, settings);
     netclient = gamePlay->getNetClient();
@@ -171,6 +176,8 @@ void StartUi::updateNetWidgetState(bool en)
 {
     mainWindow->serverIp->setEnabled(en);
     mainWindow->ipLabel->setEnabled(en);
+    mainWindow->passwordLabel->setEnabled(en);
+    mainWindow->password->setEnabled(en);
     if(en)
     {
         mainWindow->serverButton->setText("Connect");
