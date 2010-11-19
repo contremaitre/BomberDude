@@ -28,6 +28,10 @@ public:
 	void setDirection(int dir)			{ latestDirection = dir; }
 	int getDirection() const			{ return latestDirection; }
 
+    bool getIsAlive() const             { return isAlive; }
+
+    bool getIsSick() const              { return currentSickness != SICK_NONE; }
+
 protected:
 	qint8 id;
 

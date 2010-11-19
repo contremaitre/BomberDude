@@ -11,9 +11,6 @@ public:
     PlayerServer(int playerId);
 
     // these methods modify the variables inherited from Player
-	void setX(qint16 x)					{ this->x = x; }
-	void setY(qint16 y)					{ this->y = y; }
-	void setDirection(int dir)			{ latestDirection = dir; }
     void setIsDead()                    { isAlive = false; }
     void setSickness(sickness s)        { currentSickness = s; }
 
@@ -28,6 +25,9 @@ public:
     bool getIsBombAvailable() const     { return bombsAvailable != 0; }
     void decBombsAvailable()            { bombsAvailable--; }
     void incBombsAvailable()            { bombsAvailable++; }
+
+    qint8 getFlameLength() const        { return flameLength; }
+    void incFlameLength()               { flameLength++; }
 
 private:
 	bool layingBomb;
