@@ -133,7 +133,8 @@ void StartUi::startServer()
     QString password;
     if(settings->isServer())
     {
-        password = "password"; //Todo random password
+        qsrand(QDateTime::currentDateTime().toTime_t());
+        password.setNum(qrand ());
         if(server)
         {
             server->kill();
