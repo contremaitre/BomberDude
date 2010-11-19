@@ -23,7 +23,7 @@
 #include "PlayerServer.h"
 
 
-class MapServer : public QObject, public Map<PlayerServer>
+class MapServer : public Map<PlayerServer>
 {
 	Q_OBJECT
 
@@ -72,10 +72,6 @@ public:
 
 private:
 	const Flame* explosion(Bomb* b);
-
-    virtual void emitSigBlockChanged(int pos)               { emit sigBlockChanged(pos); }
-	virtual void emitSigBlockChanged(int i, int j)          { emit sigBlockChanged(i, j); }
-    virtual void emitSigHeartbeatUpdated(qint32 value)      { emit sigHeartbeatUpdated(value); }
 
 signals:
 	void updatedMap(QByteArray data);

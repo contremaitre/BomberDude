@@ -36,7 +36,7 @@
  */
 
 template<typename P>
-class Map
+class Map : public QObject
 {
 protected:
     Map();
@@ -95,9 +95,9 @@ protected:
 
     // signals
 private:
-    virtual void emitSigBlockChanged(int pos) = 0;
-	virtual void emitSigBlockChanged(int i, int j) = 0;
-    virtual void emitSigHeartbeatUpdated(qint32 value) = 0;
+    virtual void sigBlockChanged(int pos) = 0;
+	virtual void sigBlockChanged(int i, int j) = 0;
+    virtual void sigHeartbeatUpdated(qint32 value) = 0;
 };
 
 
@@ -178,14 +178,14 @@ template<typename P>
 void Map<P>::setType(BlockMapProperty::BlockType type, int pos)
 {
     block_list[pos].setType(type);
-    emitSigBlockChanged(pos);
+    sigBlockChanged(pos);
 }
 
 template<typename P>
 void Map<P>::setType(BlockMapProperty::BlockType type, int x, int y)
 {
     block_list[y*width+x].setType(type);
-    emitSigBlockChanged(x,y);
+    sigBlockChanged(x,y);
 }
 
 template<typename P>
@@ -301,7 +301,7 @@ bool Map<P>::blockContainsBomb(int x,int y) const
 template<typename P>
 void Map<P>::setHeartBeat(qint32 hb) {
     heartBeat = hb;
-    emitSigHeartbeatUpdated(hb);
+    sigHeartbeatUpdated(hb);
 }
 
 
