@@ -10,22 +10,18 @@ make
 
 ----------------------------------------------------------------------------------
 STATUS :
-done :
-- random map creation
-- pixmaps loading
-- player movements with arrow keys
-- network communication
-
-started :
-- Player animation (QPropertyAnimation)
 
 todo :
-- players more sophisticated (create a class with attributes like speed, bomb capacity etc...)
+- players more sophisticated (attributes like speed, bomb capacity etc...)
 - auto configuration scripts to build the project (CMAKE ?)
 - menu
-- configuration screen (to change the gameplay, keys, connect or launch a server) etc...
+- configuration screen (to change the gameplay, keys) etc...
 - bonus
-- custom map creation (with xml files)
 - find another name for the game
+
+Known Bug :
+- if the GUI launch a server, but a server is already running on the same computer, then the client will be connected to the local server
+instead of failling
+- The standalone server doesn't reload maps when all players left anymore
 ----------------------------------------------------------------------------------
 
