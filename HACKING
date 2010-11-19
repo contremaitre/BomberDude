@@ -13,4 +13,9 @@ NetServer/NetServerClient and NetClient can comunicate.
    - NetServer receives udp datagrams (moves...)
    - NetServerClient receives tcp messages
 
+When started from the GUI, a random password is generated, and the server is launched as a new process with it.
+The GUI then send this password to be the admin of the game.
+When started from command line, an optionnal password can be set with --admin-password
+If no password is set, the first client connected is the admin
+If a client is connected with a password, he can shutdown the server.
 
