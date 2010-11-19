@@ -17,6 +17,7 @@
 
 #include "NetClient.h"
 #include "NetMessage.h"
+#include "MapClient.h"
 
 
 NetClient::NetClient()
@@ -237,7 +238,7 @@ void NetClient::handleTcpMsg(QDataStream &in)
 	{
 	case msg_map:
 		qDebug("NetClient map received");
-		map = new Map;
+		map = new MapClient();
 		in >> *map;
 		emit mapReceived(map);
 		break;

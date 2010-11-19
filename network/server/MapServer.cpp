@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include "MapServer.h"
+#include "PlayerServer.h"
 
 
 const QPoint MapServer::dirLeft = QPoint(-1,0);
@@ -457,6 +458,12 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 			}
 		}
 	}
+}
+
+void MapServer::newPlayer(int id)
+{
+    maxNbPlayers++;
+    players.append(new PlayerServer(id));
 }
 
 void MapServer::startHeartBeat(qint32 startValue, int intervals) {

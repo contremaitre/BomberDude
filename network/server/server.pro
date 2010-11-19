@@ -1,7 +1,6 @@
 ROOT_PWD = ../../
 DEPENDENCY_LIBRARIES = common
 include($${ROOT_PWD}lib_dep.pri)
-
 QT += network \
     xml
 CONFIG += DEBUG \
@@ -16,8 +15,10 @@ LIBS += -L$${ROOT_PWD}common \
 HEADERS = MapParser.h \
     MapServer.h \
     NetServer.h \
-    NetServerClient.h 
+    NetServerClient.h \
+    PlayerServer.h
 SOURCES = MapParser.cpp \
     MapServer.cpp \
     NetServer.cpp \
-    NetServerClient.cpp 
+    NetServerClient.cpp \
+    PlayerServer.cpp

@@ -44,6 +44,8 @@ private:
 
 	QTimer timerHeartBeat;
 
+    virtual void newPlayer(int id);
+
 	struct initialPlayerPosition
 	{
 	    QPoint coord;

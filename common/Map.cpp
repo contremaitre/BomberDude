@@ -26,14 +26,14 @@ Map::Map() :
 	height(0),
 	blockSize(0),
     block_list(NULL),
-    maxNbPlayers(0),
-    heartBeat(-999999999)
+    heartBeat(-999999999),
+    maxNbPlayers(0)
 {}
 
 Map::Map(qint16 w, qint16 h, qint16 bs) :
 	block_list(NULL),
-	maxNbPlayers(0),
-	heartBeat(-999999999)
+	heartBeat(-999999999),
+	maxNbPlayers(0)
 {
 	setDim(w,h,bs);
 }
@@ -211,11 +211,11 @@ qint8 Map::getMaxNbPlayers() const
     return maxNbPlayers;
 }
 
-void Map::newPlayer(int id)
-{
-    maxNbPlayers++;
-    players.append(new Player(id));
-}
+//void Map::newPlayer(int id)
+//{
+//    maxNbPlayers++;
+//    players.append(new Player(id));
+//}
 
 void Map::setHeartBeat(qint32 hb) {
     heartBeat = hb;
