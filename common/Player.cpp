@@ -5,16 +5,14 @@ Player::Player() :
 	id(-1),
 	x(-1),
 	y(-1),
-	latestDirection(-1),
-	layingBomb(false)
+	latestDirection(-1)
 {}
 
 Player::Player(qint8 playerId) :
 	id(playerId),
 	x(-1),
 	y(-1),
-	latestDirection(-1),
-	layingBomb(false)
+	latestDirection(-1)
 {}
 
 QDataStream& operator>>(QDataStream& in, Player& p) {

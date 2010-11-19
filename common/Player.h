@@ -29,10 +29,6 @@ public:
 	void setDirection(int dir)			{ latestDirection = dir; }
 	int getDirection() const			{ return latestDirection; }
 
-	void raiseLayingBomb()				{ layingBomb = true; }
-	void clearLayingBomb()				{ layingBomb = false; }
-	bool getLayingBomb() const			{ return layingBomb; }
-
 protected:
 	qint8 id;
 
@@ -40,7 +36,6 @@ protected:
 	qint16 y;
 
 	int latestDirection;
-	bool layingBomb;
 
     bool isAlive;
     sickness currentSickness;
