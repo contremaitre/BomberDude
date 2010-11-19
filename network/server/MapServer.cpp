@@ -370,7 +370,7 @@ Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
 	}
 
 	// add the bomb
-	Bomb *newBomb = new Bomb(playerId, squareX, squareY, 100, 3);
+	Bomb *newBomb = new Bomb(playerId, squareX, squareY, 100, players[playerId]->getFlameLength());
 	bombs.append(newBomb);
 	qDebug() << " MapServer> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
 	return newBomb;
@@ -386,6 +386,7 @@ const Flame* MapServer::explosion(Bomb* b)
 	QPoint tempPoint = QPoint(b->x,b->y);
 	propagateFlame(*f, tempPoint, b->range);
 
+    players[b->playerId]->incBombsAvailable();
 	delete b;
 	addFlame(f);
 	//flames.append(f);
@@ -440,6 +441,7 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 				f.addDetonatedBomb(*b);
 				QPoint newPos = QPoint(b->x, b->y);
 				propagateFlame(f, newPos, b->range);
+                players[b->playerId]->incBombsAvailable();
 				delete b;
 			}
 		}
@@ -498,9 +500,13 @@ void MapServer::newHeartBeat() {
         foreach(PlayerServer* playerN, players) {
             if(playerN->getLayingBomb()) {
                 playerN->clearLayingBomb();
-                Bomb* newBomb = addBomb(playerN->getId());
-                if(newBomb != 0)
-                    newBombs.append(newBomb);
+                if(playerN->getIsBombAvailable()) {
+                    Bomb* newBomb = addBomb(playerN->getId());
+                    if(newBomb != 0) {
+                        newBombs.append(newBomb);
+                        playerN->decBombsAvailable();
+                    }
+                }
             }
             if(playerN->getDirection() != -1) {
                 movePlayer(playerN->getId(), playerN->getDirection());
