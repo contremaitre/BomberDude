@@ -226,12 +226,15 @@ void Map::setHeartBeat(qint32 hb) {
 Map::~Map()
 {
     delete[] block_list;
-    Player *p;
-    while(!players.empty())
-    {
-        p = players.takeFirst();
+
+    foreach(Player* p, players)
         delete p;
-    }
+
+    foreach(Bomb* b, bombs)
+        delete b;
+
+    foreach(Flame* f, flames)
+        delete f;
 }
 
 QDataStream &operator<<(QDataStream &out, const Map &map)
