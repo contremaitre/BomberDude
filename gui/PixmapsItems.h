@@ -36,6 +36,7 @@ private:
     QList <block_pixmaps_t> block_pixmaps;
     QList <option_pixmaps_t> option_pixmaps;
     QPixmap bomberman[10];
+    QPixmap burnt;
     QPixmap none;
     void loadAll();
     //width and height to scale the pixmaps to the good size
@@ -44,9 +45,10 @@ public:
     PixmapsItems();
     ~PixmapsItems();
     void init(int,int);
-    QPixmap getPixmap(BlockMapProperty::BlockType);
-    QPixmap getPixmap(int);
-    QPixmap getPixmap(BlockMapProperty::Option);
+    const QPixmap& getPixmap(BlockMapProperty::BlockType);
+    const QPixmap& getPixmap(int);
+    const QPixmap& getPixmapBurnt()                         { return burnt; }
+    const QPixmap& getPixmap(BlockMapProperty::Option);
 };
 
 

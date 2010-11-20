@@ -177,7 +177,11 @@ void GameArena::updateMap(QByteArray& updateBlock) {
 	for(qint8 i = 0; i < playerListSize; i++) {
 		Player playerN;
 		updateIn >> playerN;
-		movePlayer(playerN.getId(), playerN.getX(), playerN.getY());
+        if(playerN.getIsAlive())
+            movePlayer(playerN.getId(), playerN.getX(), playerN.getY());
+        else
+            // TODO store in a table that the item was already removed?
+            scene->removeItem(playersItem[playerN.getId()]->getItem());
 	}
 
 	qint8 newBombsListSize;
@@ -213,7 +217,16 @@ void GameArena::updateMap(QByteArray& updateBlock) {
     // list of players killed during this hearbeat
     QList<MapClient::killedPlayer> killedPlayers;
     updateIn >> killedPlayers;
-    // TODO display something
+
+    foreach(MapClient::killedPlayer frag, killedPlayers) {
+        qint16 px, py;
+        map->getPlayerPosition(frag.first, px, py);
+        QGraphicsSquareItem* burnt = new QGraphicsSquareItem(px-squareSize/2, py-squareSize/2, squareSize);
+        burnt->setItem(pixmaps.getPixmapBurnt());
+        scene->addItem(burnt);
+        burntPlayers.append(burnt);
+        QTimer::singleShot(1500, this, SLOT(removeBurnt()));
+    }
 }
 
 void GameArena::blockChanged(int i, int j)
@@ -267,6 +280,13 @@ void GameArena::slotHearbeatUpdated(qint32 value) {
         timeInSeconds = newTime;
         emit sigTimeUpdated(newTime);
     }
+}
+
+void GameArena::removeBurnt() {
+    QGraphicsSquareItem* item = burntPlayers.first();
+    burntPlayers.pop_front();
+    scene->removeItem(item);
+    delete item;
 }
 
 GameArena::~GameArena()

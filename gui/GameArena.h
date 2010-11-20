@@ -40,6 +40,8 @@ private:
     PixmapsItems pixmaps;
     QGraphicsSquareItem **squaresItem;
     QGraphicsSquareItem **playersItem;
+    QList<QGraphicsSquareItem*> burntPlayers;
+
     void initCase(int, int);
     void init();
     void loadPixMaps();
@@ -73,6 +75,7 @@ private slots:
     void blockChanged(int);
 	void blockChanged(int x, int y);
     void slotHearbeatUpdated(qint32 value);
+    void removeBurnt();
 
 signals:
     void sigTimeUpdated(int valueInSeconds);

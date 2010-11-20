@@ -22,6 +22,10 @@ PixmapsItems::PixmapsItems()
     width = height = 0;
 }
 
+PixmapsItems::~PixmapsItems()
+{
+}
+
 void PixmapsItems::init(int w, int h)
 {
     width = w;
@@ -37,6 +41,9 @@ void PixmapsItems::loadAll()
         QPixmap ps = p.scaled(QSizeF(width,height).toSize());
         bomberman[i] = ps;
     }
+
+    QPixmap p("pictures/tux_burn.png");
+    burnt = p.scaled(QSizeF(width,height).toSize());
 
     block_pixmaps_t tmp_block;
     
@@ -71,7 +78,7 @@ void PixmapsItems::loadAll()
     block_pixmaps.push_back(tmp_block);
 }
 
-QPixmap PixmapsItems::getPixmap(BlockMapProperty::BlockType type)
+const QPixmap& PixmapsItems::getPixmap(BlockMapProperty::BlockType type)
 {
     for (int i = 0; i < block_pixmaps.size(); ++i) {
         if (block_pixmaps.at(i).type == type)
@@ -80,14 +87,14 @@ QPixmap PixmapsItems::getPixmap(BlockMapProperty::BlockType type)
     return none;
 }
 
-QPixmap PixmapsItems::getPixmap(int player)
+const QPixmap& PixmapsItems::getPixmap(int player)
 {
     //for now, the max number of differents player graphic is 10
     Q_ASSERT(player < 10);
     return bomberman[player];
 }
 
-QPixmap PixmapsItems::getPixmap(BlockMapProperty::Option type)
+const QPixmap& PixmapsItems::getPixmap(BlockMapProperty::Option type)
 {
     for (int i = 0; i < block_pixmaps.size(); ++i) {
         if (option_pixmaps.at(i).type == type)
@@ -95,9 +102,3 @@ QPixmap PixmapsItems::getPixmap(BlockMapProperty::Option type)
     }
     return none;
 }
-
-PixmapsItems::~PixmapsItems()
-{
-}
-
-
