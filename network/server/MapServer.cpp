@@ -233,7 +233,11 @@ bool MapServer::movePlayerOld(int id, int direction)
 	BlockMapProperty::BlockType typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
 
 	//here we test if the next block is empty and if the next block does not contains a bomb or if the next block is the same as the actual block (if we are before the middle of the block)
-	if( typeOfNextBlock == BlockMapProperty::empty && (((x_originalBlock==x_nextBlock) && (y_originalBlock==y_nextBlock))||!blockContainsBomb(x_nextBlock,y_nextBlock)))
+	if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
+        (   (x_originalBlock == x_nextBlock) && (y_originalBlock == y_nextBlock) ||
+            !blockContainsBomb(x_nextBlock,y_nextBlock)
+        )
+      )
 	{
 		qint16 x,y;
 		getPlayerPosition(id,x,y);
@@ -282,7 +286,8 @@ bool MapServer::movePlayerOld(int id, int direction)
 			{
 				getBlockPosition( x_player, y_player+sign*getBlockSize()/2, x_nextBlock, y_nextBlock );
 				typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
-				if( typeOfNextBlock == BlockMapProperty::empty && !blockContainsBomb(x_nextBlock,y_nextBlock))
+				if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
+                     !blockContainsBomb(x_nextBlock,y_nextBlock))
 				{
 					setPlayerPosition(id,x+ move_x/2,y+absMin(pos,MOVE_STEP));
 					return true;
@@ -297,7 +302,8 @@ bool MapServer::movePlayerOld(int id, int direction)
 			{
 				getBlockPosition( x_player+sign*getBlockSize()/2, y_player, x_nextBlock, y_nextBlock );
 				typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
-				if( typeOfNextBlock == BlockMapProperty::empty && !blockContainsBomb(x_nextBlock,y_nextBlock))
+				if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
+                    !blockContainsBomb(x_nextBlock,y_nextBlock))
 				{
 					setPlayerPosition(id,x+absMin(pos,MOVE_STEP),y+ move_y/2);
 					return true;
