@@ -43,6 +43,7 @@ private:
     Bomb* addBomb(int id);
     Bomb* addBomb(int id, int x, int y);
 
+    QList<qint8> justKilledPlayers;                 // to be reset at each hearbeat
 	QTimer timerHeartBeat;
 
 	struct initialPlayerPosition

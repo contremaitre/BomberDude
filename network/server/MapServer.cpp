@@ -478,6 +478,8 @@ void MapServer::newHeartBeat() {
     if(heartBeat % 100 == 0)
         qDebug() << "send Hearbeat #" << heartBeat;
 
+    justKilledPlayers.clear();
+
 	QByteArray updateArray;
 	QDataStream updateOut(&updateArray,QIODevice::WriteOnly | QIODevice::Truncate);
 	updateOut << heartBeat;
@@ -504,20 +506,22 @@ void MapServer::newHeartBeat() {
     QList<Bomb*> newBombs;
     if(heartBeat >= 0) {
         foreach(PlayerServer* playerN, players) {
-            if(playerN->getLayingBomb()) {
-                playerN->clearLayingBomb();
-                if(playerN->getIsBombAvailable()) {
-                    Bomb* newBomb = addBomb(playerN->getId());
-                    if(newBomb != 0) {
-                        newBombs.append(newBomb);
-                        playerN->decBombsAvailable();
+            if(playerN->isAlive()) {
+                if(playerN->getLayingBomb()) {
+                    playerN->clearLayingBomb();
+                    if(playerN->getIsBombAvailable()) {
+                        Bomb* newBomb = addBomb(playerN->getId());
+                        if(newBomb != 0) {
+                            newBombs.append(newBomb);
+                            playerN->decBombsAvailable();
+                        }
                     }
                 }
-            }
-            if(playerN->getDirection() != -1) {
-                movePlayer(playerN->getId(), playerN->getDirection());
-                playerN->setDirection(-1);
-                movedPlayers.append(playerN);
+                if(playerN->getDirection() != -1) {
+                    movePlayer(playerN->getId(), playerN->getDirection());
+                    playerN->setDirection(-1);
+                    movedPlayers.append(playerN);
+                }
             }
         }
     }
@@ -557,6 +561,9 @@ void MapServer::newHeartBeat() {
 	updateOut << static_cast<qint8>(explodeList.size());
 	foreach(const Flame* flameN, explodeList)
 		updateOut << *flameN;
+
+    // send the list of players that were killed during this heartbeat
+    updateOut << justKilledPlayers;
 
 	// send the update to the clients
 	emit updatedMap(updateArray);

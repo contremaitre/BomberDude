@@ -209,6 +209,11 @@ void GameArena::updateMap(QByteArray& updateBlock) {
         }
 		addFlame(f);
 	}
+
+    // list of players killed during this hearbeat
+    QList<qint8> justKilledPlayers;
+    updateIn >> justKilledPlayers;
+    // TODO display something
 }
 
 void GameArena::blockChanged(int i, int j)
