@@ -42,8 +42,14 @@ private:
     bool movePlayerOld(int id, int direction);
     Bomb* addBomb(int id);
     Bomb* addBomb(int id, int x, int y);
+    
+    bool checkPlayerInFlames(PlayerServer* playerN,
+                             const QPoint& playerBlock,
+                             const QList<Flame*>& flamesToCheck,
+                             QList<killedPlayer>& killedPlayers);
+    void checkPlayerSurroundings(PlayerServer* player,
+                                 QList<killedPlayer>& killedPlayers);
 
-    QList<qint8> justKilledPlayers;                 // to be reset at each hearbeat
 	QTimer timerHeartBeat;
 
 	struct initialPlayerPosition
@@ -72,7 +78,7 @@ public:
 	void startHeartBeat(qint32 startValue, int intervals);
 
 private:
-	const Flame* explosion(Bomb* b);
+	Flame* explosion(Bomb* b);
 
 signals:
 	void updatedMap(QByteArray data);

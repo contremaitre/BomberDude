@@ -77,9 +77,11 @@ public:
 	void setHeartBeat(qint32 hb);
 	qint32 getHeartBeat() const                                     { return heartBeat; }
 
+    typedef QPair<qint8,qint8> killedPlayer;       // T1: who was killed, T2: by who
+    
 protected:
     BlockMapProperty* getBlockList() const                    { return block_list; }
-    
+
 private:
     qint16 width;
     qint16 height;

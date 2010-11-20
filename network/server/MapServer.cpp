@@ -28,7 +28,6 @@ const QPoint MapServer::dirUp = QPoint(0,-1);
 const QPoint MapServer::dirDown = QPoint(0,1);
 
 
-
 MapServer::MapServer()
 {
 	connect(&timerHeartBeat, SIGNAL(timeout()), this, SLOT(newHeartBeat()));
@@ -234,7 +233,7 @@ bool MapServer::movePlayerOld(int id, int direction)
 
 	//here we test if the next block is empty and if the next block does not contains a bomb or if the next block is the same as the actual block (if we are before the middle of the block)
 	if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
-        (   (x_originalBlock == x_nextBlock) && (y_originalBlock == y_nextBlock) ||
+        (   (x_originalBlock == x_nextBlock && y_originalBlock == y_nextBlock) ||
             !blockContainsBomb(x_nextBlock,y_nextBlock)
         )
       )
@@ -383,7 +382,7 @@ Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
 }
 
 
-const Flame* MapServer::explosion(Bomb* b)
+Flame* MapServer::explosion(Bomb* b)
 {
 	bombs.removeOne(b);
 	Flame *f = new Flame(b->playerId,20);
@@ -468,6 +467,36 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 	}
 }
 
+bool MapServer::checkPlayerInFlames(PlayerServer* playerN,
+                         const QPoint& playerBlock,
+                         const QList<Flame*>& flamesToCheck,
+                         QList<killedPlayer>& killedPlayers) {
+    foreach(Flame* f, flamesToCheck)
+        if(f->getFlamePositions().contains(playerBlock)) {
+            playerN->setIsDead();
+            killedPlayers.append(killedPlayer(playerN->getId(), f->getPlayerId()));
+            return true;
+        }
+
+    return false;
+}
+
+void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
+                                        QList<killedPlayer>& killedPlayers) {
+    int x, y;
+    getBlockPosition(playerN->getX(), playerN->getY(), x, y);
+    QPoint actPoint(x, y);
+
+    // check whether the player threw himself in a flame
+    if(checkPlayerInFlames(playerN, actPoint, flames, killedPlayers))
+        return;
+
+    // TODO check for other player close by for disease
+
+    // TODO check for bonus available on the current block
+
+}
+
 void MapServer::startHeartBeat(qint32 startValue, int intervals) {
 	setHeartBeat(startValue);
 	timerHeartBeat.start(intervals);
@@ -478,7 +507,7 @@ void MapServer::newHeartBeat() {
     if(heartBeat % 100 == 0)
         qDebug() << "send Hearbeat #" << heartBeat;
 
-    justKilledPlayers.clear();
+    QList<killedPlayer> killedPlayers;
 
 	QByteArray updateArray;
 	QDataStream updateOut(&updateArray,QIODevice::WriteOnly | QIODevice::Truncate);
@@ -506,7 +535,7 @@ void MapServer::newHeartBeat() {
     QList<Bomb*> newBombs;
     if(heartBeat >= 0) {
         foreach(PlayerServer* playerN, players) {
-            if(playerN->isAlive()) {
+            if(playerN->getIsAlive()) {
                 if(playerN->getLayingBomb()) {
                     playerN->clearLayingBomb();
                     if(playerN->getIsBombAvailable()) {
@@ -522,6 +551,7 @@ void MapServer::newHeartBeat() {
                     playerN->setDirection(-1);
                     movedPlayers.append(playerN);
                 }
+                checkPlayerSurroundings(playerN, killedPlayers);
             }
         }
     }
@@ -546,7 +576,7 @@ void MapServer::newHeartBeat() {
 	// WARNING : because a bomb exploding can trigger several other ones
 	//           we must restart from the beginning of the list every time
 	//           to ensure the iterator is still valid
-	QList<const Flame*> explodeList;
+	QList<Flame*> explodeList;
 	QList<Bomb*>::iterator itBomb = bombs.begin();
 	while(itBomb != bombs.end()) {
 		if((*itBomb)->mustExplode()) {
@@ -559,11 +589,24 @@ void MapServer::newHeartBeat() {
 
 	// serialize the list of explosions
 	updateOut << static_cast<qint8>(explodeList.size());
-	foreach(const Flame* flameN, explodeList)
+	foreach(Flame* flameN, explodeList)
 		updateOut << *flameN;
 
+    // check which players just were killed by the explosions
+    if(heartBeat >= 0) {
+        foreach(PlayerServer* playerN, players) {
+            if(playerN->getIsAlive()) {
+                int px, py;
+                getBlockPosition(playerN->getX(), playerN->getY(), px, py);
+                QPoint actPoint(px, py);
+                if(checkPlayerInFlames(playerN, actPoint, explodeList, killedPlayers))
+                    continue;
+            }
+        }
+    }
+
     // send the list of players that were killed during this heartbeat
-    updateOut << justKilledPlayers;
+    updateOut << killedPlayers;
 
 	// send the update to the clients
 	emit updatedMap(updateArray);

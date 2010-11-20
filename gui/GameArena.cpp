@@ -211,8 +211,8 @@ void GameArena::updateMap(QByteArray& updateBlock) {
 	}
 
     // list of players killed during this hearbeat
-    QList<qint8> justKilledPlayers;
-    updateIn >> justKilledPlayers;
+    QList<MapClient::killedPlayer> killedPlayers;
+    updateIn >> killedPlayers;
     // TODO display something
 }
 
