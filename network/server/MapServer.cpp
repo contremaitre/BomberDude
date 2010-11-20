@@ -531,7 +531,6 @@ void MapServer::newHeartBeat() {
 	updateOut << cleanList;
 
 	// now let each alive player lay a bomb, then move
-    QList<Player*> movedPlayers;
     QList<Bomb*> newBombs;
     if(heartBeat >= 0) {
         foreach(PlayerServer* playerN, players) {
@@ -549,16 +548,15 @@ void MapServer::newHeartBeat() {
                 if(playerN->getDirection() != -1) {
                     movePlayer(playerN->getId(), playerN->getDirection());
                     playerN->setDirection(-1);
-                    movedPlayers.append(playerN);
                 }
                 checkPlayerSurroundings(playerN, killedPlayers);
             }
         }
     }
 
-	// serialize the new positions for the players who moved
-	updateOut << static_cast<qint8>(movedPlayers.size());
-	foreach(Player* playerN, movedPlayers) {
+	// serialize all players information
+	updateOut << static_cast<qint8>(players.size());
+	foreach(PlayerServer* playerN, players) {
 		updateOut << *playerN;
 	}
 
