@@ -104,7 +104,7 @@ void GameArena::setMap(MapClient *map)
     connect(map, SIGNAL(sigHeartbeatUpdated(qint32)), this, SLOT(slotHearbeatUpdated(qint32)));
 
     connect(map,SIGNAL(sigMovePlayer(int, int, int)), this, SLOT(movePlayer(int, int, int)));
-    connect(map,SIGNAL(sigKillPlayer(qint16,qint16)), this, SLOT(killPlayer(qint16,qint16)));
+    connect(map,SIGNAL(sigKillPlayer(int)), this, SLOT(killPlayer(int)));
 }
 
 void GameArena::movePlayer(int player, int x, int y)
@@ -215,8 +215,13 @@ void GameArena::removeBurnt() {
     delete item;
 }
 
-void GameArena::killPlayer(qint16 px, qint16 py)
+void GameArena::killPlayer(int id)
 {
+	qint16 px, py;
+	map->getPlayerPosition(id, px, py);
+	scene->removeItem(playersItem[id]->getItem());
+	delete playersItem[id];
+	playersItem[id] = NULL;
 	QGraphicsSquareItem* burnt = new QGraphicsSquareItem(px-squareSize/2, py-squareSize/2, squareSize);
 	burnt->setItem(pixmaps.getPixmapBurnt());
 	scene->addItem(burnt);

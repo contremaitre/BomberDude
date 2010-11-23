@@ -18,7 +18,7 @@ signals:
     void sigHeartbeatUpdated(qint32 value);
 
     void sigMovePlayer(int player, int x, int y);
-    void sigKillPlayer(qint16 px, qint16 py);
+    void sigKillPlayer(int);
 };
 
 

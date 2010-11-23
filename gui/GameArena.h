@@ -76,7 +76,7 @@ private slots:
 	void blockChanged(int x, int y);
     void slotHearbeatUpdated(qint32 value);
     void removeBurnt();
-    void killPlayer(qint16 px, qint16 py);
+    void killPlayer(int);
 
 signals:
     void sigTimeUpdated(int valueInSeconds);

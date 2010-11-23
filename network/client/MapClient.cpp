@@ -32,13 +32,6 @@ void MapClient::updateMap(QByteArray& updateBlock) {
         	emit sigMovePlayer(id, playerN.getX(), playerN.getY());
         }
 
-        //todo take into account this case
-//        else if(playersItem[id])
-//        {
-//            //scene->removeItem(playersItem[playerN.getId()]->getItem());
-//            delete playersItem[id];
-//            playersItem[id] = NULL;
-//        }
 	}
 
 	qint8 newBombsListSize;
@@ -76,13 +69,6 @@ void MapClient::updateMap(QByteArray& updateBlock) {
     updateIn >> killedPlayers;
 
     foreach(MapClient::killedPlayer frag, killedPlayers) {
-        qint16 px, py;
-        getPlayerPosition(frag.first, px, py);
-        sigKillPlayer(px,py);
-//        QGraphicsSquareItem* burnt = new QGraphicsSquareItem(px-squareSize/2, py-squareSize/2, squareSize);
-//        burnt->setItem(pixmaps.getPixmapBurnt());
-//        scene->addItem(burnt);
-//        burntPlayers.append(burnt);
-//        QTimer::singleShot(1500, this, SLOT(removeBurnt()));
+        sigKillPlayer(frag.first);
     }
 }
