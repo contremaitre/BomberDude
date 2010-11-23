@@ -15,8 +15,8 @@ INCLUDEPATH += . \
     $${ROOT_PWD}network/client
 LIBS += -L$${ROOT_PWD}common \
     -L$${ROOT_PWD}network/client \
-    -lcommon \
-    -lclient
+    -lclient \
+    -lcommon
 
 # Input
 HEADERS += QGraphicsSquareItem.h \
