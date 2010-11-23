@@ -46,7 +46,7 @@ void GameArena::init()
 	width = map->getWidth();
 	height = map->getHeight();
 	delete[] squaresItem;
-	delete[] playersItem;
+	delete[] playersItem; //todo we may have *playersItem leaks
 	squaresItem = new QGraphicsSquareItem*[width * height];
 	playersItem = new QGraphicsSquareItem*[map->getMaxNbPlayers()];
 	for(int i = 0; i < width; i++)
@@ -106,6 +106,7 @@ void GameArena::setMap(MapClient *map)
 
 void GameArena::movePlayer(int player, int x, int y)
 {
+    Q_ASSERT(playersItem[player] != NULL); //Player really exists
 	map->setPlayerPosition(player, x, y);
 	playersItem[player]->setPos(x-squareSize/2,y-squareSize/2,squareSize);
 }
@@ -177,11 +178,15 @@ void GameArena::updateMap(QByteArray& updateBlock) {
 	for(qint8 i = 0; i < playerListSize; i++) {
 		Player playerN;
 		updateIn >> playerN;
+		int id = playerN.getId();
         if(playerN.getIsAlive())
-            movePlayer(playerN.getId(), playerN.getX(), playerN.getY());
-        else
-            // TODO store in a table that the item was already removed?
-            scene->removeItem(playersItem[playerN.getId()]->getItem());
+            movePlayer(id, playerN.getX(), playerN.getY());
+        else if(playersItem[id])
+        {
+            //scene->removeItem(playersItem[playerN.getId()]->getItem());
+            delete playersItem[id];
+            playersItem[id] = NULL;
+        }
 	}
 
 	qint8 newBombsListSize;
