@@ -84,9 +84,8 @@ private slots:
     void checkUdp();
 
 signals:
-//    void mapReceived(MapClient*);
-//	void updateMap(QByteArray updateBlock);
-//    void sigUpdatePlayerData(qint32 playerId, QString playerName);
+    void mapReceived(MapClient*);
+    void sigUpdatePlayerData(qint32 playerId, QString playerName);
 
     void sigConnected();
     void sigConnectionError();
