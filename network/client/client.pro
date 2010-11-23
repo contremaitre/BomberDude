@@ -13,6 +13,7 @@ DEPENDPATH += . \
 LIBS += -L$${ROOT_PWD}common \
     -lcommon
 HEADERS = NetClient.h \
-    MapClient.h
+    MapClient.h \
+    ../NetMessage.h
 SOURCES = NetClient.cpp \
     MapClient.cpp

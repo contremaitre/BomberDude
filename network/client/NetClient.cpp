@@ -16,7 +16,7 @@
  */
 
 #include "NetClient.h"
-#include "NetMessage.h"
+#include "../NetMessage.h"
 
 
 NetClient::NetClient()

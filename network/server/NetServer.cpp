@@ -19,7 +19,7 @@
 
 #include "NetServer.h"
 #include "constant.h"
-#include "NetMessage.h"
+#include "../NetMessage.h"
 #include "MapParser.h"
 
 NetServer::NetServer(int port, QString adminPasswd) : QThread()

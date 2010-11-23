@@ -16,7 +16,8 @@ HEADERS = MapParser.h \
     MapServer.h \
     NetServer.h \
     NetServerClient.h \
-    PlayerServer.h
+    PlayerServer.h \
+    ../NetMessage.h
 SOURCES = MapParser.cpp \
     MapServer.cpp \
     NetServer.cpp \
