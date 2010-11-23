@@ -61,21 +61,22 @@ public:
     int getWidth();
     int getHeight();
     int getCaseSize() const;
-    void movePlayer(int player, int x, int y);
     void addBomb(int player, int x, int y, int bombId);
     void addFlame(Flame* flame);
     void removeFlame(int flameId);
     void removeBomb(qint16 bombId);
-	void updateMap(QByteArray& updateBlock);
+//	void updateMap(QByteArray& updateBlock);
     int getNbPlayers() const;
     const MapClient *getMap();
     void setMap(MapClient *);
 
 private slots:
+    void movePlayer(int player, int x, int y);
     void blockChanged(int);
 	void blockChanged(int x, int y);
     void slotHearbeatUpdated(qint32 value);
     void removeBurnt();
+    void killPlayer(qint16 px, qint16 py);
 
 signals:
     void sigTimeUpdated(int valueInSeconds);

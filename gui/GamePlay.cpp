@@ -58,9 +58,6 @@ void GamePlay::mapReceived(MapClient *map)
     gameArena->createGraphics();
 }
 
-void GamePlay::updateMap(QByteArray updateBlock) {
-	gameArena->updateMap(updateBlock);
-}
 
 void GamePlay::slotTimeUpdated(int timeInSeconds) {
     emit sigTimeUpdated(timeInSeconds);

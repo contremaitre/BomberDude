@@ -69,7 +69,7 @@ private slots:
     void dropBomb();
     void slotPingTimer();
     void mapReceived(MapClient*);
-	void updateMap(QByteArray updateBlock);
+//	void updateMap(QByteArray updateBlock);
     void slotTimeUpdated(int timeInSeconds);
 
 signals:

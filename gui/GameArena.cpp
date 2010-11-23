@@ -102,12 +102,14 @@ void GameArena::setMap(MapClient *map)
     connect(map, SIGNAL(sigBlockChanged(int)), this, SLOT(blockChanged(int)));
     connect(map, SIGNAL(sigBlockChanged(int,int)), this, SLOT(blockChanged(int,int)));
     connect(map, SIGNAL(sigHeartbeatUpdated(qint32)), this, SLOT(slotHearbeatUpdated(qint32)));
+
+    connect(map,SIGNAL(sigMovePlayer(int, int, int)), this, SLOT(movePlayer(int, int, int)));
+    connect(map,SIGNAL(sigKillPlayer(qint16,qint16)), this, SLOT(killPlayer(qint16,qint16)));
 }
 
 void GameArena::movePlayer(int player, int x, int y)
 {
     Q_ASSERT(playersItem[player] != NULL); //Player really exists
-	map->setPlayerPosition(player, x, y);
 	playersItem[player]->setPos(x-squareSize/2,y-squareSize/2,squareSize);
 }
 
@@ -151,88 +153,7 @@ void GameArena::blockChanged(int pos)
 	tempItem->setItem(pixmaps.getPixmap(map->getType(pos)));
 }
 
-void GameArena::updateMap(QByteArray& updateBlock) {
-	// FIXME this method should not be called before the map has been setup,
-	// i.e. the calling method which is a slot should not be connected before
-	// I'll leave that as an exercise to whoever fixes a bit the workflow of
-	// the client :p
-	if(map == 0)
-		return;
 
-	QDataStream updateIn(updateBlock);
-
-	qint32 heartBeat;
-	updateIn >> heartBeat;
-	map->setHeartBeat(heartBeat);
-	if(heartBeat % 100 == 0)
-	    qDebug() << "Received heartbeat " << heartBeat;
-
-	QList<qint16> cleanList;
-	updateIn >> cleanList;
-	foreach(qint16 flameId, cleanList)
-		removeFlame(flameId);
-
-	qint8 playerListSize;
-	updateIn >> playerListSize;
-//	qDebug() << playerListSize << " players received";
-	for(qint8 i = 0; i < playerListSize; i++) {
-		Player playerN;
-		updateIn >> playerN;
-		int id = playerN.getId();
-        if(playerN.getIsAlive())
-            movePlayer(id, playerN.getX(), playerN.getY());
-        else if(playersItem[id])
-        {
-            //scene->removeItem(playersItem[playerN.getId()]->getItem());
-            delete playersItem[id];
-            playersItem[id] = NULL;
-        }
-	}
-
-	qint8 newBombsListSize;
-	updateIn >> newBombsListSize;
-//	qDebug() << newBombsListSize << " new bombs received";
-	for(qint8 i = 0; i < newBombsListSize; i++) {
-		Bomb bombN;
-		updateIn >> bombN;
-		addBomb(bombN.playerId, bombN.x, bombN.y, bombN.bombId);
-	}
-
-	qint8 nbExplosions;
-	updateIn >> nbExplosions;
-	for(qint8 i = 0; i < nbExplosions; i++) {
-		Flame* f = new Flame();
-		updateIn >> *f;
-
-		QList<qint16>::const_iterator itBomb = f->getFirstDetonatedBomb();
-		for( ; itBomb != f->getLastDetonatedBomb(); ++itBomb)
-			removeBomb(*itBomb);
-        QSet<QPoint>::const_iterator itBrBlock = f->getFirstBrokenBlock();
-        for( ; itBrBlock != f->getLastBrokenBlock(); ++itBrBlock)
-        {
-            //qDebug() << "GameArena brokenblock";
-            int i = itBrBlock->x();
-            int j = itBrBlock->y();
-            map->setType(BlockMapProperty::broken, i, j);
-            getCase(i,j)->setItem(pixmaps.getPixmap(map->getType(i,j)));
-        }
-		addFlame(f);
-	}
-
-    // list of players killed during this hearbeat
-    QList<MapClient::killedPlayer> killedPlayers;
-    updateIn >> killedPlayers;
-
-    foreach(MapClient::killedPlayer frag, killedPlayers) {
-        qint16 px, py;
-        map->getPlayerPosition(frag.first, px, py);
-        QGraphicsSquareItem* burnt = new QGraphicsSquareItem(px-squareSize/2, py-squareSize/2, squareSize);
-        burnt->setItem(pixmaps.getPixmapBurnt());
-        scene->addItem(burnt);
-        burntPlayers.append(burnt);
-        QTimer::singleShot(1500, this, SLOT(removeBurnt()));
-    }
-}
 
 void GameArena::blockChanged(int i, int j)
 {
@@ -292,6 +213,15 @@ void GameArena::removeBurnt() {
     burntPlayers.pop_front();
     scene->removeItem(item);
     delete item;
+}
+
+void GameArena::killPlayer(qint16 px, qint16 py)
+{
+	QGraphicsSquareItem* burnt = new QGraphicsSquareItem(px-squareSize/2, py-squareSize/2, squareSize);
+	burnt->setItem(pixmaps.getPixmapBurnt());
+	scene->addItem(burnt);
+	burntPlayers.append(burnt);
+	QTimer::singleShot(1500, this, SLOT(removeBurnt()));
 }
 
 GameArena::~GameArena()

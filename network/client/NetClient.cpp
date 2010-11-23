@@ -199,7 +199,8 @@ void NetClient::receiveUdp()
 		case msg_update_map: {
 				QByteArray updateBlock;
 				in >> updateBlock;
-				emit updateMap(updateBlock);
+				if (map!=0)
+					map->updateMap(updateBlock);
 			}
 			break;
 		default:
@@ -239,7 +240,7 @@ void NetClient::handleTcpMsg(QDataStream &in)
 		qDebug("NetClient map received");
 		map = new MapClient();
 		in >> *map;
-		emit mapReceived(map);
+		//todo emit mapReceived(map);
 		break;
 	case msg_udp_stat:
 	{
@@ -275,7 +276,7 @@ void NetClient::handleTcpMsg(QDataStream &in)
                 playerName.clear();
             }
             //qDebug() << "Id: " << playerId << ", name: " << playerName;
-            emit sigUpdatePlayerData(playerId, playerName);           
+            //todo emit sigUpdatePlayerData(playerId, playerName);
         }
         break;
 
