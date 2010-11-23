@@ -1,6 +1,6 @@
 *.o
 *.a
-Makefile
+Makefile*
 bomb
 moc_*
 core*
