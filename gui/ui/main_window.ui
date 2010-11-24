@@ -396,6 +396,19 @@
       <string>Map</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="randomMapCheck">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>10</y>
+       <width>81</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Random</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QLabel" name="serverStatus">
     <property name="geometry">

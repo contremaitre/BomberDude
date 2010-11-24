@@ -16,6 +16,7 @@
 */
 
 #include <QtNetwork>
+#include <QDir>
 
 #include "NetServer.h"
 #include "constant.h"
@@ -25,10 +26,19 @@
 NetServer::NetServer(int port, QString adminPasswd) : QThread()
 {
     map = NULL;
+
+    /* default random map size*/
+    mapW = MAP_SIZE;
+    mapH = MAP_SIZE;
+    blockSize = BLOCK_SIZE;
+
     this->port = port;
     this->adminPasswd = adminPasswd;
     tcpServer = NULL;
     udpSocket = NULL;
+    QDir mapDirectory(MAP_PATH);
+    mapList = mapDirectory.entryList(QStringList("*.xml"));
+    currentMapInList = 0;
     gameStarted = false;
     maxNbPlayers = 2; //1
     adminConnected = false;
@@ -160,18 +170,34 @@ void NetServer::selectMap(qint8 direction)
         qDebug("NetServer selectMap and game already started");
         return;
     }
-    qDebug() << "NetServer selectMap" << direction;
+    qDebug() << "NetServer selectMap" << direction << currentMapInList;
     if(direction == -1)
     {
         //previous map
+        if(currentMapInList <= 0)
+            currentMapInList = mapList.size()-1;
+        else
+            currentMapInList--;
+        qDebug() << "NetServer, todo : load map" << mapList[currentMapInList];
     }
     else if(direction == 1)
     {
         //next map
+        if(currentMapInList >= mapList.size()-1)
+            currentMapInList = 0;
+        else
+            currentMapInList++;
+        qDebug() << "NetServer, todo : load map" << mapList[currentMapInList];
     }
     else if(direction == 0)
     {
         //random map
+        qDebug() << "NetServer random map";
+    }
+    else if(direction == 2)
+    {
+        //non random map
+        qDebug() << "NetServer non random map";
     }
 }
 
@@ -336,23 +362,12 @@ void NetServer::allocMap()
     //connect(this, SIGNAL(started()), this, SLOT(startHeartBeat()));
 }
 
-void NetServer::setMapSize(int w, int h,int squareSize)
-{
-    mapW = w;
-    mapH = h;
-    blockSize = squareSize;
-}
-
-void NetServer::setMapFile(const QString file)
-{
-    mapFile = file;
-}
 bool NetServer::loadMap()
 {
-    allocMap();
     if(gameStarted)
         qFatal("create map, and game already started");
 
+    allocMap();
     if(!mapFile.isEmpty())
     {
         qDebug() << "going to load map" << mapFile;

@@ -26,10 +26,13 @@
 #define BLOCK_SIZE 30
 #define MAP_SIZE 20
 
+#define MAP_PATH "maps/"
+
 //Game
-#define MAX_NB_PLAYER 4
-#define DEFAULT_BOMB_DURATION 4000 //ms
-#define DEFAULT_BOMB_RANGE 1
+#define MAX_NB_PLAYER 4 //for random maps
+#define DEFAULT_BOMB_DURATION 100 //ticks
+#define DEFAULT_BOMB_RANGE 4
+#define DEFAULT_BOMB_CAPACITY 3
 //how fast the bomb is blinking (ms)
 #define BOMB_BLINK_INTERVAL 500
 

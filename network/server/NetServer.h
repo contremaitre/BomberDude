@@ -32,11 +32,13 @@
 #include <QHostAddress>
 #include <QTcpServer>
 #include <QUdpSocket>
+#include <QStringList>
 
 #include "Flame.h"
 #include "MapServer.h"
 #include "NetServerClient.h"
 
+class QDir;
 
 class NetServer : public QThread
 {
@@ -46,8 +48,6 @@ public:
     ~NetServer();
     void run();
     void close();
-    void setMapSize(int w, int h,int squareSize);
-    void setMapFile(QString);
     //call this function when the game is launched
     bool loadMap();
     void setMaxPlayers(int);
@@ -58,6 +58,8 @@ public:
 
 private:
     MapServer *map;
+    QStringList mapList;
+    int currentMapInList;
     int port;
     bool gameStarted;
     int maxNbPlayers;
