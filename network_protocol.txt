@@ -10,6 +10,9 @@ List of possible messages
 - client -> server
     - msg_move
         qint16 direction
+    - msg_select_map
+        qint8 direction
+        Select a map. direction = 0 : random, direction = -1 previous, direction = 1 next
 
 - server -> client
     - msg_moved

@@ -98,7 +98,14 @@ void NetServerClient::handleMsg(QDataStream &in)
         if(isAdmin)
             server->startGame();
         break;
-
+    case msg_select_map:
+    {
+        qint8 direction;
+        in >> direction;
+        if(isAdmin)
+            server->selectMap(direction);
+        break;
+    }
     case msg_player_data: {
             QString name;
             in >> name;

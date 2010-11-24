@@ -140,6 +140,18 @@ void NetClient::sendPlayerData(const QString& playerName) {
     qDebug() << "NetClient send player data";
 }
 
+void NetClient::selectMap(int direction)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << static_cast<quint16>(0);
+    out << static_cast<quint16>(msg_select_map);
+    out << static_cast<qint8>(direction);
+    setBlockSize(block, out);
+    tcpSocket->write(block);
+    qDebug() << "NetClient select map";
+}
 
 void NetClient::stopServer()
 {
