@@ -37,6 +37,8 @@ StartUi::StartUi(QApplication *a)
     connect(mainWindow->sound, SIGNAL(stateChanged(int)), this, SLOT(soundChanged(int)));
     connect(mainWindow->stats_check, SIGNAL(stateChanged(int)), this, SLOT(statsCheckedChanged(int)));
     connect(mainWindow->startGameButton,SIGNAL(clicked()),this,SLOT(slotStartGame()));
+    connect(mainWindow->mapRightButton, SIGNAL(clicked()), this, SLOT(slotMapRightButton()));
+    connect(mainWindow->mapLeftButton, SIGNAL(clicked()), this, SLOT(slotMapLeftButton()));
 }
 
 void StartUi::loadIpStats()
@@ -302,6 +304,16 @@ void StartUi::slotConnectionError()
 void StartUi::slotStartGame()
 {
     gamePlay->getNetClient()->startGame();
+}
+
+void StartUi::slotMapLeftButton()
+{
+    gamePlay->getNetClient()->selectMap(-1);
+}
+
+void StartUi::slotMapRightButton()
+{
+    gamePlay->getNetClient()->selectMap(1);
 }
 
 void StartUi::slotIsServerAdmin()

@@ -52,6 +52,7 @@ public:
     bool loadMap();
     void setMaxPlayers(int);
     void startGame();
+    void selectMap(qint8 direction);
     void passwordReceived(int id, QString &pass);
     void shutdown();
 

@@ -51,6 +51,7 @@ public:
     void sendPlayerData(const QString& playerName);
     void setAdminPasswd(const QString &);
     void stopServer();
+    void selectMap(int direction);
 
 private:
     QTcpSocket *tcpSocket;

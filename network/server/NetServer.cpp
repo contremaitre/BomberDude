@@ -153,6 +153,28 @@ void NetServer::startGame()
     }
 }
 
+void NetServer::selectMap(qint8 direction)
+{
+    if(gameStarted)
+    {
+        qDebug("NetServer selectMap and game already started");
+        return;
+    }
+    qDebug() << "NetServer selectMap" << direction;
+    if(direction == -1)
+    {
+        //previous map
+    }
+    else if(direction == 1)
+    {
+        //next map
+    }
+    else if(direction == 0)
+    {
+        //random map
+    }
+}
+
 void NetServer::setMaxPlayers(int value)
 {
     maxNbPlayers = value;

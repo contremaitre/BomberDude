@@ -44,6 +44,7 @@ enum NetMsgType
     msg_update_player_data, // TCP server -> client, player's profile
     msg_admin_passwd, //TCP client -> server, admin password
     msg_shutdown_server, //TCP client -> server. Note : must be logged on the server with an admin password
+    msg_select_map, //TCP client -> server, select next map in the list
 };
 
 #endif
