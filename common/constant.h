@@ -26,6 +26,8 @@
 #define BLOCK_SIZE 30
 #define MAP_SIZE 20
 
+#define MAP_PATH "maps/"
+
 //Game
 #define MAX_NB_PLAYER 4 //for random maps
 #define DEFAULT_BOMB_DURATION 100 //ticks

@@ -36,6 +36,7 @@ StartUi::StartUi(QApplication *a)
     connect(mainWindow->isServer, SIGNAL(stateChanged(int)), this, SLOT(isServerChanged(int)));
     connect(mainWindow->sound, SIGNAL(stateChanged(int)), this, SLOT(soundChanged(int)));
     connect(mainWindow->stats_check, SIGNAL(stateChanged(int)), this, SLOT(statsCheckedChanged(int)));
+    connect(mainWindow->randomMapCheck, SIGNAL(stateChanged(int)), this, SLOT(randomMapCheckedChanged(int)));
     connect(mainWindow->startGameButton,SIGNAL(clicked()),this,SLOT(slotStartGame()));
     connect(mainWindow->mapRightButton, SIGNAL(clicked()), this, SLOT(slotMapRightButton()));
     connect(mainWindow->mapLeftButton, SIGNAL(clicked()), this, SLOT(slotMapLeftButton()));
@@ -251,7 +252,6 @@ void StartUi::statPing(int ping)
     }
 }
 
-
 void StartUi::slotConnectedToServer()
 {
     qDebug("StartUi::slotConnected");
@@ -306,6 +306,24 @@ void StartUi::slotStartGame()
 {
     if(gamePlay)
         gamePlay->getNetClient()->startGame();
+}
+
+void StartUi::randomMapCheckedChanged(int state)
+{
+    if(state == 0)
+    {
+        //non random map
+        mainWindow->mapRightButton->setEnabled(true);
+        mainWindow->mapLeftButton->setEnabled(true);
+        gamePlay->getNetClient()->selectMap(2);
+    }
+    else
+    {
+        //random map
+        mainWindow->mapRightButton->setEnabled(false);
+        mainWindow->mapLeftButton->setEnabled(false);
+        gamePlay->getNetClient()->selectMap(0);
+    }
 }
 
 void StartUi::slotMapLeftButton()

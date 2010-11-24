@@ -22,13 +22,6 @@
 Serverd::Serverd(int port, const char *adminPasswd, int mapSize, int blockSize)
 {
     init(port, adminPasswd);
-    server->setMapSize(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
-}
-
-Serverd::Serverd(int port, const char *adminPasswd, const char *mapFile)
-{
-    init(port, adminPasswd);
-    server->setMapFile(mapFile);
 }
 
 void Serverd::init(int port, const char *adminPasswd)

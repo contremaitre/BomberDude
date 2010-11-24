@@ -77,6 +77,7 @@ private slots:
     void statPing(int);
     void statPacketLoss(double);
     void statsCheckedChanged(int);
+    void randomMapCheckedChanged(int);
     void slotConnectionError();
     void slotConnectedToServer();
     void slotServerLaunched();

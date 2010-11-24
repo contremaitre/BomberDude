@@ -27,7 +27,6 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv, false);
 
-    const char *mapFile = NULL;
     const char *adminPasswd = NULL;
 	int portNumber = SERVER_PORT;
 
@@ -36,15 +35,6 @@ int main(int argc, char *argv[])
 	// parse the command line parameters
 	// each option section must increment index_arg by itself and finish by "continue"
 	while(index_arg < argc) {
-		if(strcmp(argv[index_arg], "--mapfile") == 0) {
-			if(++index_arg >= argc) {
-				std::cerr << "Parameter --mapfile: missing argument" << std::endl;
-				return 42;
-			}
-			mapFile = argv[index_arg++];
-			continue;
-		}
-
 		if(strcmp(argv[index_arg], "--port") == 0) {
 			if(++index_arg >= argc) {
 				std::cerr << "Parameter --port: missing argument" << std::endl;
@@ -74,11 +64,7 @@ int main(int argc, char *argv[])
 
 	std::cout << "Using port number: " << portNumber << std::endl;
 
-    Serverd *serverd;
-    if(mapFile)
-        serverd = new Serverd(portNumber,adminPasswd,mapFile);
-    else
-        serverd = new Serverd(portNumber,adminPasswd,MAP_SIZE,BLOCK_SIZE);
+    Serverd *serverd = new Serverd(portNumber,adminPasswd,MAP_SIZE,BLOCK_SIZE);
 
     QObject::connect(serverd,SIGNAL(sigQuit()), &app, SLOT(quit()));
     serverd->launch();
