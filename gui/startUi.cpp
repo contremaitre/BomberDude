@@ -278,6 +278,7 @@ void StartUi::closeGame()
         gamePlay = NULL;
     }
     loadIpStats();
+    loadNetWidget();
     mainWindow->network_pref->show();
     mainWindow->sound_pref->show();
     mainWindow->ip_stats->show();
@@ -303,7 +304,8 @@ void StartUi::slotConnectionError()
 
 void StartUi::slotStartGame()
 {
-    gamePlay->getNetClient()->startGame();
+    if(gamePlay)
+        gamePlay->getNetClient()->startGame();
 }
 
 void StartUi::slotMapLeftButton()
