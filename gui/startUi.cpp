@@ -99,6 +99,9 @@ void StartUi::loadNetWidget()
     mainWindow->serverStatus->setPixmap(NULL);
     mainWindow->maxPlayersBox->setValue(0);
     mainWindow->adminWidget->setEnabled(false);
+    mainWindow->randomMapCheck->setCheckState(Qt::Unchecked);
+    mainWindow->mapRightButton->setEnabled(true);
+    mainWindow->mapLeftButton->setEnabled(true);
 }
 
 void StartUi::loadPlayerData() {
@@ -310,6 +313,8 @@ void StartUi::slotStartGame()
 
 void StartUi::randomMapCheckedChanged(int state)
 {
+    if(!gamePlay || !gamePlay->getNetClient())
+        return;
     if(state == 0)
     {
         //non random map

@@ -88,7 +88,7 @@ bool MapParser::endElement(const QString &, const QString &, const QString & qNa
                 case 'r': //ArrowRight
                 case 'd': //ArrowDown
                 case 'l': //ArrowLeft
-                case '_':
+                case '_': //Empty
                     map->setType(BlockMapProperty::empty,i,counterRows);
                     break;
                 //Not handled types, treated as walls

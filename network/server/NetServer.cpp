@@ -31,13 +31,14 @@ NetServer::NetServer(int port, QString adminPasswd) : QThread()
     mapW = MAP_SIZE;
     mapH = MAP_SIZE;
     blockSize = BLOCK_SIZE;
+    randomMap = false;
 
     this->port = port;
     this->adminPasswd = adminPasswd;
     tcpServer = NULL;
     udpSocket = NULL;
     QDir mapDirectory(MAP_PATH);
-    mapList = mapDirectory.entryList(QStringList("*.xml"));
+    mapList = mapDirectory.entryInfoList(QStringList("*.xml"));
     currentMapInList = 0;
     gameStarted = false;
     maxNbPlayers = 2; //1
@@ -178,7 +179,7 @@ void NetServer::selectMap(qint8 direction)
             currentMapInList = mapList.size()-1;
         else
             currentMapInList--;
-        qDebug() << "NetServer, todo : load map" << mapList[currentMapInList];
+        qDebug() << "NetServer, todo : load map" << mapList[currentMapInList].fileName();
     }
     else if(direction == 1)
     {
@@ -187,17 +188,19 @@ void NetServer::selectMap(qint8 direction)
             currentMapInList = 0;
         else
             currentMapInList++;
-        qDebug() << "NetServer, todo : load map" << mapList[currentMapInList];
+        qDebug() << "NetServer, todo : load map" << mapList[currentMapInList].fileName();
     }
     else if(direction == 0)
     {
         //random map
         qDebug() << "NetServer random map";
+        randomMap = true;
     }
     else if(direction == 2)
     {
         //non random map
         qDebug() << "NetServer non random map";
+        randomMap = false;
     }
 }
 
@@ -368,11 +371,12 @@ bool NetServer::loadMap()
         qFatal("create map, and game already started");
 
     allocMap();
-    if(!mapFile.isEmpty())
+    qDebug() << "loadMap :" << currentMapInList << mapList.size();
+    if(!randomMap && !mapList.isEmpty() && currentMapInList >= 0 && currentMapInList < mapList.size()) //file
     {
-        qDebug() << "going to load map" << mapFile;
+        qDebug() << "going to load map" << mapList[currentMapInList].fileName();
         MapParser mapParser(map);
-        QFile mapXmlFile(mapFile);
+        QFile mapXmlFile(mapList[currentMapInList].absoluteFilePath());
         QXmlInputSource source(&mapXmlFile);
         // Create the XML file reader
         QXmlSimpleReader reader;
@@ -381,7 +385,7 @@ bool NetServer::loadMap()
         reader.parse(source);
         qDebug() << "map loaded";
     }
-    else
+    else //random
     {
         qDebug() << "set Dimensions "<< mapW << mapH << blockSize;
         map->setDim(mapW,mapH,blockSize);
