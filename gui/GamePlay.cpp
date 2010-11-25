@@ -52,7 +52,6 @@ void GamePlay::cliConnect(const QString &pass)
 
 void GamePlay::mapReceived(MapClient *map)
 {
-    //todo. If we are the server we recreate the map. It's useless
     //qDebug() << "map received, create graphics";
     gameArena->setMap(map);
     gameArena->createGraphics();

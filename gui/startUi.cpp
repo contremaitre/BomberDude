@@ -285,6 +285,9 @@ void StartUi::closeGame()
     mainWindow->network_pref->show();
     mainWindow->sound_pref->show();
     mainWindow->ip_stats->show();
+    mainWindow->adminWidget->show();
+    mainWindow->player_data->show();
+    mainWindow->previewGraphicsView->show();
     mainWindow->network_pref->setEnabled(true);
     mainWindow->sound_pref->setEnabled(true);
 }
@@ -308,7 +311,14 @@ void StartUi::slotConnectionError()
 void StartUi::slotStartGame()
 {
     if(gamePlay)
+    {
+        mainWindow->network_pref->hide();
+        mainWindow->sound_pref->hide();
+        mainWindow->adminWidget->hide();
+        mainWindow->player_data->hide();
+        mainWindow->previewGraphicsView->hide();
         gamePlay->getNetClient()->startGame();
+    }
 }
 
 void StartUi::randomMapCheckedChanged(int state)
