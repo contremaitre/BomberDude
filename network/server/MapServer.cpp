@@ -427,6 +427,8 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 	for (int i=0;i<range;i++)
 	{
 		pTemp=pTemp+direction;
+		if ( pTemp.x() < 0 || pTemp.y() < 0 || pTemp.x() >= getWidth() || pTemp.y() >= getHeight())
+		    return;
 		if (getType(pTemp.x(),pTemp.y())==BlockMapProperty::wall ||
 			getType(pTemp.x(),pTemp.y())==BlockMapProperty::broken )
 			return;
