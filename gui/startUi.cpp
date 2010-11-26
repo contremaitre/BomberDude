@@ -163,7 +163,7 @@ void StartUi::startServer()
     {
         password = mainWindow->password->toPlainText();
     }
-    gamePlay = new GamePlay(this, settings);
+    gamePlay = new GamePlay(this, settings, mainWindow->previewGraphicsView);
     NetClient *netclient = gamePlay->getNetClient();
 
     connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );

@@ -405,7 +405,7 @@ void MapServer::propagateFlame(Flame & f, const QPoint & p, int range)
 	if (!f.getFlamePositions().contains(p))
 	{
 		f.addFlame(p.x(),p.y());
-		for (int i=0;i<MAX_NB_PLAYER;i++)
+		for (int i=0;i<getMaxNbPlayers();i++)
 		{
 			qint16 x,y;
 			getPlayerPosition(i,x,y);
@@ -456,7 +456,7 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 		if (!f.getFlamePositions().contains(pTemp))
 		{
 			f.addFlame(pTemp.x(),pTemp.y());
-			for (int i=0;i<MAX_NB_PLAYER;i++)
+			for (int i=0;i<getMaxNbPlayers();i++)
 			{
 				qint16 x,y;
 				getPlayerPosition(i,x,y);

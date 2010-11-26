@@ -21,14 +21,15 @@
 #include "GamePlay.h"
 #include "constant.h"
 
-GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
+GamePlay::GamePlay(QMainWindow *mainw, Settings *set, QGraphicsView *mapGraphicPreview)
 {
     connect(&timer, SIGNAL(timeout()),this,SLOT(slotMoveTimer()));
     connect(&timerPing, SIGNAL(timeout()),this,SLOT(slotPingTimer()));
     timerPing.start(2000); // Ping every 2s
 
     leftK = rightK = upK = downK = false;
-    gameArena = new GameArena(mainw, BLOCK_SIZE);
+    gameArena = new GameArena(mainw, NULL, BLOCK_SIZE);
+    gameArenaPreview = new GameArena(mainw, mapGraphicPreview, BLOCK_SIZE/2);  //todo : create a light class for the preview
     gameArena->getEventFilter(this);
     connect(gameArena, SIGNAL(sigTimeUpdated(int)), this, SLOT(slotTimeUpdated(int)));
 
@@ -36,7 +37,7 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set)
     client = new NetClient;
 	connect(client, SIGNAL(updateMap(QByteArray)), this, SLOT(updateMap(QByteArray)));
     connect(client,SIGNAL(mapReceived(MapClient*)),this,SLOT(mapReceived(MapClient*)));
-
+    connect(client,SIGNAL(mapPreviewReceived(MapClient*)),this,SLOT(mapPreviewReceived(MapClient*)));
     settings = set;
 }
 
@@ -55,6 +56,13 @@ void GamePlay::mapReceived(MapClient *map)
     //qDebug() << "map received, create graphics";
     gameArena->setMap(map);
     gameArena->createGraphics();
+}
+
+void GamePlay::mapPreviewReceived(MapClient *map)
+{
+    //qDebug() << "map received, create graphics";
+    gameArenaPreview->setMap(map);
+    gameArenaPreview->createGraphics();
 }
 
 void GamePlay::updateMap(QByteArray updateBlock) {

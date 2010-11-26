@@ -33,7 +33,7 @@ class GameArena : public QObject
 {
   Q_OBJECT
 private:
-    QGraphicsView *view;
+    QGraphicsView *graphicView;
     QGraphicsScene *scene;
     QMainWindow *mainWindow;
     MapClient* map;
@@ -43,15 +43,14 @@ private:
     QList<QGraphicsSquareItem*> burntPlayers;
 
     void initCase(int, int);
-    void init();
-    void loadPixMaps();
     int width;
     int height;
+    int maxNbPlayers;
     int squareSize;
     int timeInSeconds;
 
 public:
-    GameArena(QMainWindow *, int blockSize);
+    GameArena(QMainWindow *, QGraphicsView *, int blockSize);
     ~GameArena();
     QGraphicsSquareItem *getCase(int);
     QGraphicsSquareItem *getCase(int, int);

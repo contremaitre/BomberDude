@@ -41,13 +41,15 @@ class GamePlay : public QObject
   Q_OBJECT
 
 public:
-    GamePlay(QMainWindow *, Settings *);
+    GamePlay(QMainWindow *, Settings *, QGraphicsView *);
     ~GamePlay();
     void cliConnect(const QString &pass);
     NetClient *getNetClient();
 
 private:
     GameArena *gameArena;
+    GameArena *gameArenaPreview; //todo : create a light class for the preview
+    QGraphicsView *mapGraphicPreview;
     NetClient *client;
     Settings *settings;
 
@@ -69,6 +71,7 @@ private slots:
     void dropBomb();
     void slotPingTimer();
     void mapReceived(MapClient*);
+    void mapPreviewReceived(MapClient*);
 	void updateMap(QByteArray updateBlock);
     void slotTimeUpdated(int timeInSeconds);
 

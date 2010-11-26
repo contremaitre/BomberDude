@@ -179,7 +179,6 @@ void NetServer::selectMap(qint8 direction)
             currentMapInList = mapList.size()-1;
         else
             currentMapInList--;
-        qDebug() << "NetServer, todo : load map" << mapList[currentMapInList].fileName();
     }
     else if(direction == 1)
     {
@@ -188,7 +187,22 @@ void NetServer::selectMap(qint8 direction)
             currentMapInList = 0;
         else
             currentMapInList++;
-        qDebug() << "NetServer, todo : load map" << mapList[currentMapInList].fileName();
+    }
+    if(direction == -1 || direction == 1)
+    {
+        qDebug() << "going to load map" << mapList[currentMapInList].fileName();
+        MapServer tmpMap;
+        MapParser mapParser(&tmpMap);
+        QFile mapXmlFile(mapList[currentMapInList].absoluteFilePath());
+        QXmlInputSource source(&mapXmlFile);
+        // Create the XML file reader
+        QXmlSimpleReader reader;
+        reader.setContentHandler(&mapParser);
+        // Parse the XML file
+        reader.parse(source);
+        qDebug() << "map loaded";
+        foreach(NetServerClient *client, clients)
+            client->sendMapPreview(tmpMap);
     }
     else if(direction == 0)
     {
