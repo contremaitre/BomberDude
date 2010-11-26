@@ -36,10 +36,10 @@
 #include <QFileInfo>
 
 #include "Flame.h"
-#include "MapServer.h"
 #include "NetServerClient.h"
 
 class QDir;
+class MapServer;
 
 class NetServer : public QThread
 {
@@ -59,6 +59,7 @@ public:
 
 private:
     MapServer *map;
+    MapServer *mapPreview;
     QFileInfoList mapList;
     bool randomMap;
     int currentMapInList;

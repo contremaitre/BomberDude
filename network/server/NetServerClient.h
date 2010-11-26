@@ -46,7 +46,7 @@ class NetServerClient : public QObject
   NetServerClient(QTcpSocket *, QUdpSocket *, int id, bool admin, int maxPl, NetServer *);
   ~NetServerClient();
   void sendMap(const Map<PlayerServer>&);
-  void sendMapPreview(const Map<PlayerServer>&);
+  void sendMapPreview(const Map<PlayerServer>*);
   void sendUpdate(const QByteArray& block);
   void sendTcpBlock(const QByteArray& block);
   QHostAddress getAddress() const;
