@@ -7,9 +7,10 @@
 
 class Bonus {
 public:
-    static const quint8 BONUS_NONE = 0;         // for bogus object (to be initialised by deserialisation)
-    static const quint8 BONUS_FLAME = 1;
-    static const quint8 BONUS_BOMB = 2;
+    typedef quint8 Bonus_t;
+    static const Bonus_t BONUS_NONE = 0;         // for bogus object (to be initialised by deserialisation)
+    static const Bonus_t BONUS_FLAME = 1;
+    static const Bonus_t BONUS_BOMB = 2;
 
     Bonus() :
         type(BONUS_NONE),
@@ -17,13 +18,13 @@ public:
         y(-1)
     {}
 
-    Bonus(quint8 pType, qint16 pX, qint16 pY) :
+    Bonus(Bonus_t pType, qint16 pX, qint16 pY) :
         type(pType),
         x(pX),
         y(pY)
     {}
 
-    quint8 getType() const                  { Q_ASSERT(type != BONUS_NONE); return type; }
+    Bonus_t getType() const                 { Q_ASSERT(type != BONUS_NONE); return type; }
 
     qint16 getX() const                     { Q_ASSERT(type != BONUS_NONE); return x; }
     void setX(qint16 pX)                    { Q_ASSERT(type != BONUS_NONE); x = pX; }
@@ -32,7 +33,7 @@ public:
     void setY(qint16 pY)                    { Q_ASSERT(type != BONUS_NONE); y = pY; }
 
 private:
-    quint8 type;
+    Bonus_t type;
     qint16 x;
     qint16 y;
 

@@ -31,6 +31,14 @@ const QPoint MapServer::dirDown = QPoint(0,1);
 MapServer::MapServer()
 {
 	connect(&timerHeartBeat, SIGNAL(timeout()), this, SLOT(newHeartBeat()));
+
+    int index = 0;
+    for(int i = 0; i < 16; i++, index++)
+        bonusTable[index] = Bonus::BONUS_BOMB;
+    for(int i = 0; i < 16; i++, index++)
+        bonusTable[index] = Bonus::BONUS_FLAME;
+    while(index < BONUS_TABLE_LENGTH)
+        bonusTable[index++] = Bonus::BONUS_NONE;
 }
 
 void MapServer::loadRandom()

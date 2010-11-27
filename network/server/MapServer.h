@@ -21,6 +21,7 @@
 
 #include "Map.h"
 #include "PlayerServer.h"
+#include "Bonus.h"
 
 
 class MapServer : public Map<PlayerServer>
@@ -28,6 +29,9 @@ class MapServer : public Map<PlayerServer>
 	Q_OBJECT
 
 private:
+    virtual void brokenBlockRemoved(int x, int y);
+
+	Flame* explosion(Bomb* b);
 	void propagateFlame(Flame & f, const QPoint & p, int range);
 	void directedFlameProgagation(Flame & f, const QPoint & p, const QPoint & direction, int range);
     void adjustPlayerPosition(int plId, int xDirection, int yDirection);
@@ -51,6 +55,9 @@ private:
                                  QList<killedPlayer>& killedPlayers);
 
 	QTimer timerHeartBeat;
+
+    static const int BONUS_TABLE_LENGTH = 128;
+    Bonus::Bonus_t bonusTable[BONUS_TABLE_LENGTH];
 
 	struct initialPlayerPosition
 	{
@@ -76,11 +83,6 @@ public:
 	void requestBombPlayer(int id);
 
 	void startHeartBeat(qint32 startValue, int intervals);
-
-private:
-	Flame* explosion(Bomb* b);
-
-    virtual void brokenBlockRemoved(int x, int y);
 
 signals:
 	void updatedMap(QByteArray data);
