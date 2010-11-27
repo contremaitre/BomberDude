@@ -37,6 +37,8 @@ private:
     QList <option_pixmaps_t> option_pixmaps;
     QPixmap bomberman[10];
     QPixmap burnt;
+    QPixmap bonus_bomb;
+    QPixmap bonus_flame;
     QPixmap none;
     void loadAll();
     //width and height to scale the pixmaps to the good size
