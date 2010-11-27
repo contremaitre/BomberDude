@@ -503,14 +503,38 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
 
     // TODO check for other player close by for disease
 
-    // TODO check for bonus available on the current block
+    // TODO does the code belong to MapServer or to PlayerServer?
+    QList<Bonus*>::iterator itb;
+    for(itb = bonus.begin(); itb != bonus.end(); ++itb) {
+        Bonus* b = *itb;
+        if(actPoint.x() == b->getX() && actPoint.y() == b->getY()) {
+            switch(b->getType()) {
+                case Bonus::BONUS_BOMB:
+                    playerN->incMaxNumberOfBombs();
+                    break;
+                case Bonus::BONUS_FLAME:
+                    playerN->incFlameLength();
+                    break;
+                default:
+                    qDebug() << "Type " << b->getType() << " not yet implemented!";
+            }
+            playerN->heldBonus.append(b);
+            bonus.erase(itb);
+            qDebug() << "Type " << b->getType();
 
+            // TODO assess if b can also be in createdBonus during the same heartbeat, remove it if it can happen
+            removedBonus.append(b);
+
+            // there's only one bonus per square, get out of the loop
+            break;
+        }
+    }
 }
 
 void MapServer::brokenBlockRemoved(int x, int y) {
-    int randomDraw = qrand() * BONUS_TABLE_LENGTH / RAND_MAX;
+    int randomDraw = static_cast<int>((static_cast<double>(qrand()) / RAND_MAX) * BONUS_TABLE_LENGTH);
 
-    randomDraw &= 32; // FIXME gives bonus every turn for debugging
+    randomDraw &= 31; // FIXME gives bonus every turn for debugging
 
     Bonus::Bonus_t result = bonusTable[randomDraw];
     if(result != Bonus::BONUS_NONE) {

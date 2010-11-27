@@ -144,6 +144,9 @@ Map<P>::~Map()
 
     foreach(Flame* f, flames)
         delete f;
+
+    foreach(Bonus* b, bonus)
+        delete b;
 }
 
 template<typename P>

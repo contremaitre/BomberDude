@@ -3,12 +3,14 @@
 
 
 #include "Player.h"
+#include "Bonus.h"
 
 
 class PlayerServer: public Player
 {
 public:
     PlayerServer(int playerId);
+    ~PlayerServer();
 
     // these methods modify the variables inherited from Player
     void setIsDead()                    { isAlive = false; }
@@ -28,6 +30,8 @@ public:
 
     qint8 getFlameLength() const        { return flameLength; }
     void incFlameLength()               { flameLength++; }
+
+    QList<Bonus*> heldBonus;
 
 private:
 	bool layingBomb;

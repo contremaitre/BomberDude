@@ -42,4 +42,8 @@ private:
 };
 
 
+QDataStream& operator>>(QDataStream& in, Bonus& b);
+QDataStream& operator<<(QDataStream& out, const Bonus& b);
+
+
 #endif // QTB_BONUS_H
