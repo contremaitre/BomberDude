@@ -21,6 +21,7 @@
 #include "startUi.h"
 #include "Flame.h"
 #include "GameArena.h"
+#include "Bonus.h"
 
 GameArena::GameArena(QMainWindow * mainw, QGraphicsView *view, int s) :
 	map(NULL),
@@ -243,6 +244,22 @@ void GameArena::updateMap(QByteArray& updateBlock) {
         scene->addItem(burnt);
         burntPlayers.append(burnt);
         QTimer::singleShot(1500, this, SLOT(removeBurnt()));
+    }
+
+    quint8 nbCreatedBonus;
+    updateIn >> nbCreatedBonus;
+    for(quint8 i = 0; i < nbCreatedBonus; i++) {
+        Bonus* b = new Bonus();
+        updateIn >> *b;
+        // TODO store it on the map
+    }
+
+    quint8 nbRemovedBonus;
+    updateIn >> nbRemovedBonus;
+    for(quint8 i = 0; i < nbRemovedBonus; i++) {
+        qint16 x, y;
+        updateIn >> x >> y;
+        // TODO remove it from the map
     }
 }
 

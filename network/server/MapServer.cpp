@@ -662,8 +662,10 @@ void MapServer::newHeartBeat() {
 
     // send the list of bonus removed during this heartbeat
     updateOut << static_cast<quint8>(removedBonus.size());
-    foreach(const Bonus* b, removedBonus)
-        updateOut << *b;
+    foreach(const Bonus* b, removedBonus) {
+        updateOut << b->getX();
+        updateOut << b->getY();
+    }
 
 	// send the update to the clients
 	emit updatedMap(updateArray);
