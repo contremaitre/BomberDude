@@ -27,6 +27,7 @@
 #include "constant.h"
 #include "Bomb.h"
 #include "Flame.h"
+#include "Bonus.h"
 
 
 /**
@@ -83,6 +84,9 @@ protected:
     BlockMapProperty* getBlockList() const                    { return block_list; }
 
 private:
+    // callback method for when a brick wall is removed, only useful for the server
+    virtual void brokenBlockRemoved(int, int)                       {}
+
     qint16 width;
     qint16 height;
     qint16 blockSize;                       //There are "blockSize" pixels in one block
@@ -98,6 +102,7 @@ protected:
 	QList<P*> players;                      ///< list of players currently on the field
 	QList<Bomb*> bombs;						///< list of bombs yet to explode
 	QList<Flame*> flames;					///< list of explosions
+    QList<Bonus*> bonus;                    ///< list of bonus
 
     // signals
 private:
@@ -230,6 +235,7 @@ void Map<P>::removeFlame(int flameId)
             //remove flames
             while(it != f->getLastFlame())
             {
+                // FIXME there could be another (and more recent) flame on the same square!
                 setType(BlockMapProperty::empty, (*it).x(), (*it).y());
                 it++;
             }
@@ -239,6 +245,7 @@ void Map<P>::removeFlame(int flameId)
             {
                 //qDebug() << "GameArena brokenblock";
                 setType(BlockMapProperty::empty, it->x(), it->y());
+                brokenBlockRemoved(it->x(), it->y());
                 //getCase(i,j)->setItem(pixmaps.getPixmap(map->getType(i,j)));
             }
             flames.erase(itFlame);

@@ -499,6 +499,10 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
 
 }
 
+void MapServer::brokenBlockRemoved(int x, int y) {
+    // TODO create bonus
+}
+
 void MapServer::startHeartBeat(qint32 startValue, int intervals) {
 	setHeartBeat(startValue);
 	timerHeartBeat.start(intervals);

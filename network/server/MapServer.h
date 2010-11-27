@@ -80,6 +80,8 @@ public:
 private:
 	Flame* explosion(Bomb* b);
 
+    virtual void brokenBlockRemoved(int x, int y);
+
 signals:
 	void updatedMap(QByteArray data);
 
