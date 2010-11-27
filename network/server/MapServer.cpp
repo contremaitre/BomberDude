@@ -508,7 +508,16 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
 }
 
 void MapServer::brokenBlockRemoved(int x, int y) {
-    // TODO create bonus
+    int randomDraw = qrand() * BONUS_TABLE_LENGTH / RAND_MAX;
+
+    randomDraw &= 32; // FIXME gives bonus every turn for debugging
+
+    Bonus::Bonus_t result = bonusTable[randomDraw];
+    if(result != Bonus::BONUS_NONE) {
+        Bonus* newBonus = new Bonus(result, x, y);
+        bonus.append(newBonus);
+        createdBonus.append(newBonus);
+    }
 }
 
 void MapServer::startHeartBeat(qint32 startValue, int intervals) {
@@ -522,6 +531,8 @@ void MapServer::newHeartBeat() {
         qDebug() << "send Hearbeat #" << heartBeat;
 
     QList<killedPlayer> killedPlayers;
+    createdBonus.clear();
+    removedBonus.clear();
 
 	QByteArray updateArray;
 	QDataStream updateOut(&updateArray,QIODevice::WriteOnly | QIODevice::Truncate);
@@ -619,6 +630,16 @@ void MapServer::newHeartBeat() {
 
     // send the list of players that were killed during this heartbeat
     updateOut << killedPlayers;
+
+    // send the list of bonus created during this heartbeat and still available
+    updateOut << static_cast<quint8>(createdBonus.size());
+    foreach(const Bonus* b, createdBonus)
+        updateOut << *b;
+
+    // send the list of bonus removed during this heartbeat
+    updateOut << static_cast<quint8>(removedBonus.size());
+    foreach(const Bonus* b, removedBonus)
+        updateOut << *b;
 
 	// send the update to the clients
 	emit updatedMap(updateArray);

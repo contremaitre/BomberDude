@@ -57,7 +57,9 @@ private:
 	QTimer timerHeartBeat;
 
     static const int BONUS_TABLE_LENGTH = 128;
-    Bonus::Bonus_t bonusTable[BONUS_TABLE_LENGTH];
+    Bonus::Bonus_t bonusTable[BONUS_TABLE_LENGTH];          ///< table to determine which bonus to add
+    QList<const Bonus*> createdBonus;                       ///< list of bonus created during the heartbeat
+    QList<const Bonus*> removedBonus;                       ///< list of bonus picked up or destroyed during the heartbeat
 
 	struct initialPlayerPosition
 	{
