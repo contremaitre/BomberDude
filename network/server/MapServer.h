@@ -22,6 +22,7 @@
 #include "Map.h"
 #include "PlayerServer.h"
 #include "Bonus.h"
+#include "Point.h"
 
 
 class MapServer : public Map<PlayerServer>
@@ -54,13 +55,15 @@ private:
     void checkPlayerSurroundings(PlayerServer* player,
                                  QList<killedPlayer>& killedPlayers);
 
+    Bonus* removeBonus(qint8 x, qint8 y);
+
 	QTimer timerHeartBeat;
 
-    QList<Bonus*> bonus;                                    ///< list of bonus
+    QMap<Point<qint8>, Bonus*> bonus;                       ///< list of bonus
     static const int BONUS_TABLE_LENGTH = 128;
     Bonus::Bonus_t bonusTable[BONUS_TABLE_LENGTH];          ///< table to determine which bonus to add
     QList<const Bonus*> createdBonus;                       ///< list of bonus created during the heartbeat
-    QList<const Bonus*> removedBonus;                       ///< list of bonus picked up or destroyed during the heartbeat
+    QList<Point<qint8> > removedBonus;                      ///< list of bonus picked up or destroyed during the heartbeat
 
 	struct initialPlayerPosition
 	{
