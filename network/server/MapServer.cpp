@@ -510,9 +510,9 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
     // TODO check for other player close by for disease
 
     // TODO does the code belong to MapServer or to PlayerServer?
-    QList<Bonus*>::iterator itb;
+    QMap<Point<qint8>, Bonus*>::iterator itb;
     for(itb = bonus.begin(); itb != bonus.end(); ++itb) {
-        Bonus* b = *itb;
+        Bonus* b = itb.value();
         if(actPoint.x() == b->getX() && actPoint.y() == b->getY()) {
             switch(b->getType()) {
                 case Bonus::BONUS_BOMB:
@@ -545,7 +545,7 @@ void MapServer::brokenBlockRemoved(int x, int y) {
     Bonus::Bonus_t result = bonusTable[randomDraw];
     if(result != Bonus::BONUS_NONE) {
         Bonus* newBonus = new Bonus(result, x, y);
-        bonus.append(newBonus);
+        bonus[Point<qint8>(x,y)] = newBonus;
         createdBonus.append(newBonus);
     }
 }
