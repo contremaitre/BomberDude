@@ -267,7 +267,9 @@ void GameArena::updateMap(QByteArray& updateBlock) {
         }
         if(pixBonus->getItem() != 0) {
             scene->addItem(pixBonus);
-            // TODO store it in GameArena
+            QGraphicsItem* oldItem = map->addBonus(b->getX(), b->getY(), pixBonus);
+            if(oldItem)
+                scene->removeItem(oldItem);
         }
     }
 
@@ -276,7 +278,9 @@ void GameArena::updateMap(QByteArray& updateBlock) {
     for(quint8 i = 0; i < nbRemovedBonus; i++) {
         qint16 x, y;
         updateIn >> x >> y;
-        // TODO remove it from the map
+        QGraphicsItem* oldItem = map->removeBonus(x, y);
+        if(oldItem)
+            scene->removeItem(oldItem);
     }
 }
 
