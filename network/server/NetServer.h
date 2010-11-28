@@ -33,12 +33,13 @@
 #include <QTcpServer>
 #include <QUdpSocket>
 #include <QStringList>
+#include <QFileInfo>
 
 #include "Flame.h"
-#include "MapServer.h"
 #include "NetServerClient.h"
 
 class QDir;
+class MapServer;
 
 class NetServer : public QThread
 {
@@ -58,7 +59,9 @@ public:
 
 private:
     MapServer *map;
-    QStringList mapList;
+    MapServer *mapPreview;
+    QFileInfoList mapList;
+    bool randomMap;
     int currentMapInList;
     int port;
     bool gameStarted;
@@ -67,7 +70,6 @@ private:
     QUdpSocket *udpSocket;
     /* Connected client list, sorted by id */
     QList<NetServerClient *> clients;
-    QString mapFile; //path of the map file, if it's not a random map
     QString adminPasswd; //optional admin password
     bool adminConnected;
     int mapW, mapH, blockSize; //map size if it's a random map

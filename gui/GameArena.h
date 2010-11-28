@@ -29,11 +29,15 @@
 #include "PixmapsItems.h"
 
 
+// necessary to use QPoint in a QMap
+bool operator<(const QPoint&, const QPoint&);
+
+
 class GameArena : public QObject
 {
   Q_OBJECT
 private:
-    QGraphicsView *view;
+    QGraphicsView *graphicView;
     QGraphicsScene *scene;
     QMainWindow *mainWindow;
     MapClient* map;
@@ -41,17 +45,17 @@ private:
     QGraphicsSquareItem **squaresItem;
     QGraphicsSquareItem **playersItem;
     QList<QGraphicsSquareItem*> burntPlayers;
+    QMap<QPoint, QGraphicsItem*> bonus;
 
     void initCase(int, int);
-    void init();
-    void loadPixMaps();
     int width;
     int height;
+    int maxNbPlayers;
     int squareSize;
     int timeInSeconds;
 
 public:
-    GameArena(QMainWindow *, int blockSize);
+    GameArena(QMainWindow *, QGraphicsView *, int blockSize);
     ~GameArena();
     QGraphicsSquareItem *getCase(int);
     QGraphicsSquareItem *getCase(int, int);
@@ -77,6 +81,8 @@ private slots:
     void slotHearbeatUpdated(qint32 value);
     void removeBurnt();
     void killPlayer(int);
+    void slotAddBonus(Bonus::Bonus_t type, qint16 x, qint16 y);
+    void slotRemoveBonus(qint16 x, qint16 y);
 
 signals:
     void sigTimeUpdated(int valueInSeconds);

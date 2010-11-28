@@ -99,6 +99,9 @@ void StartUi::loadNetWidget()
     mainWindow->serverStatus->setPixmap(NULL);
     mainWindow->maxPlayersBox->setValue(0);
     mainWindow->adminWidget->setEnabled(false);
+    mainWindow->randomMapCheck->setCheckState(Qt::Unchecked);
+    mainWindow->mapRightButton->setEnabled(true);
+    mainWindow->mapLeftButton->setEnabled(true);
 }
 
 void StartUi::loadPlayerData() {
@@ -160,7 +163,7 @@ void StartUi::startServer()
     {
         password = mainWindow->password->toPlainText();
     }
-    gamePlay = new GamePlay(this, settings);
+    gamePlay = new GamePlay(this, settings, mainWindow->previewGraphicsView);
     NetClient *netclient = gamePlay->getNetClient();
 
     connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );
@@ -282,6 +285,9 @@ void StartUi::closeGame()
     mainWindow->network_pref->show();
     mainWindow->sound_pref->show();
     mainWindow->ip_stats->show();
+    mainWindow->adminWidget->show();
+    mainWindow->player_data->show();
+    mainWindow->previewGraphicsView->show();
     mainWindow->network_pref->setEnabled(true);
     mainWindow->sound_pref->setEnabled(true);
 }
@@ -305,11 +311,20 @@ void StartUi::slotConnectionError()
 void StartUi::slotStartGame()
 {
     if(gamePlay)
+    {
+        mainWindow->network_pref->hide();
+        mainWindow->sound_pref->hide();
+        mainWindow->adminWidget->hide();
+        mainWindow->player_data->hide();
+        mainWindow->previewGraphicsView->hide();
         gamePlay->getNetClient()->startGame();
+    }
 }
 
 void StartUi::randomMapCheckedChanged(int state)
 {
+    if(!gamePlay || !gamePlay->getNetClient())
+        return;
     if(state == 0)
     {
         //non random map

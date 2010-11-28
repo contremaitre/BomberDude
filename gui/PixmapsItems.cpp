@@ -37,13 +37,12 @@ void PixmapsItems::loadAll()
 {
     for(int i = 0; i < 10; i++) {
         QString pixPath = "pictures/tux_0" + QString::number(i) + ".png";
-        QPixmap p(pixPath);
-        QPixmap ps = p.scaled(QSizeF(width,height).toSize());
-        bomberman[i] = ps;
+        bomberman[i] = QPixmap(pixPath).scaled(QSizeF(width,height).toSize());
     }
 
-    QPixmap p("pictures/tux_burn.png");
-    burnt = p.scaled(QSizeF(width,height).toSize());
+    burnt = QPixmap("pictures/tux_burn.png").scaled(QSizeF(width,height).toSize());
+    bonus_bomb = QPixmap("pictures/bonus_bomb.png").scaled(QSizeF(width,height).toSize());
+    bonus_flame = QPixmap("pictures/bonus_flame.png").scaled(QSizeF(width,height).toSize());
 
     block_pixmaps_t tmp_block;
     

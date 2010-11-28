@@ -21,9 +21,10 @@
 #include "startUi.h"
 #include "Flame.h"
 #include "GameArena.h"
+#include "Bonus.h"
 
-GameArena::GameArena(QMainWindow * mainw, int s) :
-	map(0),
+GameArena::GameArena(QMainWindow * mainw, QGraphicsView *view, int s) :
+	map(NULL),
     timeInSeconds(-999)
 {
 	width = height = 0;
@@ -32,38 +33,8 @@ GameArena::GameArena(QMainWindow * mainw, int s) :
 	playersItem = NULL;
     scene = new QGraphicsScene;
     mainWindow = mainw;
-    view = NULL;
-	loadPixMaps();
-}
-
-void GameArena::loadPixMaps()
-{
-	pixmaps.init(squareSize, squareSize);
-}
-
-void GameArena::init()
-{
-	width = map->getWidth();
-	height = map->getHeight();
-	delete[] squaresItem;
-	delete[] playersItem; //todo we may have *playersItem leaks
-	squaresItem = new QGraphicsSquareItem*[width * height];
-	playersItem = new QGraphicsSquareItem*[map->getMaxNbPlayers()];
-	for(int i = 0; i < width; i++)
-	{
-		for(int j = 0; j < height; j++)
-		{
-			initCase(i,j);
-			getCase(i,j)->setItem(pixmaps.getPixmap(map->getType(i,j)));
-		}
-	}
-	qint16 x,y;
-	for(int i = 0; i < map->getMaxNbPlayers(); i++)
-	{
-		map->getPlayerPosition(i,x,y);
-		playersItem[i] = new QGraphicsSquareItem(x-squareSize/2,y-squareSize/2,squareSize);
-		playersItem[i]->setItem(pixmaps.getPixmap(i));
-	}
+    graphicView = view;
+    pixmaps.init(squareSize, squareSize);
 }
 
 void GameArena::createGraphics()
@@ -81,13 +52,20 @@ void GameArena::createGraphics()
             QGraphicsSquareItem *m_case = getPlayer(i);
             scene->addItem(m_case->getItem());
     }
-    view = new QGraphicsView(mainWindow);
-    int size = squareSize * (width+1);
-    mainWindow->setMinimumSize(size,size);
-    view->setMinimumSize(size,size);
-    view->setScene(scene);
-    view->show();
-    view->setFocus();
+    if(!graphicView)
+    {
+        graphicView = new QGraphicsView(mainWindow);
+        int size = squareSize * (width+1);
+        mainWindow->setMinimumSize(size,size);
+        graphicView->setMinimumSize(size,size);
+        graphicView->setScene(scene);
+        graphicView->show();
+        graphicView->setFocus();
+    }
+    else
+    {
+        graphicView->setScene(scene);
+    }
 }
 
 void GameArena::getEventFilter(QObject *obj)
@@ -95,16 +73,53 @@ void GameArena::getEventFilter(QObject *obj)
     scene->installEventFilter(obj);
 }
 
-void GameArena::setMap(MapClient *map)
+void GameArena::setMap(MapClient *newMap)
 {
-	this->map = map;
-	init();
+
+    if (squaresItem)
+    {
+        for (int i = 0; i < width * height; i++)
+            delete squaresItem[i];
+        delete[] squaresItem;
+    }
+    if (playersItem)
+    {
+        for (int i = 0; i < maxNbPlayers; i++)
+            delete playersItem[i];
+        delete[] playersItem;
+    }
+
+    map = newMap;
+
+    width = map->getWidth();
+    height = map->getHeight();
+    maxNbPlayers = map->getMaxNbPlayers();
+    squaresItem = new QGraphicsSquareItem*[width * height];
+    playersItem = new QGraphicsSquareItem*[maxNbPlayers];
+    for(int i = 0; i < width; i++)
+    {
+        for(int j = 0; j < height; j++)
+        {
+            initCase(i,j);
+            getCase(i,j)->setItem(pixmaps.getPixmap(map->getType(i,j)));
+        }
+    }
+    qint16 x,y;
+    for(int i = 0; i < maxNbPlayers; i++)
+    {
+        map->getPlayerPosition(i,x,y);
+        playersItem[i] = new QGraphicsSquareItem(x-squareSize/2,y-squareSize/2,squareSize);
+        playersItem[i]->setItem(pixmaps.getPixmap(i));
+    }
+
     connect(map, SIGNAL(sigBlockChanged(int)), this, SLOT(blockChanged(int)));
     connect(map, SIGNAL(sigBlockChanged(int,int)), this, SLOT(blockChanged(int,int)));
     connect(map, SIGNAL(sigHeartbeatUpdated(qint32)), this, SLOT(slotHearbeatUpdated(qint32)));
 
-    connect(map,SIGNAL(sigMovePlayer(int, int, int)), this, SLOT(movePlayer(int, int, int)));
-    connect(map,SIGNAL(sigKillPlayer(int)), this, SLOT(killPlayer(int)));
+    connect(map, SIGNAL(sigMovePlayer(int, int, int)), this, SLOT(movePlayer(int, int, int)));
+    connect(map, SIGNAL(sigKillPlayer(int)), this, SLOT(killPlayer(int)));
+    connect(map, SIGNAL(sigAddBonus(Bonus::Bonus_t,qint16,qint16)), this, SLOT(slotAddBonus(Bonus::Bonus_t,qint16,qint16)));
+    connect(map, SIGNAL(sigRemoveBonus(qint16,qint16)), this, SLOT(slotRemoveBonus(qint16,qint16)));
 }
 
 void GameArena::movePlayer(int player, int x, int y)
@@ -153,8 +168,6 @@ void GameArena::blockChanged(int pos)
 	tempItem->setItem(pixmaps.getPixmap(map->getType(pos)));
 }
 
-
-
 void GameArena::blockChanged(int i, int j)
 {
 	blockChanged(j * width + i);
@@ -177,7 +190,7 @@ int GameArena::getHeight()
 
 int GameArena::getNbPlayers() const
 {
-	return map->getMaxNbPlayers();
+	return maxNbPlayers;
 }
 
 QGraphicsSquareItem *GameArena::getCase(int i, int j)
@@ -229,6 +242,39 @@ void GameArena::killPlayer(int id)
 	QTimer::singleShot(1500, this, SLOT(removeBurnt()));
 }
 
+void GameArena::slotAddBonus(Bonus::Bonus_t bonusType, qint16 x, qint16 y) {
+    QGraphicsSquareItem* pixBonus = new QGraphicsSquareItem(x * squareSize,
+                                                            y * squareSize,
+                                                            squareSize);
+    switch(bonusType) {
+        case Bonus::BONUS_BOMB:
+            pixBonus->setItem(pixmaps.getPixmapBonusBomb());
+            break;
+        case Bonus::BONUS_FLAME:
+            pixBonus->setItem(pixmaps.getPixmapBonusFlame());
+            break;
+        default:
+            delete pixBonus;
+            return;
+    }
+
+    QPoint key(x, y);
+    QMap<QPoint, QGraphicsItem*>::iterator itb = bonus.find(key);
+    if(itb != bonus.end())
+        scene->removeItem(itb.value());
+    bonus[key] = pixBonus;
+    scene->addItem(pixBonus);    
+}
+
+void GameArena::slotRemoveBonus(qint16 x, qint16 y) {
+    QPoint key(x, y);
+    QMap<QPoint, QGraphicsItem*>::iterator itb = bonus.find(key);
+    if(itb != bonus.end()) {
+        scene->removeItem(itb.value());
+        bonus.erase(itb);
+    }
+}
+
 GameArena::~GameArena()
 {
 	if(squaresItem)
@@ -239,11 +285,11 @@ GameArena::~GameArena()
 	}
 	if(playersItem)
 	{
-		for(int i = 0; i < map->getMaxNbPlayers(); i++)
+		for(int i = 0; i < maxNbPlayers; i++)
 			delete playersItem[i];
 		delete[] playersItem;
 	}
-    delete view;
+    delete graphicView;
     //delete scene; todo crash ?
 }
 

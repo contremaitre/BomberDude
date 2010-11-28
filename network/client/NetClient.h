@@ -76,6 +76,7 @@ private:
     int udpCheckCount;
     quint16 blockSize; //size of the current message
     MapClient *map; //store the map when the server sends it;
+    MapClient *mapPreview; //store the map when the server sends it;
 
 private slots:
     void readTcpMsgFromServer();
@@ -86,6 +87,7 @@ private slots:
 
 signals:
     void mapReceived(MapClient*);
+    void mapPreviewReceived(MapClient*);
     void sigUpdatePlayerData(qint32 playerId, QString playerName);
 
     void sigConnected();

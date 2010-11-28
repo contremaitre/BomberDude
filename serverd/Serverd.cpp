@@ -59,6 +59,5 @@ Serverd::~Serverd()
     server->quit();
     server->wait();
     delete server;
-    delete map;
 }
 

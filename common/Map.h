@@ -83,6 +83,9 @@ protected:
     BlockMapProperty* getBlockList() const                    { return block_list; }
 
 private:
+    // callback method for when a brick wall is removed, only useful for the server
+    virtual void brokenBlockRemoved(int, int)                       {}
+
     qint16 width;
     qint16 height;
     qint16 blockSize;                       //There are "blockSize" pixels in one block
@@ -230,6 +233,7 @@ void Map<P>::removeFlame(int flameId)
             //remove flames
             while(it != f->getLastFlame())
             {
+                // FIXME there could be another (and more recent) flame on the same square!
                 setType(BlockMapProperty::empty, (*it).x(), (*it).y());
                 it++;
             }
@@ -239,6 +243,7 @@ void Map<P>::removeFlame(int flameId)
             {
                 //qDebug() << "GameArena brokenblock";
                 setType(BlockMapProperty::empty, it->x(), it->y());
+                brokenBlockRemoved(it->x(), it->y());
                 //getCase(i,j)->setItem(pixmaps.getPixmap(map->getType(i,j)));
             }
             flames.erase(itFlame);

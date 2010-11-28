@@ -31,7 +31,21 @@ const QPoint MapServer::dirDown = QPoint(0,1);
 MapServer::MapServer()
 {
 	connect(&timerHeartBeat, SIGNAL(timeout()), this, SLOT(newHeartBeat()));
+
+    int index = 0;
+    for(int i = 0; i < 16; i++, index++)
+        bonusTable[index] = Bonus::BONUS_BOMB;
+    for(int i = 0; i < 16; i++, index++)
+        bonusTable[index] = Bonus::BONUS_FLAME;
+    while(index < BONUS_TABLE_LENGTH)
+        bonusTable[index++] = Bonus::BONUS_NONE;
 }
+
+MapServer::~MapServer() {
+    foreach(Bonus* b, bonus)
+        delete b;
+}
+
 
 void MapServer::loadRandom()
 {
@@ -405,7 +419,7 @@ void MapServer::propagateFlame(Flame & f, const QPoint & p, int range)
 	if (!f.getFlamePositions().contains(p))
 	{
 		f.addFlame(p.x(),p.y());
-		for (int i=0;i<MAX_NB_PLAYER;i++)
+		for (int i=0;i<getMaxNbPlayers();i++)
 		{
 			qint16 x,y;
 			getPlayerPosition(i,x,y);
@@ -427,6 +441,8 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 	for (int i=0;i<range;i++)
 	{
 		pTemp=pTemp+direction;
+		if ( pTemp.x() < 0 || pTemp.y() < 0 || pTemp.x() >= getWidth() || pTemp.y() >= getHeight())
+		    return;
 		if (getType(pTemp.x(),pTemp.y())==BlockMapProperty::wall ||
 			getType(pTemp.x(),pTemp.y())==BlockMapProperty::broken )
 			return;
@@ -454,7 +470,7 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 		if (!f.getFlamePositions().contains(pTemp))
 		{
 			f.addFlame(pTemp.x(),pTemp.y());
-			for (int i=0;i<MAX_NB_PLAYER;i++)
+			for (int i=0;i<getMaxNbPlayers();i++)
 			{
 				qint16 x,y;
 				getPlayerPosition(i,x,y);
@@ -493,8 +509,45 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
 
     // TODO check for other player close by for disease
 
-    // TODO check for bonus available on the current block
+    // TODO does the code belong to MapServer or to PlayerServer?
+    QList<Bonus*>::iterator itb;
+    for(itb = bonus.begin(); itb != bonus.end(); ++itb) {
+        Bonus* b = *itb;
+        if(actPoint.x() == b->getX() && actPoint.y() == b->getY()) {
+            switch(b->getType()) {
+                case Bonus::BONUS_BOMB:
+                    playerN->incMaxNumberOfBombs();
+                    break;
+                case Bonus::BONUS_FLAME:
+                    playerN->incFlameLength();
+                    break;
+                default:
+                    qDebug() << "Type " << b->getType() << " not yet implemented!";
+            }
+            playerN->heldBonus.append(b);
+            bonus.erase(itb);
+            qDebug() << "Type " << b->getType();
 
+            // TODO assess if b can also be in createdBonus during the same heartbeat, remove it if it can happen
+            removedBonus.append(b);
+
+            // there's only one bonus per square, get out of the loop
+            break;
+        }
+    }
+}
+
+void MapServer::brokenBlockRemoved(int x, int y) {
+    int randomDraw = static_cast<int>((static_cast<double>(qrand()) / RAND_MAX) * BONUS_TABLE_LENGTH);
+
+    randomDraw &= 31; // FIXME gives bonus every turn for debugging
+
+    Bonus::Bonus_t result = bonusTable[randomDraw];
+    if(result != Bonus::BONUS_NONE) {
+        Bonus* newBonus = new Bonus(result, x, y);
+        bonus.append(newBonus);
+        createdBonus.append(newBonus);
+    }
 }
 
 void MapServer::startHeartBeat(qint32 startValue, int intervals) {
@@ -508,6 +561,8 @@ void MapServer::newHeartBeat() {
         qDebug() << "send Hearbeat #" << heartBeat;
 
     QList<killedPlayer> killedPlayers;
+    createdBonus.clear();
+    removedBonus.clear();
 
 	QByteArray updateArray;
 	QDataStream updateOut(&updateArray,QIODevice::WriteOnly | QIODevice::Truncate);
@@ -605,6 +660,18 @@ void MapServer::newHeartBeat() {
 
     // send the list of players that were killed during this heartbeat
     updateOut << killedPlayers;
+
+    // send the list of bonus created during this heartbeat and still available
+    updateOut << static_cast<quint8>(createdBonus.size());
+    foreach(const Bonus* b, createdBonus)
+        updateOut << *b;
+
+    // send the list of bonus removed during this heartbeat
+    updateOut << static_cast<quint8>(removedBonus.size());
+    foreach(const Bonus* b, removedBonus) {
+        updateOut << b->getX();
+        updateOut << b->getY();
+    }
 
 	// send the update to the clients
 	emit updatedMap(updateArray);

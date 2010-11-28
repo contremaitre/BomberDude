@@ -37,7 +37,7 @@ NetClient::NetClient()
 	serverAddress.setAddress("");
 	serverPort = 0;
 	timerCheckUdp = NULL;
-
+	mapPreview = NULL;
 }
 
 void NetClient::setAdminPasswd(const QString &p)
@@ -254,6 +254,13 @@ void NetClient::handleTcpMsg(QDataStream &in)
 		in >> *map;
 		emit mapReceived(map);
 		break;
+	case msg_map_preview:
+        qDebug("NetClient map preview received");
+        delete mapPreview;
+        mapPreview = new MapClient();
+        in >> *mapPreview;
+        emit mapPreviewReceived(mapPreview);
+        break;
 	case msg_udp_stat:
 	{
 	    quint16 nbErrors;
@@ -393,6 +400,7 @@ NetClient::~NetClient()
 	delete timePing;
 	delete udpSocket;
 	delete tcpSocket;
+	delete mapPreview;
 	delete map;
 }
 

@@ -45,7 +45,6 @@ public:
 private:
     void init(int port, const char *adminPasswd);
     NetServer *server;
-    MapServer *map;
 
 private slots:
     void allPlayersLeft();
