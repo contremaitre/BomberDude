@@ -56,6 +56,7 @@ private:
 
 	QTimer timerHeartBeat;
 
+    QList<Bonus*> bonus;                                    ///< list of bonus
     static const int BONUS_TABLE_LENGTH = 128;
     Bonus::Bonus_t bonusTable[BONUS_TABLE_LENGTH];          ///< table to determine which bonus to add
     QList<const Bonus*> createdBonus;                       ///< list of bonus created during the heartbeat
@@ -76,7 +77,8 @@ private:
 public:
 	MapServer();
 //    MapServer(qint16, qint16, qint16);
-    ~MapServer() {}
+    virtual ~MapServer();
+
 	void loadRandom();
 	void addPlayerSlot(int, int);
 	bool assignPlayer(int id);

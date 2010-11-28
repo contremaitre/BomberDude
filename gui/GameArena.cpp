@@ -251,7 +251,24 @@ void GameArena::updateMap(QByteArray& updateBlock) {
     for(quint8 i = 0; i < nbCreatedBonus; i++) {
         Bonus* b = new Bonus();
         updateIn >> *b;
-        // TODO store it on the map
+
+        QGraphicsSquareItem* pixBonus = new QGraphicsSquareItem(b->getX() * squareSize,
+                                                                b->getY() * squareSize,
+                                                                squareSize);
+        switch(b->getType()) {
+            case Bonus::BONUS_BOMB:
+                pixBonus->setItem(pixmaps.getPixmapBonusBomb());
+                break;
+            case Bonus::BONUS_FLAME:
+                pixBonus->setItem(pixmaps.getPixmapBonusFlame());
+                break;
+            default:
+                break;
+        }
+        if(pixBonus->getItem() != 0) {
+            scene->addItem(pixBonus);
+            // TODO store it in GameArena
+        }
     }
 
     quint8 nbRemovedBonus;

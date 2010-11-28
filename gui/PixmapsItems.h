@@ -49,7 +49,9 @@ public:
     void init(int,int);
     const QPixmap& getPixmap(BlockMapProperty::BlockType);
     const QPixmap& getPixmap(int);
-    const QPixmap& getPixmapBurnt()                         { return burnt; }
+    const QPixmap& getPixmapBurnt() const                   { return burnt; }
+    const QPixmap& getPixmapBonusBomb() const               { return bonus_bomb; }
+    const QPixmap& getPixmapBonusFlame() const              { return bonus_flame; }    
     const QPixmap& getPixmap(BlockMapProperty::Option);
 };
 

@@ -27,7 +27,6 @@
 #include "constant.h"
 #include "Bomb.h"
 #include "Flame.h"
-#include "Bonus.h"
 
 
 /**
@@ -102,7 +101,6 @@ protected:
 	QList<P*> players;                      ///< list of players currently on the field
 	QList<Bomb*> bombs;						///< list of bombs yet to explode
 	QList<Flame*> flames;					///< list of explosions
-    QList<Bonus*> bonus;                    ///< list of bonus
 
     // signals
 private:
@@ -144,9 +142,6 @@ Map<P>::~Map()
 
     foreach(Flame* f, flames)
         delete f;
-
-    foreach(Bonus* b, bonus)
-        delete b;
 }
 
 template<typename P>

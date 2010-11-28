@@ -41,6 +41,12 @@ MapServer::MapServer()
         bonusTable[index++] = Bonus::BONUS_NONE;
 }
 
+MapServer::~MapServer() {
+    foreach(Bonus* b, bonus)
+        delete b;
+}
+
+
 void MapServer::loadRandom()
 {
 	// qDebug() << "set Dimensions (2) "<<width<<" "<<height<<" ";
