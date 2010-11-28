@@ -479,6 +479,10 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 				if (pTemp.x()==squareX && pTemp.y()==squareY)
 					qDebug() << "player "<<f.getPlayerId()<<" pwned player "<<i;
 			}
+
+            Bonus* destroyedBonus = removeBonus(pTemp.x(), pTemp.y());
+            // TODO store the bonus somewhere and make it reappear elsewhere later
+            delete destroyedBonus;
 		}
 	}
 }
@@ -509,32 +513,36 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
 
     // TODO check for other player close by for disease
 
-    // TODO does the code belong to MapServer or to PlayerServer?
-    QMap<Point<qint8>, Bonus*>::iterator itb;
-    for(itb = bonus.begin(); itb != bonus.end(); ++itb) {
-        Bonus* b = itb.value();
-        if(actPoint.x() == b->getX() && actPoint.y() == b->getY()) {
-            switch(b->getType()) {
-                case Bonus::BONUS_BOMB:
-                    playerN->incMaxNumberOfBombs();
-                    break;
-                case Bonus::BONUS_FLAME:
-                    playerN->incFlameLength();
-                    break;
-                default:
-                    qDebug() << "Type " << b->getType() << " not yet implemented!";
-            }
-            playerN->heldBonus.append(b);
-            bonus.erase(itb);
-            qDebug() << "Type " << b->getType();
-
-            // TODO assess if b can also be in createdBonus during the same heartbeat, remove it if it can happen
-            removedBonus.append(b);
-
-            // there's only one bonus per square, get out of the loop
-            break;
+    Bonus* pickedUpBonus = removeBonus(actPoint.x(), actPoint.y());
+    if(pickedUpBonus) {
+        // TODO does the code belong to MapServer or to PlayerServer?
+        switch(pickedUpBonus->getType()) {
+            case Bonus::BONUS_BOMB:
+                playerN->incMaxNumberOfBombs();
+                break;
+            case Bonus::BONUS_FLAME:
+                playerN->incFlameLength();
+                break;
+            default:
+                qDebug() << "Type " << pickedUpBonus->getType() << " not yet implemented!";
         }
+        playerN->heldBonus.append(pickedUpBonus);        
     }
+}
+
+Bonus* MapServer::removeBonus(qint8 x, qint8 y) {
+    QMap<Point<qint8>, Bonus*>::iterator itb = bonus.find(Point<qint8>(x, y));
+    if(itb == bonus.end())
+        return 0;
+
+    Bonus* ret = itb.value();
+
+    // TODO check that the bonus cannot be created and destroyed in the same turn
+    removedBonus.append(Point<qint8>(ret->getX(), ret->getY()));
+
+    bonus.erase(itb);
+
+    return ret;
 }
 
 void MapServer::brokenBlockRemoved(int x, int y) {
@@ -668,9 +676,9 @@ void MapServer::newHeartBeat() {
 
     // send the list of bonus removed during this heartbeat
     updateOut << static_cast<quint8>(removedBonus.size());
-    foreach(const Bonus* b, removedBonus) {
-        updateOut << b->getX();
-        updateOut << b->getY();
+    foreach(Point<qint8> p, removedBonus) {
+        updateOut << p.x();
+        updateOut << p.y();
     }
 
 	// send the update to the clients

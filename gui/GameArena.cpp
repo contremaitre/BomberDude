@@ -276,7 +276,7 @@ void GameArena::updateMap(QByteArray& updateBlock) {
     quint8 nbRemovedBonus;
     updateIn >> nbRemovedBonus;
     for(quint8 i = 0; i < nbRemovedBonus; i++) {
-        qint16 x, y;
+        qint8 x, y;
         updateIn >> x >> y;
         QGraphicsItem* oldItem = map->removeBonus(x, y);
         if(oldItem)
