@@ -12,16 +12,13 @@ make
 STATUS :
 
 todo :
-- players more sophisticated (attributes like speed, bomb capacity etc...)
+- implement all bonus from AB
 - auto configuration scripts to build the project (CMAKE ?)
-- menu
-- configuration screen (to change the gameplay, keys) etc...
-- bonus
+- work on the gui, design a nice one.
 - find another name for the game
 
 Known Bug :
 - if the GUI launch a server, but a server is already running on the same computer, then the client will be connected to the local server
 instead of failling
-- The standalone server doesn't reload maps when all players left anymore
 ----------------------------------------------------------------------------------
 
