@@ -28,7 +28,9 @@ Settings::Settings()
     serverPort = qsettings->value("serverPort",SERVER_PORT).toInt();
     sound = qsettings->value("sound", true).toBool();
     showIpStats = qsettings->value("showIpStats", true).toBool();
-    playerName = qsettings->value("playerName", "").toString();
+    playerName = qsettings->value("playerName", "player").toString();
+    if(playerName.isEmpty())
+        playerName = "player"; //the user may have set an empty name
 }
 
 void Settings::save()
