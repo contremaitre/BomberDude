@@ -141,10 +141,10 @@ void NetServer::shutdown()
     emit sigQuit();
 }
 
-void NetServer::passwordReceived(int id, QString &pass)
+bool NetServer::passwordReceived(int id, QString &pass)
 {
     if(adminConnected)
-        return;
+        return false;
     if(!adminPasswd.isEmpty() && pass == adminPasswd )
     {
         foreach(NetServerClient *client, clients)
@@ -153,9 +153,11 @@ void NetServer::passwordReceived(int id, QString &pass)
             {
                 adminConnected = true;
                 client->setAdmin();
+                return true;
             }
         }
     }
+    return false;
 }
 
 void NetServer::startGame()

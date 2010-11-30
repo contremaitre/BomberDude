@@ -121,7 +121,8 @@ void NetServerClient::handleMsg(QDataStream &in)
     {
         QString pass;
         in >> pass;
-        server->passwordReceived(playerId,pass);
+        if(!server->passwordReceived(playerId,pass))
+            tcpSocket->close();
         break;
     }
     case msg_shutdown_server:
