@@ -73,6 +73,7 @@ private slots:
     void mapReceived(MapClient*);
 //	void updateMap(QByteArray updateBlock);
     void mapPreviewReceived(MapClient*);
+    void slotMapRandom();
     void slotTimeUpdated(int timeInSeconds);
 
 signals:

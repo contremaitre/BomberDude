@@ -28,6 +28,7 @@ GameArena::GameArena(QMainWindow * mainw, QGraphicsView *view, int s) :
     timeInSeconds(-999)
 {
 	width = height = 0;
+	maxNbPlayers = 0;
 	squareSize = s;
 	squaresItem = NULL;
 	playersItem = NULL;
@@ -73,22 +74,28 @@ void GameArena::getEventFilter(QObject *obj)
     scene->installEventFilter(obj);
 }
 
-void GameArena::setMap(MapClient *newMap)
+void GameArena::clear()
 {
-
     if (squaresItem)
     {
         for (int i = 0; i < width * height; i++)
             delete squaresItem[i];
         delete[] squaresItem;
+        squaresItem = NULL;
     }
     if (playersItem)
     {
         for (int i = 0; i < maxNbPlayers; i++)
             delete playersItem[i];
         delete[] playersItem;
+        playersItem = NULL;
     }
+}
 
+void GameArena::setMap(MapClient *newMap)
+{
+
+    clear();
     map = newMap;
 
     width = map->getWidth();
@@ -277,18 +284,7 @@ void GameArena::slotRemoveBonus(qint16 x, qint16 y) {
 
 GameArena::~GameArena()
 {
-	if(squaresItem)
-	{
-		for(int i = 0; i < width*height; i++)
-			delete squaresItem[i];
-		delete []squaresItem;
-	}
-	if(playersItem)
-	{
-		for(int i = 0; i < maxNbPlayers; i++)
-			delete playersItem[i];
-		delete[] playersItem;
-	}
+    clear();
     delete graphicView;
     //delete scene; todo crash ?
 }

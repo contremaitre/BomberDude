@@ -175,50 +175,43 @@ void NetServer::startGame()
 
 void NetServer::selectMap(qint8 direction)
 {
+    qDebug() << "NetServer selectMap" << direction << currentMapInList;
     if(gameStarted)
     {
         qDebug("NetServer selectMap and game already started");
         return;
     }
-    qDebug() << "NetServer selectMap" << direction << currentMapInList;
-    if(direction == -1)
+    if(mapList.isEmpty())
     {
-        //previous map
-        if(currentMapInList <= 0)
-            currentMapInList = mapList.size()-1;
-        else
-            currentMapInList--;
-    }
-    else if(direction == 1)
-    {
-        //next map
-        if(currentMapInList >= mapList.size()-1)
-            currentMapInList = 0;
-        else
-            currentMapInList++;
-    }
-    else if(direction == 2)
-    {
-        //non random map
-        qDebug() << "NetServer non random map";
-        if(currentMapInList <= 0 || currentMapInList >= mapList.size()-1)
-            currentMapInList = 0;
-        randomMap = false;
-    }
-    else if(direction == 0)
-    {
-        //random map
-        qDebug() << "NetServer random map";
+        qDebug("no map available, force random");
         randomMap = true;
+        return;
     }
-    if( !randomMap )
+
+    if(direction == 2)
     {
-        if(mapList.isEmpty())
+        //switch to non random map and select the first available map
+        if(!randomMap && mapPreview && maxNbPlayers <= mapPreview->getMaxNbPlayers())
         {
-            randomMap = true;
+            //no change
             return;
         }
-        if(direction == -1 || direction == 1 || direction == 2)
+        qDebug() << "NetServer non random map";
+        randomMap = false;
+        currentMapInList--;
+        direction = 1;
+    }
+    if(direction == -1 || direction == 1)
+    {
+        //next or previous map
+        currentMapInList += direction;
+        if(currentMapInList < 0)
+            currentMapInList = mapList.size()-1;
+        if(currentMapInList >= mapList.size())
+            currentMapInList = 0;
+        int firstChecked = currentMapInList;
+        bool found = false;
+        do
         {
             qDebug() << "going to load map" << mapList[currentMapInList].fileName();
             delete mapPreview;
@@ -231,14 +224,37 @@ void NetServer::selectMap(qint8 direction)
             reader.setContentHandler(&mapParser);
             // Parse the XML file
             reader.parse(source);
-            qDebug() << "map loaded";
-            foreach(NetServerClient *client, clients)
-                client->sendMapPreview(mapPreview);
+            qDebug() << "map loaded, current max players" << maxNbPlayers << "map max player" << mapPreview->getMaxNbPlayers();
+            if(maxNbPlayers <= mapPreview->getMaxNbPlayers())
+            {
+                foreach(NetServerClient *client, clients)
+                    client->sendMapPreview(mapPreview);
+                found = true;
+                break;
+            }
+            currentMapInList += direction;
+            if(currentMapInList < 0)
+                currentMapInList = mapList.size()-1;
+            if(currentMapInList >= mapList.size())
+                currentMapInList = 0;
+        }while(currentMapInList != firstChecked);
+        if(!found)
+        {
+            qDebug() << "No map found, go random";
+            randomMap = true;
         }
     }
-
-
-
+    else if(direction == 0)
+    {
+        //random map
+        qDebug() << "NetServer random map";
+        randomMap = true;
+    }
+    if(randomMap)
+    {
+        foreach(NetServerClient *client, clients)
+            client->sendMapRandom();
+    }
 }
 
 void NetServer::setMaxPlayers(int value)
@@ -255,6 +271,8 @@ void NetServer::setMaxPlayers(int value)
 
     foreach(NetServerClient *client, clients)
         client->sendMaxPlayers(maxNbPlayers);
+    if(!randomMap)
+        selectMap(2); //check if the current map is ok with this number of player
 }
 
 void NetServer::clientDisconected(NetServerClient *client)

@@ -261,6 +261,12 @@ void NetClient::handleTcpMsg(QDataStream &in)
         in >> *mapPreview;
         emit mapPreviewReceived(mapPreview);
         break;
+    case msg_map_random:
+        qDebug("NetClient random map");
+        delete mapPreview;
+        mapPreview = NULL;
+        emit sigMapRandom();
+        break;
 	case msg_udp_stat:
 	{
 	    quint16 nbErrors;

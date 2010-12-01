@@ -46,6 +46,7 @@ enum NetMsgType
     msg_shutdown_server, //TCP client -> server. Note : must be logged on the server with an admin password
     msg_select_map, //TCP client -> server, select next map in the list
     msg_map_preview, //TCP server -> clients, map preview
+    msg_map_random, //TCP server -> clients, random map
 };
 
 #endif

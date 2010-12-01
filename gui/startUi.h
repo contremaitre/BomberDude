@@ -87,6 +87,7 @@ private slots:
     void slotMaxPlayersChanged(int);
     void slotUpdatePlayerData(qint32 playerId, QString playerName);
     void slotStartGame();
+    void slotMapRandom();
     void slotMapLeftButton();
     void slotMapRightButton();
     void closeGame();

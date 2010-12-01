@@ -158,6 +158,18 @@ void NetServerClient::sendMaxPlayers(int value)
     tcpSocket->write(block);
 }
 
+void NetServerClient::sendMapRandom()
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_map_random;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    tcpSocket->write(block);
+}
+
 void NetServerClient::sendMapPreview(const Map<PlayerServer> *map)
 {
     QByteArray block;
@@ -169,7 +181,6 @@ void NetServerClient::sendMapPreview(const Map<PlayerServer> *map)
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
     tcpSocket->write(block);
-    //qDebug() << "NetServerClient sending map to client " << playerId;
 }
 
 void NetServerClient::sendMap(const Map<PlayerServer>& map)

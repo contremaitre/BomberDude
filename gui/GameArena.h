@@ -73,6 +73,7 @@ public:
     int getNbPlayers() const;
     const MapClient *getMap();
     void setMap(MapClient *);
+    void clear();
 
 private slots:
     void movePlayer(int player, int x, int y);

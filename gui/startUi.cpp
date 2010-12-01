@@ -175,6 +175,7 @@ void StartUi::startServer()
     connect( netclient, SIGNAL(sigIsServerAdmin()), this, SLOT(slotIsServerAdmin()));
     connect( netclient, SIGNAL(sigMaxPlayersChanged(int)), this, SLOT(slotMaxPlayersChanged(int)));
     connect( netclient, SIGNAL(sigUpdatePlayerData(qint32,QString)), this, SLOT(slotUpdatePlayerData(qint32,QString)));
+    connect( netclient, SIGNAL(sigMapRandom()), this, SLOT(slotMapRandom()));
     gamePlay->cliConnect(password);
 }
 
@@ -306,6 +307,11 @@ void StartUi::slotConnectionError()
 {
     //qDebug("StartUi::slotConnectionError");
     closeGame();
+}
+
+void StartUi::slotMapRandom()
+{
+    mainWindow->randomMapCheck->setCheckState(Qt::Checked);
 }
 
 void StartUi::slotStartGame()
