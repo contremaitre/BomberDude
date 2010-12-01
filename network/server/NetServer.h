@@ -94,7 +94,6 @@ private slots:
 signals:
     void newPlayer();
     void allPlayersLeft();
-    void serverError();
     void serverReady();
     void sigStartHeartBeat();
     void sigQuit();

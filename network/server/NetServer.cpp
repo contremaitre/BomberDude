@@ -53,7 +53,7 @@ void NetServer::run()
     tcpServer = new QTcpServer();
     if (!tcpServer->listen(QHostAddress::Any, port)) {
         qDebug() << "server tcp error :" << tcpServer->errorString();
-        emit serverError();
+        emit sigQuit();
         return;
     }
     udpSocket = new QUdpSocket();
