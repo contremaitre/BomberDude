@@ -467,6 +467,13 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 			}
 		}
 
+        // if a bonus is on the square it is destroyed immediately but the flame does not enter
+        Bonus* destroyedBonus = removeBonus(pTemp.x(), pTemp.y());
+        if(destroyedBonus) {
+            delete destroyedBonus;
+            return;
+        }
+
 		if (!f.getFlamePositions().contains(pTemp))
 		{
 			f.addFlame(pTemp.x(),pTemp.y());
@@ -479,10 +486,6 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 				if (pTemp.x()==squareX && pTemp.y()==squareY)
 					qDebug() << "player "<<f.getPlayerId()<<" pwned player "<<i;
 			}
-
-            Bonus* destroyedBonus = removeBonus(pTemp.x(), pTemp.y());
-            // TODO store the bonus somewhere and make it reappear elsewhere later
-            delete destroyedBonus;
 		}
 	}
 }
