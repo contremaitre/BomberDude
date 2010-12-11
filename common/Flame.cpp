@@ -43,14 +43,6 @@ Flame::~Flame() {
 	// TODO Auto-generated destructor stub
 }
 
-void Flame::addFlame(int x, int y) {
-	flames.insert(QPoint(x,y));
-}
-
-void Flame::addBrokenBlock(int x, int y) {
-	brokenBlocks.insert(QPoint(x,y));
-}
-
 QDataStream &operator<<(QDataStream &out, const Flame& flame)
 {
 	out << flame.flameId;

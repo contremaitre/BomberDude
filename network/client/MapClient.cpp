@@ -56,15 +56,16 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 		Flame* f = new Flame();
 		updateIn >> *f;
 
-		QList<qint16>::const_iterator itBomb = f->getFirstDetonatedBomb();
-		for( ; itBomb != f->getLastDetonatedBomb(); ++itBomb)
-			removeBomb(*itBomb);
-        QSet<QPoint>::const_iterator itBrBlock = f->getFirstBrokenBlock();
-        for( ; itBrBlock != f->getLastBrokenBlock(); ++itBrBlock)
+		QList<qint16> detonatedBombs = f->getDetonatedBombs();
+        foreach(qint16 bombId, detonatedBombs)
+			removeBomb(bombId);
+
+        QSet<QPoint> brokenBlocks = f->getBrokenBlocks();
+        foreach(QPoint bb, brokenBlocks)
         {
             //qDebug() << "GameArena brokenblock";
-            int i = itBrBlock->x();
-            int j = itBrBlock->y();
+            int i = bb.x();
+            int j = bb.y();
             setType(BlockMapProperty::broken, i, j);
             emit sigBlockChanged(i,j);
         }

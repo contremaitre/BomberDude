@@ -228,10 +228,11 @@ void Map<P>::removeFlame(int flameId)
         Flame *f = *itFlame;
         if(f->getFlameId() == flameId)
         {
-            QSet<QPoint>::const_iterator it = f->getFirstFlame();
+            QSet<QPoint> flamePositions = f->getFlamePositions();
+            QSet<QPoint>::const_iterator it = flamePositions.constBegin();
 
             //remove flames
-            while(it != f->getLastFlame())
+            while(it != flamePositions.constEnd())
             {
                 // FIXME there could be another (and more recent) flame on the same square!
                 setType(BlockMapProperty::empty, (*it).x(), (*it).y());
@@ -239,11 +240,12 @@ void Map<P>::removeFlame(int flameId)
             }
 
             //remove broken blocks
-            for( it = f->getFirstBrokenBlock(); it != f->getLastBrokenBlock(); it++)
+            QSet<QPoint> brokenBlocks = f->getBrokenBlocks();
+            foreach(QPoint bb, brokenBlocks)
             {
                 //qDebug() << "GameArena brokenblock";
-                setType(BlockMapProperty::empty, it->x(), it->y());
-                brokenBlockRemoved(it->x(), it->y());
+                setType(BlockMapProperty::empty, bb.x(), bb.y());
+                brokenBlockRemoved(bb.x(), bb.y());
                 //getCase(i,j)->setItem(pixmaps.getPixmap(map->getType(i,j)));
             }
             flames.erase(itFlame);

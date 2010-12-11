@@ -54,14 +54,11 @@ public:
 	Flame(qint8 playerId, int duration);
 	virtual ~Flame();
 
-	void addFlame(int x, int y);
+	void addFlame(int x, int y)                 { flames.insert(QPoint(x,y)); }
 	QSet<QPoint> getFlamePositions() const		{ return flames; }
-	QSet<QPoint>::const_iterator getFirstFlame() const		{ return flames.constBegin(); }
-	QSet<QPoint>::const_iterator getLastFlame() const		{ return flames.constEnd(); }
 
-	void addBrokenBlock(int x, int y);
-	QSet<QPoint>::const_iterator getFirstBrokenBlock() const	{ return brokenBlocks.constBegin(); }
-	QSet<QPoint>::const_iterator getLastBrokenBlock() const		{ return brokenBlocks.constEnd(); }
+	void addBrokenBlock(int x, int y)           { brokenBlocks.insert(QPoint(x,y)); }
+    QSet<QPoint> getBrokenBlocks() const        { return brokenBlocks; }
 
 	qint16 getFlameId() const					{ return flameId; }
 
@@ -71,8 +68,7 @@ public:
 	bool isFinished()							{ return duration < 0; }
 
 	void addDetonatedBomb(const Bomb& bombN)	{ detonatedBombs.append(bombN.bombId); }
-	QList<qint16>::const_iterator getFirstDetonatedBomb() const		{ return detonatedBombs.constBegin(); }
-	QList<qint16>::const_iterator getLastDetonatedBomb() const		{ return detonatedBombs.constEnd(); }
+	QList<qint16> getDetonatedBombs() const		{ return detonatedBombs; }
 
 private:
 	static qint16 index;							///< unique ID for each explosion
