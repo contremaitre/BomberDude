@@ -31,6 +31,7 @@ Settings::Settings()
     playerName = qsettings->value("playerName", "player").toString();
     if(playerName.isEmpty())
         playerName = "player"; //the user may have set an empty name
+    debugMode = qsettings->value("debugMode", false).toBool();
 }
 
 void Settings::save()
@@ -41,6 +42,7 @@ void Settings::save()
     qsettings->setValue("serverPort",serverPort);
     qsettings->setValue("showIpStats",showIpStats);
     qsettings->setValue("playerName", playerName);
+    qsettings->setValue("debugMode", debugMode);
 }
 
 bool Settings::isServer() const
@@ -72,6 +74,10 @@ bool Settings::isSound() const
     return sound;
 }
 
+bool Settings::isDebugMode() const {
+    return debugMode;
+}
+
 void Settings::setServer(bool val)
 {
     b_isServer = val;
@@ -99,6 +105,10 @@ void Settings::setSound(bool val)
 
 void Settings::setPlayerName(const QString& name) {
     playerName = name;
+}
+
+void Settings::setDebugMode(bool val) {
+    debugMode = val;
 }
 
 Settings::~Settings()

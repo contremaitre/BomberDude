@@ -102,6 +102,7 @@ void StartUi::loadNetWidget()
     mainWindow->randomMapCheck->setCheckState(Qt::Unchecked);
     mainWindow->mapRightButton->setEnabled(true);
     mainWindow->mapLeftButton->setEnabled(true);
+    mainWindow->checkDebugMode->setChecked(settings->isDebugMode());
 }
 
 void StartUi::loadPlayerData() {
@@ -123,6 +124,7 @@ bool StartUi::setSettings()
     checked = mainWindow->sound->checkState() == 0 ? false : true;
     settings->setSound(checked);
     settings->setPlayerName(mainWindow->playerName->text());
+    settings->setDebugMode(mainWindow->checkDebugMode->isChecked());
     return true;
 }
 

@@ -34,6 +34,7 @@ private:
     bool sound;
     bool showIpStats;
     QString playerName;
+    bool debugMode;
 
 public:
     Settings();
@@ -47,6 +48,7 @@ public:
     bool isSound() const;
     bool getShowIpStats() const;
     QString getPlayerName() const;
+    bool isDebugMode() const;
 
     void setServer(bool);
     void setServerPort(int);
@@ -54,6 +56,7 @@ public:
     void setSound(bool);
     void setShowIpStats(bool);
     void setPlayerName(const QString&);
+    void setDebugMode(bool);
 };
 
 
