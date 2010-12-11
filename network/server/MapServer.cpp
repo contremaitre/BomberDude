@@ -474,10 +474,8 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
             return;
         }
 
-		if (!f.getFlamePositions().contains(pTemp))
-		{
-			f.addFlame(pTemp.x(),pTemp.y());
-		}
+        // just add the new square to the list, it's Flame's role to manage that there are no double entries
+        f.addFlame(pTemp.x(),pTemp.y());
 	}
 }
 
