@@ -58,6 +58,7 @@ private:
     Bonus* removeBonus(qint8 x, qint8 y);
 
 	QTimer timerHeartBeat;
+    bool debugMode;
 
     QMap<Point<qint8>, Bonus*> bonus;                       ///< list of bonus
     static const int BONUS_TABLE_LENGTH = 128;
@@ -89,6 +90,7 @@ public:
 	void requestMovePlayer(int id, int direction);
 	void requestBombPlayer(int id);
 
+    void setDebugMode(bool val)                                 { debugMode = val; }
 	void startHeartBeat(qint32 startValue, int intervals);
 
 signals:

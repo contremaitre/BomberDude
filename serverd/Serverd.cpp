@@ -19,14 +19,14 @@
 #include "Serverd.h"
 #include "constant.h"
 
-Serverd::Serverd(int port, const char *adminPasswd, int mapSize, int blockSize)
+Serverd::Serverd(int port, const char *adminPasswd, int mapSize, int blockSize, bool debugMode)
 {
-    init(port, adminPasswd);
+    init(port, adminPasswd, debugMode);
 }
 
-void Serverd::init(int port, const char *adminPasswd)
+void Serverd::init(int port, const char *adminPasswd, bool debugMode)
 {
-    server = new NetServer(port, adminPasswd);
+    server = new NetServer(port, adminPasswd, debugMode);
     connect(server,SIGNAL(sigQuit()), this, SLOT(slotQuit()), Qt::QueuedConnection);
 }
 

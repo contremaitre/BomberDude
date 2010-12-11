@@ -45,7 +45,7 @@ class NetServer : public QThread
 {
     Q_OBJECT
 public:
-    NetServer(int port, QString adminPasswd);
+    NetServer(int port, QString adminPasswd, bool debugMode);
     ~NetServer();
     void run();
     void close();
@@ -73,6 +73,8 @@ private:
     QString adminPasswd; //optional admin password
     bool adminConnected;
     int mapW, mapH, blockSize; //map size if it's a random map
+    bool debugMode;
+
     int readMove(QDataStream &in);
     void sendUdpWelcomeAck(QHostAddress sender, quint16 senderPort);
     void sendPingBack(quint32 cpt, QHostAddress sender, quint16 senderPort);

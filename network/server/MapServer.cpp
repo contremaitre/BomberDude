@@ -37,8 +37,10 @@ MapServer::MapServer()
         bonusTable[index] = Bonus::BONUS_BOMB;
     for(int i = 0; i < 16; i++, index++)
         bonusTable[index] = Bonus::BONUS_FLAME;
+    Q_ASSERT(index < BONUS_TABLE_LENGTH);
     while(index < BONUS_TABLE_LENGTH)
         bonusTable[index++] = Bonus::BONUS_NONE;
+    debugMode = false;
 }
 
 MapServer::~MapServer() {
@@ -540,7 +542,8 @@ Bonus* MapServer::removeBonus(qint8 x, qint8 y) {
 void MapServer::brokenBlockRemoved(int x, int y) {
     int randomDraw = static_cast<int>((static_cast<double>(qrand()) / RAND_MAX) * BONUS_TABLE_LENGTH);
 
-    randomDraw &= 31; // FIXME gives bonus every turn for debugging
+    if(debugMode)
+        randomDraw &= 31;
 
     Bonus::Bonus_t result = bonusTable[randomDraw];
     if(result != Bonus::BONUS_NONE) {

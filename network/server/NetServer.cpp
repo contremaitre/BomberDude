@@ -24,7 +24,7 @@
 #include "../NetMessage.h"
 #include "MapParser.h"
 
-NetServer::NetServer(int port, QString adminPasswd) : QThread()
+NetServer::NetServer(int port, QString adminPasswd, bool debugMode) : QThread()
 {
     map = NULL;
     mapPreview = NULL;
@@ -43,6 +43,7 @@ NetServer::NetServer(int port, QString adminPasswd) : QThread()
     maxNbPlayers = 2; //1
     adminConnected = false;
     randomMap = false;
+    this->debugMode = debugMode;
     selectMap(2);
     connect(this,SIGNAL(sigStartHeartBeat()), this, SLOT(startHeartBeat()), Qt::QueuedConnection);
 }
@@ -70,8 +71,8 @@ void NetServer::startHeartBeat() {
     qDebug() << "NetServer::startHeartBeat";
 
     // starts with a negative heartbeat for a countdown
-	//map->startHeartBeat(-3 * (1000 / MOVE_TICK_INTERVAL), MOVE_TICK_INTERVAL);
-    map->startHeartBeat(0, MOVE_TICK_INTERVAL);
+    qint32 initHB = debugMode ? 0 : -2 * (1000 / MOVE_TICK_INTERVAL);
+	map->startHeartBeat(initHB, MOVE_TICK_INTERVAL);
 }
 
 void NetServer::setBlockSize(const QByteArray &block, QDataStream & out)
@@ -426,6 +427,7 @@ bool NetServer::loadMap()
         qFatal("create map, and game already started");
 
     allocMap();
+    map->setDebugMode(debugMode);
     qDebug() << "loadMap :" << currentMapInList << mapList.size();
     if(!randomMap && !mapList.isEmpty() && currentMapInList >= 0 && currentMapInList < mapList.size()) //file
     {

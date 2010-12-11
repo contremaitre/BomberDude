@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
 
     const char *adminPasswd = NULL;
 	int portNumber = SERVER_PORT;
+    bool debugMode = false;
 
 	int index_arg = 1;
 
@@ -58,13 +59,19 @@ int main(int argc, char *argv[])
             continue;
         }
 
+        if(strcmp(argv[index_arg], "--debug-mode") == 0) {
+            debugMode = true;
+            ++index_arg;
+            continue;
+        }
+
 		std::cout << "Unknown parameter: " << argv[index_arg] << std::endl;
 		++index_arg;
 	}
 
 	std::cout << "Using port number: " << portNumber << std::endl;
 
-    Serverd *serverd = new Serverd(portNumber,adminPasswd,MAP_SIZE,BLOCK_SIZE);
+    Serverd *serverd = new Serverd(portNumber, adminPasswd, MAP_SIZE, BLOCK_SIZE, debugMode);
 
     QObject::connect(serverd,SIGNAL(sigQuit()), &app, SLOT(quit()));
     serverd->launch();
