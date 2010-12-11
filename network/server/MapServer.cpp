@@ -477,15 +477,6 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 		if (!f.getFlamePositions().contains(pTemp))
 		{
 			f.addFlame(pTemp.x(),pTemp.y());
-			for (int i=0;i<getMaxNbPlayers();i++)
-			{
-				qint16 x,y;
-				getPlayerPosition(i,x,y);
-				int squareX, squareY;
-				getBlockPosition(x,y,squareX,squareY);
-				if (pTemp.x()==squareX && pTemp.y()==squareY)
-					qDebug() << "player "<<f.getPlayerId()<<" pwned player "<<i;
-			}
 		}
 	}
 }
