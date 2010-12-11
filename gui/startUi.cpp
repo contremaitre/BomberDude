@@ -158,6 +158,8 @@ void StartUi::startServer()
 		serverCmdLine += " --port ";
 		serverCmdLine += mainWindow->serverPort->toPlainText();
 		serverCmdLine += " --admin-password " + password;
+        if(mainWindow->checkDebugMode->isChecked())
+            serverCmdLine += " --debug-mode";
 
         server->start(serverCmdLine);
     }
