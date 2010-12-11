@@ -30,7 +30,7 @@
 
 //Game
 #define MAX_NB_PLAYER 4 //for random maps
-#define DEFAULT_BOMB_DURATION 100 //ticks
+#define DEFAULT_BOMB_DURATION 40 //ticks
 #define DEFAULT_BOMB_RANGE 2
 #define DEFAULT_BOMB_CAPACITY 1
 //how fast the bomb is blinking (ms)
