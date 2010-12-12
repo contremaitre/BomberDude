@@ -121,6 +121,7 @@ bool MapServer::assignPlayer(int id)
         return false;
     startPlayerSlots[id].freeSlot = false;
     setPlayerPosition(id, startPlayerSlots.at(id).coord.x(), startPlayerSlots.at(id).coord.y());
+    players[id]->setIsAlive(true);
     return true;
 }
 
@@ -487,7 +488,7 @@ bool MapServer::checkPlayerInFlames(PlayerServer* playerN,
                          QList<killedPlayer>& killedPlayers) {
     foreach(Flame* f, flamesToCheck)
         if(f->getFlamePositions().contains(playerBlock)) {
-            playerN->setIsDead();
+            playerN->setIsAlive(false);
             killedPlayers.append(killedPlayer(playerN->getId(), f->getPlayerId()));
             return true;
         }

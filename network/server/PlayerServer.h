@@ -13,7 +13,7 @@ public:
     ~PlayerServer();
 
     // these methods modify the variables inherited from Player
-    void setIsDead()                    { isAlive = false; }
+    void setIsAlive(bool isAlive)       { this->isAlive = isAlive; }
     void setSickness(sickness s)        { currentSickness = s; }
 
     // methods specific to PlayerServer

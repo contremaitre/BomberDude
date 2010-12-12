@@ -11,6 +11,7 @@ PlayerServer::PlayerServer(int playerId) :
 {}
 
 PlayerServer::~PlayerServer() {
+    // TODO release the bonus on the map instead of deleting them
     foreach(Bonus* b, heldBonus)
         delete b;
 }

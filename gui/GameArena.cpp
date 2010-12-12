@@ -48,11 +48,6 @@ void GameArena::createGraphics()
             scene->addItem(m_case->getItem());
         }
     }
-    for(int i = 0 ; i < getNbPlayers(); i++)
-    {
-            QGraphicsSquareItem *m_case = getPlayer(i);
-            scene->addItem(m_case->getItem());
-    }
     if(!graphicView)
     {
         graphicView = new QGraphicsView(mainWindow);
@@ -132,6 +127,10 @@ void GameArena::setMap(MapClient *newMap)
 void GameArena::movePlayer(int player, int x, int y)
 {
     Q_ASSERT(playersItem[player] != NULL); //Player really exists
+
+    if(playersItem[player]->getItem()->scene() == 0)
+        scene->addItem(playersItem[player]->getItem());
+
 	playersItem[player]->setPos(x-squareSize/2,y-squareSize/2,squareSize);
 }
 
