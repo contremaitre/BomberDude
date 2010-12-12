@@ -100,6 +100,8 @@ signals:
 	void sigBlockChanged(int i, int j);
     void sigHeartbeatUpdated(qint32 value);
 
+    void sigWinner(qint8 playerId);
+
 public slots:
 	void newHeartBeat();
 

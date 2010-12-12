@@ -679,4 +679,29 @@ void MapServer::newHeartBeat() {
 
 	// send the update to the clients
 	emit updatedMap(updateArray);
+
+    // count how many players are still alive
+    QList<qint8> playersAlive;
+    foreach(PlayerServer* playerN, players) {
+        if(playerN->getIsAlive()) {
+            playersAlive.append(playerN->getId());
+            if(playersAlive.size() > 1)
+                break;
+        }
+    }
+
+    // is there a draw? in this case we send -1 as winner's id
+    if(playersAlive.size() == 0) {
+        timerHeartBeat.stop();
+        emit sigWinner(-1);
+        return;
+    }
+
+    if((! debugMode) && playersAlive.size() == 1) {
+        timerHeartBeat.stop();
+        emit sigWinner(playersAlive.first());
+        return;
+    }
+
+    // TODO time over
 }
