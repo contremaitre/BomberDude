@@ -281,6 +281,32 @@ void GameArena::slotRemoveBonus(qint16 x, qint16 y) {
     }
 }
 
+void GameArena::slotMapWinner(qint8 playerId) {
+    QFont bigText;
+    bigText.setPointSize(32);
+    bigText.setWeight(QFont::Bold);
+
+    QGraphicsSimpleTextItem* textOver = new QGraphicsSimpleTextItem();
+    if(playerId == -1)
+        textOver->setText("DRAW GAME!");
+    else
+        textOver->setText(QString("PLAYER ") + QString::number(playerId + 1) + QString(" WINS!"));
+    textOver->setFont(bigText);
+    textOver->setZValue(1.0);
+
+    scene->addItem(textOver);
+
+    QGraphicsSimpleTextItem* text2 = new QGraphicsSimpleTextItem();
+    text2->setText(textOver->text());
+    text2->setFont(bigText);
+    text2->setZValue(0.9);
+    text2->setX(text2->x() + 1);
+    text2->setY(text2->y() + 1);
+    text2->setBrush(QBrush(Qt::white));
+
+    scene->addItem(text2);
+}
+
 GameArena::~GameArena()
 {
     clear();

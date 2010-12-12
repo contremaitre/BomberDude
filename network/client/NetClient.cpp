@@ -302,8 +302,15 @@ void NetClient::handleTcpMsg(QDataStream &in)
             }
             //qDebug() << "Id: " << playerId << ", name: " << playerName;
             emit sigUpdatePlayerData(playerId, playerName);
+            break;
         }
-        break;
+    case msg_map_winner: {
+            qint8 playerId;
+            in >> playerId;
+
+            emit sigMapWinner(playerId);
+            break;
+        }
 
 	default:
 		//trash the message

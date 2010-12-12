@@ -97,6 +97,7 @@ signals:
     void sigStatPacketLoss(double);
     void sigIsServerAdmin();
     void sigMaxPlayersChanged(int);
+    void sigMapWinner(qint8 playerId);
 };
 
 

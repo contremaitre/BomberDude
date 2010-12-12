@@ -85,6 +85,9 @@ private slots:
     void slotAddBonus(Bonus::Bonus_t type, qint16 x, qint16 y);
     void slotRemoveBonus(qint16 x, qint16 y);
 
+public slots:
+    void slotMapWinner(qint8 playerId);
+
 signals:
     void sigTimeUpdated(int valueInSeconds);
 };
