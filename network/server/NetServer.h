@@ -87,11 +87,12 @@ private slots:
     void receiveUdp();
     void slotUpdatePlayerData(int playerId, QString playerName);
 
-	// to be called in it's own thread (otherwise the QTimer object can fail to send signals)
+	// to be called in its own thread (otherwise the QTimer object can fail to send signals)
 	void startHeartBeat();
 
 	// sent by the game loop
 	void updateMap(QByteArray updateData);
+    void slotWinner(qint8 playerId);
 
 signals:
     void newPlayer();

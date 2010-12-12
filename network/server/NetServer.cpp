@@ -417,6 +417,7 @@ void NetServer::allocMap()
     delete map;
     map = new MapServer;
     connect(map,SIGNAL(updatedMap(QByteArray)),this,SLOT(updateMap(QByteArray)));
+    connect(map, SIGNAL(sigWinner(qint8)), this, SLOT(slotWinner(qint8)));
     emit sigStartHeartBeat();
     //connect(this, SIGNAL(started()), this, SLOT(startHeartBeat()));
 }
@@ -475,4 +476,18 @@ void NetServer::updateMap(QByteArray updateData) {
 
 	foreach(NetServerClient *client, clients)
 		client->sendUpdate(block);
+}
+
+void NetServer::slotWinner(qint8 playerId) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << static_cast<quint16>(0);
+    out << static_cast<quint16>(msg_map_winner);
+    out << playerId;
+    // TODO send statistics (score, kills) so that the client is up-to-date
+    setBlockSize(block, out);
+
+    foreach(NetServerClient *client, clients)
+        client->sendTcpBlock(block);
 }
