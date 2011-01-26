@@ -18,7 +18,5 @@ todo :
 - find another name for the game
 
 Known Bug :
-- if the GUI launch a server, but a server is already running on the same computer, then the client will be connected to the local server
-instead of failling
 ----------------------------------------------------------------------------------
 
