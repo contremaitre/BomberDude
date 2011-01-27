@@ -107,13 +107,16 @@ void GameArena::setMap(MapClient *newMap)
         }
     }
     qint16 x,y;
-    for(int i = 0; i < maxNbPlayers; i++)
+    for(int i = 0; i < map->getNbPlayers(); i++)
     {
         map->getPlayerPosition(i,x,y);
         playersItem[i] = new QGraphicsSquareItem(x-squareSize/2,y-squareSize/2,squareSize);
         playersItem[i]->setItem(pixmaps.getPixmap(i));
     }
-
+    for(int i = map->getNbPlayers(); i < map->getMaxNbPlayers(); i++)
+    {
+        playersItem[i] = NULL;
+    }
     connect(map, SIGNAL(sigBlockChanged(int)), this, SLOT(blockChanged(int)));
     connect(map, SIGNAL(sigBlockChanged(int,int)), this, SLOT(blockChanged(int,int)));
     connect(map, SIGNAL(sigHeartbeatUpdated(qint32)), this, SLOT(slotHearbeatUpdated(qint32)));

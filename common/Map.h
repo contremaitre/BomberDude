@@ -31,8 +31,6 @@
 
 /**
  * This class represent a bomberman game map
- * For now, the map create can only be a random map
- * Todo : add a load function, so we can load a map from a file
  */
 
 // WARNING! This class inherits from QObject but does not use the Q_OBJECT macro
@@ -66,6 +64,8 @@ public:
     void getPlayerPosition(int, qint16&, qint16&) const;
     void newPlayer(int id);
     qint8 getMaxNbPlayers() const                                   { return maxNbPlayers; }
+    qint8 getNbPlayers() const                                      { return NbPlayers; }
+    void setMaxNbPlayers(int);
 
     void addFlame(Flame* f);
     void removeFlame(int flameId);
@@ -81,6 +81,8 @@ public:
     
 protected:
     BlockMapProperty* getBlockList() const                    { return block_list; }
+    quint8 NbPlayers;
+    quint8 maxNbPlayers;
 
 private:
     // callback method for when a brick wall is removed, only useful for the server
@@ -90,8 +92,6 @@ private:
     qint16 height;
     qint16 blockSize;                       //There are "blockSize" pixels in one block
     BlockMapProperty *block_list;
-
-    quint8 maxNbPlayers;
 
     //Test if a coordinate is below (-1) on (0) or above (1) the middle of the block
     int coordinatePositionInBlock(int coord);
@@ -112,19 +112,21 @@ private:
 
 template<typename P>
 Map<P>::Map() :
-	width(0),
-	height(0),
-	blockSize(0),
-    block_list(NULL),
+    NbPlayers(0),
     maxNbPlayers(0),
+    width(0),
+    height(0),
+    blockSize(0),
+    block_list(NULL),
     heartBeat(-999999999)
 {}
 
 template<typename P>
 Map<P>::Map(qint16 w, qint16 h, qint16 bs) :
-	block_list(NULL),
-	maxNbPlayers(0),
-	heartBeat(-999999999)
+    maxNbPlayers(0),
+    NbPlayers(0),
+    block_list(NULL),
+    heartBeat(-999999999)
 {
 	setDim(w,h,bs);
 }
@@ -205,10 +207,15 @@ void Map<P>::setPlayerPosition(int id, qint16 x, qint16 y)
 template<typename P>
 void Map<P>::newPlayer(int id)
 {
-    maxNbPlayers++;
+    NbPlayers++;
     players.append(new P(id));
 }
 
+template<typename P>
+void Map<P>::setMaxNbPlayers(int nb)
+{
+    maxNbPlayers = nb;
+}
 
 template<typename P>
 void Map<P>::addFlame(Flame* flame)
@@ -317,14 +324,14 @@ int Map<P>::coordinatePositionInBlock(int coord)
 
 template<typename P>
 QDataStream &operator>>(QDataStream & in, Map<P> &map) {
-    qint8 maxNbPlayers;
+    qint8 NbPlayers, MaxNbPlayer;
 	qint16 width, height, blockSize;
-    in >> maxNbPlayers >> width >> height >> blockSize;
+    in >> MaxNbPlayer >> NbPlayers >> width >> height >> blockSize;
     map.setDim(width, height, blockSize);
-
+    map.setMaxNbPlayers(MaxNbPlayer);
     //retreive player position from the data stream
     qint16 x,y;
-    for(int i = 0; i < maxNbPlayers; i++)
+    for(int i = 0; i < NbPlayers; i++)
     {
         in >> x >> y;
         map.newPlayer(i);
@@ -342,11 +349,11 @@ QDataStream &operator>>(QDataStream & in, Map<P> &map) {
 
 template<typename P>
 QDataStream &operator<<(QDataStream &out, const Map<P> &map) {
-    out << map.getMaxNbPlayers() << map.getWidth() << map.getHeight() << map.getBlockSize();
+    out << map.getMaxNbPlayers() << map.getNbPlayers() << map.getWidth() << map.getHeight() << map.getBlockSize();
     //copy player positions in our data stream
     //out.writeBytes((const char *)map.getPlayersPosition(),map.getMaxNbPlayers()*sizeof(int));
     qint16 x,y;
-    for(int i = 0; i < map.getMaxNbPlayers(); i++)
+    for(int i = 0; i < map.getNbPlayers(); i++)
     {
         map.getPlayerPosition(i,x,y);
         out << x << y;

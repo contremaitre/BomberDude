@@ -123,6 +123,7 @@ bool MapServer::assignPlayer(int id)
 {
     if(id >= startPlayerSlots.size() || !startPlayerSlots.at(id).freeSlot )
         return false;
+    newPlayer(id); //update Map Subclass
     startPlayerSlots[id].freeSlot = false;
     setPlayerPosition(id, startPlayerSlots.at(id).coord.x(), startPlayerSlots.at(id).coord.y());
     players[id]->setIsAlive(true);
@@ -133,7 +134,7 @@ void MapServer::addPlayerSlot(int x, int y)
 {
     initialPlayerPosition tmp = {QPoint(x,y), true};
     startPlayerSlots.append(tmp);
-    newPlayer(startPlayerSlots.size()-1); //update Map Subclass
+    maxNbPlayers++;
 }
 
 void MapServer::requestBombPlayer(int id) {
@@ -426,7 +427,7 @@ void MapServer::propagateFlame(Flame & f, const QPoint & p, int range)
 	if (!f.getFlamePositions().contains(p))
 	{
 		f.addFlame(p.x(),p.y());
-		for (int i=0;i<getMaxNbPlayers();i++)
+		for (int i=0;i<getNbPlayers();i++)
 		{
 			qint16 x,y;
 			getPlayerPosition(i,x,y);
@@ -524,6 +525,7 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
                 break;
             case Bonus::BONUS_OIL:
                 playerN->setOilBonus();
+                break;
             default:
                 qDebug() << "Type " << pickedUpBonus->getType() << " not yet implemented!";
         }
