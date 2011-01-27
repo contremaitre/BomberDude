@@ -40,41 +40,31 @@ void PixmapsItems::loadAll()
         bomberman[i] = QPixmap(pixPath).scaled(QSizeF(width,height).toSize());
     }
 
+    addBonusPixMap(Bonus::BONUS_FLAME,"pictures/bonus_flame.png");
+    addBonusPixMap(Bonus::BONUS_BOMB,"pictures/bonus_bomb.png");
     burnt = QPixmap("pictures/tux_burn.png").scaled(QSizeF(width,height).toSize());
-    bonus_bomb = QPixmap("pictures/bonus_bomb.png").scaled(QSizeF(width,height).toSize());
-    bonus_flame = QPixmap("pictures/bonus_flame.png").scaled(QSizeF(width,height).toSize());
 
+    addBlockPixMap(BlockMapProperty::brick,"pictures/brick.png");
+    addBlockPixMap(BlockMapProperty::wall,"pictures/wall.png");
+    addBlockPixMap(BlockMapProperty::bomb,"pictures/bomb.png");
+    addBlockPixMap(BlockMapProperty::flame,"pictures/explosion.png");
+    addBlockPixMap(BlockMapProperty::broken,"pictures/broken.png");
+}
+
+void PixmapsItems::addBlockPixMap(BlockMapProperty::BlockType type, const char *name)
+{
     block_pixmaps_t tmp_block;
-    
-    QPixmap p2("pictures/brick.png");
-    QPixmap ps2 = p2.scaled(QSizeF(width,height).toSize());
-    tmp_block.pixmap = ps2;
-    tmp_block.type = BlockMapProperty::brick;
+    tmp_block.pixmap = QPixmap(name).scaled(QSizeF(width,height).toSize());
+    tmp_block.type = type;
     block_pixmaps.push_back(tmp_block);
+}
 
-    QPixmap p3("pictures/wall.png");
-    QPixmap ps3 = p3.scaled(QSizeF(width,height).toSize());
-    tmp_block.pixmap = ps3;
-    tmp_block.type = BlockMapProperty::wall;
-    block_pixmaps.push_back(tmp_block);
-
-    QPixmap p4("pictures/bomb.png");
-    QPixmap ps4 = p4.scaled(QSizeF(width,height).toSize());
-    tmp_block.pixmap = ps4;
-    tmp_block.type = BlockMapProperty::bomb;
-    block_pixmaps.push_back(tmp_block);
-
-    QPixmap p5("pictures/explosion.png");
-    QPixmap ps5 = p5.scaled(QSizeF(width,height).toSize());
-    tmp_block.pixmap = ps5;
-    tmp_block.type = BlockMapProperty::flame;
-    block_pixmaps.push_back(tmp_block);
-
-    QPixmap p6("pictures/broken.png");
-    QPixmap ps6 = p6.scaled(QSizeF(width,height).toSize());
-    tmp_block.pixmap = ps6;
-    tmp_block.type = BlockMapProperty::broken;
-    block_pixmaps.push_back(tmp_block);
+void PixmapsItems::addBonusPixMap(Bonus::Bonus_t type, const char *name)
+{
+    option_pixmaps_t tmp_block;
+    tmp_block.pixmap = QPixmap(name).scaled(QSizeF(width,height).toSize());
+    tmp_block.type = type;
+    option_pixmaps.push_back(tmp_block);
 }
 
 const QPixmap& PixmapsItems::getPixmap(BlockMapProperty::BlockType type)
@@ -83,6 +73,17 @@ const QPixmap& PixmapsItems::getPixmap(BlockMapProperty::BlockType type)
         if (block_pixmaps.at(i).type == type)
             return block_pixmaps.at(i).pixmap;
     }
+    //todo could this case be avoided ?
+    return none;
+}
+
+const QPixmap& PixmapsItems::getPixmap(Bonus::Bonus_t type)
+{
+    for (int i = 0; i < block_pixmaps.size(); ++i) {
+        if (option_pixmaps.at(i).type == type)
+            return option_pixmaps.at(i).pixmap;
+    }
+    Q_ASSERT(false);
     return none;
 }
 
@@ -93,11 +94,3 @@ const QPixmap& PixmapsItems::getPixmap(int player)
     return bomberman[player];
 }
 
-const QPixmap& PixmapsItems::getPixmap(BlockMapProperty::Option type)
-{
-    for (int i = 0; i < block_pixmaps.size(); ++i) {
-        if (option_pixmaps.at(i).type == type)
-            return option_pixmaps.at(i).pixmap;
-    }
-    return none;
-}

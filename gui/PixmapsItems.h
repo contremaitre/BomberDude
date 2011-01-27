@@ -22,7 +22,7 @@
 #include <QPixmap>
 
 #include "BlockMapProperty.h"
-
+#include "Bonus.h"
 /**
  * For now, we load one picture for each block type. And this is done manualy
  * In the future, we will have something like a xml file with an association of block type and pictures
@@ -32,15 +32,15 @@ class PixmapsItems
 {
 private:
     struct block_pixmaps_t{QPixmap pixmap; BlockMapProperty::BlockType type;};
-    struct option_pixmaps_t{QPixmap pixmap; BlockMapProperty::Option type;};
+    struct option_pixmaps_t{QPixmap pixmap; Bonus::Bonus_t type;};
     QList <block_pixmaps_t> block_pixmaps;
     QList <option_pixmaps_t> option_pixmaps;
     QPixmap bomberman[10];
     QPixmap burnt;
-    QPixmap bonus_bomb;
-    QPixmap bonus_flame;
     QPixmap none;
     void loadAll();
+    void addBlockPixMap(BlockMapProperty::BlockType, const char *);
+    void addBonusPixMap(Bonus::Bonus_t, const char *);
     //width and height to scale the pixmaps to the good size
     int width, height;
 public:
@@ -50,9 +50,7 @@ public:
     const QPixmap& getPixmap(BlockMapProperty::BlockType);
     const QPixmap& getPixmap(int);
     const QPixmap& getPixmapBurnt() const                   { return burnt; }
-    const QPixmap& getPixmapBonusBomb() const               { return bonus_bomb; }
-    const QPixmap& getPixmapBonusFlame() const              { return bonus_flame; }    
-    const QPixmap& getPixmap(BlockMapProperty::Option);
+    const QPixmap& getPixmap(Bonus::Bonus_t);
 };
 
 

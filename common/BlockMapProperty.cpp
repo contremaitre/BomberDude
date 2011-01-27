@@ -20,7 +20,6 @@
 BlockMapProperty::BlockMapProperty()
 {
     type = empty;
-    option = none;
 }
 
 BlockMapProperty::~BlockMapProperty()

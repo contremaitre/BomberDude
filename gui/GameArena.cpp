@@ -252,17 +252,7 @@ void GameArena::slotAddBonus(Bonus::Bonus_t bonusType, qint16 x, qint16 y) {
     QGraphicsSquareItem* pixBonus = new QGraphicsSquareItem(x * squareSize,
                                                             y * squareSize,
                                                             squareSize);
-    switch(bonusType) {
-        case Bonus::BONUS_BOMB:
-            pixBonus->setItem(pixmaps.getPixmapBonusBomb());
-            break;
-        case Bonus::BONUS_FLAME:
-            pixBonus->setItem(pixmaps.getPixmapBonusFlame());
-            break;
-        default:
-            delete pixBonus;
-            return;
-    }
+    pixBonus->setItem(pixmaps.getPixmap(bonusType));
 
     QPoint key(x, y);
     QMap<QPoint, QGraphicsItem*>::iterator itb = bonus.find(key);

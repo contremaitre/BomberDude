@@ -24,7 +24,6 @@ class BlockMapProperty
 public:
     //must be kept in sync in PixmapsItem
     enum BlockType {wall,brick,bomb,flame,empty,broken};
-    enum Option {none,o_bomb};
 
     BlockMapProperty();
     ~BlockMapProperty();
@@ -33,8 +32,6 @@ public:
     BlockType getType() const;
 private:
     BlockType type;
-    Option option;
-
 };
 
 
