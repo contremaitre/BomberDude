@@ -311,7 +311,10 @@ void NetClient::handleTcpMsg(QDataStream &in)
             emit sigMapWinner(playerId);
             break;
         }
-
+    case msg_start_game:
+        qDebug() << "NetClient emit sigGameStarted";
+        emit sigGameStarted();
+        break;
 	default:
 		//trash the message
         qDebug() << "NetClient, unexpected tcp message received" << msg_type;

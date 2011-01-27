@@ -98,6 +98,7 @@ signals:
     void sigIsServerAdmin();
     void sigMaxPlayersChanged(int);
     void sigMapWinner(qint8 playerId);
+    void sigGameStarted();
 };
 
 

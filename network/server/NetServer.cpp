@@ -165,12 +165,16 @@ void NetServer::startGame()
 {
     if(!gameStarted)
     {
+        qDebug() << "NetServer start , nb =" << clients.size();
         loadMap();
         foreach(NetServerClient *client, clients)
             map->assignPlayer(client->getId());
         foreach(NetServerClient *client, clients)
             client->sendMap(*map);
+        foreach(NetServerClient *client, clients)
+            client->sendGameStarted();
         gameStarted = true;
+        emit sigStartHeartBeat();
     }
 }
 
@@ -418,8 +422,6 @@ void NetServer::allocMap()
     map = new MapServer;
     connect(map,SIGNAL(updatedMap(QByteArray)),this,SLOT(updateMap(QByteArray)));
     connect(map, SIGNAL(sigWinner(qint8)), this, SLOT(slotWinner(qint8)));
-    emit sigStartHeartBeat();
-    //connect(this, SIGNAL(started()), this, SLOT(startHeartBeat()));
 }
 
 bool NetServer::loadMap()

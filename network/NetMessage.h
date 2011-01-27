@@ -39,7 +39,7 @@ enum NetMsgType
 	msg_net_version,
 	msg_is_admin,
 	msg_max_players,
-	msg_start_game,
+    msg_start_game,         // TCP client <-> server start game, and game started
     msg_player_data,        // TCP client -> server, player's profile
     msg_update_player_data, // TCP server -> client, player's profile
     msg_admin_passwd,       // TCP client -> server, admin password

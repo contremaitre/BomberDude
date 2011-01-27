@@ -75,7 +75,7 @@ private slots:
     void mapPreviewReceived(MapClient*);
     void slotMapRandom();
     void slotTimeUpdated(int timeInSeconds);
-
+    void gameStarted();
 signals:
     void connectedToServer();
     void connectionError();

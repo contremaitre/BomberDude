@@ -90,6 +90,7 @@ private slots:
     void slotMapRandom();
     void slotMapLeftButton();
     void slotMapRightButton();
+    void slotGameStarted();
     void closeGame();
 };
 

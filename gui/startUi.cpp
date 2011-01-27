@@ -180,6 +180,7 @@ void StartUi::startServer()
     connect( netclient, SIGNAL(sigMaxPlayersChanged(int)), this, SLOT(slotMaxPlayersChanged(int)));
     connect( netclient, SIGNAL(sigUpdatePlayerData(qint32,QString)), this, SLOT(slotUpdatePlayerData(qint32,QString)));
     connect( netclient, SIGNAL(sigMapRandom()), this, SLOT(slotMapRandom()));
+    connect( netclient, SIGNAL(sigGameStarted()), this, SLOT(slotGameStarted()));
     gamePlay->cliConnect(password);
 }
 
@@ -321,14 +322,17 @@ void StartUi::slotMapRandom()
 void StartUi::slotStartGame()
 {
     if(gamePlay)
-    {
-        mainWindow->network_pref->hide();
-        mainWindow->sound_pref->hide();
-        mainWindow->adminWidget->hide();
-        mainWindow->player_data->hide();
-        mainWindow->previewGraphicsView->hide();
         gamePlay->getNetClient()->startGame();
-    }
+}
+
+void StartUi::slotGameStarted()
+{
+    qDebug() << "StartUi game started";
+    mainWindow->network_pref->hide();
+    mainWindow->sound_pref->hide();
+    mainWindow->adminWidget->hide();
+    mainWindow->player_data->hide();
+    mainWindow->previewGraphicsView->hide();
 }
 
 void StartUi::randomMapCheckedChanged(int state)

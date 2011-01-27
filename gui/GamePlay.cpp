@@ -36,6 +36,7 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set, QGraphicsView *mapGraphicP
     //MAP_SIZE
     client = new NetClient;
     connect(client,SIGNAL(mapReceived(MapClient*)),this,SLOT(mapReceived(MapClient*)));
+    connect(client,SIGNAL(sigGameStarted()),this,SLOT(gameStarted()));
     connect(client,SIGNAL(mapPreviewReceived(MapClient*)),this,SLOT(mapPreviewReceived(MapClient*)));
     connect(client,SIGNAL(sigMapRandom()),this,SLOT(slotMapRandom()));
     connect(client, SIGNAL(sigMapWinner(qint8)), gameArena, SLOT(slotMapWinner(qint8)));
@@ -54,8 +55,13 @@ void GamePlay::cliConnect(const QString &pass)
 
 void GamePlay::mapReceived(MapClient *map)
 {
-    //qDebug() << "map received, create graphics";
+    //qDebug() << "map received";
     gameArena->setMap(map);
+}
+
+void GamePlay::gameStarted()
+{
+    //qDebug() << "map received";
     gameArena->createGraphics();
 }
 
