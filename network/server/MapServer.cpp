@@ -522,6 +522,8 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
             case Bonus::BONUS_FLAME:
                 playerN->incFlameLength();
                 break;
+            case Bonus::BONUS_OIL:
+                playerN->setOilBonus();
             default:
                 qDebug() << "Type " << pickedUpBonus->getType() << " not yet implemented!";
         }

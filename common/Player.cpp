@@ -8,7 +8,7 @@ Player::Player() :
 	y(-1),
 	latestDirection(-1),
     isAlive(false),
-    currentSickness(SICK_NONE)
+    isSick(false)
 {}
 
 Player::Player(qint8 playerId) :
@@ -17,7 +17,7 @@ Player::Player(qint8 playerId) :
 	y(-1),
 	latestDirection(-1),
     isAlive(false),
-    currentSickness(SICK_NONE)
+    isSick(false)
 {}
 
 
@@ -31,7 +31,7 @@ QDataStream& operator>>(QDataStream& in, Player& p) {
     quint8 bitField;
     in >> bitField;
     p.isAlive = bitField & (1 << BFI_IS_ALIVE);
-    p.currentSickness = (bitField & (1 <<BFI_SICKNESS)) ? SICK_UNKNOWN : SICK_NONE;
+    p.isSick = (bitField & (1 <<BFI_SICKNESS));
 
 	return in;
 }
@@ -42,7 +42,7 @@ QDataStream& operator<<(QDataStream& out, const Player& p) {
     quint8 bitField = 0;
     if(p.isAlive)
         bitField |= 1 << BFI_IS_ALIVE;
-    if(p.currentSickness != SICK_NONE)
+    if(p.isSick)
         bitField |= 1 << BFI_SICKNESS;
     out << bitField;
 

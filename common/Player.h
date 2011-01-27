@@ -4,15 +4,6 @@
 
 #include <QDataStream>
 
-
-enum sickness { SICK_NONE,
-                SICK_UNKNOWN,
-                SICK_FAST,
-                SICK_NO_BOMB,
-                SICK_DIARRHEA
-            };
-
-
 class Player {
 public:
 	Player();
@@ -30,7 +21,7 @@ public:
 
     bool getIsAlive() const             { return isAlive; }
 
-    bool getIsSick() const              { return currentSickness != SICK_NONE; }
+    bool getIsSick() const              { return isSick; }
 
 protected:
 	qint8 id;
@@ -41,7 +32,7 @@ protected:
 	int latestDirection;
 
     bool isAlive;
-    sickness currentSickness;
+    bool isSick;
 
 	// allows easier serialization, avoids exposing all internal variables for writing
 	friend QDataStream& operator>>(QDataStream& in, Player& f);

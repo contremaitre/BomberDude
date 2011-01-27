@@ -5,6 +5,12 @@
 #include "Player.h"
 #include "Bonus.h"
 
+enum sickness { SICK_NONE,
+                SICK_UNKNOWN,
+                SICK_FAST,
+                SICK_NO_BOMB,
+                SICK_DIARRHEA
+            };
 
 class PlayerServer: public Player
 {
@@ -14,7 +20,7 @@ public:
 
     // these methods modify the variables inherited from Player
     void setIsAlive(bool isAlive)       { this->isAlive = isAlive; }
-    void setSickness(sickness s)        { currentSickness = s; }
+    void setSickness(sickness s);
 
     // methods specific to PlayerServer
 	void raiseLayingBomb()				{ layingBomb = true; }
@@ -31,15 +37,19 @@ public:
     qint8 getFlameLength() const        { return flameLength; }
     void incFlameLength()               { flameLength++; }
 
+    void setOilBonus()                  { oilBonus = true; }
+
     QList<Bonus*> heldBonus;
 
 private:
-	bool layingBomb;
+    bool layingBomb;
+    bool oilBonus;
 
     qint8 maxNumberOfBombs;
     qint8 bombsAvailable;
 
     qint8 flameLength;
+    sickness currentSickness;
 
 };
 
