@@ -42,6 +42,8 @@ void PixmapsItems::loadAll()
 
     addBonusPixMap(Bonus::BONUS_FLAME,"pictures/bonus_flame.png");
     addBonusPixMap(Bonus::BONUS_BOMB,"pictures/bonus_bomb.png");
+    addBonusPixMap(Bonus::BONUS_OIL,"pictures/bonus_oil.png");
+    addBonusPixMap(Bonus::BONUS_DISEASE,"pictures/bonus_disease.png");
     burnt = QPixmap("pictures/tux_burn.png").scaled(QSizeF(width,height).toSize());
 
     addBlockPixMap(BlockMapProperty::brick,"pictures/brick.png");

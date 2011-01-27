@@ -11,6 +11,8 @@ public:
     static const Bonus_t BONUS_NONE = 0;         // for bogus object (to be initialised by deserialisation)
     static const Bonus_t BONUS_FLAME = 1;
     static const Bonus_t BONUS_BOMB = 2;
+    static const Bonus_t BONUS_OIL = 3;
+    static const Bonus_t BONUS_DISEASE = 4;
 
     Bonus() :
         type(BONUS_NONE),

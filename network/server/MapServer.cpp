@@ -37,6 +37,10 @@ MapServer::MapServer()
         bonusTable[index] = Bonus::BONUS_BOMB;
     for(int i = 0; i < 16; i++, index++)
         bonusTable[index] = Bonus::BONUS_FLAME;
+    for(int i = 0; i < 16; i++, index++)
+        bonusTable[index] = Bonus::BONUS_DISEASE;
+    for(int i = 0; i < 16; i++, index++)
+        bonusTable[index] = Bonus::BONUS_OIL;
     Q_ASSERT(index < BONUS_TABLE_LENGTH);
     while(index < BONUS_TABLE_LENGTH)
         bonusTable[index++] = Bonus::BONUS_NONE;
@@ -544,7 +548,7 @@ void MapServer::brokenBlockRemoved(int x, int y) {
     int randomDraw = static_cast<int>((static_cast<double>(qrand()) / RAND_MAX) * BONUS_TABLE_LENGTH);
 
     if(debugMode)
-        randomDraw &= 31;
+        randomDraw = randomDraw % 63;
 
     Bonus::Bonus_t result = bonusTable[randomDraw];
     if(result != Bonus::BONUS_NONE) {
