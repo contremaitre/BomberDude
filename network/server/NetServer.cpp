@@ -163,7 +163,9 @@ bool NetServer::passwordReceived(int id, QString &pass)
 
 void NetServer::startGame()
 {
-    if(!gameStarted)
+    qDebug() << "NetServer start, starded:" << gameStarted << "nb =" << clients.size();
+    //in non debug mode, require at least two players
+    if(!gameStarted && (debugMode || clients.size() > 1))
     {
         qDebug() << "NetServer start , nb =" << clients.size();
         loadMap();
