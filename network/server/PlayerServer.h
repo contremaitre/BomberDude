@@ -42,6 +42,8 @@ public:
     void setSickness(sickness s);
     sickness getSickness()              {return currentSickness;}
 
+    qint16 getMoveDistance() const;
+
     void decreaseDuration(); //only used for sickness for the moment
     QList<Bonus*> heldBonus;
 
@@ -56,6 +58,7 @@ private:
     sickness currentSickness;
     qint16 SicknessDuration;
 
+    quint16 moveDistance;
 };
 
 

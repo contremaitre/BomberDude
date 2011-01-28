@@ -170,38 +170,38 @@ void MapServer::requestMovePlayer(int id, int direction) {
 	(*itPlayer)->setDirection(direction);
 }
 
-bool MapServer::movePlayer(int id, int direction)
+bool MapServer::movePlayer(int id, int direction, int distance)
 {
 	bool ret = false;
 	if(direction == 7 || direction == 0 || direction == 1)
-		ret = movePlayerLeft(id);
+		ret = movePlayerLeft(id,distance);
 	if(!ret && (direction == 7 || direction == 6 || direction == 5))
-		ret = movePlayerDown(id);
+		ret = movePlayerDown(id,distance);
 	if(!ret && (direction == 5 || direction == 4 || direction == 3))
-		ret = movePlayerRight(id);
+		ret = movePlayerRight(id,distance);
 	if(!ret && (direction == 1 || direction == 2 || direction == 3))
-		ret = movePlayerUp(id);
+		ret = movePlayerUp(id,distance);
 	return ret;
 }
 //TODO optimize this
-bool MapServer::movePlayerLeft(int id)
+bool MapServer::movePlayerLeft(int id, int distance)
 {
-	return movePlayerOld(id,0);
+	return movePlayerOld(id,0,distance);
 }
 
-bool MapServer::movePlayerDown(int id)
+bool MapServer::movePlayerDown(int id, int distance)
 {
-	return movePlayerOld(id,3);
+	return movePlayerOld(id,3,distance);
 }
 
-bool MapServer::movePlayerRight(int id)
+bool MapServer::movePlayerRight(int id, int distance)
 {
-	return movePlayerOld(id,2);
+	return movePlayerOld(id,2,distance);
 }
 
-bool MapServer::movePlayerUp(int id)
+bool MapServer::movePlayerUp(int id, int distance)
 {
-	return movePlayerOld(id,1);
+	return movePlayerOld(id,1,distance);
 }
 
 
@@ -212,7 +212,7 @@ bool MapServer::movePlayerUp(int id)
  *      |
  *      3
  */
-bool MapServer::movePlayerOld(int id, int direction)
+bool MapServer::movePlayerOld(int id, int direction, int distance)
 {
 	/**
 	 * Rules for a player move :
@@ -230,24 +230,24 @@ bool MapServer::movePlayerOld(int id, int direction)
 	switch(direction)
 	{
 	case 0:
-		move_x = -1 * MOVE_STEP;
+		move_x = -1 * distance;
 		break;
 	case 1:
-		move_y = -1 * MOVE_STEP;
+		move_y = -1 * distance;
 		break;
 	case 2:
-		move_x = 1 * MOVE_STEP;
+		move_x = 1 * distance;
 		break;
 	case 3:
-		move_y = 1 * MOVE_STEP;
+		move_y = 1 * distance;
 		break;
 	default:
 		return false;
 	}
 	int x_originalBlock, y_originalBlock;
 	getBlockPosition( x_player, y_player, x_originalBlock, y_originalBlock );
-	x_player += move_x + (move_x/(MOVE_STEP))*(getBlockSize()/2);
-	y_player += move_y + (move_y/(MOVE_STEP))*(getBlockSize()/2);
+	x_player += move_x + (move_x/distance)*(getBlockSize()/2);
+	y_player += move_y + (move_y/distance)*(getBlockSize()/2);
 	int x_nextBlock, y_nextBlock;
 	getBlockPosition( x_player, y_player, x_nextBlock, y_nextBlock );
 	//qDebug() << "next block" << x_nextBlock << y_nextBlock ;
@@ -264,7 +264,7 @@ bool MapServer::movePlayerOld(int id, int direction)
 		getPlayerPosition(id,x,y);
 		setPlayerPosition(id,x+move_x,y+move_y);
 		//We want to stay on the middle of blocks.
-		adjustPlayerPosition(id,move_x,move_y);
+		adjustPlayerPosition(id,move_x,move_y, distance);
 		return true;
 	}
 	else
@@ -310,7 +310,7 @@ bool MapServer::movePlayerOld(int id, int direction)
 				if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
                      !blockContainsBomb(x_nextBlock,y_nextBlock))
 				{
-					setPlayerPosition(id,x+ move_x/2,y+absMin(pos,MOVE_STEP));
+					setPlayerPosition(id,x+ move_x/2,y+absMin(pos,distance));
 					return true;
 				}
 			}
@@ -326,7 +326,7 @@ bool MapServer::movePlayerOld(int id, int direction)
 				if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
                     !blockContainsBomb(x_nextBlock,y_nextBlock))
 				{
-					setPlayerPosition(id,x+absMin(pos,MOVE_STEP),y+ move_y/2);
+					setPlayerPosition(id,x+absMin(pos,distance),y+ move_y/2);
 					return true;
 				}
 			}
@@ -350,19 +350,19 @@ int MapServer::absMin(int a, int b) const
 	}
 }
 
-void MapServer::adjustPlayerPosition(int plId, int xDirection, int yDirection)
+void MapServer::adjustPlayerPosition(int plId, int xDirection, int yDirection, int distance)
 {
 	qint16 x,y;
 	getPlayerPosition(plId,x,y);
 	if(xDirection != 0)
 	{
 		int pos = coordinatePositionInBlock(y);
-		setPlayerPosition(plId,x,y-absMin(pos,MOVE_STEP));
+		setPlayerPosition(plId,x,y-absMin(pos,distance));
 	}
 	else
 	{
 		int pos = coordinatePositionInBlock(x);
-		setPlayerPosition(plId,x-absMin(pos,MOVE_STEP),y);
+		setPlayerPosition(plId,x-absMin(pos,distance),y);
 	}
 }
 
@@ -619,7 +619,7 @@ void MapServer::newHeartBeat() {
                     }
                 }
                 if(playerN->getDirection() != -1) {
-                    movePlayer(playerN->getId(), playerN->getDirection());
+                    movePlayer(playerN->getId(), playerN->getDirection(), playerN->getMoveDistance());
                     playerN->setDirection(-1);
                 }
                 checkPlayerSurroundings(playerN, killedPlayers);

@@ -35,16 +35,16 @@ private:
 	Flame* explosion(Bomb* b);
 	void propagateFlame(Flame & f, const QPoint & p, int range);
 	void directedFlameProgagation(Flame & f, const QPoint & p, const QPoint & direction, int range);
-    void adjustPlayerPosition(int plId, int xDirection, int yDirection);
+    void adjustPlayerPosition(int plId, int xDirection, int yDirection, int distance);
     //Test if a coordinate is bellow (-1) on (0) or above (1) the middle of the block
     int coordinatePositionInBlock(int coord);
     int absMin(int a, int b) const;
-	bool movePlayer(int id, int direction);
-	bool movePlayerLeft(int id);
-    bool movePlayerRight(int id);
-    bool movePlayerUp(int id);
-    bool movePlayerDown(int id);
-    bool movePlayerOld(int id, int direction);
+    bool movePlayer(int id, int direction, int distance);
+    bool movePlayerLeft(int id, int distance);
+    bool movePlayerRight(int id, int distance);
+    bool movePlayerUp(int id, int distance);
+    bool movePlayerDown(int id, int distance);
+    bool movePlayerOld(int id, int direction, int distance);
     Bomb* addBomb(int id);
     Bomb* addBomb(int id, int x, int y);
     

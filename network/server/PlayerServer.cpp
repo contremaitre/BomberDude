@@ -11,7 +11,8 @@ PlayerServer::PlayerServer(int playerId) :
     bombsAvailable(maxNumberOfBombs),
     flameLength(DEFAULT_BOMB_RANGE),
     currentSickness(SICK_NONE),
-    SicknessDuration(0)
+    SicknessDuration(0),
+    moveDistance(MOVE_STEP)
 
 {}
 
@@ -49,6 +50,11 @@ bool PlayerServer::getIsBombAvailable() const
     if(currentSickness == SICK_NO_BOMB)
         return false;
     return bombsAvailable != 0;
+}
+
+qint16 PlayerServer::getMoveDistance() const
+{
+    return moveDistance;
 }
 
 void PlayerServer::decreaseDuration()
