@@ -29,11 +29,17 @@ void PlayerServer::setSickness(sickness s)
     case SICK_FAST:
         qDebug() << "fast";
         break;
+    case SICK_SLOW:
+        qDebug() << "slow";
+        break;
     case SICK_NO_BOMB:
         qDebug() << "no bomb";
         break;
     case SICK_NONE:
         qDebug() << "none";
+        break;
+    default:
+        qDebug() << "unknown disease ??";
         break;
     }
     if(currentSickness == SICK_NONE)
@@ -54,6 +60,10 @@ bool PlayerServer::getIsBombAvailable() const
 
 qint16 PlayerServer::getMoveDistance() const
 {
+    if(currentSickness == SICK_SLOW)
+        return moveDistance / 2;
+    else if(currentSickness == SICK_FAST)
+        return moveDistance * 3;
     return moveDistance;
 }
 

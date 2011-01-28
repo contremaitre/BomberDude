@@ -6,8 +6,8 @@
 #include "Bonus.h"
 
 enum sickness { SICK_NONE=0,
-                SICK_FAST, //not implemented (no effect)
-                //SICK_SLOW,
+                SICK_FAST,
+                SICK_SLOW,
                 SICK_NO_BOMB,
                 SICK_DIARRHEA,
                 SICK_LAST,
