@@ -32,6 +32,12 @@
 // necessary to use QPoint in a QMap
 bool operator<(const QPoint&, const QPoint&);
 
+struct playersItem_t
+{
+    QGraphicsSquareItem item;
+    bool sick;
+    bool itemSick;
+};
 
 class GameArena : public QObject
 {
@@ -43,9 +49,12 @@ private:
     MapClient* map;
     PixmapsItems pixmaps;
     QGraphicsSquareItem **squaresItem;
-    QGraphicsSquareItem **playersItem;
+    playersItem_t *playersItem;
     QList<QGraphicsSquareItem*> burntPlayers;
     QMap<QPoint, QGraphicsItem*> bonus;
+
+    QGraphicsSquareItem *getCase(int);
+    QGraphicsSquareItem *getCase(int, int);
 
     void initCase(int, int);
     int width;
@@ -57,9 +66,7 @@ private:
 public:
     GameArena(QMainWindow *, QGraphicsView *, int blockSize);
     ~GameArena();
-    QGraphicsSquareItem *getCase(int);
-    QGraphicsSquareItem *getCase(int, int);
-    QGraphicsSquareItem *getPlayer(int);
+    //QGraphicsSquareItem *getPlayer(int);
     void createGraphics();
     void getEventFilter(QObject *obj);
     int getWidth();
@@ -77,6 +84,7 @@ public:
 
 private slots:
     void movePlayer(int player, int x, int y);
+    void slotPlayerSickChanged(int player, bool sick);
     void blockChanged(int);
 	void blockChanged(int x, int y);
     void slotHearbeatUpdated(qint32 value);

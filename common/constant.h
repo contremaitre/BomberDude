@@ -33,6 +33,7 @@
 #define DEFAULT_BOMB_DURATION 40 //ticks
 #define DEFAULT_BOMB_RANGE 2
 #define DEFAULT_BOMB_CAPACITY 1
+#define DEFAULT_DISEASE_DURATION 150
 //how fast the bomb is blinking (ms)
 #define BOMB_BLINK_INTERVAL 500
 

@@ -5,11 +5,11 @@
 #include "Player.h"
 #include "Bonus.h"
 
-enum sickness { SICK_NONE,
-                SICK_UNKNOWN,
+enum sickness { SICK_NONE=0,
                 SICK_FAST,
                 SICK_NO_BOMB,
-                SICK_DIARRHEA
+                SICK_DIARRHEA,
+                SICK_LAST,
             };
 
 class PlayerServer: public Player
@@ -39,6 +39,7 @@ public:
 
     void setOilBonus()                  { oilBonus = true; }
 
+    void decreaseDuration(); //only used for sickness for the moment
     QList<Bonus*> heldBonus;
 
 private:
@@ -50,6 +51,7 @@ private:
 
     qint8 flameLength;
     sickness currentSickness;
+    qint16 SicknessDuration;
 
 };
 

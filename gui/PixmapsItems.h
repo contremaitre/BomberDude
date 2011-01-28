@@ -37,6 +37,7 @@ private:
     QList <option_pixmaps_t> option_pixmaps;
     QPixmap bomberman[10];
     QPixmap burnt;
+    QPixmap sick;
     QPixmap none;
     void loadAll();
     void addBlockPixMap(BlockMapProperty::BlockType, const char *);
@@ -50,6 +51,7 @@ public:
     const QPixmap& getPixmap(BlockMapProperty::BlockType);
     const QPixmap& getPixmap(int);
     const QPixmap& getPixmapBurnt() const                   { return burnt; }
+    const QPixmap& getPixmapSick() const                    { return sick; }
     const QPixmap& getPixmap(Bonus::Bonus_t);
 };
 

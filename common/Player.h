@@ -22,7 +22,7 @@ public:
     bool getIsAlive() const             { return isAlive; }
 
     bool getIsSick() const              { return isSick; }
-
+    void setIsSick(bool sick)           { isSick = sick; }
 protected:
 	qint8 id;
 

@@ -33,10 +33,13 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 	for(qint8 i = 0; i < playerListSize; i++) {
 		Player playerN;
 		updateIn >> playerN;
+		//qDebug() << "player " << i << "sick" << playerN.getIsSick();
 		int id = playerN.getId();
         if(playerN.getIsAlive()){
         	setPlayerPosition(id, playerN.getX(), playerN.getY());
         	emit sigMovePlayer(id, playerN.getX(), playerN.getY());
+        	if(setPlayerSickness(id, playerN.getIsSick()))
+        	    emit sigPlayerSickChanged(id, playerN.getIsSick());
         }
 
 	}

@@ -61,6 +61,7 @@ public:
     void getBlockPosition(int x, int y, int &xdest, int &ydest) const;
 
     void setPlayerPosition(int id, qint16 , qint16);
+    bool setPlayerSickness(int id, bool sick);                     //return true if sickness changed
     void getPlayerPosition(int, qint16&, qint16&) const;
     void newPlayer(int id);
     qint8 getMaxNbPlayers() const                                   { return maxNbPlayers; }
@@ -204,6 +205,16 @@ void Map<P>::setPlayerPosition(int id, qint16 x, qint16 y)
 	players[id]->setY(y);
 }
 
+template<typename P>
+bool Map<P>::setPlayerSickness(int id, bool sick)
+{
+    if(players[id]->getIsSick() != sick)
+    {
+        players[id]->setIsSick(sick);
+        return true;
+    }
+    return false;
+}
 template<typename P>
 void Map<P>::newPlayer(int id)
 {

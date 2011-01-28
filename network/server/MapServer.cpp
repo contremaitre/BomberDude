@@ -526,6 +526,12 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
             case Bonus::BONUS_OIL:
                 playerN->setOilBonus();
                 break;
+            case Bonus::BONUS_DISEASE:
+            {
+                int random = ( qrand() % (SICK_LAST-1) ) + 1;
+                playerN->setSickness((sickness)random);
+                break;
+            }
             default:
                 qDebug() << "Type " << pickedUpBonus->getType() << " not yet implemented!";
         }
@@ -625,6 +631,8 @@ void MapServer::newHeartBeat() {
 	updateOut << static_cast<qint8>(players.size());
 	foreach(PlayerServer* playerN, players) {
 		updateOut << *playerN;
+		//update Player infos
+		playerN->decreaseDuration();
 	}
 
 	// serialize the new bombs
@@ -636,6 +644,7 @@ void MapServer::newHeartBeat() {
 	// then decrease each bomb's counter
 	foreach(Bomb* bombN, bombs)
 		bombN->decreaseLifeSpan();
+
 
 	// now we check which bombs must explode
 	// WARNING : because a bomb exploding can trigger several other ones
