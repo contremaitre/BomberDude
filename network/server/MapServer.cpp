@@ -608,7 +608,7 @@ void MapServer::newHeartBeat() {
     if(heartBeat >= 0) {
         foreach(PlayerServer* playerN, players) {
             if(playerN->getIsAlive()) {
-                if(playerN->getLayingBomb()) {
+                if(playerN->getLayingBomb() || playerN->getSickness() == SICK_DIARRHEA) {
                     playerN->clearLayingBomb();
                     if(playerN->getIsBombAvailable()) {
                         Bomb* newBomb = addBomb(playerN->getId());

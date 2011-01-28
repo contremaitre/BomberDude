@@ -19,7 +19,22 @@ void PlayerServer::setSickness(sickness s)
 {
     currentSickness = s;
     Q_ASSERT(s >= SICK_NONE && s < SICK_LAST );
-    qDebug() << "sickness" << s;
+    qDebug() << "sickness :";
+    switch(s)
+    {
+    case SICK_DIARRHEA:
+        qDebug() << "diarrhea";
+        break;
+    case SICK_FAST:
+        qDebug() << "fast";
+        break;
+    case SICK_NO_BOMB:
+        qDebug() << "no bomb";
+        break;
+    case SICK_NONE:
+        qDebug() << "none";
+        break;
+    }
     if(currentSickness == SICK_NONE)
         isSick = false;
     else
@@ -27,6 +42,13 @@ void PlayerServer::setSickness(sickness s)
         isSick = true;
         SicknessDuration = DEFAULT_DISEASE_DURATION;
     }
+}
+
+bool PlayerServer::getIsBombAvailable() const
+{
+    if(currentSickness == SICK_NO_BOMB)
+        return false;
+    return bombsAvailable != 0;
 }
 
 void PlayerServer::decreaseDuration()

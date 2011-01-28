@@ -6,7 +6,7 @@
 #include "Bonus.h"
 
 enum sickness { SICK_NONE=0,
-                SICK_FAST,
+                SICK_FAST, //not implemented (no effect)
                 SICK_NO_BOMB,
                 SICK_DIARRHEA,
                 SICK_LAST,
@@ -20,7 +20,6 @@ public:
 
     // these methods modify the variables inherited from Player
     void setIsAlive(bool isAlive)       { this->isAlive = isAlive; }
-    void setSickness(sickness s);
 
     // methods specific to PlayerServer
 	void raiseLayingBomb()				{ layingBomb = true; }
@@ -30,7 +29,7 @@ public:
     qint8 getMaxNumberOfBombs() const   { return maxNumberOfBombs; }
     void incMaxNumberOfBombs()          { maxNumberOfBombs++; bombsAvailable++; }
 
-    bool getIsBombAvailable() const     { return bombsAvailable != 0; }
+    bool getIsBombAvailable() const;
     void decBombsAvailable()            { bombsAvailable--; }
     void incBombsAvailable()            { bombsAvailable++; }
 
@@ -38,6 +37,9 @@ public:
     void incFlameLength()               { flameLength++; }
 
     void setOilBonus()                  { oilBonus = true; }
+
+    void setSickness(sickness s);
+    sickness getSickness()              {return currentSickness;}
 
     void decreaseDuration(); //only used for sickness for the moment
     QList<Bonus*> heldBonus;
