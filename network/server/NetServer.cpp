@@ -71,8 +71,8 @@ void NetServer::startHeartBeat() {
     qDebug() << "NetServer::startHeartBeat";
 
     // starts with a negative heartbeat for a countdown
-    qint32 initHB = debugMode ? 0 : -2 * (1000 / MOVE_TICK_INTERVAL);
-	map->startHeartBeat(initHB, MOVE_TICK_INTERVAL);
+    qint32 initHB = debugMode ? 0 : -2 * (1000 / HEARTBEAT);
+	map->startHeartBeat(initHB, HEARTBEAT);
 }
 
 void NetServer::setBlockSize(const QByteArray &block, QDataStream & out)

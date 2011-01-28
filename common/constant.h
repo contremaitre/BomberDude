@@ -35,7 +35,6 @@
 #define DEFAULT_BOMB_CAPACITY 1
 #define DEFAULT_DISEASE_DURATION 150
 //how fast the bomb is blinking (ms)
-#define BOMB_BLINK_INTERVAL 500
 
 //Network
 #define SERVER_PORT 10000
@@ -44,7 +43,7 @@
 #define UDP_STATS_INTERVAL 150
 
 //Gameplay
-#define MOVE_TICK_INTERVAL 50 //(ms)
+#define HEARTBEAT 50 //(ms)
 #define MOVE_STEP (int)(BLOCK_SIZE/7)
 
 

@@ -177,7 +177,7 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
             return QObject::eventFilter(obj, event);
         if(press && !timer.isActive())
         {
-            timer.start(MOVE_TICK_INTERVAL);
+            timer.start(HEARTBEAT);
             slotMoveTimer();
         }
         if(!press && !leftK && !upK && !rightK && !downK && timer.isActive())
