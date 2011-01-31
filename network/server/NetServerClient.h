@@ -61,7 +61,7 @@ class NetServerClient : public QObject
   void sendUdpStats();
   void sendMaxPlayers(int);
   void setAdmin();
-
+  bool getAdmin() const { return isAdmin; }
  private:
   QTcpSocket *tcpSocket;
   QUdpSocket *udpSocket;

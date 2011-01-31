@@ -299,10 +299,13 @@ void NetServer::clientDisconected(NetServerClient *client)
     for (int i = 0; i < clients.size(); ++i) {
         if (clients.at(i) == client)
         {
+            bool admin = client->getAdmin();
             clients.removeAt(i);
             delete client;
             if(clients.empty())
                 emit allPlayersLeft();
+            else if(admin && ! gameStarted)
+                restart();//easier solution (we have two cases : first entered is admin, or admin with password)
             return;
         }
     }
