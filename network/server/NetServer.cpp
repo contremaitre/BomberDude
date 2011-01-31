@@ -48,6 +48,18 @@ NetServer::NetServer(int port, QString adminPasswd, bool debugMode) : QThread()
     connect(this,SIGNAL(sigStartHeartBeat()), this, SLOT(startHeartBeat()), Qt::QueuedConnection);
 }
 
+void NetServer::restart()
+{
+    foreach (NetServerClient *client, clients) {
+        delete client;
+    }
+    clients.clear();
+    adminConnected = false;
+    gameStarted = false;
+    delete map;
+    map = NULL;
+}
+
 void NetServer::run()
 {
     qDebug() << "NetServer run, admin passord : " << adminPasswd;
@@ -68,11 +80,10 @@ void NetServer::run()
 }
 
 void NetServer::startHeartBeat() {
-    qDebug() << "NetServer::startHeartBeat";
-
     // starts with a negative heartbeat for a countdown
     qint32 initHB = debugMode ? 0 : -2 * (1000 / HEARTBEAT);
-	map->startHeartBeat(initHB, HEARTBEAT);
+    qDebug() << "NetServer::startHeartBeat" << initHB;
+    map->startHeartBeat(initHB, HEARTBEAT);
 }
 
 void NetServer::setBlockSize(const QByteArray &block, QDataStream & out)

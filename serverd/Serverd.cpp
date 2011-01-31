@@ -43,9 +43,7 @@ void Serverd::launch()
 void Serverd::allPlayersLeft()
 {
     qDebug() << "allPlayersLeft";
-    //server->loadMap();
-    //server->createRandomMap(MAP_SIZE,MAP_SIZE,BLOCK_SIZE);
-
+    server->restart();
 }
 
 void Serverd::slotQuit()

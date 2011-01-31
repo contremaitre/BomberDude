@@ -49,6 +49,7 @@ public:
     ~NetServer();
     void run();
     void close();
+    void restart(); //ends the game, remove all players and wait for new players
     //call this function when the game is launched
     bool loadMap();
     void setMaxPlayers(int);
