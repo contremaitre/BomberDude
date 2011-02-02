@@ -58,6 +58,7 @@ void NetServer::restart()
     gameStarted = false;
     delete map;
     map = NULL;
+    selectMap(2);
 }
 
 void NetServer::run()
