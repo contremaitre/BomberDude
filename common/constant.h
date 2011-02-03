@@ -39,12 +39,11 @@
 //Network
 #define SERVER_PORT 10000
 #define SERVER_ADDRESS "localhost" 
-#define LOCAL_ADDRESS "127.0.0.1"
 #define UDP_STATS_INTERVAL 150
 
 //Gameplay
 #define HEARTBEAT 50 //(ms)
-#define MOVE_STEP (int)(BLOCK_SIZE/7)
+#define MOVE_STEP (int)(BLOCK_SIZE/6)
 
 
 const int MAX_PLAYER_NAME_LENGTH = 16;
