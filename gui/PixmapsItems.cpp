@@ -44,6 +44,9 @@ void PixmapsItems::loadAll()
     addBonusPixMap(Bonus::BONUS_BOMB,"pictures/bonus_bomb.png");
     addBonusPixMap(Bonus::BONUS_OIL,"pictures/bonus_oil.png");
     addBonusPixMap(Bonus::BONUS_DISEASE,"pictures/bonus_disease.png");
+    addBonusPixMap(Bonus::BONUS_KICK,"pictures/bonus_kick.png");
+    addBonusPixMap(Bonus::BONUS_FASTER,"pictures/bonus_faster.png");
+
     burnt = QPixmap("pictures/tux_burn.png").scaled(QSizeF(width,height).toSize());
 
     addBlockPixMap(BlockMapProperty::brick,"pictures/brick.png");
@@ -81,7 +84,7 @@ const QPixmap& PixmapsItems::getPixmap(BlockMapProperty::BlockType type)
 
 const QPixmap& PixmapsItems::getPixmap(Bonus::Bonus_t type)
 {
-    for (int i = 0; i < block_pixmaps.size(); ++i) {
+    for (int i = 0; i < option_pixmaps.size(); ++i) {
         if (option_pixmaps.at(i).type == type)
             return option_pixmaps.at(i).pixmap;
     }

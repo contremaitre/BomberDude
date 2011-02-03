@@ -13,6 +13,8 @@ public:
     static const Bonus_t BONUS_BOMB = 2;
     static const Bonus_t BONUS_OIL = 3;
     static const Bonus_t BONUS_DISEASE = 4;
+    static const Bonus_t BONUS_KICK = 5;
+    static const Bonus_t BONUS_FASTER = 6;
 
     Bonus() :
         type(BONUS_NONE),

@@ -38,7 +38,9 @@ public:
     void incFlameLength()               { flameLength++; }
 
     void setOilBonus()                  { oilBonus = true; }
+    void setKickBonus()                 { kickBonus = true; }
 
+    void setFasterBonus()               { moveDistance++; }
     void setSickness(sickness s);
     sickness getSickness()              {return currentSickness;}
 
@@ -50,6 +52,7 @@ public:
 private:
     bool layingBomb;
     bool oilBonus;
+    bool kickBonus;
 
     qint8 maxNumberOfBombs;
     qint8 bombsAvailable;

@@ -7,6 +7,7 @@ PlayerServer::PlayerServer(int playerId) :
     Player(playerId),
     layingBomb(false),
     oilBonus(false),
+    kickBonus(false),
     maxNumberOfBombs(DEFAULT_BOMB_CAPACITY),
     bombsAvailable(maxNumberOfBombs),
     flameLength(DEFAULT_BOMB_RANGE),
