@@ -40,11 +40,7 @@ private:
     int coordinatePositionInBlock(int coord);
     int absMin(int a, int b) const;
     bool movePlayer(int id, int direction, int distance);
-    bool movePlayerLeft(int id, int distance);
-    bool movePlayerRight(int id, int distance);
-    bool movePlayerUp(int id, int distance);
-    bool movePlayerDown(int id, int distance);
-    bool movePlayerOld(int id, int direction, int distance);
+    bool tryMovePlayer(int id, int direction, int distance);
     Bomb* addBomb(int id);
     Bomb* addBomb(int id, int x, int y);
     
@@ -72,6 +68,11 @@ private:
 	    bool freeSlot;
 	};
 	QList <initialPlayerPosition> startPlayerSlots;
+
+	static const int MOVE_LEFT = 0;
+	static const int MOVE_UP = 1;
+	static const int MOVE_RIGHT = 2;
+	static const int MOVE_DOWN = 3;
 
 	static const QPoint dirLeft;
 	static const QPoint dirRight;

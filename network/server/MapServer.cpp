@@ -178,35 +178,16 @@ bool MapServer::movePlayer(int id, int direction, int distance)
 {
 	bool ret = false;
 	if(direction == 7 || direction == 0 || direction == 1)
-		ret = movePlayerLeft(id,distance);
+		ret = tryMovePlayer(id,MOVE_LEFT,distance);
 	if(!ret && (direction == 7 || direction == 6 || direction == 5))
-		ret = movePlayerDown(id,distance);
+		ret = tryMovePlayer(id,MOVE_UP,distance);
 	if(!ret && (direction == 5 || direction == 4 || direction == 3))
-		ret = movePlayerRight(id,distance);
+		ret = tryMovePlayer(id,MOVE_RIGHT,distance);
 	if(!ret && (direction == 1 || direction == 2 || direction == 3))
-		ret = movePlayerUp(id,distance);
+		ret = tryMovePlayer(id,MOVE_DOWN,distance);
 	return ret;
 }
-//TODO optimize this
-bool MapServer::movePlayerLeft(int id, int distance)
-{
-	return movePlayerOld(id,0,distance);
-}
 
-bool MapServer::movePlayerDown(int id, int distance)
-{
-	return movePlayerOld(id,3,distance);
-}
-
-bool MapServer::movePlayerRight(int id, int distance)
-{
-	return movePlayerOld(id,2,distance);
-}
-
-bool MapServer::movePlayerUp(int id, int distance)
-{
-	return movePlayerOld(id,1,distance);
-}
 
 
 /**
@@ -216,7 +197,7 @@ bool MapServer::movePlayerUp(int id, int distance)
  *      |
  *      3
  */
-bool MapServer::movePlayerOld(int id, int direction, int distance)
+bool MapServer::tryMovePlayer(int id, int direction, int distance)
 {
 	/**
 	 * Rules for a player move :
@@ -233,16 +214,16 @@ bool MapServer::movePlayerOld(int id, int direction, int distance)
 	//qDebug() << "Map move player" << id << direction << "x,y" << x << y;
 	switch(direction)
 	{
-	case 0:
+	case MOVE_LEFT:
 		move_x = -1 * distance;
 		break;
-	case 1:
+	case MOVE_DOWN:
 		move_y = -1 * distance;
 		break;
-	case 2:
+	case MOVE_RIGHT:
 		move_x = 1 * distance;
 		break;
-	case 3:
+	case MOVE_UP:
 		move_y = 1 * distance;
 		break;
 	default:
