@@ -16,6 +16,7 @@
 */
 
 #include "PixmapsItems.h"
+#include <QDebug>
 
 PixmapsItems::PixmapsItems()
 {
@@ -48,6 +49,7 @@ void PixmapsItems::loadAll()
     addBonusPixMap(Bonus::BONUS_FASTER,"pictures/bonus_faster.png");
 
     burnt = QPixmap("pictures/tux_burn.png").scaled(QSizeF(width,height).toSize());
+    option_unknown = QPixmap("pictures/bonus_unknown.png").scaled(QSizeF(width,height).toSize());
 
     addBlockPixMap(BlockMapProperty::brick,"pictures/brick.png");
     addBlockPixMap(BlockMapProperty::wall,"pictures/wall.png");
@@ -88,8 +90,8 @@ const QPixmap& PixmapsItems::getPixmap(Bonus::Bonus_t type)
         if (option_pixmaps.at(i).type == type)
             return option_pixmaps.at(i).pixmap;
     }
-    Q_ASSERT(false);
-    return none;
+    qDebug() << "*** Warning *** unknown option" << type << "server version newer than client version ?";
+    return option_unknown;
 }
 
 const QPixmap& PixmapsItems::getPixmap(int player)

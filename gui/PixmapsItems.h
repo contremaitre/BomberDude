@@ -38,6 +38,7 @@ private:
     QPixmap bomberman[10];
     QPixmap burnt;
     QPixmap sick;
+    QPixmap option_unknown;
     QPixmap none;
     void loadAll();
     void addBlockPixMap(BlockMapProperty::BlockType, const char *);
