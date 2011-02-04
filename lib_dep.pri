@@ -1,6 +1,6 @@
 # 
 win32 {
- LIB_EXT=dll
+ LIB_EXT=a
 }
 !win32 {
  LIB_EXT=a
