@@ -32,6 +32,7 @@ StartUi::StartUi(QApplication *a)
     loadSound();
     loadIpStats();
     loadPlayerData();
+    mainWindow->players_widget->hide();
     connect(mainWindow->serverButton,SIGNAL(clicked()),this,SLOT(startServer()));
     connect(mainWindow->isServer, SIGNAL(stateChanged(int)), this, SLOT(isServerChanged(int)));
     connect(mainWindow->sound, SIGNAL(stateChanged(int)), this, SLOT(soundChanged(int)));
@@ -296,6 +297,7 @@ void StartUi::closeGame()
     mainWindow->previewGraphicsView->show();
     mainWindow->network_pref->setEnabled(true);
     mainWindow->sound_pref->setEnabled(true);
+    mainWindow->players_widget->hide();
 }
 
 void StartUi::slotServerLaunched()
@@ -333,6 +335,7 @@ void StartUi::slotGameStarted()
     mainWindow->adminWidget->hide();
     mainWindow->player_data->hide();
     mainWindow->previewGraphicsView->hide();
+    mainWindow->players_widget->show();
 }
 
 void StartUi::randomMapCheckedChanged(int state)
