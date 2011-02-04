@@ -18,6 +18,7 @@ todo :
 - find another name for the game
 
 Known Bug :
+Server does not work on win32, there is a timer issue, not started in its thread
 ----------------------------------------------------------------------------------
 
 
