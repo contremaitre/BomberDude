@@ -390,7 +390,8 @@ void StartUi::slotUpdatePlayerData(qint32 playerId, QString playerName) {
 
 void StartUi::slotPlayerLeft(qint32 playerId)
 {
-    mainWindow->playersList->removeRow(playerId);
+    delete mainWindow->playersList->takeItem(playerId,0);
+    delete mainWindow->playersList->takeItem(playerId,1);
 }
 
 void StartUi::slotReadServerDebug()
