@@ -180,6 +180,7 @@ void StartUi::startServer()
     connect( netclient, SIGNAL(sigIsServerAdmin()), this, SLOT(slotIsServerAdmin()));
     connect( netclient, SIGNAL(sigMaxPlayersChanged(int)), this, SLOT(slotMaxPlayersChanged(int)));
     connect( netclient, SIGNAL(sigUpdatePlayerData(qint32,QString)), this, SLOT(slotUpdatePlayerData(qint32,QString)));
+    connect( netclient, SIGNAL(sigPlayerLeft(qint32)), this, SLOT(slotPlayerLeft(qint32)));
     connect( netclient, SIGNAL(sigMapRandom()), this, SLOT(slotMapRandom()));
     connect( netclient, SIGNAL(sigGameStarted()), this, SLOT(slotGameStarted()));
     gamePlay->cliConnect(password);
@@ -385,6 +386,11 @@ void StartUi::slotUpdatePlayerData(qint32 playerId, QString playerName) {
     mainWindow->playersList->setItem(playerId, 0, newItem);
     newItem = new QTableWidgetItem(playerName);
     mainWindow->playersList->setItem(playerId, 1, newItem);
+}
+
+void StartUi::slotPlayerLeft(qint32 playerId)
+{
+    mainWindow->playersList->removeRow(playerId);
 }
 
 void StartUi::slotReadServerDebug()

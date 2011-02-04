@@ -301,12 +301,15 @@ void NetServer::clientDisconected(NetServerClient *client)
         if (clients.at(i) == client)
         {
             bool admin = client->getAdmin();
+            int id = client->getId();
             clients.removeAt(i);
             delete client;
             if(clients.empty())
                 emit allPlayersLeft();
             else if(admin && ! gameStarted)
                 restart();//easier solution (we have two cases : first entered is admin, or admin with password)
+            else
+                sendCLientDisconnected(id);
             return;
         }
     }
@@ -391,6 +394,20 @@ void NetServer::slotUpdatePlayerData(int playerId, QString playerName) {
     out << static_cast<quint16>(msg_update_player_data);
     out << static_cast<qint32>(playerId);
     out << playerName;
+    setBlockSize(block, out);
+
+    foreach(NetServerClient* Nclient, clients)
+        Nclient->sendTcpBlock(block);
+}
+
+void NetServer::sendCLientDisconnected(int playerId)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << static_cast<quint16>(0);
+    out << static_cast<quint16>(msg_client_disconnected);
+    out << static_cast<qint32>(playerId);
     setBlockSize(block, out);
 
     foreach(NetServerClient* Nclient, clients)

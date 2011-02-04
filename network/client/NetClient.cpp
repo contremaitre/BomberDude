@@ -304,6 +304,13 @@ void NetClient::handleTcpMsg(QDataStream &in)
             emit sigUpdatePlayerData(playerId, playerName);
             break;
         }
+    case msg_client_disconnected :
+    {
+        qint32 playerId;
+        in >> playerId;
+        qDebug() << "Client #" << playerId << "left";
+        emit sigPlayerLeft(playerId);
+    }
     case msg_map_winner: {
             qint8 playerId;
             in >> playerId;

@@ -48,6 +48,7 @@ enum NetMsgType
     msg_map_preview,        // TCP server -> client, map preview
     msg_map_random,         // TCP server -> client, random map
     msg_map_winner,         // TCP server -> client, map's winner + statistics
+    msg_client_disconnected,// TCP server -> client, player left
 };
 
 #endif

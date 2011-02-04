@@ -79,6 +79,7 @@ private:
     int readMove(QDataStream &in);
     void sendUdpWelcomeAck(QHostAddress sender, quint16 senderPort);
     void sendPingBack(quint32 cpt, QHostAddress sender, quint16 senderPort);
+    void sendCLientDisconnected(int playerId);
     void allocMap();
     void setBlockSize(const QByteArray &block, QDataStream & out);
 

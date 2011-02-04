@@ -89,6 +89,7 @@ signals:
     void mapReceived(MapClient*);
     void mapPreviewReceived(MapClient*);
     void sigUpdatePlayerData(qint32 playerId, QString playerName);
+    void sigPlayerLeft(qint32 playerId);
 
     void sigMapRandom();
     void sigConnected();
