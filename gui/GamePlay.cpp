@@ -32,6 +32,7 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set, QGraphicsView *mapGraphicP
     gameArenaPreview = new GameArena(mainw, mapGraphicPreview, BLOCK_SIZE/2);  //todo : create a light class for the preview
     gameArena->getEventFilter(this);
     connect(gameArena, SIGNAL(sigTimeUpdated(int)), this, SLOT(slotTimeUpdated(int)));
+    connect(gameArena, SIGNAL(sigNewPlayerGraphic(int,const QPixmap &)), this, SLOT(slotNewPlayerGraphic(int,const QPixmap &)));
 
     //MAP_SIZE
     client = new NetClient;
@@ -79,6 +80,10 @@ void GamePlay::mapPreviewReceived(MapClient *map)
 
 void GamePlay::slotTimeUpdated(int timeInSeconds) {
     emit sigTimeUpdated(timeInSeconds);
+}
+
+void GamePlay::slotNewPlayerGraphic(int pl, const QPixmap &pix) {
+    emit sigNewPlayerGraphic(pl,pix);
 }
 
 void GamePlay::move(int direction)

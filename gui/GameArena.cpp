@@ -108,6 +108,7 @@ void GameArena::setMap(MapClient *newMap)
         playersItem[i].sick = false;
         playersItem[i].item.setPos(x-squareSize/2,y-squareSize/2,squareSize);
         playersItem[i].item.setItem(pixmaps.getPixmap(i));
+        emit sigNewPlayerGraphic(i,pixmaps.getPixmap(i));
     }
 
     connect(map, SIGNAL(sigBlockChanged(int)), this, SLOT(blockChanged(int)));

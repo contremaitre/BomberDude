@@ -60,6 +60,8 @@ private:
     QPixmap statusRed;
     QPixmap loading;
 
+    QList <QLabel *> labelsPlayerList;
+
     void loadPixmaps();
     void loadNetWidget();
     void loadSound();
@@ -92,6 +94,7 @@ private slots:
     void slotMapLeftButton();
     void slotMapRightButton();
     void slotGameStarted();
+    void slotNewPlayerGraphic(int, const QPixmap &);
     void closeGame();
 };
 

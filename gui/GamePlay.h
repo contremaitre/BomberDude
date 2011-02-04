@@ -76,6 +76,8 @@ private slots:
     void slotMapRandom();
     void slotTimeUpdated(int timeInSeconds);
     void gameStarted();
+    void slotNewPlayerGraphic(int,const QPixmap &);
+
 signals:
     void connectedToServer();
     void connectionError();
@@ -84,6 +86,7 @@ signals:
     void sigStatPacketLoss(double);
     void sigIsServerAdmin(int);
     void sigTimeUpdated(int timeInSeconds);
+    void sigNewPlayerGraphic(int, const QPixmap &);
 };
 
 

@@ -98,6 +98,7 @@ public slots:
 
 signals:
     void sigTimeUpdated(int valueInSeconds);
+    void sigNewPlayerGraphic(int,const QPixmap &);
 };
 
 

@@ -32,7 +32,6 @@ StartUi::StartUi(QApplication *a)
     loadSound();
     loadIpStats();
     loadPlayerData();
-    mainWindow->players_widget->hide();
     connect(mainWindow->serverButton,SIGNAL(clicked()),this,SLOT(startServer()));
     connect(mainWindow->isServer, SIGNAL(stateChanged(int)), this, SLOT(isServerChanged(int)));
     connect(mainWindow->sound, SIGNAL(stateChanged(int)), this, SLOT(soundChanged(int)));
@@ -173,6 +172,7 @@ void StartUi::startServer()
 
     connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );
     connect( gamePlay, SIGNAL(sigTimeUpdated(int)), mainWindow->gameClock, SLOT(display(int)));
+    connect( gamePlay, SIGNAL(sigNewPlayerGraphic(int,const QPixmap &)), this, SLOT(slotNewPlayerGraphic(int,const QPixmap &)));
     connect( netclient, SIGNAL(sigConnected()), this, SLOT(slotConnectedToServer()));
     connect( netclient, SIGNAL(sigConnectionError()), this, SLOT(slotConnectionError()), Qt::QueuedConnection);
     connect( netclient, SIGNAL(sigStatPing(int)), this, SLOT(statPing(int)));
@@ -288,6 +288,8 @@ void StartUi::closeGame()
         delete gamePlay;
         gamePlay = NULL;
     }
+    while(!labelsPlayerList.empty())
+        delete labelsPlayerList.takeFirst();
     loadIpStats();
     loadNetWidget();
     mainWindow->network_pref->show();
@@ -298,7 +300,6 @@ void StartUi::closeGame()
     mainWindow->previewGraphicsView->show();
     mainWindow->network_pref->setEnabled(true);
     mainWindow->sound_pref->setEnabled(true);
-    mainWindow->players_widget->hide();
 }
 
 void StartUi::slotServerLaunched()
@@ -336,7 +337,6 @@ void StartUi::slotGameStarted()
     mainWindow->adminWidget->hide();
     mainWindow->player_data->hide();
     mainWindow->previewGraphicsView->hide();
-    mainWindow->players_widget->show();
 }
 
 void StartUi::randomMapCheckedChanged(int state)
@@ -392,6 +392,19 @@ void StartUi::slotPlayerLeft(qint32 playerId)
 {
     delete mainWindow->playersList->takeItem(playerId,0);
     delete mainWindow->playersList->takeItem(playerId,1);
+}
+
+void StartUi::slotNewPlayerGraphic(int player, const QPixmap &pix)
+{
+    qDebug() << "Startui new player graphic" << player;
+    QLabel *label = new QLabel;
+    label->setPixmap(pix);
+    mainWindow->gridLayout->addWidget(label,player,0);
+
+    QLabel *label2 = new QLabel(mainWindow->playersList->item(player,1)->text());
+    mainWindow->gridLayout->addWidget(label2,player,1);
+    labelsPlayerList.push_back(label);
+    labelsPlayerList.push_back(label2);
 }
 
 void StartUi::slotReadServerDebug()

@@ -530,18 +530,20 @@
      </rect>
     </property>
    </widget>
-   <widget class="QWidget" name="players_widget" native="true">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
+   <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
       <x>670</x>
       <y>140</y>
-      <width>120</width>
-      <height>41</height>
+      <width>121</width>
+      <height>121</height>
      </rect>
     </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
