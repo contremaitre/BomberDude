@@ -23,7 +23,7 @@ class BlockMapProperty
 {
 public:
     //must be kept in sync in PixmapsItem
-    enum BlockType {wall,brick,bomb,flame,empty,broken};
+    enum BlockType {wall,brick,bomb,bombrc,flame,empty,broken};
 
     BlockMapProperty();
     ~BlockMapProperty();

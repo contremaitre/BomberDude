@@ -52,6 +52,7 @@ private:
     playersItem_t *playersItem;
     QList<QGraphicsSquareItem*> burntPlayers;
     QMap<QPoint, QGraphicsItem*> bonus;
+    QMap<int, QGraphicsItem*> bombs;
 
     QGraphicsSquareItem *getCase(int);
     QGraphicsSquareItem *getCase(int, int);
@@ -72,7 +73,6 @@ public:
     int getWidth();
     int getHeight();
     int getCaseSize() const;
-    void addBomb(int player, int x, int y, int bombId);
     void addFlame(Flame* flame);
     void removeFlame(int flameId);
     void removeBomb(qint16 bombId);
@@ -92,6 +92,8 @@ private slots:
     void killPlayer(int);
     void slotAddBonus(Bonus::Bonus_t type, qint16 x, qint16 y);
     void slotRemoveBonus(qint16 x, qint16 y);
+    void slotAddBomb(int id);
+    void slotRemoveBomb(int id);
 
 public slots:
     void slotMapWinner(qint8 playerId);

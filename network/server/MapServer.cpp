@@ -45,6 +45,8 @@ MapServer::MapServer()
         bonusTable[index] = Bonus::BONUS_KICK;
     for(int i = 0; i < 16; i++, index++)
         bonusTable[index] = Bonus::BONUS_FASTER;
+    for(int i = 0; i < 16; i++, index++)
+        bonusTable[index] = Bonus::BONUS_REMOTE;
     Q_ASSERT(index < BONUS_TABLE_LENGTH);
     while(index < BONUS_TABLE_LENGTH)
         bonusTable[index++] = Bonus::BONUS_NONE;
@@ -382,7 +384,7 @@ Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
 	}
 
 	// add the bomb
-	Bomb *newBomb = new Bomb(playerId, squareX, squareY, DEFAULT_BOMB_DURATION, players[playerId]->getFlameLength());
+	Bomb *newBomb = new Bomb(playerId, squareX, squareY, DEFAULT_BOMB_DURATION, players[playerId]->getFlameLength(), players[playerId]->getRemoteOption());
 	bombs.append(newBomb);
 	qDebug() << " MapServer> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
 	return newBomb;
@@ -523,6 +525,9 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
             case Bonus::BONUS_FASTER:
                 playerN->setFasterBonus();
                 break;
+            case Bonus::BONUS_REMOTE:
+                playerN->setRemoteBonus();
+                break;
             default:
                 qDebug() << "Type " << pickedUpBonus->getType() << " not yet implemented!";
         }
@@ -549,7 +554,7 @@ void MapServer::brokenBlockRemoved(int x, int y) {
     int randomDraw = static_cast<int>((static_cast<double>(qrand()) / RAND_MAX) * BONUS_TABLE_LENGTH);
 
     if(debugMode)
-        randomDraw = randomDraw % 96;
+        randomDraw = randomDraw % 111;
 
     Bonus::Bonus_t result = bonusTable[randomDraw];
     if(result != Bonus::BONUS_NONE) {
@@ -603,7 +608,7 @@ void MapServer::newHeartBeat() {
                     playerN->clearLayingBomb();
                     if(playerN->getIsBombAvailable()) {
                         Bomb* newBomb = addBomb(playerN->getId());
-                        if(newBomb != 0) {
+                        if(newBomb != NULL) {
                             newBombs.append(newBomb);
                             playerN->decBombsAvailable();
                         }

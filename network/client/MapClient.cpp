@@ -50,7 +50,8 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 	for(qint8 i = 0; i < newBombsListSize; i++) {
 		Bomb bombN;
 		updateIn >> bombN;
-		addBomb(bombN.playerId, bombN.x, bombN.y, bombN.bombId);
+		addBomb(bombN.playerId, bombN.x, bombN.y, bombN.bombId, bombN.remoteControled);
+		emit sigAddBomb(bombN.bombId);
 	}
 
 	qint8 nbExplosions;
@@ -61,7 +62,10 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 
 		QList<qint16> detonatedBombs = f->getDetonatedBombs();
         foreach(qint16 bombId, detonatedBombs)
+		{
+            emit sigRemoveBomb(bombId);
 			removeBomb(bombId);
+		}
 
         QSet<QPoint> brokenBlocks = f->getBrokenBlocks();
         foreach(QPoint bb, brokenBlocks)
@@ -70,7 +74,7 @@ void MapClient::updateMap(QByteArray& updateBlock) {
             int i = bb.x();
             int j = bb.y();
             setType(BlockMapProperty::broken, i, j);
-            emit sigBlockChanged(i,j);
+            //emit sigBlockChanged(i,j);
         }
 		addFlame(f);
 	}
@@ -99,4 +103,3 @@ void MapClient::updateMap(QByteArray& updateBlock) {
         emit sigRemoveBonus(x, y);
     }
 }
-

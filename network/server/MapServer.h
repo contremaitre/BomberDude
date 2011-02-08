@@ -57,7 +57,7 @@ private:
     bool debugMode;
 
     QMap<Point<qint8>, Bonus*> bonus;                       ///< list of bonus
-    static const int BONUS_TABLE_LENGTH = 288;
+    static const int BONUS_TABLE_LENGTH = 304;
     Bonus::Bonus_t bonusTable[BONUS_TABLE_LENGTH];          ///< table to determine which bonus to add
     QList<const Bonus*> createdBonus;                       ///< list of bonus created during the heartbeat
     QList<Point<qint8> > removedBonus;                      ///< list of bonus picked up or destroyed during the heartbeat
@@ -97,9 +97,11 @@ public:
 signals:
 	void updatedMap(QByteArray data);
 
+	/* Unused */
     void sigBlockChanged(int pos);
 	void sigBlockChanged(int i, int j);
-    void sigHeartbeatUpdated(qint32 value);
+	void sigHeartbeatUpdated(qint32 value);
+	/* End unused */
 
     void sigWinner(qint8 playerId);
 

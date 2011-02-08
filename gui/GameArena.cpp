@@ -120,6 +120,8 @@ void GameArena::setMap(MapClient *newMap)
     connect(map, SIGNAL(sigKillPlayer(int)), this, SLOT(killPlayer(int)));
     connect(map, SIGNAL(sigAddBonus(Bonus::Bonus_t,qint16,qint16)), this, SLOT(slotAddBonus(Bonus::Bonus_t,qint16,qint16)));
     connect(map, SIGNAL(sigRemoveBonus(qint16,qint16)), this, SLOT(slotRemoveBonus(qint16,qint16)));
+    connect(map, SIGNAL(sigAddBomb(int)), this, SLOT(slotAddBomb(int)), Qt::DirectConnection);
+    connect(map, SIGNAL(sigRemoveBomb(int)), this, SLOT(slotRemoveBomb(int)), Qt::DirectConnection);
 }
 
 void GameArena::movePlayer(int player, int x, int y)
@@ -151,27 +153,6 @@ void GameArena::slotPlayerSickChanged(int player, bool sick)
         playersItem[player].item.setItem(pixmaps.getPixmap(player));//remove sickness graphic
         playersItem[player].itemSick = false;
     }
-}
-
-void GameArena::addBomb(int player, int squareX, int squareY, int bombId)
-{
-	map->addBomb(player, squareX, squareY, bombId);
-}
-
-void GameArena::addFlame(Flame* flame)
-{
-	map->addFlame(flame);
-}
-
-
-void GameArena::removeBomb(qint16 bombId)
-{
-	map->removeBomb(bombId);
-}
-
-void GameArena::removeFlame(int flameId)
-{
-	map->removeFlame(flameId);
 }
 
 int GameArena::getCaseSize() const
@@ -285,6 +266,27 @@ void GameArena::slotRemoveBonus(qint16 x, qint16 y) {
     if(itb != bonus.end()) {
         scene->removeItem(itb.value());
         bonus.erase(itb);
+    }
+}
+
+void GameArena::slotAddBomb(int id)
+{
+    const Bomb *bomb = map->getBomb(id);
+    QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb->x * squareSize,
+                                                       bomb->y * squareSize,
+                                                            squareSize);
+    qDebug() << "new bomb, remote =" << bomb->remoteControled;
+    pix->setItem(pixmaps.getPixmap(bomb->remoteControled ? BlockMapProperty::bombrc : BlockMapProperty::bomb));
+    bombs[id] = pix;
+    scene->addItem(pix);
+}
+
+void GameArena::slotRemoveBomb(int id)
+{
+    QMap<int, QGraphicsItem*>::iterator itb = bombs.find(id);
+    if(itb != bombs.end()) {
+        scene->removeItem(itb.value());
+        bombs.erase(itb);
     }
 }
 

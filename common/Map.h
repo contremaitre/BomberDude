@@ -71,8 +71,9 @@ public:
     void addFlame(Flame* f);
     void removeFlame(int flameId);
 
-    void addBomb(int id, int x, int y,int bombId);
+    void addBomb(int plId, int x, int y,int bombId, bool rc);
     void removeBomb(qint16 bombId);
+    const Bomb *getBomb(qint16 bombId);
     bool blockContainsBomb(int x,int y) const;
 
 	void setHeartBeat(qint32 hb);
@@ -276,29 +277,41 @@ void Map<P>::removeFlame(int flameId)
 
 
 template<typename P>
-void Map<P>::addBomb(int id, int squareX, int squareY, int bombId)
+void Map<P>::addBomb(int plId, int squareX, int squareY, int bombId, bool rc)
 {
-	Bomb *newBomb = new Bomb(id, squareX, squareY, bombId);
+    Bomb *newBomb = new Bomb(plId, squareX, squareY, bombId, rc);
     bombs.append(newBomb);
     qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<"bombId: "<<newBomb->bombId;
-    setType(BlockMapProperty::bomb,squareX,squareY);
 }
 
 template<typename P>
 void Map<P>::removeBomb(qint16 bombId)
 {
-	foreach (Bomb *b, bombs)
-	{
-	  if(b->bombId == bombId)
-	  {
-		  bombs.removeOne(b);
-		  setType(BlockMapProperty::bomb,b->x,b->y);
-		  delete b;
-		  return;
-	  }
-	}
-	qDebug()<< "nothing has been removed";
+    foreach (Bomb *b, bombs)
+    {
+        if(b->bombId == bombId)
+        {
+            bombs.removeOne(b);
+            delete b;
+            return;
+        }
+    }
+    qDebug() << "nothing has been removed";
 }
+
+template<typename P>
+const Bomb * Map<P>::getBomb(qint16 bombId)
+{
+    foreach (Bomb *b, bombs)
+    {
+      if(b->bombId == bombId)
+      {
+          return b;
+      }
+    }
+    return NULL;
+}
+
 
 template<typename P>
 bool Map<P>::blockContainsBomb(int x,int y) const
@@ -308,7 +321,7 @@ bool Map<P>::blockContainsBomb(int x,int y) const
     	if ((b->x == x) && (b->y == y))
     		return true;
     }
-	return false;
+    return false;
 }
 
 

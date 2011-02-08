@@ -47,6 +47,7 @@ void PixmapsItems::loadAll()
     addBonusPixMap(Bonus::BONUS_DISEASE,"pictures/bonus_disease.png");
     addBonusPixMap(Bonus::BONUS_KICK,"pictures/bonus_kick.png");
     addBonusPixMap(Bonus::BONUS_FASTER,"pictures/bonus_faster.png");
+    addBonusPixMap(Bonus::BONUS_REMOTE,"pictures/bonus_bomb_rc.png");
 
     burnt = QPixmap("pictures/tux_burn.png").scaled(QSizeF(width,height).toSize());
     option_unknown = QPixmap("pictures/bonus_unknown.png").scaled(QSizeF(width,height).toSize());
@@ -54,6 +55,7 @@ void PixmapsItems::loadAll()
     addBlockPixMap(BlockMapProperty::brick,"pictures/brick.png");
     addBlockPixMap(BlockMapProperty::wall,"pictures/wall.png");
     addBlockPixMap(BlockMapProperty::bomb,"pictures/bomb.png");
+    addBlockPixMap(BlockMapProperty::bombrc,"pictures/bomb_rc.png");
     addBlockPixMap(BlockMapProperty::flame,"pictures/explosion.png");
     addBlockPixMap(BlockMapProperty::broken,"pictures/broken.png");
 }

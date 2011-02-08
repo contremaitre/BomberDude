@@ -26,6 +26,7 @@ public:
 	void raiseLayingBomb()				{ layingBomb = true; }
 	void clearLayingBomb()				{ layingBomb = false; }
 	bool getLayingBomb() const			{ return layingBomb; }
+	bool getRemoteOption();
 
     qint8 getMaxNumberOfBombs() const   { return maxNumberOfBombs; }
     void incMaxNumberOfBombs()          { maxNumberOfBombs++; bombsAvailable++; }
@@ -41,6 +42,7 @@ public:
     void setKickBonus()                 { kickBonus = true; }
 
     void setFasterBonus()               { moveDistance++; }
+    void setRemoteBonus()               { nbRemoteControl = maxNumberOfBombs; }
     void setSickness(sickness s);
     sickness getSickness()              {return currentSickness;}
 
@@ -56,6 +58,7 @@ private:
 
     qint8 maxNumberOfBombs;
     qint8 bombsAvailable;
+    qint8 nbRemoteControl;
 
     qint8 flameLength;
     sickness currentSickness;

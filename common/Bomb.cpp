@@ -27,29 +27,31 @@ Bomb::Bomb() :
 	playerId(-1),
 	duration(-1),
 	range(-1),
-	bombId(-1)
+	bombId(-1),
+	remoteControled(false)
 {}
 
 //constructor for server
-Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range)
+Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool remote)
 {
-	qDebug() << "Bomb constructor";
-	this->range = range;
+    this->range = range;
     this->playerId = playerId;
     this->duration = duration;
     this->x=x;
     this->y=y;
     this->bombId=index;
-      index++;
+    this->remoteControled = remote;
+    index++;
 }
 
 //constructor for client
-Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId)
+Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId, bool remote)
 {
    this->playerId = playerId;
    this->x=x;
    this->y=y;
    this->bombId=bombId;
+   this->remoteControled = remote;
    range = duration = -1;
 }
 
@@ -57,12 +59,17 @@ Bomb::~Bomb()
 {
 }
 
-QDataStream& operator>>(QDataStream& in, Bomb& f) {
-	in >> f.bombId >> f.x >> f.y >> f.playerId;
-	return in;
+QDataStream& operator>>(QDataStream& in, Bomb& f)
+{
+    qint8 rc;
+    in >> f.bombId >> f.x >> f.y >> f.playerId;
+    in >> rc;
+    f.remoteControled = rc != 0;
+    return in;
 }
 
-QDataStream& operator<<(QDataStream& out, const Bomb& f) {
-	out << f.bombId << f.x << f.y << f.playerId;
-	return out;
+QDataStream& operator<<(QDataStream& out, const Bomb& f)
+{
+    out << f.bombId << f.x << f.y << f.playerId << (qint8) f.remoteControled;
+    return out;
 }

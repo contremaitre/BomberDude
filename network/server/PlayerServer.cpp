@@ -10,6 +10,7 @@ PlayerServer::PlayerServer(int playerId) :
     kickBonus(false),
     maxNumberOfBombs(DEFAULT_BOMB_CAPACITY),
     bombsAvailable(maxNumberOfBombs),
+    nbRemoteControl(0),
     flameLength(DEFAULT_BOMB_RANGE),
     currentSickness(SICK_NONE),
     SicknessDuration(0),
@@ -50,6 +51,17 @@ void PlayerServer::setSickness(sickness s)
         isSick = true;
         SicknessDuration = DEFAULT_DISEASE_DURATION;
     }
+}
+
+bool PlayerServer::getRemoteOption()
+{
+    qDebug() << "getRemoteOption" << nbRemoteControl;
+    if(nbRemoteControl > 0)
+    {
+        nbRemoteControl--;
+        return true;
+    }
+    return false;
 }
 
 bool PlayerServer::getIsBombAvailable() const

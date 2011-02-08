@@ -19,7 +19,6 @@ class MapClient : public Map<Player>
     Q_OBJECT
 public :
     void updateMap(QByteArray& updateBlock);
-
 private:
     QMap<QPoint, QGraphicsItem*> bonus;
 
@@ -33,6 +32,8 @@ signals:
     void sigKillPlayer(int);
     void sigAddBonus(Bonus::Bonus_t type, qint16 x, qint16 y);
     void sigRemoveBonus(qint16 x, qint16 y);
+    void sigAddBomb(int);
+    void sigRemoveBomb(int);
 };
 
 
