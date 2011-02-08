@@ -94,7 +94,7 @@ private:
     qint16 blockSize;                       //There are "blockSize" pixels in one block
     BlockMapProperty *block_list;
 
-    //Test if a coordinate is below (-1) on (0) or above (1) the middle of the block
+    //Test if a coordinate is below (<0) on (0) or above (>0) the middle of the block
     int coordinatePositionInBlock(int coord);
 
 protected:
@@ -324,12 +324,7 @@ int Map<P>::coordinatePositionInBlock(int coord)
 {
     int block = coord / blockSize;
     int middle = blockSize * block + blockSize/2;
-    if(coord == middle)
-        return 0;
     return coord - middle;
-    //if(coord < middle)
-    //    return -1;
-    //return 1;    
 }
 
 
