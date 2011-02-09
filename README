@@ -9,18 +9,11 @@ qmake
 make
 
 ----------------------------------------------------------------------------------
-STATUS :
 
-todo :
-- implement all bonus from AB
-- auto configuration scripts to build the project (CMAKE ?)
-- work on the gui, design a nice one.
-- find another name for the game
+Status :
+https://github.com/contremaitre/QtBomberman/issues
 
-Known Bug :
-Server does not work on win32, there is a timer issue, not started in its thread
 ----------------------------------------------------------------------------------
-
 
 *** Cross compil for windows (improvments welcome, see TODO) ****
 copy Qt sdk 4.x for win32 in your linux filesystem
