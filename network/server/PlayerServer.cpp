@@ -81,6 +81,13 @@ qint16 PlayerServer::getMoveDistance() const
     return moveDistance;
 }
 
+bool PlayerServer::getOptKey()
+{
+    bool ret = optKeyClicked;
+    optKeyClicked = false; //only one controlled bomb at a time
+    return ret;
+}
+
 void PlayerServer::decreaseDuration()
 {
     //qDebug() << "decrease" << isSick << SicknessDuration;

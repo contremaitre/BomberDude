@@ -29,7 +29,7 @@ public:
 	bool getRemoteOption();
 
     void setOptKey(bool o)              { optKeyClicked = o; }
-    bool getOptKey() const              { return optKeyClicked; }
+    bool getOptKey();
 
     qint8 getMaxNumberOfBombs() const   { return maxNumberOfBombs; }
     void incMaxNumberOfBombs()          { maxNumberOfBombs++; bombsAvailable++; }
