@@ -144,16 +144,8 @@ void MapServer::addPlayerSlot(int x, int y)
 }
 
 void MapServer::requestBombPlayer(int id) {
-	QList<PlayerServer*>::iterator itPlayer = players.begin();
-	for(; itPlayer != players.end(); ++itPlayer)
-		if((*itPlayer)->getId() == id)
-			break;
-	if(itPlayer == players.end()) {
-		qDebug() << "Unknown player #" << id;
-		return;
-	}
 	//qDebug() << "Player #" << id << " going " << direction;
-	(*itPlayer)->raiseLayingBomb();
+	players[id]->raiseLayingBomb();
 }
 
 /**
@@ -164,16 +156,8 @@ void MapServer::requestBombPlayer(int id) {
  *   7  6  5
  */
 void MapServer::requestMovePlayer(int id, int direction) {
-	QList<PlayerServer*>::iterator itPlayer = players.begin();
-	for(; itPlayer != players.end(); ++itPlayer)
-		if((*itPlayer)->getId() == id)
-			break;
-	if(itPlayer == players.end()) {
-		qDebug() << "Unknown player #" << id;
-		return;
-	}
 	//qDebug() << "Player #" << id << " going " << direction;
-	(*itPlayer)->setDirection(direction);
+	players[id]->setDirection(direction);
 }
 
 bool MapServer::movePlayer(int id, int direction, int distance)
