@@ -159,9 +159,16 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
         }
         else if(c->key() == Qt::Key_Space)
         {
-	    //qDebug("space");
             dropBomb();
             return true;
+        }
+        else if(c->key() == Qt::Key_Control)
+        {
+            client->sendKeyOpt1();
+        }
+        else if(c->key() == Qt::Key_Shift)
+        {
+            client->sendKeyOpt2();
         }
     }
     if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)

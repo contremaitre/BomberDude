@@ -143,6 +143,16 @@ void MapServer::addPlayerSlot(int x, int y)
     maxNbPlayers++;
 }
 
+void MapServer::requestKeyOpt1(int id)
+{
+
+}
+
+void MapServer::requestKeyOpt2(int id)
+{
+
+}
+
 void MapServer::requestBombPlayer(int id) {
 	//qDebug() << "Player #" << id << " going " << direction;
 	players[id]->raiseLayingBomb();

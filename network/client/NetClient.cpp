@@ -99,6 +99,25 @@ void NetClient::sendBomb()
     sendUdpDatagram(block);
 }
 
+void NetClient::sendKeyOpt1()
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    udpGenericStream(out);
+    out << (quint16)msg_key_opt1;
+    setBlockSize(block, out);
+    sendUdpDatagram(block);
+}
+
+void NetClient::sendKeyOpt2()
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    udpGenericStream(out);
+    out << (quint16)msg_key_opt2;
+    setBlockSize(block, out);
+    sendUdpDatagram(block);
+}
 
 void NetClient::sendPing()
 {

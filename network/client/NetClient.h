@@ -46,6 +46,8 @@ public:
     void sendMove(int direction);
     void sendPing();
     void sendBomb();
+    void sendKeyOpt1();
+    void sendKeyOpt2();
     void setMaxPlayers(int);
     void startGame();
     void sendPlayerData(const QString& playerName);

@@ -89,6 +89,8 @@ public:
 	bool assignPlayer(int id);
 	//int getFreePlayerSlot();
 	void requestMovePlayer(int id, int direction);
+	void requestKeyOpt1(int id);
+    void requestKeyOpt2(int id);
 	void requestBombPlayer(int id);
 
     void setDebugMode(bool val)                                 { debugMode = val; }
