@@ -44,6 +44,9 @@ public:
     void setOilBonus()                  { oilBonus = true; }
     void setKickBonus()                 { kickBonus = true; }
 
+    void setMultibombBonus()            { multiBombBonus = true; }
+    bool getMultibombBonus() const      { return multiBombBonus; }
+
     void setFasterBonus()               { moveDistance++; }
     void setRemoteBonus()               { nbRemoteControl = maxNumberOfBombs; }
     void setSickness(sickness s);
@@ -58,6 +61,7 @@ private:
     bool layingBomb;
     bool oilBonus;
     bool kickBonus;
+    bool multiBombBonus;
     bool optKeyClicked;
 
     qint8 maxNumberOfBombs;

@@ -48,6 +48,7 @@ void PixmapsItems::loadAll()
     addBonusPixMap(Bonus::BONUS_KICK,"pictures/bonus_kick.png");
     addBonusPixMap(Bonus::BONUS_FASTER,"pictures/bonus_faster.png");
     addBonusPixMap(Bonus::BONUS_REMOTE,"pictures/bonus_bomb_rc.png");
+    addBonusPixMap(Bonus::BONUS_MULTIBOMB,"pictures/bonus_bomb_multiple.png");
 
     burnt = QPixmap("pictures/tux_burn.png").scaled(QSizeF(width,height).toSize());
     option_unknown = QPixmap("pictures/bonus_unknown.png").scaled(QSizeF(width,height).toSize());
