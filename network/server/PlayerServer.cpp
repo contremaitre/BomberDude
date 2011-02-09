@@ -8,6 +8,7 @@ PlayerServer::PlayerServer(int playerId) :
     layingBomb(false),
     oilBonus(false),
     kickBonus(false),
+    optKeyClicked(false),
     maxNumberOfBombs(DEFAULT_BOMB_CAPACITY),
     bombsAvailable(maxNumberOfBombs),
     nbRemoteControl(0),

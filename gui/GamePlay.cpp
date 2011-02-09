@@ -164,11 +164,7 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
         }
         else if(c->key() == Qt::Key_Control)
         {
-            client->sendKeyOpt1();
-        }
-        else if(c->key() == Qt::Key_Shift)
-        {
-            client->sendKeyOpt2();
+            client->sendOptKey();
         }
     }
     if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)

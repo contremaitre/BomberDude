@@ -378,13 +378,9 @@ void NetServer::receiveUdp()
             if(gameStarted)
                 map->requestBombPlayer(client->getId());
             break;
-        case msg_key_opt1:
+        case msg_opt_key:
             if(gameStarted)
-                map->requestKeyOpt1(client->getId());
-            break;
-        case msg_key_opt2:
-            if(gameStarted)
-                map->requestKeyOpt2(client->getId());
+                map->requestOptKey(client->getId());
             break;
         default:
             qDebug() << "NetServer readMove discarding unkown message";

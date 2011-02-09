@@ -143,14 +143,9 @@ void MapServer::addPlayerSlot(int x, int y)
     maxNbPlayers++;
 }
 
-void MapServer::requestKeyOpt1(int id)
+void MapServer::requestOptKey(int id)
 {
-
-}
-
-void MapServer::requestKeyOpt2(int id)
-{
-
+    players[id]->setOptKey(true);
 }
 
 void MapServer::requestBombPlayer(int id) {
@@ -643,7 +638,7 @@ void MapServer::newHeartBeat() {
 	QList<Flame*> explodeList;
 	QList<Bomb*>::iterator itBomb = bombs.begin();
 	while(itBomb != bombs.end()) {
-		if((*itBomb)->mustExplode()) {
+		if((*itBomb)->mustExplode() || ( (*itBomb)->remoteControled && players[(*itBomb)->playerId]->getOptKey() ) ) {
 			explodeList.append(explosion(*itBomb));
 			itBomb = bombs.begin();
 		}
@@ -690,6 +685,7 @@ void MapServer::newHeartBeat() {
     // count how many players are still alive
     QList<qint8> playersAlive;
     foreach(PlayerServer* playerN, players) {
+        playerN->setOptKey(false);
         if(playerN->getIsAlive()) {
             playersAlive.append(playerN->getId());
             if(playersAlive.size() > 1)

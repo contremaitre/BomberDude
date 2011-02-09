@@ -49,8 +49,7 @@ enum NetMsgType
     msg_map_random,         // TCP server -> client, random map
     msg_map_winner,         // TCP server -> client, map's winner + statistics
     msg_client_disconnected,// TCP server -> client, player left
-    msg_key_opt1,           // UDP client -> server, key option 1
-    msg_key_opt2,           // UDP client -> server, key option 2
+    msg_opt_key,            // UDP client -> server, key option 1
 };
 
 #endif

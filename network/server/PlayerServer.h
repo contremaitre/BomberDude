@@ -28,6 +28,9 @@ public:
 	bool getLayingBomb() const			{ return layingBomb; }
 	bool getRemoteOption();
 
+    void setOptKey(bool o)              { optKeyClicked = o; }
+    bool getOptKey() const              { return optKeyClicked; }
+
     qint8 getMaxNumberOfBombs() const   { return maxNumberOfBombs; }
     void incMaxNumberOfBombs()          { maxNumberOfBombs++; bombsAvailable++; }
 
@@ -55,6 +58,7 @@ private:
     bool layingBomb;
     bool oilBonus;
     bool kickBonus;
+    bool optKeyClicked;
 
     qint8 maxNumberOfBombs;
     qint8 bombsAvailable;
