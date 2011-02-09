@@ -91,6 +91,7 @@ public:
 	void requestMovePlayer(int id, int direction);
 	void requestOptKey(int id);
 	void requestBombPlayer(int id);
+	void requestDoubleKey1(int id);
 
     void setDebugMode(bool val)                                 { debugMode = val; }
 	void startHeartBeat(qint32 startValue, int intervals);

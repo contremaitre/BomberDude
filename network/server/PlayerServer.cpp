@@ -9,6 +9,7 @@ PlayerServer::PlayerServer(int playerId) :
     oilBonus(false),
     kickBonus(false),
     optKeyClicked(false),
+    doubleKey1(false),
     maxNumberOfBombs(DEFAULT_BOMB_CAPACITY),
     bombsAvailable(maxNumberOfBombs),
     nbRemoteControl(0),
@@ -85,6 +86,13 @@ bool PlayerServer::getOptKey()
 {
     bool ret = optKeyClicked;
     optKeyClicked = false; //only one controlled bomb at a time
+    return ret;
+}
+
+bool PlayerServer::getDoubleKey1()
+{
+    bool ret = doubleKey1;
+    doubleKey1 = false; //only one controlled bomb at a time
     return ret;
 }
 

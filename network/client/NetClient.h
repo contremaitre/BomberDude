@@ -46,6 +46,7 @@ public:
     void sendMove(int direction);
     void sendPing();
     void sendBomb();
+    void sendDoubleKey1();
     void sendOptKey();
     void setMaxPlayers(int);
     void startGame();

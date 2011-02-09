@@ -52,6 +52,7 @@ private:
     QGraphicsView *mapGraphicPreview;
     NetClient *client;
     Settings *settings;
+    QTime lastDropTime; //time of the last "drop bomb" key press
 
     bool leftK, rightK, upK, downK;
     QTimer timer;
@@ -68,7 +69,6 @@ private:
 
 private slots:
     void slotMoveTimer();
-    void dropBomb();
     void slotPingTimer();
     void mapReceived(MapClient*);
 //	void updateMap(QByteArray updateBlock);
