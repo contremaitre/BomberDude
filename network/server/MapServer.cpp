@@ -236,7 +236,7 @@ bool MapServer::tryMovePlayer(int id, int direction, int distance)
 	//here we test if the next block is empty and if the next block does not contains a bomb or if the next block is the same as the actual block (if we are before the middle of the block)
 	if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
         (   (x_originalBlock == x_nextBlock && y_originalBlock == y_nextBlock) ||
-            !blockContainsBomb(x_nextBlock,y_nextBlock)
+            blockContainsBomb(x_nextBlock,y_nextBlock) == -1
         )
       )
 	{
@@ -288,7 +288,7 @@ bool MapServer::tryMovePlayer(int id, int direction, int distance)
 				getBlockPosition( x_player, y_player+sign*getBlockSize()/2, x_nextBlock, y_nextBlock );
 				typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
 				if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
-                     !blockContainsBomb(x_nextBlock,y_nextBlock))
+                     blockContainsBomb(x_nextBlock,y_nextBlock) == -1)
 				{
 					setPlayerPosition(id,x+ move_x/2,y+absMin(pos,distance));
 					return true;
@@ -304,7 +304,7 @@ bool MapServer::tryMovePlayer(int id, int direction, int distance)
 				getBlockPosition( x_player+sign*getBlockSize()/2, y_player, x_nextBlock, y_nextBlock );
 				typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
 				if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
-                    !blockContainsBomb(x_nextBlock,y_nextBlock))
+                    blockContainsBomb(x_nextBlock,y_nextBlock) == -1)
 				{
 					setPlayerPosition(id,x+absMin(pos,distance),y+ move_y/2);
 					return true;
@@ -363,11 +363,10 @@ QList<Bomb*> MapServer::addBombMultiple(int playerId)
     int squareX,squareY;
     qint16 x,y;
     QList<Bomb*> newBombs;
-    if(players[playerId]->getHeading() == -1)
-        return newBombs;
     getPlayerPosition(playerId,x,y);
     getBlockPosition(x,y,squareX,squareY);
-    //question : un joueur coincé, a t'il sa direction updaté si il essaye de bouger
+    if(players[playerId]->getHeading() == -1 || blockContainsBomb(squareX,squareY) != playerId) //drop multibombs the player laready has a bomb here
+        return newBombs;
     while(players[playerId]->getIsBombAvailable())
     {
         getNextBlock(squareX,squareY,squareX,squareY,players[playerId]->getHeading());
@@ -390,12 +389,9 @@ Bomb* MapServer::addBomb(int playerId)
 
 Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
 {
-	// is there a bomb at the same place ?
-	foreach (Bomb *b, bombs)
-	{
-		if((b->x == squareX) && (b->y == squareY))
-			return NULL;
-	}
+    BlockMapProperty::BlockType type = getType(squareX,squareY);
+    if( blockContainsBomb(squareX,squareY) != -1 || type != BlockMapProperty::empty)
+        return NULL;
 
 	// add the bomb
 	Bomb *newBomb = new Bomb(playerId, squareX, squareY, DEFAULT_BOMB_DURATION, players[playerId]->getFlameLength(), players[playerId]->getRemoteOption());
@@ -624,16 +620,15 @@ void MapServer::newHeartBeat() {
         foreach(PlayerServer* playerN, players) {
             if(playerN->getIsAlive()) {
                 if(playerN->getLayingBomb() || playerN->getSickness() == SICK_DIARRHEA) {
-                    playerN->clearLayingBomb();
-                    if(playerN->getIsBombAvailable()) {
+                    if(playerN->getIsBombAvailable())
+                    {
                         Bomb* newBomb = addBomb(playerN->getId());
                         if(newBomb != NULL)
-                            newBombs.append(newBomb);
+                            newBombs << newBomb;
+                        else if(playerN->getLayingBomb() && playerN->getMultibombBonus())
+                            newBombs << addBombMultiple(playerN->getId());
                     }
-                }
-                if(playerN->getMultibombBonus() && playerN->getDoubleKey1())
-                {
-                    newBombs.append(addBombMultiple(playerN->getId()));
+                    playerN->clearLayingBomb();
                 }
                 if(playerN->getDirection() != -1) {
                     movePlayer(playerN->getId(), playerN->getDirection(), playerN->getMoveDistance());

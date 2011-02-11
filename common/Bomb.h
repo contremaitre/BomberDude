@@ -37,6 +37,7 @@ public:
 
 	// TODO must also check that the bomb is not in movement
 	bool mustExplode()						{ return !remoteControled && duration < 0; }
+    qint8 getPlayer()                       { return playerId; }
 
 private:
 	static qint16 index;

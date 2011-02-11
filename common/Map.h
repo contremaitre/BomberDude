@@ -75,7 +75,7 @@ public:
     void addBomb(int plId, int x, int y,int bombId, bool rc);
     void removeBomb(qint16 bombId);
     const Bomb *getBomb(qint16 bombId);
-    bool blockContainsBomb(int x,int y) const;
+    int blockContainsBomb(int x,int y) const; //return -1 if no bomb, or player's id bomb owner
 
 	void setHeartBeat(qint32 hb);
 	qint32 getHeartBeat() const                                     { return heartBeat; }
@@ -211,11 +211,11 @@ void Map<P>::getNextBlock(int x, int y, int &xdest, int &ydest, int direction) c
         if(xdest < width - 1)
             xdest++;
         break;
-    case MOVE_UP:
+    case MOVE_DOWN:
         if(ydest > 0)
             ydest--;
         break;
-    case MOVE_DOWN:
+    case MOVE_UP:
         if(ydest < height - 1)
             ydest++;
         break;
@@ -346,14 +346,14 @@ const Bomb * Map<P>::getBomb(qint16 bombId)
 
 
 template<typename P>
-bool Map<P>::blockContainsBomb(int x,int y) const
+int Map<P>::blockContainsBomb(int x,int y) const
 {
-   foreach( Bomb *b, bombs)
+    foreach( Bomb *b, bombs)
     {
-    	if ((b->x == x) && (b->y == y))
-    		return true;
+        if ((b->x == x) && (b->y == y))
+            return b->getPlayer();
     }
-    return false;
+    return -1;
 }
 
 
