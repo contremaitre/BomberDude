@@ -16,8 +16,10 @@ public:
 	void setY(qint16 y)					{ this->y = y; }
 	qint16 getY() const					{ return y; }
 
-	void setDirection(int dir)			{ latestDirection = dir; }
-	int getDirection() const			{ return latestDirection; }
+    void setDirection(int dir)			{ direction = dir; }
+    int getDirection() const			{ return direction; }
+    void setHeading(int h)              { heading = h;}
+    int getHeading() const              { return heading;}
 
     bool getIsAlive() const             { return isAlive; }
 
@@ -29,7 +31,8 @@ protected:
 	qint16 x;
 	qint16 y;
 
-	int latestDirection;
+	int direction;
+	int heading;
 
     bool isAlive;
     bool isSick;

@@ -6,7 +6,8 @@ Player::Player() :
 	id(-1),
 	x(-1),
 	y(-1),
-	latestDirection(-1),
+    direction(-1),
+    heading(-1),
     isAlive(false),
     isSick(false)
 {}
@@ -15,7 +16,8 @@ Player::Player(qint8 playerId) :
 	id(playerId),
 	x(-1),
 	y(-1),
-	latestDirection(-1),
+    direction(-1),
+    heading(-1),
     isAlive(false),
     isSick(false)
 {}

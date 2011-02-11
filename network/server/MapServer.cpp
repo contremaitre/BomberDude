@@ -210,6 +210,7 @@ bool MapServer::tryMovePlayer(int id, int direction, int distance)
 	int move_x = 0;
 	int move_y = 0;
 	getPlayerPosition( id, x_player, y_player );
+	players[id]->setHeading(direction);
 	//qDebug() << "Map move player" << id << direction << "x,y" << x << y;
 	switch(direction)
 	{
@@ -362,6 +363,27 @@ int MapServer::coordinatePositionInBlock(int coord)
 	//return 1;
 }
 
+QList<Bomb*> MapServer::addBombMultiple(int playerId)
+{
+    int squareX,squareY;
+    qint16 x,y;
+    QList<Bomb*> newBombs;
+    if(players[playerId]->getHeading() == -1)
+        return newBombs;
+    getPlayerPosition(playerId,x,y);
+    getBlockPosition(x,y,squareX,squareY);
+    //question : un joueur coincé, a t'il sa direction updaté si il essaye de bouger
+    while(players[playerId]->getIsBombAvailable())
+    {
+        getNextBlock(squareX,squareY,squareX,squareY,players[playerId]->getHeading());
+        Bomb *b = addBomb(playerId, squareX, squareY);
+        if( !b )
+            break;
+        newBombs << b;
+    }
+    return newBombs;
+}
+
 Bomb* MapServer::addBomb(int playerId)
 {
 	int squareX,squareY;
@@ -377,13 +399,14 @@ Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
 	foreach (Bomb *b, bombs)
 	{
 		if((b->x == squareX) && (b->y == squareY))
-			return 0;
+			return NULL;
 	}
 
 	// add the bomb
 	Bomb *newBomb = new Bomb(playerId, squareX, squareY, DEFAULT_BOMB_DURATION, players[playerId]->getFlameLength(), players[playerId]->getRemoteOption());
 	bombs.append(newBomb);
 	qDebug() << " MapServer> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
+	players[playerId]->decBombsAvailable();
 	return newBomb;
 }
 
@@ -609,11 +632,13 @@ void MapServer::newHeartBeat() {
                     playerN->clearLayingBomb();
                     if(playerN->getIsBombAvailable()) {
                         Bomb* newBomb = addBomb(playerN->getId());
-                        if(newBomb != NULL) {
+                        if(newBomb != NULL)
                             newBombs.append(newBomb);
-                            playerN->decBombsAvailable();
-                        }
                     }
+                }
+                if(playerN->getMultibombBonus() && playerN->getDoubleKey1())
+                {
+                    newBombs.append(addBombMultiple(playerN->getId()));
                 }
                 if(playerN->getDirection() != -1) {
                     movePlayer(playerN->getId(), playerN->getDirection(), playerN->getMoveDistance());
@@ -698,7 +723,6 @@ void MapServer::newHeartBeat() {
     QList<qint8> playersAlive;
     foreach(PlayerServer* playerN, players) {
         playerN->setOptKey(false);
-        //qDebug() << "getDoubleKey1 : " << playerN->getDoubleKey1();
         playerN->getDoubleKey1();
         if(playerN->getIsAlive()) {
             playersAlive.append(playerN->getId());

@@ -59,6 +59,7 @@ public:
     void setType(BlockMapProperty::BlockType type, int pos);
     void setType(BlockMapProperty::BlockType type, int x, int y);
     void getBlockPosition(int x, int y, int &xdest, int &ydest) const;
+    void getNextBlock(int x, int y, int &xdest, int &ydest, int direction) const;
 
     void setPlayerPosition(int id, qint16 , qint16);
     bool setPlayerSickness(int id, bool sick);                     //return true if sickness changed
@@ -85,6 +86,10 @@ protected:
     BlockMapProperty* getBlockList() const                    { return block_list; }
     quint8 NbPlayers;
     quint8 maxNbPlayers;
+    static const int MOVE_LEFT = 0;
+    static const int MOVE_UP = 1;
+    static const int MOVE_RIGHT = 2;
+    static const int MOVE_DOWN = 3;
 
 private:
     // callback method for when a brick wall is removed, only useful for the server
@@ -191,6 +196,33 @@ void Map<P>::getBlockPosition(int x, int y, int &xdest, int &ydest) const
     ydest = y / blockSize;
 }
 
+template<typename P>
+void Map<P>::getNextBlock(int x, int y, int &xdest, int &ydest, int direction) const
+{
+    xdest = x;
+    ydest = y;
+    switch(direction)
+    {
+    case MOVE_LEFT:
+        if(xdest > 0)
+            xdest--;
+        break;
+    case MOVE_RIGHT:
+        if(xdest < width - 1)
+            xdest++;
+        break;
+    case MOVE_UP:
+        if(ydest > 0)
+            ydest--;
+        break;
+    case MOVE_DOWN:
+        if(ydest < height - 1)
+            ydest++;
+        break;
+    default:
+        break;
+    }
+}
 
 template<typename P>
 void Map<P>::getPlayerPosition(int pl, qint16 &x, qint16 &y) const

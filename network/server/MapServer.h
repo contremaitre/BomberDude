@@ -41,8 +41,10 @@ private:
     int absMin(int a, int b) const;
     bool movePlayer(int id, int direction, int distance);
     bool tryMovePlayer(int id, int direction, int distance);
+    int keyToDirection(int direction);
     Bomb* addBomb(int id);
     Bomb* addBomb(int id, int x, int y);
+    QList<Bomb*> addBombMultiple(int playerId);
     
     bool checkPlayerInFlames(PlayerServer* playerN,
                              const QPoint& playerBlock,
@@ -68,11 +70,6 @@ private:
 	    bool freeSlot;
 	};
 	QList <initialPlayerPosition> startPlayerSlots;
-
-	static const int MOVE_LEFT = 0;
-	static const int MOVE_UP = 1;
-	static const int MOVE_RIGHT = 2;
-	static const int MOVE_DOWN = 3;
 
 	static const QPoint dirLeft;
 	static const QPoint dirRight;
