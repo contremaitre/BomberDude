@@ -42,7 +42,6 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set, QGraphicsView *mapGraphicP
     connect(client,SIGNAL(sigMapRandom()),this,SLOT(slotMapRandom()));
     connect(client, SIGNAL(sigMapWinner(qint8)), gameArena, SLOT(slotMapWinner(qint8)));
     settings = set;
-    lastDropTime.start();
 }
 
 void GamePlay::cliConnect(const QString &pass)
@@ -142,6 +141,11 @@ void GamePlay::slotPingTimer()
     client->sendPing();
 }
 
+void GamePlay::dropBomb()
+{
+    client->sendBomb();
+}
+
 bool GamePlay::eventFilter(QObject *obj, QEvent *event)
 {
     if(event->type() == QEvent::KeyPress)
@@ -155,13 +159,7 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
         }
         else if(c->key() == Qt::Key_Space)
         {
-            //qDebug() << "space" << lastDropTime.elapsed();
-            if(lastDropTime.elapsed() < KEYBOARD_DOUBLE_PRESS)
-                client->sendDoubleKey1();
-            else
-                client->sendBomb();
-
-            lastDropTime.start();
+            dropBomb();
             return true;
         }
         else if(c->key() == Qt::Key_Control)

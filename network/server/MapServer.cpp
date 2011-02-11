@@ -151,11 +151,6 @@ void MapServer::requestOptKey(int id)
     players[id]->setOptKey(true);
 }
 
-void MapServer::requestDoubleKey1(int id)
-{
-    players[id]->setDoubleKey1();
-}
-
 void MapServer::requestBombPlayer(int id) {
 	//qDebug() << "Player #" << id << " going " << direction;
 	players[id]->raiseLayingBomb();
@@ -723,7 +718,6 @@ void MapServer::newHeartBeat() {
     QList<qint8> playersAlive;
     foreach(PlayerServer* playerN, players) {
         playerN->setOptKey(false);
-        playerN->getDoubleKey1();
         if(playerN->getIsAlive()) {
             playersAlive.append(playerN->getId());
             if(playersAlive.size() > 1)

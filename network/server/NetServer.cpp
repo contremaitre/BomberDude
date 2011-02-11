@@ -382,10 +382,6 @@ void NetServer::receiveUdp()
             if(gameStarted)
                 map->requestOptKey(client->getId());
             break;
-        case msg_double_key1:
-            if(gameStarted)
-                map->requestDoubleKey1(client->getId());
-            break;
         default:
             qDebug() << "NetServer readMove discarding unkown message";
             break;

@@ -34,7 +34,7 @@
 #define DEFAULT_BOMB_RANGE 2
 #define DEFAULT_BOMB_CAPACITY 1
 #define DEFAULT_DISEASE_DURATION 150
-#define KEYBOARD_DOUBLE_PRESS 500 //ms, how fast you must press the key twice, to use some option
+//how fast the bomb is blinking (ms)
 
 //Network
 #define SERVER_PORT 10000

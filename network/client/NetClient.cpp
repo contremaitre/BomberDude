@@ -99,16 +99,6 @@ void NetClient::sendBomb()
     sendUdpDatagram(block);
 }
 
-void NetClient::sendDoubleKey1()
-{
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    udpGenericStream(out);
-    out << (quint16)msg_double_key1;
-    setBlockSize(block, out);
-    sendUdpDatagram(block);
-}
-
 void NetClient::sendOptKey()
 {
     QByteArray block;

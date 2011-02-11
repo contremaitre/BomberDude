@@ -31,9 +31,6 @@ public:
     void setOptKey(bool o)              { optKeyClicked = o; }
     bool getOptKey();
 
-    void setDoubleKey1()                { doubleKey1 = true; }
-    bool getDoubleKey1();
-
     qint8 getMaxNumberOfBombs() const   { return maxNumberOfBombs; }
     void incMaxNumberOfBombs()          { maxNumberOfBombs++; bombsAvailable++; }
 
@@ -66,7 +63,6 @@ private:
     bool kickBonus;
     bool multiBombBonus;
     bool optKeyClicked;
-    bool doubleKey1;
 
     qint8 maxNumberOfBombs;
     qint8 bombsAvailable;
