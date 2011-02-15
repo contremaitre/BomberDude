@@ -365,11 +365,37 @@ QList<Bomb*> MapServer::addBombMultiple(int playerId)
     QList<Bomb*> newBombs;
     getPlayerPosition(playerId,x,y);
     getBlockPosition(x,y,squareX,squareY);
-    if(players[playerId]->getHeading() == -1 || blockContainsBomb(squareX,squareY) != playerId) //drop multibombs the player laready has a bomb here
+    //drop multibombs if the player already has a bomb here
+    if(players[playerId]->getHeading() == -1 || blockContainsBomb(squareX,squareY) != playerId)
         return newBombs;
     while(players[playerId]->getIsBombAvailable())
     {
         getNextBlock(squareX,squareY,squareX,squareY,players[playerId]->getHeading());
+        //we check that a player is not here
+        bool isPlayer = false;
+        for (int i=0;i<getNbPlayers();i++)
+        {
+            qint16 p_x, p_y;
+            getPlayerPosition(i, p_x, p_y);
+            int p_squareX, p_squareY;
+            getBlockPosition(p_x, p_y, p_squareX, p_squareY);
+            if (squareX == p_squareX && squareY == p_squareY)
+            {
+                qDebug() << "multibomb blocked by player" << i;
+                isPlayer = true;
+                break;
+            }
+        }
+        //check if a bonus is here
+        QMap<Point<qint8>, Bonus*>::iterator itb = bonus.find(Point<qint8>(squareX, squareY));
+        if(itb != bonus.end())
+        {
+            qDebug() << "multibomb blocked by bonus";
+            break;
+        }
+
+        if(isPlayer)
+            break;
         Bomb *b = addBomb(playerId, squareX, squareY);
         if( !b )
             break;
@@ -553,7 +579,7 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
 Bonus* MapServer::removeBonus(qint8 x, qint8 y) {
     QMap<Point<qint8>, Bonus*>::iterator itb = bonus.find(Point<qint8>(x, y));
     if(itb == bonus.end())
-        return 0;
+        return NULL;
 
     Bonus* ret = itb.value();
 
