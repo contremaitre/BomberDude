@@ -511,6 +511,20 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 	}
 }
 
+void MapServer::doPlayerDeath(PlayerServer* playerN)
+{
+    //check if the player has detonators bomb on the field
+    foreach(Bomb * b, bombs)
+    {
+        if (b->playerId == playerN->getId())
+        {
+            qDebug("dead player has a detonator bomb");
+            b->remoteControlled = false;
+            b->duration = DEFAULT_BOMB_DURATION;
+        }
+    }
+}
+
 bool MapServer::checkPlayerInFlames(PlayerServer* playerN,
                          const QPoint& playerBlock,
                          const QList<Flame*>& flamesToCheck,
@@ -691,7 +705,7 @@ void MapServer::newHeartBeat() {
 	QList<Flame*> explodeList;
 	QList<Bomb*>::iterator itBomb = bombs.begin();
 	while(itBomb != bombs.end()) {
-		if((*itBomb)->mustExplode() || ( (*itBomb)->remoteControled && players[(*itBomb)->playerId]->getOptKey() ) ) {
+		if((*itBomb)->mustExplode() || ( (*itBomb)->remoteControlled && players[(*itBomb)->playerId]->getOptKey() ) ) {
 			explodeList.append(explosion(*itBomb));
 			itBomb = bombs.begin();
 		}
@@ -712,7 +726,9 @@ void MapServer::newHeartBeat() {
                 getBlockPosition(playerN->getX(), playerN->getY(), px, py);
                 QPoint actPoint(px, py);
                 if(checkPlayerInFlames(playerN, actPoint, explodeList, killedPlayers))
-                    continue;
+                {
+                    doPlayerDeath(playerN);
+                }
             }
         }
     }

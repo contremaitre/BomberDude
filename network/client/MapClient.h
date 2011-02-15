@@ -34,6 +34,7 @@ signals:
     void sigRemoveBonus(qint16 x, qint16 y);
     void sigAddBomb(int);
     void sigRemoveBomb(int);
+    void sigRemoveBombRC(int);
 };
 
 

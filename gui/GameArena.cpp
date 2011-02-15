@@ -122,6 +122,7 @@ void GameArena::setMap(MapClient *newMap)
     connect(map, SIGNAL(sigRemoveBonus(qint16,qint16)), this, SLOT(slotRemoveBonus(qint16,qint16)));
     connect(map, SIGNAL(sigAddBomb(int)), this, SLOT(slotAddBomb(int)), Qt::DirectConnection);
     connect(map, SIGNAL(sigRemoveBomb(int)), this, SLOT(slotRemoveBomb(int)), Qt::DirectConnection);
+    connect(map, SIGNAL(sigRemoveBombRC(int)), this, SLOT(slotRemoveBombRC(int)), Qt::DirectConnection);
 }
 
 void GameArena::movePlayer(int player, int x, int y)
@@ -275,8 +276,8 @@ void GameArena::slotAddBomb(int id)
     QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb->x * squareSize,
                                                        bomb->y * squareSize,
                                                             squareSize);
-    qDebug() << "new bomb, remote =" << bomb->remoteControled;
-    pix->setItem(pixmaps.getPixmap(bomb->remoteControled ? BlockMapProperty::bombrc : BlockMapProperty::bomb));
+    qDebug() << "new bomb, remote =" << bomb->remoteControlled;
+    pix->setItem(pixmaps.getPixmap(bomb->remoteControlled ? BlockMapProperty::bombrc : BlockMapProperty::bomb));
     bombs[id] = pix;
     scene->addItem(pix);
 }
@@ -287,6 +288,22 @@ void GameArena::slotRemoveBomb(int id)
     if(itb != bombs.end()) {
         scene->removeItem(itb.value());
         bombs.erase(itb);
+    }
+}
+
+void GameArena::slotRemoveBombRC(int id)
+{
+    QMap<int, QGraphicsItem*>::iterator itb = bombs.find(id);
+    if(itb != bombs.end()) {
+        scene->removeItem(itb.value());
+        const Bomb *bomb = map->getBomb(id);
+        QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb->x * squareSize,
+                                                           bomb->y * squareSize,
+                                                                squareSize);
+        pix->setItem(pixmaps.getPixmap(BlockMapProperty::bomb));
+        *itb = pix;
+        scene->addItem(pix);
+        qDebug() << "gamearene : bomb lost rc";
     }
 }
 

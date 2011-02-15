@@ -33,10 +33,10 @@ public:
 	Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId, bool remote);
 	~Bomb();
 
-	void decreaseLifeSpan()					{ if(!remoteControled) duration--; }
+	void decreaseLifeSpan()					{ if(!remoteControlled) duration--; }
 
 	// TODO must also check that the bomb is not in movement
-	bool mustExplode()						{ return !remoteControled && duration < 0; }
+	bool mustExplode()						{ return !remoteControlled && duration < 0; }
     qint8 getPlayer()                       { return playerId; }
 
 private:
@@ -51,7 +51,7 @@ public:
     int duration;
     int range;
     qint16 bombId;
-    bool remoteControled;
+    bool remoteControlled;
 
 	friend QDataStream& operator>>(QDataStream& in, Bomb& f);
 	friend QDataStream& operator<<(QDataStream& out, const Bomb& f);

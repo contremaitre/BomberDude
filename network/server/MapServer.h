@@ -50,6 +50,7 @@ private:
                              const QPoint& playerBlock,
                              const QList<Flame*>& flamesToCheck,
                              QList<killedPlayer>& killedPlayers);
+    void doPlayerDeath(PlayerServer* playerN); //check what has to be done when a player die
     void checkPlayerSurroundings(PlayerServer* player,
                                  QList<killedPlayer>& killedPlayers);
 

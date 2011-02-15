@@ -50,7 +50,7 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 	for(qint8 i = 0; i < newBombsListSize; i++) {
 		Bomb bombN;
 		updateIn >> bombN;
-		addBomb(bombN.playerId, bombN.x, bombN.y, bombN.bombId, bombN.remoteControled);
+		addBomb(bombN.playerId, bombN.x, bombN.y, bombN.bombId, bombN.remoteControlled);
 		emit sigAddBomb(bombN.bombId);
 	}
 
@@ -85,6 +85,15 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 
     foreach(MapClient::killedPlayer frag, killedPlayers) {
         sigKillPlayer(frag.first);
+        //replace detonators bombs of this player with standard bombs
+        foreach (Bomb *b, bombs)
+        {
+            if(b->remoteControlled)
+            {
+                b->remoteControlled = false;
+                emit sigRemoveBombRC(b->bombId);
+            }
+        }
     }
 
     quint8 nbCreatedBonus;

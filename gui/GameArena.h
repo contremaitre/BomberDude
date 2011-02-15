@@ -94,6 +94,7 @@ private slots:
     void slotRemoveBonus(qint16 x, qint16 y);
     void slotAddBomb(int id);
     void slotRemoveBomb(int id);
+    void slotRemoveBombRC(int id);
 
 public slots:
     void slotMapWinner(qint8 playerId);
