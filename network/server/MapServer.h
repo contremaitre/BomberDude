@@ -45,7 +45,8 @@ private:
     Bomb* addBomb(int id);
     Bomb* addBomb(int id, int x, int y);
     QList<Bomb*> addBombMultiple(int playerId);
-    
+    bool getRandomEmptyPosition(int &x, int &y);
+    bool blockEmpty(int x, int y);//return true if there is nothing on this block
     bool checkPlayerInFlames(PlayerServer* playerN,
                              const QPoint& playerBlock,
                              const QList<Flame*>& flamesToCheck,
@@ -71,7 +72,7 @@ private:
 	    bool freeSlot;
 	};
 	QList <initialPlayerPosition> startPlayerSlots;
-
+	QList <Bonus::Bonus_t> bonusToSpawn; //when a player die, or pick a bonus incompatible with another one, the bonus re-spawn on the map
 	static const QPoint dirLeft;
 	static const QPoint dirRight;
 	static const QPoint dirUp;

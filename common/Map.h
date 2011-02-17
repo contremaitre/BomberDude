@@ -86,6 +86,8 @@ protected:
     BlockMapProperty* getBlockList() const                    { return block_list; }
     quint8 NbPlayers;
     quint8 maxNbPlayers;
+    qint16 width;
+    qint16 height;
     static const int MOVE_LEFT = 0;
     static const int MOVE_UP = 1;
     static const int MOVE_RIGHT = 2;
@@ -95,8 +97,7 @@ private:
     // callback method for when a brick wall is removed, only useful for the server
     virtual void brokenBlockRemoved(int, int)                       {}
 
-    qint16 width;
-    qint16 height;
+
     qint16 blockSize;                       //There are "blockSize" pixels in one block
     BlockMapProperty *block_list;
 

@@ -57,7 +57,7 @@ void PlayerServer::setSickness(sickness s)
     }
 }
 
-bool PlayerServer::getRemoteOption()
+bool PlayerServer::getRemoteBonus()
 {
     qDebug() << "getRemoteOption" << nbRemoteControl;
     if(nbRemoteControl > 0)
@@ -66,6 +66,14 @@ bool PlayerServer::getRemoteOption()
         return true;
     }
     return false;
+}
+
+void PlayerServer::setRemoteBonus(bool set)
+{
+    if(set)
+        nbRemoteControl = maxNumberOfBombs;
+    else
+        nbRemoteControl = 0;
 }
 
 bool PlayerServer::getIsBombAvailable() const

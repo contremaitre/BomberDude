@@ -26,7 +26,6 @@ public:
 	void raiseLayingBomb()				{ layingBomb = true; }
 	void clearLayingBomb()				{ layingBomb = false; }
 	bool getLayingBomb() const			{ return layingBomb; }
-	bool getRemoteOption();
 
     void setOptKey(bool o)              { optKeyClicked = o; }
     bool getOptKey();
@@ -41,20 +40,26 @@ public:
     qint8 getFlameLength() const        { return flameLength; }
     void incFlameLength()               { flameLength++; }
 
-    void setOilBonus()                  { oilBonus = true; }
+    void setOilBonus(bool set)          { oilBonus = set; }
+    bool getOilBonus() const            { return oilBonus; }
+
     void setKickBonus()                 { kickBonus = true; }
 
-    void setMultibombBonus()            { multiBombBonus = true; }
+    void setMultibombBonus(bool set)    { multiBombBonus = set; }
     bool getMultibombBonus() const      { return multiBombBonus; }
 
-    void setThrowbombBonus()            { throwBombBonus = true; }
+    void setThrowbombBonus(bool set)    { throwBombBonus = set; }
     bool getThrowbombBonus() const      { return throwBombBonus; }
 
-    void setBoxingGloveBonus()          { boxingGloveBonus = true; }
+    void setBoxingGloveBonus(bool set)  { boxingGloveBonus = set; }
     bool getBoxingGloveBonus() const    { return boxingGloveBonus; }
 
     void setFasterBonus()               { moveDistance++; }
-    void setRemoteBonus()               { nbRemoteControl = maxNumberOfBombs; }
+
+    void setRemoteBonus(bool);
+    bool hasRemoteBonus() const         { return nbRemoteControl > 0; }
+    bool getRemoteBonus();
+
     void setSickness(sickness s);
     sickness getSickness()              {return currentSickness;}
 

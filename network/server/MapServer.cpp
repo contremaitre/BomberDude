@@ -70,31 +70,31 @@ void MapServer::loadRandom()
 {
 	// qDebug() << "set Dimensions (2) "<<width<<" "<<height<<" ";
 	qsrand(time(NULL));
-	for(int w = 1; w < getWidth()-1; w++)
+	for(int w = 1; w < width-1; w++)
 	{
-		for(int h = 1; h < getHeight()-1; h++)
+		for(int h = 1; h < height-1; h++)
 		{
 			//randomly add wall or bricks or nothing
 			double d = (double)qrand() / RAND_MAX;
 			if(d < 0.05)
-				getBlockList()[h*getWidth()+w].setType(BlockMapProperty::wall);
+				getBlockList()[h*width+w].setType(BlockMapProperty::wall);
 			else if(d < 0.1)
-				getBlockList()[h*getWidth()+w].setType(BlockMapProperty::brick);
+				getBlockList()[h*width+w].setType(BlockMapProperty::brick);
 			else
-				getBlockList()[h*getWidth()+w].setType(BlockMapProperty::empty);
+				getBlockList()[h*width+w].setType(BlockMapProperty::empty);
 		}
 	}
 	qDebug() << "add walls and bricks";
 	//add walls on the map sides
-	for(int w = 0; w < getWidth(); w++)
+	for(int w = 0; w < width; w++)
 	{
 		getBlockList()[w].setType(BlockMapProperty::wall);
-		getBlockList()[(getHeight()-1)*getWidth()+w].setType(BlockMapProperty::wall);
+		getBlockList()[(height-1)*width+w].setType(BlockMapProperty::wall);
 	}
-	for(int h = 1; h < getHeight()-1; h++)
+	for(int h = 1; h < height-1; h++)
 	{
-		getBlockList()[h*getWidth()].setType(BlockMapProperty::wall);
-		getBlockList()[h*getWidth()+getWidth()-1].setType(BlockMapProperty::wall);
+		getBlockList()[h*width].setType(BlockMapProperty::wall);
+		getBlockList()[h*width+width-1].setType(BlockMapProperty::wall);
 	}
 	qDebug() << "add players";
 
@@ -102,8 +102,8 @@ void MapServer::loadRandom()
     for (int i = 0; i < MAX_NB_PLAYER; i++)
     {
         int x, y;
-        int w = (qrand() % (getWidth() - 2)) + 1;
-        int h = (qrand() % (getHeight() - 2)) + 1;
+        int w = (qrand() % (width - 2)) + 1;
+        int h = (qrand() % (height - 2)) + 1;
         qDebug() << "Player" << i << ", pos " << w << h;
         w = w * getBlockSize() + getBlockSize() / 2;
         h = h * getBlockSize() + getBlockSize() / 2;
@@ -334,6 +334,50 @@ int MapServer::absMin(int a, int b) const
 	}
 }
 
+bool MapServer::blockEmpty(int x, int y)
+{
+    if(getType(x,y) != BlockMapProperty::empty)
+        return false;
+    if(blockContainsBomb(x,y) != -1)
+        return false;
+    for (int i=0;i<getNbPlayers();i++)
+    {
+        qint16 p_x, p_y;
+        getPlayerPosition(i, p_x, p_y);
+        int p_squareX, p_squareY;
+        getBlockPosition(p_x, p_y, p_squareX, p_squareY);
+        if (x == p_squareX && y == p_squareY)
+            return false;
+    }
+    QMap<Point<qint8>, Bonus*>::iterator itb = bonus.find(Point<qint8>(x, y));
+    if(itb != bonus.end())
+        return false;
+    return true;
+}
+
+bool MapServer::getRandomEmptyPosition(int &x, int &y)
+{
+    //create a list of empty block
+    QList<QPoint> empty;
+    for(int i = 0; i < width; i++)
+    {
+        for (int j = 0; j < height; j++)
+        {
+            if(blockEmpty(i,j))
+            {
+                empty << QPoint(i,j);
+            }
+        }
+    }
+    //pick one
+    if(empty.empty())
+        return false;
+    int rand = static_cast<int>((static_cast<double>(qrand()) / RAND_MAX) * empty.size());
+    x = empty[rand].x();
+    y = empty[rand].y();
+    return true;
+}
+
 void MapServer::adjustPlayerPosition(int plId, int xDirection, int yDirection, int distance)
 {
 	qint16 x,y;
@@ -424,7 +468,7 @@ Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
         return NULL;
 
 	// add the bomb
-	Bomb *newBomb = new Bomb(playerId, squareX, squareY, DEFAULT_BOMB_DURATION, players[playerId]->getFlameLength(), players[playerId]->getRemoteOption());
+	Bomb *newBomb = new Bomb(playerId, squareX, squareY, DEFAULT_BOMB_DURATION, players[playerId]->getFlameLength(), players[playerId]->getRemoteBonus());
 	bombs.append(newBomb);
 	qDebug() << " MapServer> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
 	players[playerId]->decBombsAvailable();
@@ -477,7 +521,7 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 	for (int i=0;i<range;i++)
 	{
 		pTemp=pTemp+direction;
-		if ( pTemp.x() < 0 || pTemp.y() < 0 || pTemp.x() >= getWidth() || pTemp.y() >= getHeight())
+		if ( pTemp.x() < 0 || pTemp.y() < 0 || pTemp.x() >= width || pTemp.y() >= height)
 		    return;
 		if (getType(pTemp.x(),pTemp.y())==BlockMapProperty::wall ||
 			getType(pTemp.x(),pTemp.y())==BlockMapProperty::broken )
@@ -566,7 +610,12 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
                 playerN->incFlameLength();
                 break;
             case Bonus::BONUS_OIL:
-                playerN->setOilBonus();
+                playerN->setOilBonus(true);
+                if(playerN->hasRemoteBonus())
+                {
+                    playerN->setRemoteBonus(false);
+                    bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_REMOTE;
+                }
                 break;
             case Bonus::BONUS_DISEASE:
             {
@@ -581,16 +630,41 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
                 playerN->setFasterBonus();
                 break;
             case Bonus::BONUS_REMOTE:
-                playerN->setRemoteBonus();
+                playerN->setRemoteBonus(true);
+                if(playerN->getBoxingGloveBonus())
+                {
+                    playerN->setBoxingGloveBonus(false);
+                    bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_BOXING_GLOVE;
+                }
+                if(playerN->getOilBonus())
+                {
+                    playerN->setOilBonus(false);
+                    bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_OIL;
+                }
                 break;
             case Bonus::BONUS_MULTIBOMB:
-                playerN->setMultibombBonus();
+                playerN->setMultibombBonus(true);
+                if(playerN->getThrowbombBonus())
+                {
+                    playerN->setThrowbombBonus(false);
+                    bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_THROW_GLOVE;
+                }
                 break;
             case Bonus::BONUS_THROW_GLOVE:
-                playerN->setMultibombBonus();
+                playerN->setThrowbombBonus(true);
+                if(playerN->getMultibombBonus())
+                {
+                    playerN->setMultibombBonus(false);
+                    bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_MULTIBOMB;
+                }
                 break;
             case Bonus::BONUS_BOXING_GLOVE:
-                playerN->setMultibombBonus();
+                if(playerN->hasRemoteBonus())
+                {
+                    playerN->setRemoteBonus(false);
+                    bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_REMOTE;
+                }
+                playerN->setBoxingGloveBonus(true);
                 break;
 
             default:
@@ -740,6 +814,26 @@ void MapServer::newHeartBeat() {
                     doPlayerDeath(playerN);
                 }
             }
+        }
+    }
+
+    // create bonuses if needed
+    while(!bonusToSpawn.empty())
+    {
+        Bonus::Bonus_t bonus_type = bonusToSpawn.takeFirst();
+        int x,y;
+        qDebug() << "bonus to spawn" << bonus_type;
+        if(getRandomEmptyPosition(x,y))
+        {
+            Bonus* newBonus = new Bonus(bonus_type, x, y);
+            bonus[Point<qint8>(x,y)] = newBonus;
+            createdBonus.append(newBonus);
+        }
+        else
+        {
+            qDebug() << "plus de place";
+            bonusToSpawn.clear();
+            break;
         }
     }
 
