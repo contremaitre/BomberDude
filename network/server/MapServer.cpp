@@ -49,6 +49,10 @@ MapServer::MapServer()
         bonusTable[index] = Bonus::BONUS_REMOTE;
     for(int i = 0; i < 16; i++, index++)
         bonusTable[index] = Bonus::BONUS_MULTIBOMB;
+    for(int i = 0; i < 16; i++, index++)
+        bonusTable[index] = Bonus::BONUS_THROW_GLOVE;
+    for(int i = 0; i < 16; i++, index++)
+        bonusTable[index] = Bonus::BONUS_BOXING_GLOVE;
 
     Q_ASSERT(index < BONUS_TABLE_LENGTH);
     while(index < BONUS_TABLE_LENGTH)
@@ -582,6 +586,12 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
             case Bonus::BONUS_MULTIBOMB:
                 playerN->setMultibombBonus();
                 break;
+            case Bonus::BONUS_THROW_GLOVE:
+                playerN->setMultibombBonus();
+                break;
+            case Bonus::BONUS_BOXING_GLOVE:
+                playerN->setMultibombBonus();
+                break;
 
             default:
                 qDebug() << "Type " << pickedUpBonus->getType() << " not yet implemented!";
@@ -609,7 +619,7 @@ void MapServer::brokenBlockRemoved(int x, int y) {
     int randomDraw = static_cast<int>((static_cast<double>(qrand()) / RAND_MAX) * BONUS_TABLE_LENGTH);
 
     if(debugMode)
-        randomDraw = randomDraw % 127;
+        randomDraw = randomDraw % 159;
 
     Bonus::Bonus_t result = bonusTable[randomDraw];
     if(result != Bonus::BONUS_NONE) {

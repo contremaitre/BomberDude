@@ -17,6 +17,8 @@ public:
     static const Bonus_t BONUS_FASTER = 6;
     static const Bonus_t BONUS_REMOTE = 7;
     static const Bonus_t BONUS_MULTIBOMB = 8;
+    static const Bonus_t BONUS_THROW_GLOVE = 9;
+    static const Bonus_t BONUS_BOXING_GLOVE = 10;
 
     Bonus() :
         type(BONUS_NONE),
