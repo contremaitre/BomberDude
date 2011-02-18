@@ -571,6 +571,30 @@ void MapServer::doPlayerDeath(PlayerServer* playerN)
             b->duration = DEFAULT_BOMB_DURATION;
         }
     }
+
+    //respawn bonus of this player
+    int capacity;
+    if(playerN->getOilBonus())
+        bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_OIL;
+    if(playerN->getMultibombBonus())
+        bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_MULTIBOMB;
+    if(playerN->getThrowbombBonus())
+        bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_THROW_GLOVE;
+    if(playerN->getBoxingGloveBonus())
+        bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_BOXING_GLOVE;
+    if(playerN->hasRemoteBonus())
+        bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_REMOTE;
+    if(playerN->getKickBonus())
+        bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_KICK;
+    capacity = playerN->getFlameLength() - DEFAULT_BOMB_RANGE;
+    while(capacity-- > 0)
+        bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_FLAME;
+    capacity = playerN->getMaxNumberOfBombs() - DEFAULT_BOMB_CAPACITY;
+    while(capacity-- > 0)
+        bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_BOMB;
+    capacity = playerN->getMoveDistance() - MOVE_STEP;
+    while(capacity-- > 0)
+        bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_FASTER;
 }
 
 bool MapServer::checkPlayerInFlames(PlayerServer* playerN,

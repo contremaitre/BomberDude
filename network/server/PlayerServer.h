@@ -44,6 +44,7 @@ public:
     bool getOilBonus() const            { return oilBonus; }
 
     void setKickBonus()                 { kickBonus = true; }
+    bool getKickBonus() const           { return kickBonus; }
 
     void setMultibombBonus(bool set)    { multiBombBonus = set; }
     bool getMultibombBonus() const      { return multiBombBonus; }
