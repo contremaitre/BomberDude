@@ -84,11 +84,12 @@ void MapClient::updateMap(QByteArray& updateBlock) {
     updateIn >> killedPlayers;
 
     foreach(MapClient::killedPlayer frag, killedPlayers) {
-        sigKillPlayer(frag.first);
+        int plId = frag.first;
+        sigKillPlayer(plId);
         //replace detonators bombs of this player with standard bombs
         foreach (Bomb *b, bombs)
         {
-            if(b->remoteControlled)
+            if(b->playerId == plId && b->remoteControlled)
             {
                 b->remoteControlled = false;
                 emit sigRemoveBombRC(b->bombId);
