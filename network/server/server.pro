@@ -9,7 +9,7 @@ TEMPLATE = lib
 INCLUDEPATH += . \
     $${ROOT_PWD}common
 DEPENDPATH += . \
-    ../common
+    $${ROOT_PWD}common
 LIBS += -L$${ROOT_PWD}common \
     -lcommon
 HEADERS = MapParser.h \

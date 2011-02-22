@@ -7,7 +7,9 @@ QT += network \
 CONFIG += DEBUG
 TEMPLATE = app
 TARGET = ../Serverd
-DEPENDPATH += .
+DEPENDPATH += . \
+    $${ROOT_PWD}common \
+    $${ROOT_PWD}network/server
 INCLUDEPATH += . \
     $${ROOT_PWD}common \
     $${ROOT_PWD}network/server
