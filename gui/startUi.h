@@ -93,6 +93,7 @@ private slots:
     void slotMapRandom();
     void slotMapLeftButton();
     void slotMapRightButton();
+    void slotMapPreviewReceived(MapClient*);
     void slotGameStarted();
     void slotNewPlayerGraphic(int, const QPixmap &);
     void closeGame();

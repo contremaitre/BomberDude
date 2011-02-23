@@ -38,7 +38,9 @@
 // WARNING! pose a problem since it is an abstract one (the methods to be used
 // WARNING! as signals are pure virtual ones).
 
-template<typename P>
+//P : players
+//SL : style list
+template<typename P, typename SL>
 class Map : public QObject
 {
 protected:
@@ -46,10 +48,14 @@ protected:
     Map(qint16 w, qint16 h, qint16 block_size);
 
 public:
+
+    enum opt_styles {none,teleport,arrows,mov_walkway};
+
     virtual ~Map();
     
     void Init();
     void setDim(qint16 w, qint16 h, qint16 block_size = BLOCK_SIZE);
+    virtual void addStyle(const SL &style)=0;
 
     qint16 getWidth() const                                         { return width; }
     qint16 getHeight() const                                        { return height; }
@@ -60,6 +66,7 @@ public:
     void setType(BlockMapProperty::BlockType type, int x, int y);
     void getBlockPosition(int x, int y, int &xdest, int &ydest) const;
     void getNextBlock(int x, int y, int &xdest, int &ydest, int direction) const;
+    const QList<SL> *getStylesList() const;
 
     void setPlayerPosition(int id, qint16 , qint16);
     bool setPlayerSickness(int id, bool sick);                     //return true if sickness changed
@@ -88,6 +95,8 @@ protected:
     quint8 maxNbPlayers;
     qint16 width;
     qint16 height;
+    QList<SL> styles; //list of map styles available
+
     static const int MOVE_LEFT = 0;
     static const int MOVE_UP = 1;
     static const int MOVE_RIGHT = 2;

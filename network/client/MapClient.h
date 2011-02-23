@@ -14,11 +14,19 @@ bool operator<(const QPoint&, const QPoint&);
 
 class QGraphicsItem;
 
-class MapClient : public Map<Player>
+struct mapStyle
+{
+    QString name;
+    Map<Player,mapStyle>::opt_styles option;
+};
+
+class MapClient : public Map<Player,mapStyle>
 {
     Q_OBJECT
 public :
     void updateMap(QByteArray& updateBlock);
+    void addStyle(const mapStyle &style);
+    const QList<mapStyle> *getStyles() const;
 private:
     QMap<QPoint, QGraphicsItem*> bonus;
 
@@ -36,6 +44,8 @@ signals:
     void sigRemoveBomb(int);
     void sigRemoveBombRC(int);
 };
+
+QDataStream& operator>>(QDataStream& in, mapStyle& ms);
 
 
 #endif // QTB_MAPCLIENT_H

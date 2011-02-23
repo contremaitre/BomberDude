@@ -32,7 +32,7 @@
 
 #include "GameArena.h"
 #include "NetClient.h"
-#include "Map.h"
+//#include "Map.h"
 #include "Settings.h"
 
 

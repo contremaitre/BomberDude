@@ -65,6 +65,10 @@ MapServer::~MapServer() {
         delete b;
 }
 
+void MapServer::addStyle(const mapStyle &style)
+{
+    styles << style;
+}
 
 void MapServer::loadRandom()
 {
@@ -904,4 +908,11 @@ void MapServer::newHeartBeat() {
     }
 
     // TODO time over
+}
+
+//We only need this operator in the server, and it must match the >> operator in MapClient
+QDataStream& operator<<(QDataStream& out, const mapStyle& ms)
+{
+    out << ms.name << static_cast<quint8> (ms.option);
+    return out;
 }

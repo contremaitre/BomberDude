@@ -32,9 +32,7 @@
 #include <QPoint>
 
 #include "Flame.h"
-#include "Map.h"
-#include "PlayerServer.h"
-
+#include "MapServer.h"
 
 class NetServer;
 
@@ -45,8 +43,8 @@ class NetServerClient : public QObject
       public:
   NetServerClient(QTcpSocket *, QUdpSocket *, int id, bool admin, int maxPl, NetServer *);
   ~NetServerClient();
-  void sendMap(const Map<PlayerServer>&);
-  void sendMapPreview(const Map<PlayerServer>*);
+  void sendMap(const Map<PlayerServer,mapStyle>&);
+  void sendMapPreview(const Map<PlayerServer,mapStyle>*);
   void sendMapRandom();
   void sendGameStarted();
   void sendUpdate(const QByteArray& block);

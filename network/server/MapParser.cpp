@@ -64,6 +64,38 @@ bool MapParser::startElement(const QString&, const QString&, const QString& qNam
         qsrand(QDateTime::currentDateTime().toTime_t());
     }
     
+    if (qName == "Style")
+    {
+        qDebug() << "Map parser : style";
+        QString name;
+        MapServer::opt_styles option = MapServer::none;
+        for (int i = 0; i < atts.count(); ++i)
+        {
+            if (atts.qName(i) == "name")
+                name = atts.value(i);
+
+            if (atts.qName(i) == "type")
+            {
+                if(atts.value(i) == "arrow")
+                    option = MapServer::arrows;
+                if(atts.value(i) == "teleport")
+                    option = MapServer::teleport;
+                if(atts.value(i) == "mov_walkway")
+                    option = MapServer::mov_walkway;
+            }
+        }
+        if(!name.isEmpty() && option != MapServer::none)
+        {
+            mapStyle style;
+            style.name = name;
+            style.option = option;
+            map->addStyle(style);
+        }
+        else
+        {
+            qDebug() << "Map parser warning, unknown style element" << name << option;
+        }
+    }
     return true;
 }
 
@@ -88,12 +120,12 @@ bool MapParser::endElement(const QString &, const QString &, const QString & qNa
                 case 'r': //ArrowRight
                 case 'd': //ArrowDown
                 case 'l': //ArrowLeft
-                case '_': //Empty
+                case '_': //Empty (ground)
                     map->setType(BlockMapProperty::empty,i,counterRows);
                     break;
                 //Not handled types, treated as walls
-                case ' ': //Hole
-                case '=':
+                case ' ': //Hole (the player fall and die)
+                case '=': //Wall
                     map->setType(BlockMapProperty::wall,i,counterRows);
                     break;
                 case '+':
@@ -109,6 +141,7 @@ bool MapParser::endElement(const QString &, const QString &, const QString & qNa
                 case 'p':
                     map->setType(BlockMapProperty::empty,i,counterRows);
                     map->addPlayerSlot(i * bs + bs / 2, counterRows * bs + bs / 2);
+                    break;
             }
         }
         counterRows++;

@@ -113,3 +113,21 @@ void MapClient::updateMap(QByteArray& updateBlock) {
         emit sigRemoveBonus(x, y);
     }
 }
+
+void MapClient::addStyle(const mapStyle &style)
+{
+    styles << style;
+}
+const QList<mapStyle> *MapClient::getStyles() const
+{
+    return &styles;
+}
+
+QDataStream& operator>>(QDataStream& in, mapStyle& ms)
+{
+    quint8 opt;
+    in >> ms.name >> opt;
+    ms.option = static_cast<Map<Player,mapStyle>::opt_styles>(opt);
+    qDebug() << "map client, received style" << ms.name;
+    return in;
+}

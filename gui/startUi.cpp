@@ -183,6 +183,8 @@ void StartUi::startServer()
     connect( netclient, SIGNAL(sigPlayerLeft(qint32)), this, SLOT(slotPlayerLeft(qint32)));
     connect( netclient, SIGNAL(sigMapRandom()), this, SLOT(slotMapRandom()));
     connect( netclient, SIGNAL(sigGameStarted()), this, SLOT(slotGameStarted()));
+    connect( netclient, SIGNAL(mapPreviewReceived(MapClient*)),this,SLOT(slotMapPreviewReceived(MapClient*)));
+
     gamePlay->cliConnect(password);
 }
 
@@ -337,6 +339,17 @@ void StartUi::slotGameStarted()
     mainWindow->adminWidget->hide();
     mainWindow->player_data->hide();
     mainWindow->previewGraphicsView->hide();
+}
+
+void StartUi::slotMapPreviewReceived(MapClient *map)
+{
+    const QList<mapStyle> *styles = map->getStyles();
+    mainWindow->mapOptionCBox->clear();
+    foreach(mapStyle s, *styles)
+    {
+        qDebug() << "startui style" << s.name;
+        mainWindow->mapOptionCBox->addItem ( s.name );
+    }
 }
 
 void StartUi::randomMapCheckedChanged(int state)

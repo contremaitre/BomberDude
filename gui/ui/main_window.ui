@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>700</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -26,7 +26,7 @@
       <x>10</x>
       <y>10</y>
       <width>271</width>
-      <height>231</height>
+      <height>221</height>
      </rect>
     </property>
     <widget class="QCheckBox" name="isServer">
@@ -251,14 +251,14 @@
       <x>10</x>
       <y>250</y>
       <width>221</width>
-      <height>311</height>
+      <height>361</height>
      </rect>
     </property>
     <widget class="QSpinBox" name="maxPlayersBox">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>50</y>
+       <y>90</y>
        <width>55</width>
        <height>27</height>
       </rect>
@@ -268,7 +268,7 @@
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>50</y>
+       <y>90</y>
        <width>101</width>
        <height>27</height>
       </rect>
@@ -281,7 +281,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>280</y>
+       <y>320</y>
        <width>92</width>
        <height>27</height>
       </rect>
@@ -294,7 +294,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>90</y>
+       <y>130</y>
        <width>201</width>
        <height>181</height>
       </rect>
@@ -417,6 +417,16 @@
      </property>
      <property name="text">
       <string>Random</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="mapOptionCBox">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>50</y>
+       <width>161</width>
+       <height>21</height>
+      </rect>
      </property>
     </widget>
    </widget>

@@ -25,13 +25,19 @@
 #include "Point.h"
 
 
-class MapServer : public Map<PlayerServer>
+struct mapStyle
+{
+    QString name;
+    Map<PlayerServer,mapStyle>::opt_styles option;
+    QList<int> todo;
+};
+
+class MapServer : public Map<PlayerServer,mapStyle>
 {
 	Q_OBJECT
 
 private:
     virtual void brokenBlockRemoved(int x, int y);
-
 	Flame* explosion(Bomb* b);
 	void propagateFlame(Flame & f, const QPoint & p, int range);
 	void directedFlameProgagation(Flame & f, const QPoint & p, const QPoint & direction, int range);
@@ -83,6 +89,8 @@ public:
 //    MapServer(qint16, qint16, qint16);
     virtual ~MapServer();
 
+    virtual void addStyle(const mapStyle &style);
+
 	void loadRandom();
 	void addPlayerSlot(int, int);
 	bool assignPlayer(int id);
@@ -110,5 +118,7 @@ public slots:
 
 };
 
+//We only need this operator in the server, and it must match the >> operator in MapClient
+QDataStream& operator<<(QDataStream& out, const mapStyle& ms);
 
 #endif // QTB_MAPSERVER_H
