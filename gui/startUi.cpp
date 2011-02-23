@@ -345,6 +345,7 @@ void StartUi::slotMapPreviewReceived(MapClient *map)
 {
     const QList<mapStyle> *styles = map->getStyles();
     mainWindow->mapOptionCBox->clear();
+    mainWindow->mapOptionCBox->addItem ( "no style" );
     foreach(mapStyle s, *styles)
     {
         qDebug() << "startui style" << s.name;
@@ -422,7 +423,13 @@ void StartUi::slotNewPlayerGraphic(int player, const QPixmap &pix)
 
 void StartUi::slotReadServerDebug()
 {
-    qDebug() << "Server : " << server->readAllStandardOutput();
+    QByteArray array = server->readAllStandardOutput();
+    array.chop(1); //we don't want the last end of line
+    bool multiline = array.contains('\n');
+    if(multiline)
+        qDebug() << "\n** Server debug **\n" << array << "\n** Server debug end **\n";
+    else
+        qDebug() << "Server debug:"<< array;
 }
 
 StartUi::~StartUi()

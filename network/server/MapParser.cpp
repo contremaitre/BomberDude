@@ -66,7 +66,6 @@ bool MapParser::startElement(const QString&, const QString&, const QString& qNam
     
     if (qName == "Style")
     {
-        qDebug() << "Map parser : style";
         QString name;
         MapServer::opt_styles option = MapServer::none;
         for (int i = 0; i < atts.count(); ++i)
