@@ -399,10 +399,10 @@ void StartUi::slotNewPlayerGraphic(int player, const QPixmap &pix)
     qDebug() << "Startui new player graphic" << player;
     QLabel *label = new QLabel;
     label->setPixmap(pix);
-    mainWindow->gridLayout->addWidget(label,player,0);
+    mainWindow->playerListLayout->addWidget(label,player,0);
 
     QLabel *label2 = new QLabel(mainWindow->playersList->item(player,1)->text());
-    mainWindow->gridLayout->addWidget(label2,player,1);
+    mainWindow->playerListLayout->addWidget(label2,player,1);
     labelsPlayerList.push_back(label);
     labelsPlayerList.push_back(label2);
 }

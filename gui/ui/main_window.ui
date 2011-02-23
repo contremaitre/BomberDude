@@ -539,7 +539,7 @@
       <height>121</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QGridLayout" name="playerListLayout">
      <property name="spacing">
       <number>0</number>
      </property>
