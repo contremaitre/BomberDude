@@ -90,12 +90,12 @@ public:
     typedef QPair<qint8,qint8> killedPlayer;       // T1: who was killed, T2: by who
     
 protected:
-    BlockMapProperty* getBlockList() const                    { return block_list; }
     quint8 NbPlayers;
     quint8 maxNbPlayers;
     qint16 width;
     qint16 height;
     QList<SL> styles; //list of map styles available
+    BlockMapProperty *block_list;
 
     static const int MOVE_LEFT = 0;
     static const int MOVE_UP = 1;
@@ -108,7 +108,6 @@ private:
 
 
     qint16 blockSize;                       //There are "blockSize" pixels in one block
-    BlockMapProperty *block_list;
 
     //Test if a coordinate is below (<0) on (0) or above (>0) the middle of the block
     int coordinatePositionInBlock(int coord);

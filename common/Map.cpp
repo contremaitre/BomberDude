@@ -23,8 +23,8 @@ Map<P,SL>::Map() :
     maxNbPlayers(0),
     width(0),
     height(0),
-    blockSize(0),
     block_list(NULL),
+    blockSize(0),
     heartBeat(-999999999)
 {}
 

@@ -72,35 +72,35 @@ void MapServer::addStyle(const mapStyle &style)
 
 void MapServer::loadRandom()
 {
-	// qDebug() << "set Dimensions (2) "<<width<<" "<<height<<" ";
-	qsrand(time(NULL));
-	for(int w = 1; w < width-1; w++)
-	{
-		for(int h = 1; h < height-1; h++)
-		{
-			//randomly add wall or bricks or nothing
-			double d = (double)qrand() / RAND_MAX;
-			if(d < 0.05)
-				getBlockList()[h*width+w].setType(BlockMapProperty::wall);
-			else if(d < 0.1)
-				getBlockList()[h*width+w].setType(BlockMapProperty::brick);
-			else
-				getBlockList()[h*width+w].setType(BlockMapProperty::empty);
-		}
-	}
-	qDebug() << "add walls and bricks";
-	//add walls on the map sides
-	for(int w = 0; w < width; w++)
-	{
-		getBlockList()[w].setType(BlockMapProperty::wall);
-		getBlockList()[(height-1)*width+w].setType(BlockMapProperty::wall);
-	}
-	for(int h = 1; h < height-1; h++)
-	{
-		getBlockList()[h*width].setType(BlockMapProperty::wall);
-		getBlockList()[h*width+width-1].setType(BlockMapProperty::wall);
-	}
-	qDebug() << "add players";
+    // qDebug() << "set Dimensions (2) "<<width<<" "<<height<<" ";
+    qsrand( time(NULL));
+    for (int w = 1; w < width - 1; w++)
+    {
+        for (int h = 1; h < height - 1; h++)
+        {
+            //randomly add wall or bricks or nothing
+            double d = (double) qrand() / RAND_MAX;
+            if (d < 0.05)
+                block_list[h * width + w].setType(BlockMapProperty::wall);
+            else if (d < 0.1)
+                block_list[h * width + w].setType(BlockMapProperty::brick);
+            else
+                block_list[h * width + w].setType(BlockMapProperty::empty);
+        }
+    }
+    qDebug() << "add walls and bricks";
+    //add walls on the map sides
+    for (int w = 0; w < width; w++)
+    {
+        block_list[w].setType(BlockMapProperty::wall);
+        block_list[(height - 1) * width + w].setType(BlockMapProperty::wall);
+    }
+    for (int h = 1; h < height - 1; h++)
+    {
+        block_list[h * width].setType(BlockMapProperty::wall);
+        block_list[h * width + width - 1].setType(BlockMapProperty::wall);
+    }
+    qDebug() << "add players";
 
     //randomly add players
     for (int i = 0; i < MAX_NB_PLAYER; i++)
