@@ -68,6 +68,12 @@ MapServer::~MapServer() {
 void MapServer::addStyle(const mapStyle &style)
 {
     styles << style;
+    qDebug() << "MapServer, style added," << styles.size() << "styles, last has" << style.coordList.size() << "positions";
+}
+
+void MapServer::selectStyle(int)
+{
+
 }
 
 void MapServer::loadRandom()

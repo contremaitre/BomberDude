@@ -339,13 +339,14 @@ void NetClient::handleTcpMsg(QDataStream &in)
 	}
 }
 
-void NetClient::startGame()
+void NetClient::startGame(int styleIndex)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
     out << (quint16)0;
     out << (quint16)msg_start_game;
+    out << (qint8)styleIndex;
     setBlockSize(block, out);
     tcpSocket->write(block);
 }

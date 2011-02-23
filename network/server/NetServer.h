@@ -51,9 +51,9 @@ public:
     void close();
     void restart(); //ends the game, remove all players and wait for new players
     //call this function when the game is launched
-    bool loadMap();
+    bool loadMap(int);
     void setMaxPlayers(int);
-    void startGame();
+    void startGame(int);
     void selectMap(qint8 direction);
     bool passwordReceived(int id, QString &pass);
     void shutdown();

@@ -173,14 +173,14 @@ bool NetServer::passwordReceived(int id, QString &pass)
     return false;
 }
 
-void NetServer::startGame()
+void NetServer::startGame(int styleIndex)
 {
     qDebug() << "NetServer start, starded:" << gameStarted << "nb =" << clients.size();
     //in non debug mode, require at least two players
     if(!gameStarted && (debugMode || clients.size() > 1))
     {
         qDebug() << "NetServer start , nb =" << clients.size();
-        loadMap();
+        loadMap(styleIndex);
         foreach(NetServerClient *client, clients)
             map->assignPlayer(client->getId());
         foreach(NetServerClient *client, clients)
@@ -462,7 +462,7 @@ void NetServer::allocMap()
     connect(map, SIGNAL(sigWinner(qint8)), this, SLOT(slotWinner(qint8)));
 }
 
-bool NetServer::loadMap()
+bool NetServer::loadMap(int styleIndex)
 {
     if(gameStarted)
         qFatal("create map, and game already started");
@@ -489,6 +489,8 @@ bool NetServer::loadMap()
         map->setDim(mapW,mapH,blockSize);
         map->loadRandom();
     }
+    if(styleIndex >=0)
+        map->selectStyle(styleIndex);
     return true;
 }
 

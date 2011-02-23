@@ -40,6 +40,8 @@ private:
     /** The parser's buffer */
     QString qstr_buffer;
 
+    mapStyle currentStyle;
+
 public:
     
     /**

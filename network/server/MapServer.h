@@ -25,11 +25,20 @@
 #include "Point.h"
 
 
+enum optionDirection {optDirNone,optDirLeft,optDirRight,optDirUp,optDirDown};
+
+struct optionCoord
+{
+    enum optionDirection direction;
+    int x;
+    int y;
+};
+
 struct mapStyle
 {
     QString name;
     Map<PlayerServer,mapStyle>::opt_styles option;
-    QList<int> todo;
+    QList<optionCoord> coordList;
 };
 
 class MapServer : public Map<PlayerServer,mapStyle>
@@ -90,7 +99,7 @@ public:
     virtual ~MapServer();
 
     virtual void addStyle(const mapStyle &style);
-
+    void selectStyle(int);
 	void loadRandom();
 	void addPlayerSlot(int, int);
 	bool assignPlayer(int id);

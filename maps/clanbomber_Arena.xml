@@ -22,6 +22,7 @@
 <Style name="teleport" type="teleport">
 <option direction="right" x="3" y="4" />
 <option direction="left" x="3" y="5" />
+<option direction="left" x="3" y="5" />
 </Style>
 </Map>
 

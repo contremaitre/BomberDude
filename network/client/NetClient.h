@@ -48,7 +48,7 @@ public:
     void sendBomb();
     void sendOptKey();
     void setMaxPlayers(int);
-    void startGame();
+    void startGame(int);
     void sendPlayerData(const QString& playerName);
     void setAdminPasswd(const QString &);
     void stopServer();

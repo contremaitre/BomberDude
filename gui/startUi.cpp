@@ -327,8 +327,10 @@ void StartUi::slotMapRandom()
 
 void StartUi::slotStartGame()
 {
+    int styleIndex = mainWindow->mapOptionCBox->currentIndex();
+    qDebug() << "startui start game, style =" << styleIndex;
     if(gamePlay)
-        gamePlay->getNetClient()->startGame();
+        gamePlay->getNetClient()->startGame(styleIndex-1);
 }
 
 void StartUi::slotGameStarted()

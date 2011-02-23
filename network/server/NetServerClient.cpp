@@ -95,9 +95,13 @@ void NetServerClient::handleMsg(QDataStream &in)
         break;
     }
     case msg_start_game:
+    {
+        qint8 styleIndex;
+        in >> styleIndex;
         if(isAdmin)
-            server->startGame();
+            server->startGame(styleIndex);
         break;
+    }
     case msg_select_map:
     {
         qint8 direction;

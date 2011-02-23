@@ -66,34 +66,65 @@ bool MapParser::startElement(const QString&, const QString&, const QString& qNam
     
     if (qName == "Style")
     {
-        QString name;
-        MapServer::opt_styles option = MapServer::none;
+        currentStyle.name.clear();
+        currentStyle.option = MapServer::none;
+        currentStyle.coordList.clear();
         for (int i = 0; i < atts.count(); ++i)
         {
             if (atts.qName(i) == "name")
-                name = atts.value(i);
+                currentStyle.name = atts.value(i);
 
             if (atts.qName(i) == "type")
             {
                 if(atts.value(i) == "arrow")
-                    option = MapServer::arrows;
+                    currentStyle.option = MapServer::arrows;
                 if(atts.value(i) == "teleport")
-                    option = MapServer::teleport;
+                    currentStyle.option = MapServer::teleport;
                 if(atts.value(i) == "mov_walkway")
-                    option = MapServer::mov_walkway;
+                    currentStyle.option = MapServer::mov_walkway;
             }
         }
-        if(!name.isEmpty() && option != MapServer::none)
+    }
+    if (qName == "option")
+    {
+        optionCoord coord = {optDirNone,-1,-1};
+        for (int i = 0; i < atts.count(); ++i)
         {
-            mapStyle style;
-            style.name = name;
-            style.option = option;
-            map->addStyle(style);
+            if (atts.qName(i) == "x")
+                coord.x = atts.value(i).toInt();
+            if (atts.qName(i) == "y")
+                coord.y = atts.value(i).toInt();
+            if (atts.qName(i) == "direction")
+            {
+                if(atts.value(i) == "right")
+                    coord.direction = optDirRight;
+                else if(atts.value(i) == "left")
+                    coord.direction = optDirLeft;
+                else if(atts.value(i) == "up")
+                    coord.direction = optDirUp;
+                else if(atts.value(i) == "down")
+                    coord.direction = optDirDown;
+                else
+                {
+                    qDebug() << "MapParser, warning unknown direction in Option element" << atts.value(i);
+                    return true;
+                }
+            }
         }
-        else
+        if(coord.x == -1 || coord.y == -1)
         {
-            qDebug() << "Map parser warning, unknown style element" << name << option;
+            qDebug() << "MapParser, warning mandatory coordinate for option element missing";
+            return true;
         }
+        if(currentStyle.option == MapServer::arrows || currentStyle.option == MapServer::teleport)
+        {
+            if(coord.direction == optDirNone)
+            {
+                qDebug() << "MapParser, warning mandatory direction for option element missing";
+                return true;
+            }
+        }
+        currentStyle.coordList << coord;
     }
     return true;
 }
@@ -144,6 +175,17 @@ bool MapParser::endElement(const QString &, const QString &, const QString & qNa
             }
         }
         counterRows++;
+    }
+    if (qName == "Style")
+    {
+        if(!currentStyle.name.isEmpty() && currentStyle.option != MapServer::none && !currentStyle.coordList.empty())
+        {
+            map->addStyle(currentStyle);
+        }
+        else
+        {
+            qDebug() << "Map parser warning, style element ignored" << currentStyle.name << currentStyle.option << currentStyle.coordList.size();
+        }
     }
     return true;
 }
