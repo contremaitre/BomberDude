@@ -89,6 +89,12 @@ void Map<P,SL>::setType(BlockMapProperty::BlockType type, int x, int y)
 }
 
 template<typename P, typename SL>
+void Map<P,SL>::setOption(BlockMapProperty::BlockOption option, int pos)
+{
+    block_list[pos].setOption(option);
+}
+
+template<typename P, typename SL>
 void Map<P,SL>::setOption(BlockMapProperty::BlockOption option, int x, int y)
 {
     block_list[y*width+x].setOption(option);
@@ -304,6 +310,8 @@ QDataStream &operator>>(QDataStream & in, Map<P,SL> &map) {
     {
         in >> x;
         map.setType((BlockMapProperty::BlockType)x,i);
+        in >> x;
+        map.setOption((BlockMapProperty::BlockOption)x,i);
     }
 
     //copy style list
@@ -330,9 +338,12 @@ QDataStream &operator<<(QDataStream &out, const Map<P,SL> &map) {
         map.getPlayerPosition(i,x,y);
         out << x << y;
     }
-    //copy block types in our data stream
+    //copy block types and option in our data stream
     for(int i = 0; i < map.getWidth()*map.getHeight(); i++)
+    {
         out << (qint16)map.getType(i);
+        out << (qint16)map.getOption(i);
+    }
 
     //copy style list
     const QList<SL> *styleList = map.getStylesList();
