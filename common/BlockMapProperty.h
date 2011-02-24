@@ -19,11 +19,17 @@
 #define QTB_BLOCKMAPPROPERTY_H
 
 
+/**
+ * This class represent a block on the field
+ * A block can be a wall, a brick or empty
+ * A block can also have an option like an arrow, a teleport etc...
+ */
 class BlockMapProperty
 {
 public:
     //must be kept in sync in PixmapsItem
-    enum BlockType {wall,brick,bomb,bombrc,flame,empty,broken};
+    enum BlockType {wall,brick,empty,broken,flame};
+    enum BlockOption {none,arrow,teleport,mov_walk};
 
     BlockMapProperty();
     ~BlockMapProperty();
@@ -32,6 +38,7 @@ public:
     BlockType getType() const;
 private:
     BlockType type;
+    BlockOption option;
 };
 
 

@@ -54,11 +54,11 @@ void PixmapsItems::loadAll()
 
     burnt = QPixmap("pictures/tux_burn.png").scaled(QSizeF(width,height).toSize());
     option_unknown = QPixmap("pictures/bonus_unknown.png").scaled(QSizeF(width,height).toSize());
+    bomb = QPixmap("pictures/bomb.png").scaled(QSizeF(width,height).toSize());
+    bombrc = QPixmap("pictures/bomb_rc.png").scaled(QSizeF(width,height).toSize());
 
     addBlockPixMap(BlockMapProperty::brick,"pictures/brick.png");
     addBlockPixMap(BlockMapProperty::wall,"pictures/wall.png");
-    addBlockPixMap(BlockMapProperty::bomb,"pictures/bomb.png");
-    addBlockPixMap(BlockMapProperty::bombrc,"pictures/bomb_rc.png");
     addBlockPixMap(BlockMapProperty::flame,"pictures/explosion.png");
     addBlockPixMap(BlockMapProperty::broken,"pictures/broken.png");
 }

@@ -17,9 +17,11 @@
 
 #include "BlockMapProperty.h"
 
-BlockMapProperty::BlockMapProperty()
+BlockMapProperty::BlockMapProperty() :
+        type(empty),
+        option(none)
+
 {
-    type = empty;
 }
 
 BlockMapProperty::~BlockMapProperty()

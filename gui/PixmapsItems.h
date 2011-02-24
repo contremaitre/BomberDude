@@ -40,6 +40,8 @@ private:
     QPixmap sick;
     QPixmap option_unknown;
     QPixmap none;
+    QPixmap bomb;
+    QPixmap bombrc;
     void loadAll();
     void addBlockPixMap(BlockMapProperty::BlockType, const char *);
     void addBonusPixMap(Bonus::Bonus_t, const char *);
@@ -53,6 +55,8 @@ public:
     const QPixmap& getPixmap(int);
     const QPixmap& getPixmapBurnt() const                   { return burnt; }
     const QPixmap& getPixmapSick() const                    { return sick; }
+    const QPixmap& getPixmapBomb() const                    { return bomb; }
+    const QPixmap& getPixmapBombrc() const                  { return bombrc; }
     const QPixmap& getPixmap(Bonus::Bonus_t);
 };
 

@@ -277,7 +277,7 @@ void GameArena::slotAddBomb(int id)
                                                        bomb->y * squareSize,
                                                             squareSize);
     qDebug() << "new bomb, remote =" << bomb->remoteControlled;
-    pix->setItem(pixmaps.getPixmap(bomb->remoteControlled ? BlockMapProperty::bombrc : BlockMapProperty::bomb));
+    pix->setItem(bomb->remoteControlled ? pixmaps.getPixmapBombrc() : pixmaps.getPixmapBomb());
     bombs[id] = pix;
     scene->addItem(pix);
 }
@@ -300,7 +300,7 @@ void GameArena::slotRemoveBombRC(int id)
         QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb->x * squareSize,
                                                            bomb->y * squareSize,
                                                                 squareSize);
-        pix->setItem(pixmaps.getPixmap(BlockMapProperty::bomb));
+        pix->setItem(pixmaps.getPixmapBomb());
         *itb = pix;
         scene->addItem(pix);
         qDebug() << "gamearene : bomb lost rc";
