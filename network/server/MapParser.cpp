@@ -67,7 +67,7 @@ bool MapParser::startElement(const QString&, const QString&, const QString& qNam
     if (qName == "Style")
     {
         currentStyle.name.clear();
-        currentStyle.option = MapServer::none;
+        currentStyle.option = BlockMapProperty::none;
         currentStyle.coordList.clear();
         for (int i = 0; i < atts.count(); ++i)
         {
@@ -77,11 +77,11 @@ bool MapParser::startElement(const QString&, const QString&, const QString& qNam
             if (atts.qName(i) == "type")
             {
                 if(atts.value(i) == "arrow")
-                    currentStyle.option = MapServer::arrows;
+                    currentStyle.option = BlockMapProperty::arrow;
                 if(atts.value(i) == "teleport")
-                    currentStyle.option = MapServer::teleport;
+                    currentStyle.option = BlockMapProperty::teleport;
                 if(atts.value(i) == "mov_walkway")
-                    currentStyle.option = MapServer::mov_walkway;
+                    currentStyle.option = BlockMapProperty::mov_walk;
             }
         }
     }
@@ -116,7 +116,7 @@ bool MapParser::startElement(const QString&, const QString&, const QString& qNam
             qDebug() << "MapParser, warning mandatory coordinate for option element missing";
             return true;
         }
-        if(currentStyle.option == MapServer::arrows || currentStyle.option == MapServer::teleport)
+        if(currentStyle.option == BlockMapProperty::arrow || currentStyle.option == BlockMapProperty::teleport)
         {
             if(coord.direction == optDirNone)
             {
@@ -178,7 +178,7 @@ bool MapParser::endElement(const QString &, const QString &, const QString & qNa
     }
     if (qName == "Style")
     {
-        if(!currentStyle.name.isEmpty() && currentStyle.option != MapServer::none && !currentStyle.coordList.empty())
+        if(!currentStyle.name.isEmpty() && currentStyle.option != BlockMapProperty::none && !currentStyle.coordList.empty())
         {
             map->addStyle(currentStyle);
         }

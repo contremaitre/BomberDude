@@ -31,10 +31,12 @@
 class PixmapsItems
 {
 private:
-    struct block_pixmaps_t{QPixmap pixmap; BlockMapProperty::BlockType type;};
-    struct option_pixmaps_t{QPixmap pixmap; Bonus::Bonus_t type;};
+    struct block_pixmaps_t {QPixmap pixmap; BlockMapProperty::BlockType type;};
+    struct option_pixmaps_t{QPixmap pixmap; BlockMapProperty::BlockOption type;};
+    struct bonus_pixmaps_t {QPixmap pixmap; Bonus::Bonus_t type;};
     QList <block_pixmaps_t> block_pixmaps;
     QList <option_pixmaps_t> option_pixmaps;
+    QList <bonus_pixmaps_t> bonus_pixmaps;
     QPixmap bomberman[10];
     QPixmap burnt;
     QPixmap sick;
@@ -44,6 +46,7 @@ private:
     QPixmap bombrc;
     void loadAll();
     void addBlockPixMap(BlockMapProperty::BlockType, const char *);
+    void addOptionPixMap(BlockMapProperty::BlockOption, const char *);
     void addBonusPixMap(Bonus::Bonus_t, const char *);
     //width and height to scale the pixmaps to the good size
     int width, height;
@@ -51,13 +54,14 @@ public:
     PixmapsItems();
     ~PixmapsItems();
     void init(int,int);
+    const QPixmap& getPixmap(BlockMapProperty::BlockOption);
     const QPixmap& getPixmap(BlockMapProperty::BlockType);
+    const QPixmap& getPixmap(Bonus::Bonus_t);
     const QPixmap& getPixmap(int);
     const QPixmap& getPixmapBurnt() const                   { return burnt; }
     const QPixmap& getPixmapSick() const                    { return sick; }
     const QPixmap& getPixmapBomb() const                    { return bomb; }
     const QPixmap& getPixmapBombrc() const                  { return bombrc; }
-    const QPixmap& getPixmap(Bonus::Bonus_t);
 };
 
 

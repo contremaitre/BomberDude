@@ -127,7 +127,7 @@ QDataStream& operator>>(QDataStream& in, mapStyle& ms)
 {
     quint8 opt;
     in >> ms.name >> opt;
-    ms.option = static_cast<Map<Player,mapStyle>::opt_styles>(opt);
+    ms.option = static_cast<BlockMapProperty::BlockOption>(opt);
     qDebug() << "map client, received style" << ms.name;
     return in;
 }

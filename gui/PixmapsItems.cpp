@@ -71,12 +71,20 @@ void PixmapsItems::addBlockPixMap(BlockMapProperty::BlockType type, const char *
     block_pixmaps.push_back(tmp_block);
 }
 
-void PixmapsItems::addBonusPixMap(Bonus::Bonus_t type, const char *name)
+void PixmapsItems::addOptionPixMap(BlockMapProperty::BlockOption type, const char *name)
 {
     option_pixmaps_t tmp_block;
     tmp_block.pixmap = QPixmap(name).scaled(QSizeF(width,height).toSize());
     tmp_block.type = type;
     option_pixmaps.push_back(tmp_block);
+}
+
+void PixmapsItems::addBonusPixMap(Bonus::Bonus_t type, const char *name)
+{
+    bonus_pixmaps_t tmp_block;
+    tmp_block.pixmap = QPixmap(name).scaled(QSizeF(width,height).toSize());
+    tmp_block.type = type;
+    bonus_pixmaps.push_back(tmp_block);
 }
 
 const QPixmap& PixmapsItems::getPixmap(BlockMapProperty::BlockType type)
@@ -89,11 +97,21 @@ const QPixmap& PixmapsItems::getPixmap(BlockMapProperty::BlockType type)
     return none;
 }
 
-const QPixmap& PixmapsItems::getPixmap(Bonus::Bonus_t type)
+const QPixmap& PixmapsItems::getPixmap(BlockMapProperty::BlockOption type)
 {
     for (int i = 0; i < option_pixmaps.size(); ++i) {
         if (option_pixmaps.at(i).type == type)
             return option_pixmaps.at(i).pixmap;
+    }
+    //todo could this case be avoided ?
+    return none;
+}
+
+const QPixmap& PixmapsItems::getPixmap(Bonus::Bonus_t type)
+{
+    for (int i = 0; i < bonus_pixmaps.size(); ++i) {
+        if (bonus_pixmaps.at(i).type == type)
+            return bonus_pixmaps.at(i).pixmap;
     }
     qDebug() << "*** Warning *** unknown option" << type << "server version newer than client version ?";
     return option_unknown;

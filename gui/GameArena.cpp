@@ -98,6 +98,14 @@ void GameArena::setMap(MapClient *newMap)
         {
             initCase(i,j);
             getCase(i,j)->setItem(pixmaps.getPixmap(map->getType(i,j)));
+            if(map->getOption(i,j) != BlockMapProperty::none)
+            {
+                //add this option on the map. It won't be removed or changed during the game.
+                QGraphicsSquareItem* optItem = new QGraphicsSquareItem(i * squareSize,j * squareSize,squareSize);
+                optItem->setItem(pixmaps.getPixmap(map->getOption(i,j)));
+                scene->addItem(optItem);
+                optionsItems << optItem;
+            }
         }
     }
     qint16 x,y;
@@ -335,6 +343,13 @@ void GameArena::slotMapWinner(qint8 playerId) {
 
 GameArena::~GameArena()
 {
+    while(!optionsItems.empty())
+    {
+        QGraphicsSquareItem* item = optionsItems.takeFirst();
+        scene->removeItem(item);
+        delete item;
+    }
+
     clear();
     delete graphicView;
     //delete scene; todo crash ?

@@ -51,6 +51,7 @@ private:
     QGraphicsSquareItem **squaresItem;
     playersItem_t *playersItem;
     QList<QGraphicsSquareItem*> burntPlayers;
+    QList<QGraphicsSquareItem*> optionsItems;
     QMap<QPoint, QGraphicsItem*> bonus;
     QMap<int, QGraphicsItem*> bombs;
 

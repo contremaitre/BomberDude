@@ -71,9 +71,17 @@ void MapServer::addStyle(const mapStyle &style)
     qDebug() << "MapServer, style added," << styles.size() << "styles, last has" << style.coordList.size() << "positions";
 }
 
-void MapServer::selectStyle(int)
+void MapServer::selectStyle(int style)
 {
+    /* sanity check */
+    if(style >= styles.size())
+        return;
 
+    BlockMapProperty::BlockOption option = styles[style].option;
+    foreach(optionCoord coord,styles[style].coordList)
+    {
+        setOption(option,coord.x, coord.y);
+    }
 }
 
 void MapServer::loadRandom()

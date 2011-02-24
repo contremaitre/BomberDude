@@ -20,7 +20,6 @@
 BlockMapProperty::BlockMapProperty() :
         type(empty),
         option(none)
-
 {
 }
 
@@ -38,3 +37,12 @@ BlockMapProperty::BlockType BlockMapProperty::getType() const
     return type;
 }
 
+void BlockMapProperty::setOption(BlockOption o)
+{
+    option = o;
+}
+
+BlockMapProperty::BlockOption BlockMapProperty::getOption() const
+{
+    return option;
+}

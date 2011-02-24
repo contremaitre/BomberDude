@@ -17,7 +17,7 @@ class QGraphicsItem;
 struct mapStyle
 {
     QString name;
-    Map<Player,mapStyle>::opt_styles option;
+    BlockMapProperty::BlockOption option;
 };
 
 class MapClient : public Map<Player,mapStyle>

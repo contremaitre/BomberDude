@@ -36,6 +36,10 @@ public:
 
     void setType(BlockType);
     BlockType getType() const;
+
+    void setOption(BlockOption);
+    BlockOption getOption() const;
+
 private:
     BlockType type;
     BlockOption option;

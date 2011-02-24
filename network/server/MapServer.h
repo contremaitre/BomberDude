@@ -37,7 +37,7 @@ struct optionCoord
 struct mapStyle
 {
     QString name;
-    Map<PlayerServer,mapStyle>::opt_styles option;
+    BlockMapProperty::BlockOption option;
     QList<optionCoord> coordList;
 };
 

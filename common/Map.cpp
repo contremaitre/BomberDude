@@ -89,6 +89,12 @@ void Map<P,SL>::setType(BlockMapProperty::BlockType type, int x, int y)
 }
 
 template<typename P, typename SL>
+void Map<P,SL>::setOption(BlockMapProperty::BlockOption option, int x, int y)
+{
+    block_list[y*width+x].setOption(option);
+}
+
+template<typename P, typename SL>
 void Map<P,SL>::getBlockPosition(int x, int y, int &xdest, int &ydest) const
 {
     xdest = x / blockSize;
