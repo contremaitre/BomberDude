@@ -81,6 +81,20 @@ void MapServer::selectStyle(int style)
     foreach(optionCoord coord,styles[style].coordList)
     {
         setOption(option,coord.x, coord.y);
+        if(option == BlockMapProperty::teleport)
+        {
+            //remove adjacent block
+            block_list[coord.y * width + coord.x].setType(BlockMapProperty::empty);
+            if(coord.x > 1)
+                block_list[coord.y * width + coord.x-1].setType(BlockMapProperty::empty);
+            if(coord.x < width-1)
+                block_list[coord.y * width + coord.x+1].setType(BlockMapProperty::empty);
+            if(coord.y > 1)
+                block_list[(coord.y-1) * width + coord.x].setType(BlockMapProperty::empty);
+            if(coord.y < height-1)
+                block_list[(coord.y+1) * width + coord.x].setType(BlockMapProperty::empty);
+
+        }
     }
 }
 
