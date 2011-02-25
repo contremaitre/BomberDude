@@ -379,6 +379,8 @@ void MapServer::getNextTeleportPosition(int id, int &x, int &y)
 
 bool MapServer::blockContainsTeleport(int x, int y, int &id)
 {
+    if(getOption(x,y) != BlockMapProperty::teleport)
+        return false;
     for(int i = 0; i < teleports.size(); i++)
     {
         if(teleports[i].x() == x && teleports[i].y() == y)
