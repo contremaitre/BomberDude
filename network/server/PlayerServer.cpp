@@ -12,6 +12,7 @@ PlayerServer::PlayerServer(int playerId) :
     throwBombBonus(false),
     boxingGloveBonus(false),
     optKeyClicked(false),
+    onTeleport(false),
     maxNumberOfBombs(DEFAULT_BOMB_CAPACITY),
     bombsAvailable(maxNumberOfBombs),
     nbRemoteControl(0),

@@ -61,6 +61,9 @@ public:
     bool hasRemoteBonus() const         { return nbRemoteControl > 0; }
     bool getRemoteBonus();
 
+    bool getOnTeleport() const          { return onTeleport; }
+    void setOnTeleport(bool on)         { onTeleport = on; }
+
     void setSickness(sickness s);
     sickness getSickness()              {return currentSickness;}
 
@@ -77,6 +80,8 @@ private:
     bool throwBombBonus;
     bool boxingGloveBonus;
     bool optKeyClicked;
+
+    bool onTeleport; //set if the player was on a teleport on his previous position
 
     qint8 maxNumberOfBombs;
     qint8 bombsAvailable;

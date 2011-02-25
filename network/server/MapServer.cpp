@@ -83,6 +83,8 @@ void MapServer::selectStyle(int style)
         setOption(option,coord.x, coord.y);
         if(option == BlockMapProperty::teleport)
         {
+            QPoint point(coord.x, coord.y);
+            teleports << point;
             //remove adjacent block
             block_list[coord.y * width + coord.x].setType(BlockMapProperty::empty);
             if(coord.x > 1)
@@ -366,6 +368,28 @@ int MapServer::absMin(int a, int b) const
 	}
 }
 
+void MapServer::getNextTeleportPosition(int id, int &x, int &y)
+{
+    id++;
+    if(id >= teleports.size())
+        id = 0;
+    x = teleports[id].x();
+    y = teleports[id].y();
+}
+
+bool MapServer::blockContainsTeleport(int x, int y, int &id)
+{
+    for(int i = 0; i < teleports.size(); i++)
+    {
+        if(teleports[i].x() == x && teleports[i].y() == y)
+        {
+            id = i;
+            return true;
+        }
+    }
+    return false;
+}
+
 bool MapServer::blockEmpty(int x, int y)
 {
     if(getType(x,y) != BlockMapProperty::empty)
@@ -631,26 +655,25 @@ void MapServer::doPlayerDeath(PlayerServer* playerN)
 
 bool MapServer::checkPlayerInFlames(PlayerServer* playerN,
                          const QPoint& playerBlock,
-                         const QList<Flame*>& flamesToCheck,
-                         QList<killedPlayer>& killedPlayers) {
+                         const QList<Flame*>& flamesToCheck) {
     foreach(Flame* f, flamesToCheck)
         if(f->getFlamePositions().contains(playerBlock)) {
             playerN->setIsAlive(false);
             killedPlayers.append(killedPlayer(playerN->getId(), f->getPlayerId()));
+            doPlayerDeath(playerN);
             return true;
         }
 
     return false;
 }
 
-void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
-                                        QList<killedPlayer>& killedPlayers) {
+void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
     int x, y;
     getBlockPosition(playerN->getX(), playerN->getY(), x, y);
     QPoint actPoint(x, y);
 
     // check whether the player threw himself in a flame
-    if(checkPlayerInFlames(playerN, actPoint, flames, killedPlayers))
+    if(checkPlayerInFlames(playerN, actPoint, flames))
         return;
 
     // TODO check for other player close by for disease
@@ -728,6 +751,29 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN,
         }
         playerN->heldBonus.append(pickedUpBonus);        
     }
+    if(playerN->getOnTeleport() )
+    {
+        int id;
+        if(!blockContainsTeleport(x,y,id))
+        {
+            //qDebug("player moved out of the teleport");
+            playerN->setOnTeleport(false);
+        }
+    }
+    else
+    {
+        int id;
+        if(blockContainsTeleport(x,y,id))
+        {
+            int x_next_tp, y_next_tp;
+            //qDebug() << "player moved in the teleport" << id;
+            playerN->setOnTeleport(true);
+            getNextTeleportPosition(id, x_next_tp, y_next_tp);
+            QPoint actPoint(x_next_tp * getBlockSize() + getBlockSize() / 2, y_next_tp * getBlockSize() + getBlockSize() / 2);
+            setPlayerPosition(playerN->getId(),actPoint.x(),actPoint.y());
+            checkPlayerInFlames(playerN, actPoint, flames);
+        }
+    }
 }
 
 Bonus* MapServer::removeBonus(qint8 x, qint8 y) {
@@ -769,7 +815,7 @@ void MapServer::newHeartBeat() {
     if(heartBeat % 100 == 0)
         qDebug() << "send Hearbeat #" << heartBeat;
 
-    QList<killedPlayer> killedPlayers;
+    killedPlayers.clear();
     createdBonus.clear();
     removedBonus.clear();
 
@@ -814,7 +860,7 @@ void MapServer::newHeartBeat() {
                     movePlayer(playerN->getId(), playerN->getDirection(), playerN->getMoveDistance());
                     playerN->setDirection(-1);
                 }
-                checkPlayerSurroundings(playerN, killedPlayers);
+                checkPlayerSurroundings(playerN);
             }
         }
     }
@@ -865,10 +911,7 @@ void MapServer::newHeartBeat() {
                 int px, py;
                 getBlockPosition(playerN->getX(), playerN->getY(), px, py);
                 QPoint actPoint(px, py);
-                if(checkPlayerInFlames(playerN, actPoint, explodeList, killedPlayers))
-                {
-                    doPlayerDeath(playerN);
-                }
+                checkPlayerInFlames(playerN, actPoint, explodeList);
             }
         }
     }

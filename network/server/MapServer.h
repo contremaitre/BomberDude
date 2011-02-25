@@ -62,13 +62,13 @@ private:
     QList<Bomb*> addBombMultiple(int playerId);
     bool getRandomEmptyPosition(int &x, int &y);
     bool blockEmpty(int x, int y);//return true if there is nothing on this block
+    bool blockContainsTeleport(int x, int y, int &id);
+    void getNextTeleportPosition(int id, int &x, int &y);
     bool checkPlayerInFlames(PlayerServer* playerN,
                              const QPoint& playerBlock,
-                             const QList<Flame*>& flamesToCheck,
-                             QList<killedPlayer>& killedPlayers);
+                             const QList<Flame*>& flamesToCheck);
     void doPlayerDeath(PlayerServer* playerN); //check what has to be done when a player die
-    void checkPlayerSurroundings(PlayerServer* player,
-                                 QList<killedPlayer>& killedPlayers);
+    void checkPlayerSurroundings(PlayerServer* player);
 
     Bonus* removeBonus(qint8 x, qint8 y);
 
@@ -80,6 +80,7 @@ private:
     Bonus::Bonus_t bonusTable[BONUS_TABLE_LENGTH];          ///< table to determine which bonus to add
     QList<const Bonus*> createdBonus;                       ///< list of bonus created during the heartbeat
     QList<Point<qint8> > removedBonus;                      ///< list of bonus picked up or destroyed during the heartbeat
+    QList<QPoint> teleports;                                ///< We need a list of teleports to know where is the next teleport
 
 	struct initialPlayerPosition
 	{
@@ -88,6 +89,7 @@ private:
 	};
 	QList <initialPlayerPosition> startPlayerSlots;
 	QList <Bonus::Bonus_t> bonusToSpawn; //when a player die, or pick a bonus incompatible with another one, the bonus re-spawn on the map
+	QList<killedPlayer> killedPlayers; //list of killed players during the current heartbeat
 	static const QPoint dirLeft;
 	static const QPoint dirRight;
 	static const QPoint dirUp;
