@@ -62,7 +62,7 @@ void PixmapsItems::loadAll()
     addBlockPixMap(BlockMapProperty::flame,"pictures/explosion.png");
     addBlockPixMap(BlockMapProperty::broken,"pictures/broken.png");
 
-    //addOptionPixMap(BlockMapProperty::teleport,"todo");
+    addOptionPixMap(BlockMapProperty::teleport,"pictures/option_teleport.png");
 }
 
 void PixmapsItems::addBlockPixMap(BlockMapProperty::BlockType type, const char *name)

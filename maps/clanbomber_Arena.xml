@@ -20,9 +20,9 @@
 <option direction="left" x="3" y="5" />
 </Style>
 <Style name="teleport" type="teleport">
-<option direction="right" x="3" y="4" />
-<option direction="left" x="3" y="5" />
-<option direction="left" x="3" y="5" />
+<option direction="right" x="8" y="1" />
+<option direction="left" x="8" y="2" />
+<option direction="left" x="8" y="3" />
 </Style>
 </Map>
 
