@@ -15,14 +15,17 @@
   <Row>  ===++_p_++===  </Row>
   <Row>    =========    </Row>
 </Arena>
-<Style name="fleches" type="arrow">
-<option direction="right" x="3" y="4" />
-<option direction="left" x="3" y="5" />
+<Style name="tapis" type="mov_walkway">
+<option direction="left" x="6" y="6" />
+<option direction="left" x="7" y="6" />
+<option direction="left" x="8" y="6" />
+<option direction="left" x="9" y="6" />
+<option direction="left" x="10" y="6" />
 </Style>
 <Style name="teleport" type="teleport">
-<option direction="right" x="1" y="3" />
-<option direction="left" x="4" y="5" />
-<option direction="left" x="10" y="2" />
+<option x="1" y="3" />
+<option x="4" y="5" />
+<option x="10" y="2" />
 </Style>
 </Map>
 

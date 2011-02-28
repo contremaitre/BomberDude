@@ -44,7 +44,7 @@
 //Gameplay
 #define HEARTBEAT 50 //(ms)
 #define MOVE_STEP (int)(BLOCK_SIZE/6)
-
+#define WALKWAY_SPEED 2
 
 const int MAX_PLAYER_NAME_LENGTH = 16;
 

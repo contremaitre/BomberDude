@@ -25,11 +25,9 @@
 #include "Point.h"
 
 
-enum optionDirection {optDirNone,optDirLeft,optDirRight,optDirUp,optDirDown};
-
 struct optionCoord
 {
-    enum optionDirection direction;
+    BlockMapProperty::optionDirection direction;
     int x;
     int y;
 };

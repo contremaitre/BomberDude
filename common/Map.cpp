@@ -89,15 +89,15 @@ void Map<P,SL>::setType(BlockMapProperty::BlockType type, int x, int y)
 }
 
 template<typename P, typename SL>
-void Map<P,SL>::setOption(BlockMapProperty::BlockOption option, int pos)
+void Map<P,SL>::setOption(int pos, BlockMapProperty::BlockOption option, BlockMapProperty::optionDirection dir)
 {
-    block_list[pos].setOption(option);
+    block_list[pos].setOption(option, dir);
 }
 
 template<typename P, typename SL>
-void Map<P,SL>::setOption(BlockMapProperty::BlockOption option, int x, int y)
+void Map<P,SL>::setOption(int x, int y, BlockMapProperty::BlockOption option, BlockMapProperty::optionDirection dir)
 {
-    block_list[y*width+x].setOption(option);
+    block_list[y*width+x].setOption(option, dir);
 }
 
 template<typename P, typename SL>
@@ -311,7 +311,8 @@ QDataStream &operator>>(QDataStream & in, Map<P,SL> &map) {
         in >> x;
         map.setType((BlockMapProperty::BlockType)x,i);
         in >> x;
-        map.setOption((BlockMapProperty::BlockOption)x,i);
+        in >> y;
+        map.setOption(i,(BlockMapProperty::BlockOption)x,(BlockMapProperty::optionDirection)y);
     }
 
     //copy style list
@@ -343,6 +344,7 @@ QDataStream &operator<<(QDataStream &out, const Map<P,SL> &map) {
     {
         out << (qint16)map.getType(i);
         out << (qint16)map.getOption(i);
+        out << (qint16)map.getOptionDirection(i);
     }
 
     //copy style list

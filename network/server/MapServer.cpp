@@ -80,7 +80,7 @@ void MapServer::selectStyle(int style)
     BlockMapProperty::BlockOption option = styles[style].option;
     foreach(optionCoord coord,styles[style].coordList)
     {
-        setOption(option,coord.x, coord.y);
+        setOption(coord.x, coord.y, option, coord.direction);
         if(option == BlockMapProperty::teleport)
         {
             QPoint point(coord.x, coord.y);
@@ -774,6 +774,29 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
             QPoint actPoint(x_next_tp * getBlockSize() + getBlockSize() / 2, y_next_tp * getBlockSize() + getBlockSize() / 2);
             setPlayerPosition(playerN->getId(),actPoint.x(),actPoint.y());
             checkPlayerInFlames(playerN, actPoint, flames);
+            return;
+        }
+    }
+    if(getOption(x,y) == BlockMapProperty::mov_walk)
+    {
+        //qDebug() << "player" << playerN->getId() << "on moving walkway";
+
+        switch(getOptionDirection(x,y))
+        {
+        case BlockMapProperty::optDirLeft:
+            tryMovePlayer(playerN->getId(),MOVE_LEFT,WALKWAY_SPEED);
+            break;
+        case BlockMapProperty::optDirRight:
+            tryMovePlayer(playerN->getId(),MOVE_RIGHT,WALKWAY_SPEED);
+            break;
+        case BlockMapProperty::optDirUp:
+            tryMovePlayer(playerN->getId(),MOVE_DOWN,WALKWAY_SPEED);
+            break;
+        case BlockMapProperty::optDirDown:
+            tryMovePlayer(playerN->getId(),MOVE_UP,WALKWAY_SPEED);
+            break;
+        default:
+            break;
         }
     }
 }

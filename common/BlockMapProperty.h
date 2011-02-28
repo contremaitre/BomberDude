@@ -30,6 +30,7 @@ public:
     //must be kept in sync in PixmapsItem
     enum BlockType {wall,brick,empty,broken,flame};
     enum BlockOption {none,arrow,teleport,mov_walk};
+    enum optionDirection {optDirNone,optDirLeft,optDirRight,optDirUp,optDirDown};
 
     BlockMapProperty();
     ~BlockMapProperty();
@@ -37,12 +38,14 @@ public:
     void setType(BlockType);
     BlockType getType() const;
 
-    void setOption(BlockOption);
+    void setOption(BlockOption, optionDirection);
     BlockOption getOption() const;
+    optionDirection getOptionDirection() const;
 
 private:
     BlockType type;
     BlockOption option;
+    optionDirection optionDir;
 };
 
 

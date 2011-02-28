@@ -62,10 +62,12 @@ public:
     BlockMapProperty::BlockType getType(int pos) const              { return block_list[pos].getType(); }
     void setType(BlockMapProperty::BlockType type, int pos);
     void setType(BlockMapProperty::BlockType type, int x, int y);
-    void setOption(BlockMapProperty::BlockOption option, int pos);
-    void setOption(BlockMapProperty::BlockOption option, int x, int y);
+    void setOption(int pos, BlockMapProperty::BlockOption option, BlockMapProperty::optionDirection dir);
+    void setOption(int x, int y, BlockMapProperty::BlockOption option, BlockMapProperty::optionDirection dir);
     BlockMapProperty::BlockOption getOption(int w, int h) const     { return block_list[h*width+w].getOption(); }
     BlockMapProperty::BlockOption getOption(int pos) const          { return block_list[pos].getOption(); }
+    BlockMapProperty::optionDirection getOptionDirection(int w, int h) const     { return block_list[h*width+w].getOptionDirection(); }
+    BlockMapProperty::optionDirection getOptionDirection(int pos) const          { return block_list[pos].getOptionDirection(); }
 
     void getBlockPosition(int x, int y, int &xdest, int &ydest) const;
     void getNextBlock(int x, int y, int &xdest, int &ydest, int direction) const;

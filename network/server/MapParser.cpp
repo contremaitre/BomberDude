@@ -87,7 +87,7 @@ bool MapParser::startElement(const QString&, const QString&, const QString& qNam
     }
     if (qName == "option")
     {
-        optionCoord coord = {optDirNone,-1,-1};
+        optionCoord coord = {BlockMapProperty::optDirNone,-1,-1};
         for (int i = 0; i < atts.count(); ++i)
         {
             if (atts.qName(i) == "x")
@@ -97,13 +97,13 @@ bool MapParser::startElement(const QString&, const QString&, const QString& qNam
             if (atts.qName(i) == "direction")
             {
                 if(atts.value(i) == "right")
-                    coord.direction = optDirRight;
+                    coord.direction = BlockMapProperty::optDirRight;
                 else if(atts.value(i) == "left")
-                    coord.direction = optDirLeft;
+                    coord.direction = BlockMapProperty::optDirLeft;
                 else if(atts.value(i) == "up")
-                    coord.direction = optDirUp;
+                    coord.direction = BlockMapProperty::optDirUp;
                 else if(atts.value(i) == "down")
-                    coord.direction = optDirDown;
+                    coord.direction = BlockMapProperty::optDirDown;
                 else
                 {
                     qDebug() << "MapParser, warning unknown direction in Option element" << atts.value(i);
@@ -118,7 +118,7 @@ bool MapParser::startElement(const QString&, const QString&, const QString& qNam
         }
         if(currentStyle.option == BlockMapProperty::arrow || currentStyle.option == BlockMapProperty::teleport)
         {
-            if(coord.direction == optDirNone)
+            if(coord.direction == BlockMapProperty::optDirNone)
             {
                 qDebug() << "MapParser, warning mandatory direction for option element missing";
                 return true;
