@@ -116,7 +116,7 @@ bool MapParser::startElement(const QString&, const QString&, const QString& qNam
             qDebug() << "MapParser, warning mandatory coordinate for option element missing";
             return true;
         }
-        if(currentStyle.option == BlockMapProperty::arrow || currentStyle.option == BlockMapProperty::teleport)
+        if(currentStyle.option == BlockMapProperty::arrow)
         {
             if(coord.direction == BlockMapProperty::optDirNone)
             {
