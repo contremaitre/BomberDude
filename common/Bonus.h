@@ -4,6 +4,7 @@
 
 #include <QDataStream>
 
+#define NB_BONUS 12
 
 class Bonus {
 public:
@@ -19,6 +20,7 @@ public:
     static const Bonus_t BONUS_MULTIBOMB = 8;
     static const Bonus_t BONUS_THROW_GLOVE = 9;
     static const Bonus_t BONUS_BOXING_GLOVE = 10;
+    static const Bonus_t BONUS_RANDOM = 11;
 
     Bonus() :
         type(BONUS_NONE),
@@ -33,7 +35,7 @@ public:
     {}
 
     Bonus_t getType() const                 { Q_ASSERT(type != BONUS_NONE); return type; }
-
+    void setType(Bonus_t t)                 { type = t; }
     qint16 getX() const                     { Q_ASSERT(type != BONUS_NONE); return x; }
     void setX(qint16 pX)                    { Q_ASSERT(type != BONUS_NONE); x = pX; }
     

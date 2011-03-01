@@ -53,6 +53,8 @@ MapServer::MapServer()
         bonusTable[index] = Bonus::BONUS_THROW_GLOVE;
     for(int i = 0; i < 16; i++, index++)
         bonusTable[index] = Bonus::BONUS_BOXING_GLOVE;
+    for(int i = 0; i < 16; i++, index++)
+        bonusTable[index] = Bonus::BONUS_RANDOM;
 
     Q_ASSERT(index < BONUS_TABLE_LENGTH);
     while(index < BONUS_TABLE_LENGTH)
@@ -683,6 +685,14 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
     Bonus* pickedUpBonus = removeBonus(actPoint.x(), actPoint.y());
     if(pickedUpBonus) {
         // TODO does the code belong to MapServer or to PlayerServer?
+        if(pickedUpBonus->getType() == Bonus::BONUS_RANDOM)
+        {
+            int randomDraw = static_cast<int>((static_cast<double>(qrand()) / RAND_MAX) * (NB_BONUS-1));
+            if(randomDraw == Bonus::BONUS_RANDOM)
+                randomDraw++;
+            qDebug() << "random bonus" << randomDraw;
+            pickedUpBonus->setType(static_cast<Bonus::Bonus_t>(randomDraw));
+        }
         switch(pickedUpBonus->getType()) {
             case Bonus::BONUS_BOMB:
                 playerN->incMaxNumberOfBombs();
@@ -747,7 +757,6 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
                 }
                 playerN->setBoxingGloveBonus(true);
                 break;
-
             default:
                 qDebug() << "Type " << pickedUpBonus->getType() << " not yet implemented!";
         }
@@ -820,7 +829,7 @@ void MapServer::brokenBlockRemoved(int x, int y) {
     int randomDraw = static_cast<int>((static_cast<double>(qrand()) / RAND_MAX) * BONUS_TABLE_LENGTH);
 
     if(debugMode)
-        randomDraw = randomDraw % 159;
+        randomDraw = randomDraw % ( (NB_BONUS-1)*16 - 1);
 
     Bonus::Bonus_t result = bonusTable[randomDraw];
     if(result != Bonus::BONUS_NONE) {

@@ -51,6 +51,7 @@ void PixmapsItems::loadAll()
     addBonusPixMap(Bonus::BONUS_MULTIBOMB,"pictures/bonus_bomb_multiple.png");
     addBonusPixMap(Bonus::BONUS_THROW_GLOVE,"pictures/bonus_throw_glove.png");
     addBonusPixMap(Bonus::BONUS_BOXING_GLOVE,"pictures/bonus_boxing_glove.png");
+    addBonusPixMap(Bonus::BONUS_RANDOM,"pictures/bonus_unknown.png");
 
     burnt = QPixmap("pictures/tux_burn.png").scaled(QSizeF(width,height).toSize());
     option_unknown = QPixmap("pictures/bonus_unknown.png").scaled(QSizeF(width,height).toSize());
