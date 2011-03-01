@@ -79,6 +79,7 @@ void GameArena::clear()
         squaresItem = NULL;
     }
     delete[] playersItem;
+    playersItem = NULL;
 }
 
 void GameArena::setMap(MapClient *newMap)
