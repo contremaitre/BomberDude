@@ -11,6 +11,7 @@ PlayerServer::PlayerServer(int playerId) :
     multiBombBonus(false),
     throwBombBonus(false),
     boxingGloveBonus(false),
+    remoteBonus(false),
     optKeyClicked(false),
     onTeleport(false),
     maxNumberOfBombs(DEFAULT_BOMB_CAPACITY),
@@ -71,11 +72,21 @@ bool PlayerServer::getRemoteBonus()
 
 void PlayerServer::setRemoteBonus(bool set)
 {
+    remoteBonus = set;
     if(set)
         nbRemoteControl = maxNumberOfBombs;
     else
         nbRemoteControl = 0;
 }
+
+void PlayerServer::incMaxNumberOfBombs()
+{
+    maxNumberOfBombs++;
+    bombsAvailable++;
+    if(remoteBonus)
+        nbRemoteControl++;
+}
+
 
 bool PlayerServer::getIsBombAvailable() const
 {

@@ -31,7 +31,7 @@ public:
     bool getOptKey();
 
     qint8 getMaxNumberOfBombs() const   { return maxNumberOfBombs; }
-    void incMaxNumberOfBombs()          { maxNumberOfBombs++; bombsAvailable++; }
+    void incMaxNumberOfBombs();
 
     bool getIsBombAvailable() const;
     void decBombsAvailable()            { bombsAvailable--; }
@@ -58,7 +58,7 @@ public:
     void setFasterBonus()               { moveDistance++; }
 
     void setRemoteBonus(bool);
-    bool hasRemoteBonus() const         { return nbRemoteControl > 0; }
+    bool hasRemoteBonus() const         { return remoteBonus; }
     bool getRemoteBonus();
 
     bool getOnTeleport() const          { return onTeleport; }
@@ -79,6 +79,7 @@ private:
     bool multiBombBonus;
     bool throwBombBonus;
     bool boxingGloveBonus;
+    bool remoteBonus;
     bool optKeyClicked;
 
     bool onTeleport; //set if the player was on a teleport on his previous position
