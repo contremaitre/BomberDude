@@ -34,6 +34,7 @@
 #define DEFAULT_BOMB_RANGE 2
 #define DEFAULT_BOMB_CAPACITY 1
 #define DEFAULT_DISEASE_DURATION 150
+#define DEFAULT_GAME_DURATION 300 //seconds
 //how fast the bomb is blinking (ms)
 
 //Network

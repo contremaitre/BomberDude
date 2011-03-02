@@ -873,7 +873,7 @@ void MapServer::startHeartBeat(qint32 startValue, int intervals) {
 }
 
 void MapServer::newHeartBeat() {
-	heartBeat++;
+	heartBeat--;
     if(heartBeat % 100 == 0)
         qDebug() << "send Hearbeat #" << heartBeat;
 

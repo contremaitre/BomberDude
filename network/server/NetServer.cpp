@@ -81,8 +81,7 @@ void NetServer::run()
 }
 
 void NetServer::startHeartBeat() {
-    // starts with a negative heartbeat for a countdown
-    qint32 initHB = debugMode ? 0 : -2 * (1000 / HEARTBEAT);
+    qint32 initHB = DEFAULT_GAME_DURATION * (1000/HEARTBEAT);
     qDebug() << "NetServer::startHeartBeat" << initHB;
     map->startHeartBeat(initHB, HEARTBEAT);
 }
