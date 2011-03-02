@@ -67,7 +67,8 @@ private:
                              const QList<Flame*>& flamesToCheck);
     void doPlayerDeath(PlayerServer* playerN); //check what has to be done when a player die
     void checkPlayerSurroundings(PlayerServer* player);
-
+    void exchangePlayersPositions();
+    void exchangePlayersPositions(PlayerServer *p1, PlayerServer *p2);
     Bonus* removeBonus(qint8 x, qint8 y);
 
 	QTimer timerHeartBeat;

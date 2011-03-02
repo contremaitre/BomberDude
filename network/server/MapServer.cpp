@@ -671,6 +671,27 @@ bool MapServer::checkPlayerInFlames(PlayerServer* playerN,
     return false;
 }
 
+void MapServer::exchangePlayersPositions(PlayerServer *p1, PlayerServer *p2)
+{
+    int x = p1->getX();
+    int y = p1->getY();
+    p1->setX(p2->getX());
+    p1->setY(p2->getY());
+    p2->setX(x);
+    p2->setY(y);
+}
+
+void MapServer::exchangePlayersPositions()
+{
+    for(int i = 0; i < players.size(); i += 2)
+    {
+        if(i == players.size() - 1)
+            exchangePlayersPositions(players[0],players[i]);
+        else
+            exchangePlayersPositions(players[i],players[i+1]);
+    }
+}
+
 void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
     int x, y;
     getBlockPosition(playerN->getX(), playerN->getY(), x, y);
@@ -711,7 +732,14 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
             case Bonus::BONUS_DISEASE:
             {
                 int random = ( qrand() % (SICK_LAST-1) ) + 1;
-                playerN->setSickness((sickness)random);
+                sickness sick = static_cast<sickness> (random);
+                if(sick == SICK_SHUFFLE)
+                {
+                    qDebug() << "sick shuffle";
+                    exchangePlayersPositions();
+                }
+                else
+                    playerN->setSickness(sick);
                 break;
             }
             case Bonus::BONUS_KICK:
