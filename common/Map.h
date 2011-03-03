@@ -87,7 +87,7 @@ public:
     void addBomb(int plId, int x, int y,int bombId, bool rc);
     void removeBomb(qint16 bombId);
     const Bomb *getBomb(qint16 bombId);
-    int blockContainsBomb(int x,int y) const; //return -1 if no bomb, or player's id bomb owner
+    Bomb *blockContainsBomb(int x,int y) const;
 
 	void setHeartBeat(qint32 hb);
 	qint32 getHeartBeat() const                                     { return heartBeat; }

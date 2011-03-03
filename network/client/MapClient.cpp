@@ -22,6 +22,15 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 	if(heartBeat % 100 == 0)
 	    qDebug() << "Received heartbeat " << heartBeat;
 
+	if(heartBeat < 0 && heartBeat % SHRINKING_SPEED == 0)
+	{
+	    //gamefield shrink;
+	    qint16 x,y;
+	    updateIn >> x >> y;
+	    //qDebug() << x << y << "shrinked";
+	    setType(BlockMapProperty::wall, x, y);
+	}
+
 	QList<qint16> cleanList;
 	updateIn >> cleanList;
 	foreach(qint16 flameId, cleanList)

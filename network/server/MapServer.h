@@ -65,10 +65,11 @@ private:
     bool checkPlayerInFlames(PlayerServer* playerN,
                              const QPoint& playerBlock,
                              const QList<Flame*>& flamesToCheck);
-    void doPlayerDeath(PlayerServer* playerN); //check what has to be done when a player die
+    void doPlayerDeath(PlayerServer* playerN, int killedBy); //check what has to be done when a player die
     void checkPlayerSurroundings(PlayerServer* player);
     void exchangePlayersPositions();
     void exchangePlayersPositions(PlayerServer *p1, PlayerServer *p2);
+    bool shrinkMap();
     Bonus* removeBonus(qint8 x, qint8 y);
 
 	QTimer timerHeartBeat;
@@ -80,6 +81,11 @@ private:
     QList<const Bonus*> createdBonus;                       ///< list of bonus created during the heartbeat
     QList<Point<qint8> > removedBonus;                      ///< list of bonus picked up or destroyed during the heartbeat
     QList<QPoint> teleports;                                ///< We need a list of teleports to know where is the next teleport
+
+    QPoint shrink; //current block to add when playtime expired
+    QPoint shrinkLimitUp;
+    QPoint shrinkLimitDown;
+    QPoint shrinkDirection;
 
 	struct initialPlayerPosition
 	{

@@ -29,6 +29,8 @@ const QPoint MapServer::dirDown = QPoint(0,1);
 
 
 MapServer::MapServer()
+    : shrink(-1,0),
+      shrinkDirection(dirRight)
 {
 	connect(&timerHeartBeat, SIGNAL(timeout()), this, SLOT(newHeartBeat()));
 
@@ -273,13 +275,13 @@ bool MapServer::tryMovePlayer(int id, int direction, int distance)
 	//qDebug() << "next block" << x_nextBlock << y_nextBlock ;
 	BlockMapProperty::BlockType typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
 
-	//here we test if the next block is empty and if the next block does not contains a bomb or if the next block is the same as the actual block (if we are before the middle of the block)
-	if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
+    //here we test if the next block is empty and if the next block does not contains a bomb or if the next block is the same as the actual block (if we are before the middle of the block)
+    if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
         (   (x_originalBlock == x_nextBlock && y_originalBlock == y_nextBlock) ||
-            blockContainsBomb(x_nextBlock,y_nextBlock) == -1
+            blockContainsBomb(x_nextBlock,y_nextBlock) == NULL
         )
       )
-	{
+    {
 		qint16 x,y;
 		getPlayerPosition(id,x,y);
 		setPlayerPosition(id,x+move_x,y+move_y);
@@ -327,8 +329,8 @@ bool MapServer::tryMovePlayer(int id, int direction, int distance)
 			{
 				getBlockPosition( x_player, y_player+sign*getBlockSize()/2, x_nextBlock, y_nextBlock );
 				typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
-				if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
-                     blockContainsBomb(x_nextBlock,y_nextBlock) == -1)
+                if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
+                     blockContainsBomb(x_nextBlock,y_nextBlock) == NULL)
 				{
 					setPlayerPosition(id,x+ move_x/2,y+absMin(pos,distance));
 					return true;
@@ -343,8 +345,8 @@ bool MapServer::tryMovePlayer(int id, int direction, int distance)
 			{
 				getBlockPosition( x_player+sign*getBlockSize()/2, y_player, x_nextBlock, y_nextBlock );
 				typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
-				if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
-                    blockContainsBomb(x_nextBlock,y_nextBlock) == -1)
+                if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
+                    blockContainsBomb(x_nextBlock,y_nextBlock) == NULL)
 				{
 					setPlayerPosition(id,x+absMin(pos,distance),y+ move_y/2);
 					return true;
@@ -398,7 +400,7 @@ bool MapServer::blockEmpty(int x, int y)
 {
     if(getType(x,y) != BlockMapProperty::empty)
         return false;
-    if(blockContainsBomb(x,y) != -1)
+    if(blockContainsBomb(x,y) != NULL)
         return false;
     for (int i=0;i<getNbPlayers();i++)
     {
@@ -474,7 +476,11 @@ QList<Bomb*> MapServer::addBombMultiple(int playerId)
     getPlayerPosition(playerId,x,y);
     getBlockPosition(x,y,squareX,squareY);
     //drop multibombs if the player already has a bomb here
-    if(players[playerId]->getHeading() == -1 || blockContainsBomb(squareX,squareY) != playerId)
+    int blockBombPlayerId = -1;
+    Bomb *bomb = blockContainsBomb(squareX,squareY);
+    if(bomb)
+        blockBombPlayerId = bomb->getPlayer();
+    if(players[playerId]->getHeading() == -1 || blockBombPlayerId != playerId)
         return newBombs;
     while(players[playerId]->getIsBombAvailable())
     {
@@ -524,7 +530,7 @@ Bomb* MapServer::addBomb(int playerId)
 Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
 {
     BlockMapProperty::BlockType type = getType(squareX,squareY);
-    if( blockContainsBomb(squareX,squareY) != -1 || type != BlockMapProperty::empty)
+    if( blockContainsBomb(squareX,squareY) != NULL || type != BlockMapProperty::empty)
         return NULL;
 
 	// add the bomb
@@ -619,8 +625,10 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 	}
 }
 
-void MapServer::doPlayerDeath(PlayerServer* playerN)
+void MapServer::doPlayerDeath(PlayerServer* playerN, int killedBy)
 {
+    playerN->setIsAlive(false);
+    killedPlayers.append(killedPlayer(playerN->getId(), killedBy));
     //check if the player has detonators bomb on the field
     foreach(Bomb * b, bombs)
     {
@@ -662,9 +670,7 @@ bool MapServer::checkPlayerInFlames(PlayerServer* playerN,
                          const QList<Flame*>& flamesToCheck) {
     foreach(Flame* f, flamesToCheck)
         if(f->getFlamePositions().contains(playerBlock)) {
-            playerN->setIsAlive(false);
-            killedPlayers.append(killedPlayer(playerN->getId(), f->getPlayerId()));
-            doPlayerDeath(playerN);
+            doPlayerDeath(playerN,f->getPlayerId());
             return true;
         }
 
@@ -867,7 +873,101 @@ void MapServer::brokenBlockRemoved(int x, int y) {
     }
 }
 
+bool MapServer::shrinkMap()
+{
+    int count = 0;
+    do
+    {
+        if(shrinkDirection == dirRight)
+        {
+            if(shrink.x() < shrinkLimitDown.x()-1)
+            {
+                shrink.setX(shrink.x()+1);
+                break;
+            }
+            else
+            {
+                shrinkDirection = dirDown;
+                shrinkLimitUp.setY(shrinkLimitUp.y()+1);
+            }
+        }
+        else if(shrinkDirection == dirDown)
+        {
+            if(shrink.y() < shrinkLimitDown.y()-1)
+            {
+                shrink.setY(shrink.y()+1);
+                break;
+            }
+            else
+            {
+                shrinkDirection = dirLeft;
+                shrinkLimitDown.setX(shrinkLimitDown.x()-1);
+            }
+        }
+        else if(shrinkDirection == dirLeft)
+        {
+            if(shrink.x() > shrinkLimitUp.x())
+            {
+                shrink.setX(shrink.x()-1);
+                break;
+            }
+            else
+            {
+                shrinkDirection = dirUp;
+                shrinkLimitDown.setY(shrinkLimitDown.y()-1);
+            }
+        }
+        else if(shrinkDirection == dirUp)
+        {
+            if(shrink.y() > shrinkLimitUp.y())
+            {
+                shrink.setY(shrink.y()-1);
+                break;
+            }
+            else
+            {
+                shrinkDirection = dirRight;
+                shrinkLimitUp.setX(shrinkLimitUp.x()+1);
+            }
+        }
+        count++;
+    }while(count < 5);//test all directions
+
+    if(count <= 4)
+    {
+       setType(BlockMapProperty::wall, shrink.x(), shrink.y());
+       //check for players, bombs and bonuses
+       // Remove the bonus here
+       delete removeBonus(shrink.x(), shrink.y());
+       //Kill players on this block
+       foreach(PlayerServer* playerN, players) {
+           if(playerN->getIsAlive()) {
+               int px, py;
+               getBlockPosition(playerN->getX(), playerN->getY(), px, py);
+               if(px == shrink.x() && py == shrink.y())
+                   doPlayerDeath(playerN,-1);
+           }
+       }
+       //if there is a bomb, it must explode
+       Bomb *b = blockContainsBomb(shrink.x(), shrink.y());
+       if(b)
+       {
+           b->remoteControlled = false;
+           b->duration = 0;
+       }
+       return true;
+    }
+    else
+        qDebug() << "Map completly skrinked";
+    //shouldn't happen in a normal game
+    return false;
+}
+
 void MapServer::startHeartBeat(qint32 startValue, int intervals) {
+    shrinkLimitUp.setX(0);
+    shrinkLimitUp.setY(0);
+    shrinkLimitDown.setX(width);
+    shrinkLimitDown.setY(height);
 	setHeartBeat(startValue);
 	timerHeartBeat.start(intervals);
 }
@@ -885,6 +985,14 @@ void MapServer::newHeartBeat() {
 	QDataStream updateOut(&updateArray,QIODevice::WriteOnly | QIODevice::Truncate);
 	updateOut << heartBeat;
 
+    if(heartBeat < 0 && heartBeat % SHRINKING_SPEED == 0)
+    {
+        if(!shrinkMap())
+            emit sigWinner(-1); //shouldn't happen in a normal game
+        //qDebug() << "shrinking" << shrink.x() << shrink.y();
+        updateOut << static_cast<qint16>(shrink.x()) << static_cast<qint16>(shrink.y());
+
+    }
 	// start by cleaning flames
 	QList<qint16> cleanList;
 	QList<Flame*>::iterator itFlame = flames.begin();
@@ -904,28 +1012,32 @@ void MapServer::newHeartBeat() {
 
 	// now let each alive player lay a bomb, then move
     QList<Bomb*> newBombs;
-    if(heartBeat >= 0) {
-        foreach(PlayerServer* playerN, players) {
-            if(playerN->getIsAlive()) {
-                if(playerN->getLayingBomb() || playerN->getSickness() == SICK_DIARRHEA) {
-                    if(playerN->getIsBombAvailable())
-                    {
-                        Bomb* newBomb = addBomb(playerN->getId());
-                        if(newBomb != NULL)
-                            newBombs << newBomb;
-                        else if(playerN->getLayingBomb() && playerN->getMultibombBonus())
-                            newBombs << addBombMultiple(playerN->getId());
-                    }
-                    playerN->clearLayingBomb();
+
+    foreach(PlayerServer* playerN, players)
+    {
+        if(playerN->getIsAlive())
+        {
+            if(playerN->getLayingBomb() || playerN->getSickness() == SICK_DIARRHEA)
+            {
+                if(playerN->getIsBombAvailable())
+                {
+                    Bomb* newBomb = addBomb(playerN->getId());
+                    if(newBomb != NULL)
+                    newBombs << newBomb;
+                    else if(playerN->getLayingBomb() && playerN->getMultibombBonus())
+                    newBombs << addBombMultiple(playerN->getId());
                 }
-                if(playerN->getDirection() != -1) {
-                    movePlayer(playerN->getId(), playerN->getDirection(), playerN->getMoveDistance());
-                    playerN->setDirection(-1);
-                }
-                checkPlayerSurroundings(playerN);
+                playerN->clearLayingBomb();
             }
+            if(playerN->getDirection() != -1)
+            {
+                movePlayer(playerN->getId(), playerN->getDirection(), playerN->getMoveDistance());
+                playerN->setDirection(-1);
+            }
+            checkPlayerSurroundings(playerN);
         }
     }
+
 
 	// serialize all players information
 	updateOut << static_cast<qint8>(players.size());
@@ -967,14 +1079,14 @@ void MapServer::newHeartBeat() {
 		updateOut << *flameN;
 
     // check which players just were killed by the explosions
-    if(heartBeat >= 0) {
-        foreach(PlayerServer* playerN, players) {
-            if(playerN->getIsAlive()) {
-                int px, py;
-                getBlockPosition(playerN->getX(), playerN->getY(), px, py);
-                QPoint actPoint(px, py);
-                checkPlayerInFlames(playerN, actPoint, explodeList);
-            }
+    foreach(PlayerServer* playerN, players)
+    {
+        if(playerN->getIsAlive())
+        {
+            int px, py;
+            getBlockPosition(playerN->getX(), playerN->getY(), px, py);
+            QPoint actPoint(px, py);
+            checkPlayerInFlames(playerN, actPoint, explodeList);
         }
     }
 

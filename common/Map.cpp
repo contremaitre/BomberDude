@@ -263,14 +263,14 @@ const Bomb * Map<P,SL>::getBomb(qint16 bombId)
 
 
 template<typename P, typename SL>
-int Map<P,SL>::blockContainsBomb(int x,int y) const
+Bomb *Map<P,SL>::blockContainsBomb(int x,int y) const
 {
     foreach( Bomb *b, bombs)
     {
         if ((b->x == x) && (b->y == y))
-            return b->getPlayer();
+            return b;
     }
-    return -1;
+    return NULL;
 }
 
 
