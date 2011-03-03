@@ -58,6 +58,8 @@ private:
     QGraphicsSquareItem *getCase(int);
     QGraphicsSquareItem *getCase(int, int);
 
+    QGraphicsSimpleTextItem* textHurryUp1, *textHurryUp2;
+
     void initCase(int, int);
     int width;
     int height;
@@ -96,6 +98,7 @@ private slots:
     void slotAddBomb(int id);
     void slotRemoveBomb(int id);
     void slotRemoveBombRC(int id);
+    void slotRemoveHurryUp();
 
 public slots:
     void slotMapWinner(qint8 playerId);

@@ -25,6 +25,8 @@
 
 GameArena::GameArena(QMainWindow * mainw, QGraphicsView *view, int s) :
 	map(NULL),
+	textHurryUp1(NULL),
+	textHurryUp2(NULL),
     timeInSeconds(-999)
 {
 	width = height = 0;
@@ -235,6 +237,28 @@ void GameArena::slotHearbeatUpdated(qint32 value) {
         timeInSeconds = newTime;
         emit sigTimeUpdated(newTime);
     }
+
+    if(value == 0)
+    {
+        QFont bigText;
+        bigText.setPointSize(32);
+        bigText.setWeight(QFont::Bold);
+
+        textHurryUp1 = new QGraphicsSimpleTextItem();
+        textHurryUp1->setText("HURRY UP !");
+        textHurryUp1->setFont(bigText);
+        textHurryUp1->setZValue(1.0);
+        scene->addItem(textHurryUp1);
+        textHurryUp2 = new QGraphicsSimpleTextItem();
+        textHurryUp2->setText(textHurryUp1->text());
+        textHurryUp2->setFont(bigText);
+        textHurryUp2->setZValue(0.9);
+        textHurryUp2->setX(textHurryUp2->x() + 1);
+        textHurryUp2->setY(textHurryUp2->y() + 1);
+        textHurryUp2->setBrush(QBrush(Qt::white));
+        scene->addItem(textHurryUp2);
+        QTimer::singleShot(3000, this, SLOT(slotRemoveHurryUp()));
+    }
 }
 
 void GameArena::removeBurnt() {
@@ -242,6 +266,19 @@ void GameArena::removeBurnt() {
     burntPlayers.pop_front();
     scene->removeItem(item);
     delete item;
+}
+
+void GameArena::slotRemoveHurryUp()
+{
+    if(textHurryUp1 && textHurryUp2)
+    {
+        scene->removeItem(textHurryUp1);
+        scene->removeItem(textHurryUp2);
+        delete textHurryUp1;
+        delete textHurryUp2;
+        textHurryUp1 = NULL;
+        textHurryUp2 = NULL;
+    }
 }
 
 void GameArena::killPlayer(int id)
@@ -350,7 +387,7 @@ GameArena::~GameArena()
         scene->removeItem(item);
         delete item;
     }
-
+    slotRemoveHurryUp();
     clear();
     delete graphicView;
     //delete scene; todo crash ?
