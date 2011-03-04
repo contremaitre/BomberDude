@@ -103,7 +103,6 @@ signals:
     void serverReady();
     void sigStartHeartBeat();
     void sigQuit();
-    void sigAdminGuiDisconnected();
 };
 
 

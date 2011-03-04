@@ -50,6 +50,7 @@ enum NetMsgType
     msg_map_winner,         // TCP server -> client, map's winner + statistics
     msg_client_disconnected,// TCP server -> client, player left
     msg_opt_key,            // UDP client -> server, key option 1
+    msg_server_stopped,     // TCP server -> client, the server has stopped (shut down or admin GUI crashed)
 };
 
 #endif

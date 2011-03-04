@@ -151,6 +151,16 @@ void NetServer::incomingClient()
 
 void NetServer::shutdown()
 {
+    foreach(NetServerClient *c, clients) {
+        QByteArray block;
+        QDataStream out(&block, QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_4_0);
+        out << static_cast<quint16>(0);
+        out << static_cast<quint16>(msg_server_stopped);
+        setBlockSize(block, out);
+        c->sendTcpBlock(block);
+    }
+
     emit sigQuit();
 }
 
@@ -315,7 +325,7 @@ void NetServer::clientDisconected(NetServerClient *client)
     delete client;
 
     if(admin && startedFromGui)
-        emit sigAdminGuiDisconnected();
+        shutdown();
     else if(clients.empty())
         emit allPlayersLeft();
     else if(admin && ! gameStarted)

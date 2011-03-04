@@ -33,7 +33,6 @@ void Serverd::init(int port, const char *adminPasswd, bool debugMode, bool start
 {
     server = new NetServer(port, adminPasswd, debugMode, startedFromGui);
     connect(server,SIGNAL(sigQuit()), this, SLOT(slotQuit()), Qt::QueuedConnection);
-    connect(server, SIGNAL(sigAdminGuiDisconnected()), this, SLOT(slotAdminGuiDisconnected()));
 }
 
 void Serverd::launch()
@@ -55,13 +54,6 @@ void Serverd::allPlayersLeft()
 void Serverd::slotQuit()
 {
     qDebug("Serverd::slotQuit()");
-    emit sigQuit();
-}
-
-void Serverd::slotAdminGuiDisconnected()
-{
-    qDebug("Connection with GUI of admin lost, exiting.");
-    // TODO send a message to all other players
     emit sigQuit();
 }
 

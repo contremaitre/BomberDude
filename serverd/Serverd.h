@@ -54,7 +54,6 @@ private:
 private slots:
     void allPlayersLeft();
     void slotQuit();
-    void slotAdminGuiDisconnected();
 
 signals:
     void sigQuit();
