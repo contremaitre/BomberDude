@@ -45,7 +45,7 @@ class NetServer : public QThread
 {
     Q_OBJECT
 public:
-    NetServer(int port, QString adminPasswd, bool debugMode);
+    NetServer(int port, QString adminPasswd, bool debugMode, bool startedFromGui);
     ~NetServer();
     void run();
     void close();
@@ -75,6 +75,7 @@ private:
     bool adminConnected;
     int mapW, mapH, blockSize; //map size if it's a random map
     bool debugMode;
+    bool startedFromGui;
 
     int readMove(QDataStream &in);
     void sendUdpWelcomeAck(QHostAddress sender, quint16 senderPort);
@@ -102,6 +103,7 @@ signals:
     void serverReady();
     void sigStartHeartBeat();
     void sigQuit();
+    void sigAdminGuiDisconnected();
 };
 
 

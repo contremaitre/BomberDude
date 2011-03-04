@@ -160,6 +160,7 @@ void StartUi::startServer()
 		serverCmdLine += " --admin-password " + password;
         if(mainWindow->checkDebugMode->isChecked())
             serverCmdLine += " --debug-mode";
+        serverCmdLine += " --started-from-gui";
 
         server->start(serverCmdLine);
     }

@@ -19,15 +19,21 @@
 #include "Serverd.h"
 #include "constant.h"
 
-Serverd::Serverd(int port, const char *adminPasswd, int mapSize, int blockSize, bool debugMode)
+Serverd::Serverd(int port,
+                 const char *adminPasswd,
+                 int mapSize,
+                 int blockSize,
+                 bool debugMode,
+                 bool startedFromGui)
 {
-    init(port, adminPasswd, debugMode);
+    init(port, adminPasswd, debugMode, startedFromGui);
 }
 
-void Serverd::init(int port, const char *adminPasswd, bool debugMode)
+void Serverd::init(int port, const char *adminPasswd, bool debugMode, bool startedFromGui)
 {
-    server = new NetServer(port, adminPasswd, debugMode);
+    server = new NetServer(port, adminPasswd, debugMode, startedFromGui);
     connect(server,SIGNAL(sigQuit()), this, SLOT(slotQuit()), Qt::QueuedConnection);
+    connect(server, SIGNAL(sigAdminGuiDisconnected()), this, SLOT(slotAdminGuiDisconnected()));
 }
 
 void Serverd::launch()
@@ -49,6 +55,13 @@ void Serverd::allPlayersLeft()
 void Serverd::slotQuit()
 {
     qDebug("Serverd::slotQuit()");
+    emit sigQuit();
+}
+
+void Serverd::slotAdminGuiDisconnected()
+{
+    qDebug("Connection with GUI of admin lost, exiting.");
+    // TODO send a message to all other players
     emit sigQuit();
 }
 

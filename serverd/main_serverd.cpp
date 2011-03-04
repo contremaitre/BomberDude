@@ -30,6 +30,7 @@ int main(int argc, char *argv[])
     const char *adminPasswd = NULL;
 	int portNumber = SERVER_PORT;
     bool debugMode = false;
+    bool startedFromGui = false;
 
 	int index_arg = 1;
 
@@ -64,6 +65,12 @@ int main(int argc, char *argv[])
             ++index_arg;
             continue;
         }
+        
+        if(strcmp(argv[index_arg], "--started-from-gui") == 0) {
+            startedFromGui = true;
+            ++index_arg;
+            continue;
+        }
 
 		std::cout << "Unknown parameter: " << argv[index_arg] << std::endl;
 		++index_arg;
@@ -71,7 +78,12 @@ int main(int argc, char *argv[])
 
 	std::cout << "Using port number: " << portNumber << std::endl;
 
-    Serverd *serverd = new Serverd(portNumber, adminPasswd, MAP_SIZE, BLOCK_SIZE, debugMode);
+    Serverd *serverd = new Serverd( portNumber,
+                                    adminPasswd,
+                                    MAP_SIZE,
+                                    BLOCK_SIZE,
+                                    debugMode,
+                                    startedFromGui);
 
     QObject::connect(serverd,SIGNAL(sigQuit()), &app, SLOT(quit()));
     serverd->launch();

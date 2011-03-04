@@ -24,7 +24,7 @@
 #include "../NetMessage.h"
 #include "MapParser.h"
 
-NetServer::NetServer(int port, QString adminPasswd, bool debugMode) : QThread()
+NetServer::NetServer(int port, QString adminPasswd, bool debugMode, bool startedFromGui) : QThread()
 {
     map = NULL;
     mapPreview = NULL;
@@ -44,6 +44,7 @@ NetServer::NetServer(int port, QString adminPasswd, bool debugMode) : QThread()
     adminConnected = false;
     randomMap = false;
     this->debugMode = debugMode;
+    this->startedFromGui = startedFromGui;
     selectMap(2);
     connect(this,SIGNAL(sigStartHeartBeat()), this, SLOT(startHeartBeat()), Qt::QueuedConnection);
 }
@@ -301,23 +302,26 @@ void NetServer::setMaxPlayers(int value)
 void NetServer::clientDisconected(NetServerClient *client)
 {
     qDebug("NetServer : clientDisconected");
-    for (int i = 0; i < clients.size(); ++i) {
-        if (clients.at(i) == client)
-        {
-            bool admin = client->getAdmin();
-            int id = client->getId();
-            clients.removeAt(i);
-            delete client;
-            if(clients.empty())
-                emit allPlayersLeft();
-            else if(admin && ! gameStarted)
-                restart();//easier solution (we have two cases : first entered is admin, or admin with password)
-            else
-                sendCLientDisconnected(id);
-            return;
-        }
+
+    int i = clients.indexOf(client);
+    if(i == -1) {
+        qDebug("didn't find it");
+        return;
     }
-    qDebug("didn't find it");
+
+    bool admin = client->getAdmin();
+    int id = client->getId();
+    clients.removeAt(i);
+    delete client;
+
+    if(admin && startedFromGui)
+        emit sigAdminGuiDisconnected();
+    else if(clients.empty())
+        emit allPlayersLeft();
+    else if(admin && ! gameStarted)
+        restart();//easier solution (we have two cases : first entered is admin, or admin with password)
+    else
+        sendCLientDisconnected(id);
 }
 
 void NetServer::receiveUdp()

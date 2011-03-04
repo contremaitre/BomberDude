@@ -37,18 +37,24 @@ class Serverd : public QObject
   Q_OBJECT
 
 public:
-    Serverd(int port, const char *adminPasswd, int mapSize, int blockSize, bool debugMode);
+    Serverd(int port,
+            const char *adminPasswd,
+            int mapSize,
+            int blockSize,
+            bool debugMode,
+            bool startedFromGui);
 //    Serverd(int port, const char *adminPasswd, const char *mapFile);
     ~Serverd();
     void launch();
 
 private:
-    void init(int port, const char *adminPasswd, bool debugMode);
+    void init(int port, const char *adminPasswd, bool debugMode, bool startedFromGui);
     NetServer *server;
 
 private slots:
     void allPlayersLeft();
     void slotQuit();
+    void slotAdminGuiDisconnected();
 
 signals:
     void sigQuit();
