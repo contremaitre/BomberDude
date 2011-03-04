@@ -29,7 +29,7 @@ class BlockMapProperty
 public:
     //must be kept in sync in PixmapsItem
     enum BlockType {wall,brick,empty,broken,flame};
-    enum BlockOption {none,arrow,teleport,mov_walk};
+    enum BlockOption {none,arrow,teleport,mov_walk, random_spawn};
     enum optionDirection {optDirNone,optDirLeft,optDirRight,optDirUp,optDirDown};
 
     BlockMapProperty();

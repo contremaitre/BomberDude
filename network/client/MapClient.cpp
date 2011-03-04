@@ -22,14 +22,13 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 	if(heartBeat % 100 == 0)
 	    qDebug() << "Received heartbeat " << heartBeat;
 
-	if(heartBeat < 0 && heartBeat % SHRINKING_SPEED == 0)
-	{
-	    //gamefield shrink;
-	    qint16 x,y;
-	    updateIn >> x >> y;
-	    //qDebug() << x << y << "shrinked";
-	    setType(BlockMapProperty::wall, x, y);
-	}
+	//new block
+	qint16 x,y;
+	bool brick;
+	updateIn >> brick >> x >> y;
+	//qDebug() << x << y << "shrinked";
+	if(x > 0 && y > 0)
+	    setType(brick ? BlockMapProperty::brick : BlockMapProperty::wall, x, y);
 
 	QList<qint16> cleanList;
 	updateIn >> cleanList;

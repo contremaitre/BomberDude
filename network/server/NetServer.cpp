@@ -270,8 +270,13 @@ void NetServer::selectMap(qint8 direction)
     }
     if(randomMap)
     {
+        delete mapPreview;
+        mapPreview = new MapServer;
         foreach(NetServerClient *client, clients)
+        {
+            client->sendMapPreview(mapPreview); //only usefull to send the map style list. Could be improved
             client->sendMapRandom();
+        }
     }
 }
 

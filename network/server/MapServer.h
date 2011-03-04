@@ -58,7 +58,7 @@ private:
     Bomb* addBomb(int id);
     Bomb* addBomb(int id, int x, int y);
     QList<Bomb*> addBombMultiple(int playerId);
-    bool getRandomEmptyPosition(int &x, int &y);
+    bool getRandomEmptyPosition(qint16 &x, qint16 &y);
     bool blockEmpty(int x, int y);//return true if there is nothing on this block
     bool blockContainsTeleport(int x, int y, int &id);
     void getNextTeleportPosition(int id, int &x, int &y);
@@ -74,6 +74,7 @@ private:
 
 	QTimer timerHeartBeat;
     bool debugMode;
+    bool spawningBlocks;
 
     QMap<Point<qint8>, Bonus*> bonus;                       ///< list of bonus
     static const int BONUS_TABLE_LENGTH = NB_BONUS*16*2;    ///< todo

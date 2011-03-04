@@ -35,7 +35,8 @@
 #define DEFAULT_BOMB_CAPACITY 1
 #define DEFAULT_DISEASE_DURATION 150
 #define DEFAULT_GAME_DURATION 180 //seconds
-#define SHRINKING_SPEED 10//heartbeat, must be the same value client and server side
+#define SHRINKING_SPEED 10//heartbeat
+#define SPAWNING_BLOCK_INTERVAL 10 //seconds
 //how fast the bomb is blinking (ms)
 
 //Network

@@ -29,8 +29,10 @@ const QPoint MapServer::dirDown = QPoint(0,1);
 
 
 MapServer::MapServer()
-    : shrink(-1,0),
-      shrinkDirection(dirRight)
+          : debugMode(false),
+            spawningBlocks(false),
+            shrink(-1,0),
+            shrinkDirection(dirRight)
 {
 	connect(&timerHeartBeat, SIGNAL(timeout()), this, SLOT(newHeartBeat()));
 
@@ -61,7 +63,11 @@ MapServer::MapServer()
     Q_ASSERT(index < BONUS_TABLE_LENGTH);
     while(index < BONUS_TABLE_LENGTH)
         bonusTable[index++] = Bonus::BONUS_NONE;
-    debugMode = false;
+
+    mapStyle randomSpawning;
+    randomSpawning.name = "random spawning";
+    randomSpawning.option = BlockMapProperty::random_spawn;
+    addStyle(randomSpawning);
 }
 
 MapServer::~MapServer() {
@@ -72,16 +78,22 @@ MapServer::~MapServer() {
 void MapServer::addStyle(const mapStyle &style)
 {
     styles << style;
-    qDebug() << "MapServer, style added," << styles.size() << "styles, last has" << style.coordList.size() << "positions";
+    qDebug() << "MapServer, style added, size = " << styles.size() << ", positions = " << style.coordList.size();
 }
 
 void MapServer::selectStyle(int style)
 {
     /* sanity check */
+    qDebug() << "select style : " << style;
     if(style >= styles.size())
         return;
 
     BlockMapProperty::BlockOption option = styles[style].option;
+    if(option == BlockMapProperty::random_spawn)
+    {
+        spawningBlocks = true;
+        return;
+    }
     foreach(optionCoord coord,styles[style].coordList)
     {
         setOption(coord.x, coord.y, option, coord.direction);
@@ -417,7 +429,7 @@ bool MapServer::blockEmpty(int x, int y)
     return true;
 }
 
-bool MapServer::getRandomEmptyPosition(int &x, int &y)
+bool MapServer::getRandomEmptyPosition(qint16 &x, qint16 &y)
 {
     //create a list of empty block
     QList<QPoint> empty;
@@ -985,14 +997,26 @@ void MapServer::newHeartBeat() {
 	QDataStream updateOut(&updateArray,QIODevice::WriteOnly | QIODevice::Truncate);
 	updateOut << heartBeat;
 
+	//Add a new block if necessary, or (0,0)
+	qint16 x = 0,y = 0;
+	bool brick = true;
     if(heartBeat < 0 && heartBeat % SHRINKING_SPEED == 0)
     {
         if(!shrinkMap())
             emit sigWinner(-1); //shouldn't happen in a normal game
         //qDebug() << "shrinking" << shrink.x() << shrink.y();
-        updateOut << static_cast<qint16>(shrink.x()) << static_cast<qint16>(shrink.y());
+        x = shrink.x();
+        y = shrink.y();
+        brick = false; //wall
 
     }
+    else if(spawningBlocks && ( heartBeat % (SPAWNING_BLOCK_INTERVAL * 1000/HEARTBEAT) == 0) )
+    {
+        if(getRandomEmptyPosition(x,y))
+            setType(BlockMapProperty::brick, x, y);
+    }
+    updateOut << brick << x << y;
+
 	// start by cleaning flames
 	QList<qint16> cleanList;
 	QList<Flame*>::iterator itFlame = flames.begin();
@@ -1094,7 +1118,7 @@ void MapServer::newHeartBeat() {
     while(!bonusToSpawn.empty())
     {
         Bonus::Bonus_t bonus_type = bonusToSpawn.takeFirst();
-        int x,y;
+        qint16 x,y;
         qDebug() << "bonus to spawn" << bonus_type;
         if(getRandomEmptyPosition(x,y))
         {
