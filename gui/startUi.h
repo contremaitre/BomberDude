@@ -96,6 +96,7 @@ private slots:
     void slotMapPreviewReceived(MapClient*);
     void slotGameStarted();
     void slotNewPlayerGraphic(int, const QPixmap &);
+    void slotServerStopped();
     void closeGame();
 };
 

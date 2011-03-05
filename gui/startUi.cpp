@@ -15,6 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QMessageBox>
+
 #include "startUi.h"
 #include "constant.h"
 
@@ -185,6 +187,9 @@ void StartUi::startServer()
     connect( netclient, SIGNAL(sigMapRandom()), this, SLOT(slotMapRandom()));
     connect( netclient, SIGNAL(sigGameStarted()), this, SLOT(slotGameStarted()));
     connect( netclient, SIGNAL(mapPreviewReceived(MapClient*)),this,SLOT(slotMapPreviewReceived(MapClient*)));
+
+    // must be queued otherwise NetClient instance is deleted before finishing its processing
+    connect( netclient, SIGNAL(sigServerStopped()), this, SLOT(slotServerStopped()), Qt::QueuedConnection);
 
     gamePlay->cliConnect(password);
 }
@@ -433,6 +438,11 @@ void StartUi::slotReadServerDebug()
         qDebug() << "\n** Server debug **\n" << array << "\n** Server debug end **\n";
     else
         qDebug() << "Server debug:"<< array;
+}
+
+void StartUi::slotServerStopped()
+{
+    QMessageBox::warning(this, QString("Server stopped"),QString("The server was shut down, either by admin command or because the connection with the admin GUI was lost"));
 }
 
 StartUi::~StartUi()

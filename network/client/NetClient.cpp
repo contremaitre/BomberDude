@@ -331,6 +331,10 @@ void NetClient::handleTcpMsg(QDataStream &in)
         qDebug() << "NetClient emit sigGameStarted";
         emit sigGameStarted();
         break;
+    case msg_server_stopped:
+        qDebug() << "Server was shut down";
+        emit sigServerStopped();
+        break;
 	default:
 		//trash the message
         qDebug() << "NetClient, unexpected tcp message received" << msg_type;

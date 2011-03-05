@@ -101,6 +101,7 @@ signals:
     void sigMaxPlayersChanged(int);
     void sigMapWinner(qint8 playerId);
     void sigGameStarted();
+    void sigServerStopped();
 };
 
 
