@@ -89,6 +89,7 @@ private slots:
     void clientDisconected(NetServerClient *);
     void receiveUdp();
     void slotUpdatePlayerData(int playerId, QString playerName);
+    void slotNoAdmin();             // if started from the GUI yet no admin connection after a few seconds  
 
 	// to be called in its own thread (otherwise the QTimer object can fail to send signals)
 	void startHeartBeat();

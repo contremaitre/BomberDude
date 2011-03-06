@@ -47,6 +47,10 @@ NetServer::NetServer(int port, QString adminPasswd, bool debugMode, bool started
     this->startedFromGui = startedFromGui;
     selectMap(2);
     connect(this,SIGNAL(sigStartHeartBeat()), this, SLOT(startHeartBeat()), Qt::QueuedConnection);
+
+    if(startedFromGui) {
+        QTimer::singleShot(2000, this, SLOT(slotNoAdmin()));
+    }
 }
 
 void NetServer::restart()
@@ -420,6 +424,11 @@ void NetServer::slotUpdatePlayerData(int playerId, QString playerName) {
 
     foreach(NetServerClient* Nclient, clients)
         Nclient->sendTcpBlock(block);
+}
+
+void NetServer::slotNoAdmin() {
+    if(!adminConnected)
+        shutdown();
 }
 
 void NetServer::sendCLientDisconnected(int playerId)
