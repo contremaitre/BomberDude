@@ -429,6 +429,19 @@
       </rect>
      </property>
     </widget>
+    <widget class="QPushButton" name="cancelGameButton">
+     <property name="geometry">
+      <rect>
+       <x>111</x>
+       <y>320</y>
+       <width>101</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Cancel game</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QLabel" name="serverStatus">
     <property name="geometry">
@@ -562,7 +575,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

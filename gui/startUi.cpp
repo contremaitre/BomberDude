@@ -40,6 +40,7 @@ StartUi::StartUi(QApplication *a)
     connect(mainWindow->stats_check, SIGNAL(stateChanged(int)), this, SLOT(statsCheckedChanged(int)));
     connect(mainWindow->randomMapCheck, SIGNAL(stateChanged(int)), this, SLOT(randomMapCheckedChanged(int)));
     connect(mainWindow->startGameButton,SIGNAL(clicked()),this,SLOT(slotStartGame()));
+    connect(mainWindow->cancelGameButton,SIGNAL(clicked()),this,SLOT(slotStopGame()));
     connect(mainWindow->mapRightButton, SIGNAL(clicked()), this, SLOT(slotMapRightButton()));
     connect(mainWindow->mapLeftButton, SIGNAL(clicked()), this, SLOT(slotMapLeftButton()));
 }
@@ -337,6 +338,13 @@ void StartUi::slotStartGame()
     qDebug() << "startui start game, style =" << styleIndex;
     if(gamePlay)
         gamePlay->getNetClient()->startGame(styleIndex-1);
+}
+
+void StartUi::slotStopGame()
+{
+    qDebug() << "startui stop game";
+    if(gamePlay)
+        gamePlay->getNetClient()->stopServer();
 }
 
 void StartUi::slotGameStarted()

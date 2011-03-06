@@ -90,6 +90,7 @@ private slots:
     void slotUpdatePlayerData(qint32 playerId, QString playerName);
     void slotPlayerLeft(qint32 playerId);
     void slotStartGame();
+    void slotStopGame();
     void slotMapRandom();
     void slotMapLeftButton();
     void slotMapRightButton();
