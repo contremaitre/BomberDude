@@ -53,6 +53,8 @@ public:
     void setAdminPasswd(const QString &);
     void stopServer();
     void selectMap(int direction);
+    bool getIsAdmin()                   { return isAdmin; }
+    void quitGame();
 
 private:
     QTcpSocket *tcpSocket;
@@ -65,6 +67,7 @@ private:
     quint32 cptPing;
     quint32 lastPingAck;
     quint32 udpCpt;
+    bool isAdmin;
     QString adminPasswd;
     bool udpAckOk;
     void sendUdpWelcome();
@@ -102,6 +105,7 @@ signals:
     void sigMapWinner(qint8 playerId);
     void sigGameStarted();
     void sigServerStopped();
+    void sigGameQuit();
 };
 
 

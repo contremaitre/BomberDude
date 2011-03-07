@@ -24,6 +24,7 @@ NetClient::NetClient()
 	timePing = new QTime();
 	timePing->start();
 	cptPing = 0;
+    isAdmin = false;
 	udpCpt = 0;
 	lastPingAck = 0;
 	tcpSocket = new QTcpSocket();
@@ -174,6 +175,11 @@ void NetClient::stopServer()
     tcpSocket->write(block);
 }
 
+void NetClient::quitGame() {
+    tcpSocket->close();
+    emit sigGameQuit();
+}
+
 void NetClient::receiveUdp()
 {
 	//qDebug() << "NetClient receive udp";
@@ -287,6 +293,7 @@ void NetClient::handleTcpMsg(QDataStream &in)
 	case msg_is_admin:
 	{
 	    qDebug() << "NetClient, msg_is_admin";
+        isAdmin = true;
 	    emit sigIsServerAdmin();
 	    break;
 	}

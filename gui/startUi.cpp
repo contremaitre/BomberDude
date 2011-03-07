@@ -43,6 +43,7 @@ StartUi::StartUi(QApplication *a)
     connect(mainWindow->cancelGameButton,SIGNAL(clicked()),this,SLOT(slotStopGame()));
     connect(mainWindow->mapRightButton, SIGNAL(clicked()), this, SLOT(slotMapRightButton()));
     connect(mainWindow->mapLeftButton, SIGNAL(clicked()), this, SLOT(slotMapLeftButton()));
+    connect(mainWindow->stopGame, SIGNAL(clicked()), this, SLOT(closeGame()));
 }
 
 void StartUi::loadIpStats()
@@ -187,6 +188,7 @@ void StartUi::startServer()
     connect( netclient, SIGNAL(sigMapRandom()), this, SLOT(slotMapRandom()));
     connect( netclient, SIGNAL(sigGameStarted()), this, SLOT(slotGameStarted()));
     connect( netclient, SIGNAL(mapPreviewReceived(MapClient*)),this,SLOT(slotMapPreviewReceived(MapClient*)));
+    connect( netclient, SIGNAL(sigGameQuit()), this, SLOT(slotGameQuit()));
 
     // must be queued otherwise NetClient instance is deleted before finishing its processing
     connect( netclient, SIGNAL(sigServerStopped()), this, SLOT(slotServerStopped()), Qt::QueuedConnection);
@@ -310,6 +312,7 @@ void StartUi::closeGame()
     mainWindow->previewGraphicsView->show();
     mainWindow->network_pref->setEnabled(true);
     mainWindow->sound_pref->setEnabled(true);
+    mainWindow->stopGame->setEnabled(false);
 }
 
 void StartUi::slotServerLaunched()
@@ -344,8 +347,12 @@ void StartUi::slotStartGame()
 void StartUi::slotStopGame()
 {
     qDebug() << "startui stop game";
-    if(gamePlay)
-        gamePlay->getNetClient()->stopServer();
+    if(gamePlay) {
+        if(gamePlay->getNetClient()->getIsAdmin())
+            gamePlay->getNetClient()->stopServer();
+        else
+            gamePlay->getNetClient()->quitGame();
+    }
 }
 
 void StartUi::slotGameStarted()
@@ -356,6 +363,7 @@ void StartUi::slotGameStarted()
     mainWindow->adminWidget->hide();
     mainWindow->player_data->hide();
     mainWindow->previewGraphicsView->hide();
+    mainWindow->stopGame->setEnabled(true);
 }
 
 void StartUi::slotMapPreviewReceived(MapClient *map)
