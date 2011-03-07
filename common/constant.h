@@ -51,5 +51,6 @@
 
 const int MAX_PLAYER_NAME_LENGTH = 16;
 
+const char SIGNAL_SERVER_LISTENING[] = "Server is listening";
 
 #endif // CONSTANT_H_

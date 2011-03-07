@@ -140,11 +140,10 @@ void StartUi::startServer()
     if(!settings->getShowIpStats())
         mainWindow->ip_stats->hide();
 
-    QString password;
     if(settings->isServer())
     {
         qsrand(QDateTime::currentDateTime().toTime_t());
-        password.setNum(qrand ());
+        adminPassword.setNum(qrand ());
         if(server)
         {
             server->kill();
@@ -160,7 +159,7 @@ void StartUi::startServer()
 		QString serverCmdLine("./Serverd");
 		serverCmdLine += " --port ";
 		serverCmdLine += mainWindow->serverPort->toPlainText();
-		serverCmdLine += " --admin-password " + password;
+		serverCmdLine += " --admin-password " + adminPassword;
         if(mainWindow->checkDebugMode->isChecked())
             serverCmdLine += " --debug-mode";
         serverCmdLine += " --started-from-gui";
@@ -169,7 +168,7 @@ void StartUi::startServer()
     }
     else
     {
-        password = mainWindow->password->toPlainText();
+        adminPassword = mainWindow->password->toPlainText();
     }
     gamePlay = new GamePlay(this, settings, mainWindow->previewGraphicsView);
     NetClient *netclient = gamePlay->getNetClient();
@@ -192,7 +191,9 @@ void StartUi::startServer()
     // must be queued otherwise NetClient instance is deleted before finishing its processing
     connect( netclient, SIGNAL(sigServerStopped()), this, SLOT(slotServerStopped()), Qt::QueuedConnection);
 
-    gamePlay->cliConnect(password);
+    // if the server is remote, try to connect immediately (otherwise server's output must be checked)
+    if(!settings->isServer())
+        gamePlay->cliConnect(adminPassword);
 }
 
 void StartUi::updateNetWidgetState(bool en)
@@ -441,11 +442,17 @@ void StartUi::slotReadServerDebug()
 {
     QByteArray array = server->readAllStandardOutput();
     array.chop(1); //we don't want the last end of line
+
     bool multiline = array.contains('\n');
     if(multiline)
         qDebug() << "\n** Server debug **\n" << array << "\n** Server debug end **\n";
     else
         qDebug() << "Server debug:"<< array;
+
+    if(settings->isServer() && array.contains(SIGNAL_SERVER_LISTENING)) {
+        gamePlay->cliConnect(adminPassword);
+        qDebug() << "Server is listening: connecting";
+    }
 }
 
 void StartUi::slotServerStopped()

@@ -53,6 +53,7 @@ private:
     QSound *music;
     QProcess *server;
     QApplication *qapp;
+    QString adminPassword;
 
     QPixmap statusGrey;
     QPixmap statusGreen;

@@ -82,6 +82,10 @@ void NetServer::run()
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(receiveUdp()), Qt::DirectConnection);
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(incomingClient()), Qt::DirectConnection);
     emit serverReady();
+
+    if(startedFromGui)
+        qDebug() << SIGNAL_SERVER_LISTENING;
+
     exec();
 }
 
