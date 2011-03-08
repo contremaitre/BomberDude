@@ -546,7 +546,13 @@ Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
         return NULL;
 
 	// add the bomb
-	Bomb *newBomb = new Bomb(playerId, squareX, squareY, DEFAULT_BOMB_DURATION, players[playerId]->getFlameLength(), players[playerId]->getRemoteBonus());
+    QPoint coords = getCenterCoordForBlock(squareX, squareY);
+	Bomb *newBomb = new Bomb(playerId,
+                             coords.x(),
+                             coords.y(),
+                             DEFAULT_BOMB_DURATION,
+                             players[playerId]->getFlameLength(),
+                             players[playerId]->getRemoteBonus() );
 	bombs.append(newBomb);
 	qDebug() << " MapServer> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
 	players[playerId]->decBombsAvailable();
@@ -560,7 +566,9 @@ Flame* MapServer::explosion(Bomb* b)
 	Flame *f = new Flame(b->playerId,20);
 	f->addDetonatedBomb(*b);
 
-	QPoint tempPoint = QPoint(b->x,b->y);
+    int tx, ty;
+    getBlockPosition(b->x, b->y, tx, ty);
+	QPoint tempPoint = QPoint(tx, ty);
 	propagateFlame(*f, tempPoint, b->range);
 
     players[b->playerId]->incBombsAvailable();
@@ -614,11 +622,13 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 
 		foreach(Bomb * b, bombs)
 		{
-			if (b->x == pTemp.x() && b->y == pTemp.y())
+            int tx, ty;
+            getBlockPosition(b->x, b->y, tx, ty);
+			if (tx == pTemp.x() && ty == pTemp.y())
 			{
 				bombs.removeOne(b);
 				f.addDetonatedBomb(*b);
-				QPoint newPos = QPoint(b->x, b->y);
+				QPoint newPos = QPoint(tx, ty);
 				propagateFlame(f, newPos, b->range);
                 players[b->playerId]->incBombsAvailable();
 				delete b;

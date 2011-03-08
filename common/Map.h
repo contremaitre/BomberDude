@@ -70,6 +70,7 @@ public:
     BlockMapProperty::optionDirection getOptionDirection(int pos) const          { return block_list[pos].getOptionDirection(); }
 
     void getBlockPosition(int x, int y, int &xdest, int &ydest) const;
+    QPoint getCenterCoordForBlock(int x, int y) const;
     void getNextBlock(int x, int y, int &xdest, int &ydest, int direction) const;
     const QList<SL> *getStylesList() const;
 

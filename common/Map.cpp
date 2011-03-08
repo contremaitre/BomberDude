@@ -108,6 +108,12 @@ void Map<P,SL>::getBlockPosition(int x, int y, int &xdest, int &ydest) const
 }
 
 template<typename P, typename SL>
+QPoint Map<P,SL>::getCenterCoordForBlock(int x, int y) const
+{
+    return QPoint(x * blockSize + blockSize/2, y * blockSize + blockSize/2);
+}
+
+template<typename P, typename SL>
 void Map<P,SL>::getNextBlock(int x, int y, int &xdest, int &ydest, int direction) const
 {
     xdest = x;
@@ -267,7 +273,9 @@ Bomb *Map<P,SL>::blockContainsBomb(int x,int y) const
 {
     foreach( Bomb *b, bombs)
     {
-        if ((b->x == x) && (b->y == y))
+        int tx, ty;
+        getBlockPosition(b->x, b->y, tx, ty);
+        if(tx == x && ty == y)
             return b;
     }
     return NULL;

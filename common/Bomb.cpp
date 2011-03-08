@@ -37,9 +37,9 @@ Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool rem
     this->range = range;
     this->playerId = playerId;
     this->duration = duration;
-    this->x=x;
-    this->y=y;
-    this->bombId=index;
+    this->x = x;
+    this->y = y;
+    this->bombId = index;
     this->remoteControlled = remote;
     index++;
 }
@@ -48,9 +48,9 @@ Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool rem
 Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId, bool remote)
 {
    this->playerId = playerId;
-   this->x=x;
-   this->y=y;
-   this->bombId=bombId;
+   this->x = x;
+   this->y = y;
+   this->bombId = bombId;
    this->remoteControlled = remote;
    range = duration = -1;
 }
