@@ -53,7 +53,7 @@ private:
     QList<QGraphicsSquareItem*> burntPlayers;
     QList<QGraphicsSquareItem*> optionsItems;
     QMap<QPoint, QGraphicsItem*> bonus;
-    QMap<int, QGraphicsItem*> bombs;
+    QMap<int, QGraphicsSquareItem*> bombs;
 
     QGraphicsSquareItem *getCase(int);
     QGraphicsSquareItem *getCase(int, int);
@@ -96,6 +96,7 @@ private slots:
     void slotAddBonus(Bonus::Bonus_t type, qint16 x, qint16 y);
     void slotRemoveBonus(qint16 x, qint16 y);
     void slotAddBomb(int id);
+    void slotMovedBomb(int id);
     void slotRemoveBomb(int id);
     void slotRemoveBombRC(int id);
     void slotRemoveHurryUp();

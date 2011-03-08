@@ -62,6 +62,23 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 		emit sigAddBomb(bombN.bombId);
 	}
 
+    qint8 nbMovingBombs;
+    updateIn >> nbMovingBombs;
+	for(qint8 i = 0; i < nbMovingBombs; i++) {
+		qint16 bombId, nx, ny;
+		updateIn >> bombId >> nx >> ny;
+        foreach (Bomb *b, bombs)
+        {
+            if(b->bombId == bombId)
+            {
+                b->x = nx;
+                b->y = ny;
+                break;
+            }
+        }
+		emit sigMovedBomb(bombId);
+	}
+
 	qint8 nbExplosions;
 	updateIn >> nbExplosions;
 	for(qint8 i = 0; i < nbExplosions; i++) {

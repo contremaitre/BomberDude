@@ -41,6 +41,7 @@ signals:
     void sigAddBonus(Bonus::Bonus_t type, qint16 x, qint16 y);
     void sigRemoveBonus(qint16 x, qint16 y);
     void sigAddBomb(int);
+    void sigMovedBomb(int);
     void sigRemoveBomb(int);
     void sigRemoveBombRC(int);
 };

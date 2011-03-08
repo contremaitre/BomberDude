@@ -132,6 +132,7 @@ void GameArena::setMap(MapClient *newMap)
     connect(map, SIGNAL(sigAddBonus(Bonus::Bonus_t,qint16,qint16)), this, SLOT(slotAddBonus(Bonus::Bonus_t,qint16,qint16)));
     connect(map, SIGNAL(sigRemoveBonus(qint16,qint16)), this, SLOT(slotRemoveBonus(qint16,qint16)));
     connect(map, SIGNAL(sigAddBomb(int)), this, SLOT(slotAddBomb(int)), Qt::DirectConnection);
+    connect(map, SIGNAL(sigMovedBomb(int)), this, SLOT(slotMovedBomb(int)), Qt::DirectConnection);
     connect(map, SIGNAL(sigRemoveBomb(int)), this, SLOT(slotRemoveBomb(int)), Qt::DirectConnection);
     connect(map, SIGNAL(sigRemoveBombRC(int)), this, SLOT(slotRemoveBombRC(int)), Qt::DirectConnection);
 }
@@ -322,24 +323,31 @@ void GameArena::slotAddBomb(int id)
     QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb->x - squareSize/2,
                                                        bomb->y - squareSize/2,
                                                        squareSize);
+    pix->setZValue(1.0);
     qDebug() << "new bomb, remote =" << bomb->remoteControlled;
     pix->setItem(bomb->remoteControlled ? pixmaps.getPixmapBombrc() : pixmaps.getPixmapBomb());
     bombs[id] = pix;
-    scene->addItem(pix);
+    scene->addItem(pix->getItem());
+}
+
+void GameArena::slotMovedBomb(int id)
+{
+    const Bomb *bomb = map->getBomb(id);
+    bombs[id]->setPos(bomb->x - squareSize/2, bomb->y - squareSize/2, squareSize);
 }
 
 void GameArena::slotRemoveBomb(int id)
 {
-    QMap<int, QGraphicsItem*>::iterator itb = bombs.find(id);
+    QMap<int, QGraphicsSquareItem*>::iterator itb = bombs.find(id);
     if(itb != bombs.end()) {
-        scene->removeItem(itb.value());
+        scene->removeItem(itb.value()->getItem());
         bombs.erase(itb);
     }
 }
 
 void GameArena::slotRemoveBombRC(int id)
 {
-    QMap<int, QGraphicsItem*>::iterator itb = bombs.find(id);
+    QMap<int, QGraphicsSquareItem*>::iterator itb = bombs.find(id);
     if(itb != bombs.end()) {
         scene->removeItem(itb.value());
         const Bomb *bomb = map->getBomb(id);
