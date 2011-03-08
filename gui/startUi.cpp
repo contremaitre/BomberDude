@@ -304,6 +304,7 @@ void StartUi::closeGame()
         delete labelsPlayerList.takeFirst();
     loadIpStats();
     loadNetWidget();
+    mainWindow->playersList->clear();
     mainWindow->network_pref->show();
     mainWindow->sound_pref->show();
     mainWindow->ip_stats->show();
