@@ -28,7 +28,8 @@ Bomb::Bomb() :
 	duration(-1),
 	range(-1),
 	bombId(-1),
-	remoteControlled(false)
+	remoteControlled(false),
+    direction(-1)
 {}
 
 //constructor for server
@@ -41,18 +42,19 @@ Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool rem
     this->y = y;
     this->bombId = index;
     this->remoteControlled = remote;
+    this->direction = -1;
     index++;
 }
 
 //constructor for client
 Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId, bool remote)
 {
-   this->playerId = playerId;
-   this->x = x;
-   this->y = y;
-   this->bombId = bombId;
-   this->remoteControlled = remote;
-   range = duration = -1;
+    this->playerId = playerId;
+    this->x = x;
+    this->y = y;
+    this->bombId = bombId;
+    this->remoteControlled = remote;
+    range = duration = direction = -1;
 }
 
 Bomb::~Bomb()
@@ -70,6 +72,6 @@ QDataStream& operator>>(QDataStream& in, Bomb& f)
 
 QDataStream& operator<<(QDataStream& out, const Bomb& f)
 {
-    out << f.bombId << f.x << f.y << f.playerId << (qint8) f.remoteControlled;
+    out << f.bombId << f.x << f.y << f.playerId << static_cast<qint8>(f.remoteControlled);
     return out;
 }

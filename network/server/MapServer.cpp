@@ -369,6 +369,89 @@ bool MapServer::tryMovePlayer(int id, int direction, int distance)
 	return false;
 }
 
+/**
+ *      1
+ *      |
+ *  0 <- -> 2
+ *      |
+ *      3
+ */
+bool MapServer::tryMoveBomb(Bomb* b, int direction, int distance)
+{
+	int newx = b->x;
+	int newy = b->y;
+
+	int move_x = 0;
+	int move_y = 0;
+    int offset = distance + (getBlockSize()/2);
+
+	switch(direction)
+	{
+	case MOVE_LEFT:
+		move_x = -distance;
+        newx -= offset;
+		break;
+	case MOVE_DOWN:
+		move_y = -distance;
+        newy -= offset;
+		break;
+	case MOVE_RIGHT:
+		move_x = distance;
+        newx += offset;
+		break;
+	case MOVE_UP:
+		move_y = distance;
+        newy += offset;
+		break;
+	default:
+        Q_ASSERT(false);
+	}
+
+	int x_originalBlock, y_originalBlock;
+	getBlockPosition( b->x, b->y, x_originalBlock, y_originalBlock );
+	int x_nextBlock, y_nextBlock;
+	getBlockPosition( newx, newy, x_nextBlock, y_nextBlock );
+	//qDebug() << "next block" << x_nextBlock << y_nextBlock ;
+	BlockMapProperty::BlockType typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
+
+    //here we test if the next block is empty and if the next block does not contains a bomb or if the next block is the same as the actual block (if we are before the middle of the block)
+    if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
+        (   (x_originalBlock == x_nextBlock && y_originalBlock == y_nextBlock) ||
+            blockContainsBomb(x_nextBlock,y_nextBlock) == NULL
+        )
+      )
+    {
+        b->x += move_x;
+        b->y += move_y;
+		return true;
+	}
+	else
+	{
+		// can we move closer to the next block ?
+		// TODO adjust player position in the case ?
+		if(move_x != 0)
+		{
+			int pos = coordinatePositionInBlock(b->x);
+			//qDebug() << "Move closer ?" << pos << move_x;
+			if((pos<0 && move_x>0) || (pos>0 && move_x<0))
+			{
+                b->x -= pos;
+				return true;
+			}
+		}
+		else
+		{
+			int pos = coordinatePositionInBlock(b->y);
+			if((pos<0 && move_y>0) || (pos>0 && move_y<0))
+			{
+				b->y -= pos;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 int MapServer::absMin(int a, int b) const
 {
 	if( b < 0 )
@@ -1087,10 +1170,54 @@ void MapServer::newHeartBeat() {
 		updateOut << *bombN;
 	}
 
+    // move the bombs
+    QList<Bomb*> movingBombs;
+    foreach(Bomb* bombN, bombs) {
+        bool hasMoved = false;
+        if(bombN->direction != -1) {
+            if(tryMoveBomb(bombN, bombN->direction, 10))
+                hasMoved = true;
+            else
+                bombN->direction = -1;
+        }
+
+        int bx,by;
+        getBlockPosition(bombN->x, bombN->y, bx, by);
+        if(getOption(bx, by) == BlockMapProperty::mov_walk) {
+            switch(getOptionDirection(bx,by))
+            {
+            case BlockMapProperty::optDirLeft:
+                tryMoveBomb(bombN,MOVE_LEFT,WALKWAY_SPEED);
+                break;
+            case BlockMapProperty::optDirRight:
+                tryMoveBomb(bombN,MOVE_RIGHT,WALKWAY_SPEED);
+                break;
+            case BlockMapProperty::optDirUp:
+                tryMoveBomb(bombN,MOVE_UP,WALKWAY_SPEED);
+                break;
+            case BlockMapProperty::optDirDown:
+                tryMoveBomb(bombN,MOVE_DOWN,WALKWAY_SPEED);
+                break;
+            default:
+                Q_ASSERT(false);
+                break;
+            }
+            hasMoved = true;
+        }
+
+        if(hasMoved)
+            movingBombs.append(bombN);
+    }
+
+    // serialize the moving bombs
+	updateOut << static_cast<qint8>(movingBombs.size());
+	foreach(Bomb* bombN, movingBombs) {
+		updateOut << bombN->bombId << bombN->x << bombN->y;
+	}
+
 	// then decrease each bomb's counter
 	foreach(Bomb* bombN, bombs)
 		bombN->decreaseLifeSpan();
-
 
 	// now we check which bombs must explode
 	// WARNING : because a bomb exploding can trigger several other ones

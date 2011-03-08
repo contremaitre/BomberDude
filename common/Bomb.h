@@ -36,7 +36,7 @@ public:
 	void decreaseLifeSpan()					{ if(!remoteControlled) duration--; }
 
 	// TODO must also check that the bomb is not in movement
-	bool mustExplode()						{ return !remoteControlled && duration < 0; }
+	bool mustExplode()						{ return !remoteControlled && duration < 0 && direction == -1; }
     qint8 getPlayer()                       { return playerId; }
 
 private:
@@ -52,6 +52,7 @@ public:
     int range;
     qint16 bombId;
     bool remoteControlled;
+    qint8 direction;            ///< -1 when the bomb is still, 0-4 when moving (see MapServer::tryMoveBomb())
 
 	friend QDataStream& operator>>(QDataStream& in, Bomb& f);
 	friend QDataStream& operator<<(QDataStream& out, const Bomb& f);

@@ -54,6 +54,7 @@ private:
     int absMin(int a, int b) const;
     bool movePlayer(int id, int direction, int distance);
     bool tryMovePlayer(int id, int direction, int distance);
+    bool tryMoveBomb(Bomb* b, int direction, int distance);
     int keyToDirection(int direction);
     Bomb* addBomb(int id);
     Bomb* addBomb(int id, int x, int y);
