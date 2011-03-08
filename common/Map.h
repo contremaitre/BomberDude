@@ -71,6 +71,22 @@ public:
 
     void getBlockPosition(int x, int y, int &xdest, int &ydest) const;
     QPoint getCenterCoordForBlock(int x, int y) const;
+
+    /**
+      Finds the nearest tile from the given coordinates, i.e. finds on which tile
+      the sprite overlaps even though it is still technically in the tile "before".
+
+      Necessary for removing bonuses when bombs move, because as soon as the sprite
+      touches the bonus, the latter disappears (cf AB). If the object's coordinates
+      are in the middle of the tile, i.e. the sprite is centered on its tile, then
+      it's the tile itself which is returned, not a neighbour.
+
+      @param x abscissa in pixels
+      @param y ordinate in pixels
+      @returns a QPoint with the block's coordinates
+     */
+    QPoint getOverlappingBlockPosition(int x, int y) const;
+
     void getNextBlock(int x, int y, int &xdest, int &ydest, int direction) const;
     const QList<SL> *getStylesList() const;
 
@@ -130,6 +146,8 @@ private:
 	virtual void sigBlockChanged(int i, int j) = 0;
     virtual void sigHeartbeatUpdated(qint32 value) = 0;
 };
+
+// FIXME it's not exactly a cpp file (doesn't give a .o), better extension name for it?
 
 #include "Map.cpp"
 

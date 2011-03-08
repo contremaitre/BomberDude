@@ -114,6 +114,27 @@ QPoint Map<P,SL>::getCenterCoordForBlock(int x, int y) const
 }
 
 template<typename P, typename SL>
+QPoint Map<P,SL>::getOverlappingBlockPosition(int x, int y) const
+{
+    int bx = x / blockSize;
+    int by = y / blockSize;
+
+    int xc = bx * blockSize + blockSize/2;
+    int yc = by * blockSize + blockSize/2;
+
+    if(xc < x)
+        bx++;
+    else if(xc > x)
+        bx--;
+    else if(yc < y)
+        by++;
+    else if(yc > y)
+        by--;
+
+    return QPoint(bx,by);
+}
+
+template<typename P, typename SL>
 void Map<P,SL>::getNextBlock(int x, int y, int &xdest, int &ydest, int direction) const
 {
     xdest = x;

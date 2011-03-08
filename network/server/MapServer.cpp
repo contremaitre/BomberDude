@@ -1187,26 +1187,29 @@ void MapServer::newHeartBeat() {
             switch(getOptionDirection(bx,by))
             {
             case BlockMapProperty::optDirLeft:
-                tryMoveBomb(bombN,MOVE_LEFT,WALKWAY_SPEED);
+                hasMoved = tryMoveBomb(bombN,MOVE_LEFT,WALKWAY_SPEED);
                 break;
             case BlockMapProperty::optDirRight:
-                tryMoveBomb(bombN,MOVE_RIGHT,WALKWAY_SPEED);
+                hasMoved = tryMoveBomb(bombN,MOVE_RIGHT,WALKWAY_SPEED);
                 break;
             case BlockMapProperty::optDirUp:
-                tryMoveBomb(bombN,MOVE_UP,WALKWAY_SPEED);
+                hasMoved = tryMoveBomb(bombN,MOVE_UP,WALKWAY_SPEED);
                 break;
             case BlockMapProperty::optDirDown:
-                tryMoveBomb(bombN,MOVE_DOWN,WALKWAY_SPEED);
+                hasMoved = tryMoveBomb(bombN,MOVE_DOWN,WALKWAY_SPEED);
                 break;
             default:
                 Q_ASSERT(false);
                 break;
             }
-            hasMoved = true;
         }
 
-        if(hasMoved)
+        if(hasMoved) {
+            QPoint neighBlock = getOverlappingBlockPosition(bombN->x, bombN->y);
+            removeBonus(neighBlock.x(), neighBlock.y());
+            qDebug() << "GROSCON: " << bx << "," << by << " " << neighBlock.x() << "," << neighBlock.y();
             movingBombs.append(bombN);
+        }
     }
 
     // serialize the moving bombs
