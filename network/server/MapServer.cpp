@@ -372,6 +372,7 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
 
 bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction, int distance)
 {
+    bool wasRecentered = false;
 	int newx = b->x;
 	int newy = b->y;
 
@@ -407,6 +408,22 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction, int distance)
 	getBlockPosition( newx, newy, x_nextBlock, y_nextBlock );
 	//qDebug() << "next block" << x_nextBlock << y_nextBlock ;
 	BlockMapProperty::BlockType typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
+
+    // recenter the bomb, if the bomb is moving in a given direction it must be centered along the other axis
+    if(direction == dirLeft || direction == dirRight) {
+        int offset = coordinatePositionInBlock(b->y);
+        if(offset != 0) {
+            b->y -= offset;
+            wasRecentered = true;
+        }
+    }
+    else {
+        int offset = coordinatePositionInBlock(b->x);
+        if(offset != 0) {
+            b->x -= offset;
+            wasRecentered = true;
+        }
+    }
 
     // we need to check the tile on which the bomb will overlap after the move
     // if it is the same than the next tile (i.e. the bomb rolled past the middle of the current tile)
@@ -466,7 +483,8 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction, int distance)
 			}
 		}
 	}
-	return false;
+
+	return wasRecentered;
 }
 
 int MapServer::absMin(int a, int b) const
