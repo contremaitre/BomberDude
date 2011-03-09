@@ -27,7 +27,7 @@
 
 struct optionCoord
 {
-    BlockMapProperty::optionDirection direction;
+    globalDirection direction;
     int x;
     int y;
 };
@@ -53,8 +53,8 @@ private:
     int coordinatePositionInBlock(int coord);
     int absMin(int a, int b) const;
     bool movePlayer(int id, int direction, int distance);
-    bool tryMovePlayer(int id, int direction, int distance);
-    bool tryMoveBomb(Bomb* b, int direction, int distance);
+    bool tryMovePlayer(int id, globalDirection direction, int distance);
+    bool tryMoveBomb(Bomb* b, globalDirection direction, int distance);
     int keyToDirection(int direction);
     Bomb* addBomb(int id);
     Bomb* addBomb(int id, int x, int y);
@@ -97,10 +97,10 @@ private:
 	QList <initialPlayerPosition> startPlayerSlots;
 	QList <Bonus::Bonus_t> bonusToSpawn; //when a player die, or pick a bonus incompatible with another one, the bonus re-spawn on the map
 	QList<killedPlayer> killedPlayers; //list of killed players during the current heartbeat
-	static const QPoint dirLeft;
-	static const QPoint dirRight;
-	static const QPoint dirUp;
-	static const QPoint dirDown;
+	static const QPoint planeDirLeft;
+	static const QPoint planeDirRight;
+	static const QPoint planeDirUp;
+	static const QPoint planeDirDown;
 
 public:
 	MapServer();

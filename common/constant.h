@@ -39,6 +39,14 @@
 #define SPAWNING_BLOCK_INTERVAL 10 //seconds
 //how fast the bomb is blinking (ms)
 
+enum globalDirection {
+    dirNone = -1,
+    dirLeft = 0,
+    dirUp = 1,
+    dirRight = 2,
+    dirDown = 3,
+};
+
 //Network
 #define SERVER_PORT 10000
 #define SERVER_ADDRESS "localhost" 

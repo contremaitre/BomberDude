@@ -62,12 +62,12 @@ public:
     BlockMapProperty::BlockType getType(int pos) const              { return block_list[pos].getType(); }
     void setType(BlockMapProperty::BlockType type, int pos);
     void setType(BlockMapProperty::BlockType type, int x, int y);
-    void setOption(int pos, BlockMapProperty::BlockOption option, BlockMapProperty::optionDirection dir);
-    void setOption(int x, int y, BlockMapProperty::BlockOption option, BlockMapProperty::optionDirection dir);
+    void setOption(int pos, BlockMapProperty::BlockOption option, globalDirection dir);
+    void setOption(int x, int y, BlockMapProperty::BlockOption option, globalDirection dir);
     BlockMapProperty::BlockOption getOption(int w, int h) const     { return block_list[h*width+w].getOption(); }
     BlockMapProperty::BlockOption getOption(int pos) const          { return block_list[pos].getOption(); }
-    BlockMapProperty::optionDirection getOptionDirection(int w, int h) const     { return block_list[h*width+w].getOptionDirection(); }
-    BlockMapProperty::optionDirection getOptionDirection(int pos) const          { return block_list[pos].getOptionDirection(); }
+    globalDirection getOptionDirection(int w, int h) const     { return block_list[h*width+w].getOptionDirection(); }
+    globalDirection getOptionDirection(int pos) const          { return block_list[pos].getOptionDirection(); }
 
     void getBlockPosition(int x, int y, int &xdest, int &ydest) const;
     QPoint getCenterCoordForBlock(int x, int y) const;
@@ -87,7 +87,7 @@ public:
      */
     QPoint getOverlappingBlockPosition(int x, int y) const;
 
-    void getNextBlock(int x, int y, int &xdest, int &ydest, int direction) const;
+    void getNextBlock(int x, int y, int &xdest, int &ydest, globalDirection direction) const;
     const QList<SL> *getStylesList() const;
 
     void setPlayerPosition(int id, qint16 , qint16);
@@ -118,11 +118,6 @@ protected:
     qint16 height;
     QList<SL> styles; //list of map styles available
     BlockMapProperty *block_list;
-
-    static const int MOVE_LEFT = 0;
-    static const int MOVE_UP = 1;
-    static const int MOVE_RIGHT = 2;
-    static const int MOVE_DOWN = 3;
 
 private:
     // callback method for when a brick wall is removed, only useful for the server

@@ -19,6 +19,9 @@
 #define QTB_BLOCKMAPPROPERTY_H
 
 
+#include "constant.h"
+
+
 /**
  * This class represent a block on the field
  * A block can be a wall, a brick or empty
@@ -30,7 +33,6 @@ public:
     //must be kept in sync in PixmapsItem
     enum BlockType {wall,brick,empty,broken,flame};
     enum BlockOption {none,arrow,teleport,mov_walk, random_spawn};
-    enum optionDirection {optDirNone,optDirLeft,optDirRight,optDirUp,optDirDown};
 
     BlockMapProperty();
     ~BlockMapProperty();
@@ -38,14 +40,14 @@ public:
     void setType(BlockType);
     BlockType getType() const;
 
-    void setOption(BlockOption, optionDirection);
+    void setOption(BlockOption, globalDirection);
     BlockOption getOption() const;
-    optionDirection getOptionDirection() const;
+    globalDirection getOptionDirection() const;
 
 private:
     BlockType type;
     BlockOption option;
-    optionDirection optionDir;
+    globalDirection optionDir;
 };
 
 

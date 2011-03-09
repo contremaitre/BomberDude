@@ -20,7 +20,7 @@
 BlockMapProperty::BlockMapProperty() :
         type(empty),
         option(none),
-        optionDir(optDirNone)
+        optionDir(dirNone)
 {
 }
 
@@ -38,7 +38,7 @@ BlockMapProperty::BlockType BlockMapProperty::getType() const
     return type;
 }
 
-void BlockMapProperty::setOption(BlockOption o, optionDirection dir)
+void BlockMapProperty::setOption(BlockOption o, globalDirection dir)
 {
     option = o;
     optionDir = dir;
@@ -49,7 +49,7 @@ BlockMapProperty::BlockOption BlockMapProperty::getOption() const
     return option;
 }
 
-BlockMapProperty::optionDirection BlockMapProperty::getOptionDirection() const
+globalDirection BlockMapProperty::getOptionDirection() const
 {
     return optionDir;
 }

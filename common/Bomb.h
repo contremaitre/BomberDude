@@ -22,6 +22,8 @@
 #include <QObject>
 #include <QTimer>
 
+#include "constant.h"
+
 
 class Bomb : public QObject
 {
@@ -52,7 +54,7 @@ public:
     int range;
     qint16 bombId;
     bool remoteControlled;
-    qint8 direction;            ///< -1 when the bomb is still, 0-4 when moving (see MapServer::tryMoveBomb())
+    globalDirection direction;
 
 	friend QDataStream& operator>>(QDataStream& in, Bomb& f);
 	friend QDataStream& operator<<(QDataStream& out, const Bomb& f);

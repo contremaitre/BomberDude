@@ -22,17 +22,17 @@
 #include "PlayerServer.h"
 
 
-const QPoint MapServer::dirLeft = QPoint(-1,0);
-const QPoint MapServer::dirRight = QPoint(1,0);
-const QPoint MapServer::dirUp = QPoint(0,-1);
-const QPoint MapServer::dirDown = QPoint(0,1);
+const QPoint MapServer::planeDirLeft = QPoint(-1,0);
+const QPoint MapServer::planeDirRight = QPoint(1,0);
+const QPoint MapServer::planeDirUp = QPoint(0,-1);
+const QPoint MapServer::planeDirDown = QPoint(0,1);
 
 
 MapServer::MapServer()
           : debugMode(false),
             spawningBlocks(false),
             shrink(-1,0),
-            shrinkDirection(dirRight)
+            shrinkDirection(planeDirRight)
 {
 	connect(&timerHeartBeat, SIGNAL(timeout()), this, SLOT(newHeartBeat()));
 
@@ -226,13 +226,13 @@ bool MapServer::movePlayer(int id, int direction, int distance)
 {
 	bool ret = false;
 	if(direction == 7 || direction == 0 || direction == 1)
-		ret = tryMovePlayer(id,MOVE_LEFT,distance);
+		ret = tryMovePlayer(id, dirLeft, distance);
 	if(!ret && (direction == 7 || direction == 6 || direction == 5))
-		ret = tryMovePlayer(id,MOVE_UP,distance);
+		ret = tryMovePlayer(id, dirUp, distance);
 	if(!ret && (direction == 5 || direction == 4 || direction == 3))
-		ret = tryMovePlayer(id,MOVE_RIGHT,distance);
+		ret = tryMovePlayer(id, dirRight, distance);
 	if(!ret && (direction == 1 || direction == 2 || direction == 3))
-		ret = tryMovePlayer(id,MOVE_DOWN,distance);
+		ret = tryMovePlayer(id, dirDown, distance);
 	return ret;
 }
 
@@ -245,7 +245,7 @@ bool MapServer::movePlayer(int id, int direction, int distance)
  *      |
  *      3
  */
-bool MapServer::tryMovePlayer(int id, int direction, int distance)
+bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
 {
 	/**
 	 * Rules for a player move :
@@ -263,20 +263,21 @@ bool MapServer::tryMovePlayer(int id, int direction, int distance)
 	//qDebug() << "Map move player" << id << direction << "x,y" << x << y;
 	switch(direction)
 	{
-	case MOVE_LEFT:
-		move_x = -1 * distance;
-		break;
-	case MOVE_DOWN:
-		move_y = -1 * distance;
-		break;
-	case MOVE_RIGHT:
-		move_x = 1 * distance;
-		break;
-	case MOVE_UP:
-		move_y = 1 * distance;
-		break;
-	default:
-		return false;
+        case dirLeft:
+            move_x = -1 * distance;
+            break;
+        case dirDown:
+            move_y = -1 * distance;
+            break;
+        case dirRight:
+            move_x = 1 * distance;
+            break;
+        case dirUp:
+            move_y = 1 * distance;
+            break;
+        default:
+            Q_ASSERT(false);
+            //return false;
 	}
 	int x_originalBlock, y_originalBlock;
 	getBlockPosition( x_player, y_player, x_originalBlock, y_originalBlock );
@@ -369,14 +370,7 @@ bool MapServer::tryMovePlayer(int id, int direction, int distance)
 	return false;
 }
 
-/**
- *      1
- *      |
- *  0 <- -> 2
- *      |
- *      3
- */
-bool MapServer::tryMoveBomb(Bomb* b, int direction, int distance)
+bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction, int distance)
 {
 	int newx = b->x;
 	int newy = b->y;
@@ -387,24 +381,24 @@ bool MapServer::tryMoveBomb(Bomb* b, int direction, int distance)
 
 	switch(direction)
 	{
-	case MOVE_LEFT:
-		move_x = -distance;
-        newx -= offset;
-		break;
-	case MOVE_DOWN:
-		move_y = -distance;
-        newy -= offset;
-		break;
-	case MOVE_RIGHT:
-		move_x = distance;
-        newx += offset;
-		break;
-	case MOVE_UP:
-		move_y = distance;
-        newy += offset;
-		break;
-	default:
-        Q_ASSERT(false);
+        case dirLeft:
+            move_x = -distance;
+            newx -= offset;
+            break;
+        case dirDown:
+            move_y = -distance;
+            newy -= offset;
+            break;
+        case dirRight:
+            move_x = distance;
+            newx += offset;
+            break;
+        case dirUp:
+            move_y = distance;
+            newy += offset;
+            break;
+        default:
+            Q_ASSERT(false);
 	}
 
 	int x_originalBlock, y_originalBlock;
@@ -679,10 +673,10 @@ void MapServer::propagateFlame(Flame & f, const QPoint & p, int range)
 		}
 	}
 
-	directedFlameProgagation(f,p,dirUp,range);
-	directedFlameProgagation(f,p,dirDown,range);
-	directedFlameProgagation(f,p,dirLeft,range);
-	directedFlameProgagation(f,p,dirRight,range);
+	directedFlameProgagation(f,p,planeDirUp,range);
+	directedFlameProgagation(f,p,planeDirDown,range);
+	directedFlameProgagation(f,p,planeDirLeft,range);
+	directedFlameProgagation(f,p,planeDirRight,range);
 }
 
 void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoint & direction, int range){
@@ -928,24 +922,7 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
     if(getOption(x,y) == BlockMapProperty::mov_walk)
     {
         //qDebug() << "player" << playerN->getId() << "on moving walkway";
-
-        switch(getOptionDirection(x,y))
-        {
-        case BlockMapProperty::optDirLeft:
-            tryMovePlayer(playerN->getId(),MOVE_LEFT,WALKWAY_SPEED);
-            break;
-        case BlockMapProperty::optDirRight:
-            tryMovePlayer(playerN->getId(),MOVE_RIGHT,WALKWAY_SPEED);
-            break;
-        case BlockMapProperty::optDirUp:
-            tryMovePlayer(playerN->getId(),MOVE_DOWN,WALKWAY_SPEED);
-            break;
-        case BlockMapProperty::optDirDown:
-            tryMovePlayer(playerN->getId(),MOVE_UP,WALKWAY_SPEED);
-            break;
-        default:
-            break;
-        }
+        tryMovePlayer(playerN->getId(), getOptionDirection(x,y), WALKWAY_SPEED);
     }
 }
 
@@ -983,7 +960,7 @@ bool MapServer::shrinkMap()
     int count = 0;
     do
     {
-        if(shrinkDirection == dirRight)
+        if(shrinkDirection == planeDirRight)
         {
             if(shrink.x() < shrinkLimitDown.x()-1)
             {
@@ -992,11 +969,11 @@ bool MapServer::shrinkMap()
             }
             else
             {
-                shrinkDirection = dirDown;
+                shrinkDirection = planeDirDown;
                 shrinkLimitUp.setY(shrinkLimitUp.y()+1);
             }
         }
-        else if(shrinkDirection == dirDown)
+        else if(shrinkDirection == planeDirDown)
         {
             if(shrink.y() < shrinkLimitDown.y()-1)
             {
@@ -1005,11 +982,11 @@ bool MapServer::shrinkMap()
             }
             else
             {
-                shrinkDirection = dirLeft;
+                shrinkDirection = planeDirLeft;
                 shrinkLimitDown.setX(shrinkLimitDown.x()-1);
             }
         }
-        else if(shrinkDirection == dirLeft)
+        else if(shrinkDirection == planeDirLeft)
         {
             if(shrink.x() > shrinkLimitUp.x())
             {
@@ -1018,11 +995,11 @@ bool MapServer::shrinkMap()
             }
             else
             {
-                shrinkDirection = dirUp;
+                shrinkDirection = planeDirUp;
                 shrinkLimitDown.setY(shrinkLimitDown.y()-1);
             }
         }
-        else if(shrinkDirection == dirUp)
+        else if(shrinkDirection == planeDirUp)
         {
             if(shrink.y() > shrinkLimitUp.y())
             {
@@ -1031,7 +1008,7 @@ bool MapServer::shrinkMap()
             }
             else
             {
-                shrinkDirection = dirRight;
+                shrinkDirection = planeDirRight;
                 shrinkLimitUp.setX(shrinkLimitUp.x()+1);
             }
         }
@@ -1174,40 +1151,21 @@ void MapServer::newHeartBeat() {
     QList<Bomb*> movingBombs;
     foreach(Bomb* bombN, bombs) {
         bool hasMoved = false;
-        if(bombN->direction != -1) {
+        if(bombN->direction != dirNone) {
             if(tryMoveBomb(bombN, bombN->direction, 10))
                 hasMoved = true;
             else
-                bombN->direction = -1;
+                bombN->direction = dirNone;
         }
 
         int bx,by;
         getBlockPosition(bombN->x, bombN->y, bx, by);
-        if(getOption(bx, by) == BlockMapProperty::mov_walk) {
-            switch(getOptionDirection(bx,by))
-            {
-            case BlockMapProperty::optDirLeft:
-                hasMoved = tryMoveBomb(bombN,MOVE_LEFT,WALKWAY_SPEED);
-                break;
-            case BlockMapProperty::optDirRight:
-                hasMoved = tryMoveBomb(bombN,MOVE_RIGHT,WALKWAY_SPEED);
-                break;
-            case BlockMapProperty::optDirUp:
-                hasMoved = tryMoveBomb(bombN,MOVE_UP,WALKWAY_SPEED);
-                break;
-            case BlockMapProperty::optDirDown:
-                hasMoved = tryMoveBomb(bombN,MOVE_DOWN,WALKWAY_SPEED);
-                break;
-            default:
-                Q_ASSERT(false);
-                break;
-            }
-        }
+        if(getOption(bx, by) == BlockMapProperty::mov_walk)
+            hasMoved = tryMoveBomb(bombN, getOptionDirection(bx,by), WALKWAY_SPEED);
 
         if(hasMoved) {
             QPoint neighBlock = getOverlappingBlockPosition(bombN->x, bombN->y);
             removeBonus(neighBlock.x(), neighBlock.y());
-            qDebug() << "GROSCON: " << bx << "," << by << " " << neighBlock.x() << "," << neighBlock.y();
             movingBombs.append(bombN);
         }
     }

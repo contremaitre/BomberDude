@@ -29,7 +29,7 @@ Bomb::Bomb() :
 	range(-1),
 	bombId(-1),
 	remoteControlled(false),
-    direction(-1)
+    direction(dirNone)
 {}
 
 //constructor for server
@@ -42,7 +42,7 @@ Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool rem
     this->y = y;
     this->bombId = index;
     this->remoteControlled = remote;
-    this->direction = -1;
+    this->direction = dirNone;
     index++;
 }
 
@@ -54,7 +54,8 @@ Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId, bool remote)
     this->y = y;
     this->bombId = bombId;
     this->remoteControlled = remote;
-    range = duration = direction = -1;
+    range = duration = -1;
+    direction = dirNone;
 }
 
 Bomb::~Bomb()

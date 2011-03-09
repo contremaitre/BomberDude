@@ -89,13 +89,13 @@ void Map<P,SL>::setType(BlockMapProperty::BlockType type, int x, int y)
 }
 
 template<typename P, typename SL>
-void Map<P,SL>::setOption(int pos, BlockMapProperty::BlockOption option, BlockMapProperty::optionDirection dir)
+void Map<P,SL>::setOption(int pos, BlockMapProperty::BlockOption option, globalDirection dir)
 {
     block_list[pos].setOption(option, dir);
 }
 
 template<typename P, typename SL>
-void Map<P,SL>::setOption(int x, int y, BlockMapProperty::BlockOption option, BlockMapProperty::optionDirection dir)
+void Map<P,SL>::setOption(int x, int y, BlockMapProperty::BlockOption option, globalDirection dir)
 {
     block_list[y*width+x].setOption(option, dir);
 }
@@ -135,30 +135,30 @@ QPoint Map<P,SL>::getOverlappingBlockPosition(int x, int y) const
 }
 
 template<typename P, typename SL>
-void Map<P,SL>::getNextBlock(int x, int y, int &xdest, int &ydest, int direction) const
+void Map<P,SL>::getNextBlock(int x, int y, int &xdest, int &ydest, globalDirection direction) const
 {
     xdest = x;
     ydest = y;
     switch(direction)
     {
-    case MOVE_LEFT:
-        if(xdest > 0)
-            xdest--;
-        break;
-    case MOVE_RIGHT:
-        if(xdest < width - 1)
-            xdest++;
-        break;
-    case MOVE_DOWN:
-        if(ydest > 0)
-            ydest--;
-        break;
-    case MOVE_UP:
-        if(ydest < height - 1)
-            ydest++;
-        break;
-    default:
-        break;
+        case dirLeft:
+            if(xdest > 0)
+                xdest--;
+            break;
+        case dirRight:
+            if(xdest < width - 1)
+                xdest++;
+            break;
+        case dirDown:
+            if(ydest > 0)
+                ydest--;
+            break;
+        case dirUp:
+            if(ydest < height - 1)
+                ydest++;
+            break;
+        default:
+            break;
     }
 }
 
@@ -341,7 +341,7 @@ QDataStream &operator>>(QDataStream & in, Map<P,SL> &map) {
         map.setType((BlockMapProperty::BlockType)x,i);
         in >> x;
         in >> y;
-        map.setOption(i,(BlockMapProperty::BlockOption)x,(BlockMapProperty::optionDirection)y);
+        map.setOption(i,(BlockMapProperty::BlockOption)x,(globalDirection)y);
     }
 
     //copy style list

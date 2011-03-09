@@ -7,7 +7,7 @@ Player::Player() :
 	x(-1),
 	y(-1),
     direction(-1),
-    heading(-1),
+    heading(dirNone),
     isAlive(false),
     isSick(false)
 {}
@@ -17,7 +17,7 @@ Player::Player(qint8 playerId) :
 	x(-1),
 	y(-1),
     direction(-1),
-    heading(-1),
+    heading(dirNone),
     isAlive(false),
     isSick(false)
 {}

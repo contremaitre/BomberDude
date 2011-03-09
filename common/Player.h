@@ -4,6 +4,9 @@
 
 #include <QDataStream>
 
+#include "constant.h"
+
+
 class Player {
 public:
 	Player();
@@ -18,8 +21,8 @@ public:
 
     void setDirection(int dir)			{ direction = dir; }
     int getDirection() const			{ return direction; }
-    void setHeading(int h)              { heading = h;}
-    int getHeading() const              { return heading;}
+    void setHeading(globalDirection h)  { heading = h;}
+    globalDirection getHeading() const  { return heading;}
 
     bool getIsAlive() const             { return isAlive; }
 
@@ -32,7 +35,7 @@ protected:
 	qint16 y;
 
 	int direction;
-	int heading;
+	globalDirection heading;
 
     bool isAlive;
     bool isSick;
