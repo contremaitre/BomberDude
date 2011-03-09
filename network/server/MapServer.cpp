@@ -259,6 +259,9 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
 	int move_x = 0;
 	int move_y = 0;
 	getPlayerPosition( id, x_player, y_player );
+    const qint16 x_origPixel = x_player;
+    const qint16 y_origPixel = y_player;
+
 	players[id]->setHeading(direction);
 	//qDebug() << "Map move player" << id << direction << "x,y" << x << y;
 	switch(direction)
@@ -288,10 +291,27 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
 	//qDebug() << "next block" << x_nextBlock << y_nextBlock ;
 	BlockMapProperty::BlockType typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
 
+    // We store the result since we use it at least once
+    Bomb* bombOnNextBlock = blockContainsBomb(x_nextBlock,y_nextBlock);
+
+    // Can we kick a bomb? First check that the bomb is on another tile
+    if(x_originalBlock != x_nextBlock || y_originalBlock != y_nextBlock) {
+        if(bombOnNextBlock && players[id]->getKickBonus()) {
+            // check that the player is at the center of the tile so he can kick
+            QPoint centerOfTile = getCenterCoordForBlock(x_originalBlock, y_originalBlock);
+            if( (direction == dirLeft || direction == dirRight) && y_origPixel == centerOfTile.y() ||
+                (direction == dirUp   || direction == dirDown)  && x_origPixel == centerOfTile.x()
+              )
+            {
+                bombOnNextBlock->direction = direction;
+            }
+        }
+    }
+
     //here we test if the next block is empty and if the next block does not contains a bomb or if the next block is the same as the actual block (if we are before the middle of the block)
     if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
         (   (x_originalBlock == x_nextBlock && y_originalBlock == y_nextBlock) ||
-            blockContainsBomb(x_nextBlock,y_nextBlock) == NULL
+            bombOnNextBlock == 0
         )
       )
     {
