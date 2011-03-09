@@ -16,7 +16,9 @@
   <Row>    =========    </Row>
 </Arena>
 <Style name="tapis" type="mov_walkway">
-<option direction="left" x="6" y="6" />
+<option direction="up" x="7" y="5" />
+<option direction="right" x="6" y="5" />
+<option direction="down" x="6" y="6" />
 <option direction="left" x="7" y="6" />
 <option direction="left" x="8" y="6" />
 <option direction="left" x="9" y="6" />
