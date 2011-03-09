@@ -61,6 +61,7 @@ private:
     QList<Bomb*> addBombMultiple(int playerId);
     bool getRandomEmptyPosition(qint16 &x, qint16 &y);
     bool blockEmpty(int x, int y);//return true if there is nothing on this block
+    bool blockContainsPlayer(int x, int y);
     bool blockContainsTeleport(int x, int y, int &id);
     void getNextTeleportPosition(int id, int &x, int &y);
     bool checkPlayerInFlames(PlayerServer* playerN,

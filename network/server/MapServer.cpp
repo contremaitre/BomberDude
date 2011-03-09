@@ -408,10 +408,33 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction, int distance)
 	//qDebug() << "next block" << x_nextBlock << y_nextBlock ;
 	BlockMapProperty::BlockType typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
 
-    //here we test if the next block is empty and if the next block does not contains a bomb or if the next block is the same as the actual block (if we are before the middle of the block)
+    // we need to check the tile on which the bomb will overlap after the move
+    // if it is the same than the next tile (i.e. the bomb rolled past the middle of the current tile)
+    // then we check whether a player is standing there, in which case the bomb must bounce back.
+    QPoint overlapTile = getOverlappingBlockPosition(b->x, b->y);
+    int anbx, anby;
+    getNextBlock(x_originalBlock, y_originalBlock, anbx, anby, direction);
+    if( anbx == overlapTile.x() &&
+        anby == overlapTile.y() &&
+        blockContainsPlayer(anbx, anby) )
+    {
+        QPoint bounceHere = getCenterCoordForBlock(x_originalBlock, y_originalBlock);
+        b->x = bounceHere.x();
+        b->y = bounceHere.y();
+
+        // FIXME in case the bomb was kicked, we must stop it from rolling, yet we must signal
+        // that the bomb moved, it's probably better to return two booleans to make it clear
+        b->direction = dirNone;
+        return true;
+    }
+
+    // here we test if the next block is empty 
+    // and if the next block is the same as the actual block or does not contains a bomb nor a player
     if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
         (   (x_originalBlock == x_nextBlock && y_originalBlock == y_nextBlock) ||
-            blockContainsBomb(x_nextBlock,y_nextBlock) == NULL
+            (   blockContainsBomb(x_nextBlock,y_nextBlock) == NULL &&
+                ! blockContainsPlayer(x_nextBlock, y_nextBlock)
+            )
         )
       )
     {
@@ -491,6 +514,16 @@ bool MapServer::blockEmpty(int x, int y)
         return false;
     if(blockContainsBomb(x,y) != NULL)
         return false;
+    if(blockContainsPlayer(x, y))
+        return false;
+    QMap<Point<qint8>, Bonus*>::iterator itb = bonus.find(Point<qint8>(x, y));
+    if(itb != bonus.end())
+        return false;
+    return true;
+}
+
+bool MapServer::blockContainsPlayer(int x, int y)
+{
     for (int i=0;i<getNbPlayers();i++)
     {
         qint16 p_x, p_y;
@@ -498,12 +531,9 @@ bool MapServer::blockEmpty(int x, int y)
         int p_squareX, p_squareY;
         getBlockPosition(p_x, p_y, p_squareX, p_squareY);
         if (x == p_squareX && y == p_squareY)
-            return false;
+            return true;
     }
-    QMap<Point<qint8>, Bonus*>::iterator itb = bonus.find(Point<qint8>(x, y));
-    if(itb != bonus.end())
-        return false;
-    return true;
+    return false;
 }
 
 bool MapServer::getRandomEmptyPosition(qint16 &x, qint16 &y)
