@@ -1181,17 +1181,21 @@ void MapServer::newHeartBeat() {
     QList<Bomb*> movingBombs;
     foreach(Bomb* bombN, bombs) {
         bool hasMoved = false;
+
+        // conveyor belt has no effect on a rolling bomb, check both cases separately!
         if(bombN->direction != dirNone) {
             if(tryMoveBomb(bombN, bombN->direction, 10))
                 hasMoved = true;
             else
                 bombN->direction = dirNone;
         }
-
-        int bx,by;
-        getBlockPosition(bombN->x, bombN->y, bx, by);
-        if(getOption(bx, by) == BlockMapProperty::mov_walk)
-            hasMoved = tryMoveBomb(bombN, getOptionDirection(bx,by), WALKWAY_SPEED);
+        else
+        {
+            int bx,by;
+            getBlockPosition(bombN->x, bombN->y, bx, by);
+            if(getOption(bx, by) == BlockMapProperty::mov_walk)
+                hasMoved = tryMoveBomb(bombN, getOptionDirection(bx,by), WALKWAY_SPEED);
+        }
 
         if(hasMoved) {
             QPoint neighBlock = getOverlappingBlockPosition(bombN->x, bombN->y);
