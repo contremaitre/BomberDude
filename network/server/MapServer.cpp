@@ -304,6 +304,8 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
               )
             {
                 bombOnNextBlock->direction = direction;
+                setPlayerPosition(id, centerOfTile.x(), centerOfTile.y());
+                return true;
             }
         }
     }
