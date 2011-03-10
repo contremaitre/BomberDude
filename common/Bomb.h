@@ -37,8 +37,7 @@ public:
 
 	void decreaseLifeSpan()					{ if(!remoteControlled) duration--; }
 
-	// TODO must also check that the bomb is not in movement
-	bool mustExplode()						{ return !remoteControlled && duration < 0 && direction == -1; }
+	bool mustExplode()						{ return !remoteControlled && duration < 0; }
     qint8 getPlayer()                       { return playerId; }
 
 private:
