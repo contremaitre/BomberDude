@@ -16,18 +16,26 @@
   <Row>    =========    </Row>
 </Arena>
 <Style name="tapis" type="mov_walkway">
-<option direction="up" x="7" y="5" />
-<option direction="right" x="6" y="5" />
-<option direction="down" x="6" y="6" />
-<option direction="left" x="7" y="6" />
-<option direction="left" x="8" y="6" />
-<option direction="left" x="9" y="6" />
-<option direction="left" x="10" y="6" />
+    <option direction="up" x="7" y="5" />
+    <option direction="right" x="6" y="5" />
+    <option direction="down" x="6" y="6" />
+    <option direction="left" x="7" y="6" />
+    <option direction="left" x="8" y="6" />
+    <option direction="left" x="9" y="6" />
+    <option direction="left" x="10" y="6" />
 </Style>
 <Style name="teleport" type="teleport">
-<option x="1" y="3" />
-<option x="4" y="5" />
-<option x="10" y="2" />
+    <option x="1" y="3" />
+    <option x="4" y="5" />
+    <option x="10" y="2" />
+</Style>
+<Style name="arrow" type="arrow">
+    <option direction="right" x="8" y="6" />
+    <option direction="down" x="10" y="6" />
+
+    <option direction="right" x="9" y="7" />
+    <option direction="down" x="11" y="7" />
+    <option direction="left" x="11" y="5" />
+    <option direction="up" x="9" y="5" />
 </Style>
 </Map>
-

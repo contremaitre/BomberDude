@@ -105,7 +105,7 @@ void GameArena::setMap(MapClient *newMap)
             {
                 //add this option on the map. It won't be removed or changed during the game.
                 QGraphicsSquareItem* optItem = new QGraphicsSquareItem(i * squareSize,j * squareSize,squareSize);
-                optItem->setItem(pixmaps.getPixmap(map->getOption(i,j)));
+                optItem->setItem(pixmaps.getPixmap(map->getOption(i,j), map->getOptionDirection(i,j)));
                 scene->addItem(optItem);
                 optionsItems << optItem;
             }

@@ -64,7 +64,8 @@ void PixmapsItems::loadAll()
     addBlockPixMap(BlockMapProperty::broken,"pictures/broken.png");
 
     addOptionPixMap(BlockMapProperty::teleport,"pictures/option_teleport.png");
-    addOptionPixMap(BlockMapProperty::mov_walk,"pictures/mov_walk.png");
+    addOptionPixMapRotate(BlockMapProperty::mov_walk,"pictures/mov_walk.png");
+    addOptionPixMapRotate(BlockMapProperty::arrow,"pictures/arrow_left.svg");
 }
 
 void PixmapsItems::addBlockPixMap(BlockMapProperty::BlockType type, const char *name)
@@ -75,12 +76,38 @@ void PixmapsItems::addBlockPixMap(BlockMapProperty::BlockType type, const char *
     block_pixmaps.push_back(tmp_block);
 }
 
-void PixmapsItems::addOptionPixMap(BlockMapProperty::BlockOption type, const char *name)
+void PixmapsItems::addOptionPixMap(BlockMapProperty::BlockOption type,
+                                   const char *name)
 {
-    option_pixmaps_t tmp_block;
-    tmp_block.pixmap = QPixmap(name).scaled(QSizeF(width,height).toSize());
-    tmp_block.type = type;
-    option_pixmaps.push_back(tmp_block);
+    option_pixmaps_t tmp_key;
+    tmp_key.option = type;
+    tmp_key.dir = dirNone;
+
+    option_pixmaps[tmp_key] = QPixmap(name).scaled(QSizeF(width,height).toSize());
+}
+
+void PixmapsItems::addOptionPixMapRotate(BlockMapProperty::BlockOption type,
+                                         const char *name)
+{
+    option_pixmaps_t tmp_key;
+    tmp_key.option = type;
+    QPixmap origPix = QPixmap(name);
+    QTransform rotPi2;
+
+    tmp_key.dir = dirLeft;
+    option_pixmaps[tmp_key] = origPix.scaled(QSizeF(width,height).toSize());
+
+    tmp_key.dir = dirUp;
+    rotPi2.rotate(-90.0);
+    option_pixmaps[tmp_key] = origPix.scaled(QSizeF(width,height).toSize()).transformed(rotPi2);
+
+    tmp_key.dir = dirRight;
+    rotPi2.rotate(-90.0);
+    option_pixmaps[tmp_key] = origPix.scaled(QSizeF(width,height).toSize()).transformed(rotPi2);
+
+    tmp_key.dir = dirDown;
+    rotPi2.rotate(-90.0);
+    option_pixmaps[tmp_key] = origPix.scaled(QSizeF(width,height).toSize()).transformed(rotPi2);
 }
 
 void PixmapsItems::addBonusPixMap(Bonus::Bonus_t type, const char *name)
@@ -101,13 +128,18 @@ const QPixmap& PixmapsItems::getPixmap(BlockMapProperty::BlockType type)
     return none;
 }
 
-const QPixmap& PixmapsItems::getPixmap(BlockMapProperty::BlockOption type)
+const QPixmap& PixmapsItems::getPixmap(BlockMapProperty::BlockOption type,
+                                       globalDirection direction)
 {
-    for (int i = 0; i < option_pixmaps.size(); ++i) {
-        if (option_pixmaps.at(i).type == type)
-            return option_pixmaps.at(i).pixmap;
-    }
-    //todo could this case be avoided ?
+    option_pixmaps_t key;
+    key.option = type;
+    key.dir = direction;
+
+    QMap<option_pixmaps_t,QPixmap>::const_iterator it = option_pixmaps.find(key);
+    if(it != option_pixmaps.end())
+        return it.value();
+
+    // TODO could this case be avoided ?
     return none;
 }
 

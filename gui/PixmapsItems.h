@@ -20,23 +20,37 @@
 
 
 #include <QPixmap>
+#include <QMap>
 
 #include "BlockMapProperty.h"
 #include "Bonus.h"
+#include "constant.h"
+
 /**
  * For now, we load one picture for each block type. And this is done manualy
  * In the future, we will have something like a xml file with an association of block type and pictures
  */
-
 class PixmapsItems
 {
 private:
     struct block_pixmaps_t {QPixmap pixmap; BlockMapProperty::BlockType type;};
-    struct option_pixmaps_t{QPixmap pixmap; BlockMapProperty::BlockOption type;};
     struct bonus_pixmaps_t {QPixmap pixmap; Bonus::Bonus_t type;};
     QList <block_pixmaps_t> block_pixmaps;
-    QList <option_pixmaps_t> option_pixmaps;
     QList <bonus_pixmaps_t> bonus_pixmaps;
+
+    struct option_pixmaps_t {
+        bool operator<(const option_pixmaps_t& rhs) const {
+            if(option != rhs.option)
+                return option < rhs.option;
+            else
+                return dir < rhs.dir;
+        }
+
+        BlockMapProperty::BlockOption option;
+        globalDirection dir;
+    };
+    QMap<option_pixmaps_t, QPixmap> option_pixmaps;
+
     QPixmap bomberman[10];
     QPixmap burnt;
     QPixmap sick;
@@ -47,6 +61,7 @@ private:
     void loadAll();
     void addBlockPixMap(BlockMapProperty::BlockType, const char *);
     void addOptionPixMap(BlockMapProperty::BlockOption, const char *);
+    void addOptionPixMapRotate(BlockMapProperty::BlockOption, const char *);
     void addBonusPixMap(Bonus::Bonus_t, const char *);
     //width and height to scale the pixmaps to the good size
     int width, height;
@@ -54,7 +69,7 @@ public:
     PixmapsItems();
     ~PixmapsItems();
     void init(int,int);
-    const QPixmap& getPixmap(BlockMapProperty::BlockOption);
+    const QPixmap& getPixmap(BlockMapProperty::BlockOption, globalDirection = dirNone);
     const QPixmap& getPixmap(BlockMapProperty::BlockType);
     const QPixmap& getPixmap(Bonus::Bonus_t);
     const QPixmap& getPixmap(int);
