@@ -54,7 +54,20 @@ private:
     int absMin(int a, int b) const;
     bool movePlayer(int id, int direction, int distance);
     bool tryMovePlayer(int id, globalDirection direction, int distance);
-    bool tryMoveBomb(Bomb* b, globalDirection direction, int distance);
+
+    /**
+      Tries to move the bomb on the map.
+
+      Depending on the value of direction, we have two cases:
+      - dirNone: the bomb moves because it was kicked, get the real direction information from the bomb itself
+      - others:  the bomb moves on a walkway, some bonus like oil must be ignored
+
+      @param b          Pointer to the bomb
+      @param direction  Which way to move it
+      @return           true if the bomb moved, false otherwise
+      */
+    bool tryMoveBomb(Bomb* b, globalDirection direction);
+
     int keyToDirection(int direction);
     Bomb* addBomb(int id);
     Bomb* addBomb(int id, int x, int y);
@@ -73,6 +86,8 @@ private:
     void exchangePlayersPositions(PlayerServer *p1, PlayerServer *p2);
     bool shrinkMap();
     Bonus* removeBonus(qint8 x, qint8 y);
+
+    static globalDirection reverseDirection(globalDirection initialDir);
 
 	QTimer timerHeartBeat;
     bool debugMode;

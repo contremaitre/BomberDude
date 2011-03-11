@@ -392,8 +392,17 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
 	return false;
 }
 
-bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction, int distance)
+bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
 {
+    int distance = WALKWAY_SPEED;
+    bool isOnWalkway = true;
+
+    if(direction == dirNone) {
+        direction = b->direction;
+        distance = MOVE_STEP;
+        isOnWalkway = false;
+    }
+
     bool wasRecentered = false;
 	int newx = b->x;
 	int newy = b->y;
@@ -461,9 +470,10 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction, int distance)
         b->x = bounceHere.x();
         b->y = bounceHere.y();
 
-        // FIXME in case the bomb was kicked, we must stop it from rolling, yet we must signal
-        // that the bomb moved, it's probably better to return two booleans to make it clear
-        b->direction = dirNone;
+        if(b->hasOil && !isOnWalkway)
+            b->direction = reverseDirection(b->direction);
+        else
+            b->direction = dirNone;
         return true;
     }
 
@@ -483,8 +493,12 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction, int distance)
 	}
 	else
 	{
+        // TODO we should check first for an arrow
+        // we hit something, maybe the oil option was enabled?
+        if(b->hasOil && !isOnWalkway)
+            b->direction = reverseDirection(b->direction);
+
 		// can we move closer to the next block ?
-		// TODO adjust player position in the case ?
 		if(move_x != 0)
 		{
 			int pos = coordinatePositionInBlock(b->x);
@@ -1225,17 +1239,14 @@ void MapServer::newHeartBeat() {
 
         // conveyor belt has no effect on a rolling bomb, check both cases separately!
         if(bombN->direction != dirNone) {
-            if(tryMoveBomb(bombN, bombN->direction, 10))
-                hasMoved = true;
-            else
-                bombN->direction = dirNone;
+            hasMoved = tryMoveBomb(bombN, dirNone);
         }
         else
         {
             int bx,by;
             getBlockPosition(bombN->x, bombN->y, bx, by);
             if(getOption(bx, by) == BlockMapProperty::mov_walk)
-                hasMoved = tryMoveBomb(bombN, getOptionDirection(bx,by), WALKWAY_SPEED);
+                hasMoved = tryMoveBomb(bombN, getOptionDirection(bx,by));
         }
 
         if(hasMoved) {
@@ -1350,6 +1361,17 @@ void MapServer::newHeartBeat() {
     }
 
     // TODO time over
+}
+
+globalDirection MapServer::reverseDirection(globalDirection initialDir)
+{
+    switch(initialDir) {
+        case dirLeft:   return dirRight;
+        case dirRight:  return dirLeft;
+        case dirUp:     return dirDown;
+        case dirDown:   return dirUp;
+        default:        Q_ASSERT(false);
+    }
 }
 
 //We only need this operator in the server, and it must match the >> operator in MapClient
