@@ -31,7 +31,7 @@ class Bomb : public QObject
 
 public:
 	Bomb();
-	Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool remote);
+	Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool remote, bool oil);
 	Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId, bool remote);
 	~Bomb();
 
@@ -53,6 +53,7 @@ public:
     int range;
     qint16 bombId;
     bool remoteControlled;
+    bool hasOil;
     globalDirection direction;
 
 	friend QDataStream& operator>>(QDataStream& in, Bomb& f);

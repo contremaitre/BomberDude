@@ -29,11 +29,12 @@ Bomb::Bomb() :
 	range(-1),
 	bombId(-1),
 	remoteControlled(false),
+    hasOil(false),
     direction(dirNone)
 {}
 
 //constructor for server
-Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool remote)
+Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool remote, bool oil)
 {
     this->range = range;
     this->playerId = playerId;
@@ -42,6 +43,7 @@ Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool rem
     this->y = y;
     this->bombId = index;
     this->remoteControlled = remote;
+    this->hasOil = oil;
     this->direction = dirNone;
     index++;
 }
@@ -55,6 +57,7 @@ Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId, bool remote)
     this->bombId = bombId;
     this->remoteControlled = remote;
     range = duration = -1;
+    hasOil = false;
     direction = dirNone;
 }
 
