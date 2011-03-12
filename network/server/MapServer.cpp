@@ -299,8 +299,8 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
         if(bombOnNextBlock && players[id]->getKickBonus()) {
             // check that the player is at the center of the tile so he can kick
             QPoint centerOfTile = getCenterCoordForBlock(x_originalBlock, y_originalBlock);
-            if( (direction == dirLeft || direction == dirRight) && y_origPixel == centerOfTile.y() ||
-                (direction == dirUp   || direction == dirDown)  && x_origPixel == centerOfTile.x()
+            if( ( (direction == dirLeft || direction == dirRight) && y_origPixel == centerOfTile.y() ) ||
+                ( (direction == dirUp   || direction == dirDown)  && x_origPixel == centerOfTile.x() )
               )
             {
                 bombOnNextBlock->direction = direction;
@@ -397,13 +397,24 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
     int distance = WALKWAY_SPEED;
     bool isOnWalkway = true;
 
+	int x_originalBlock, y_originalBlock;
+	getBlockPosition( b->x, b->y, x_originalBlock, y_originalBlock);
+    QPoint centreOrig = getCenterCoordForBlock(x_originalBlock, y_originalBlock);
+
     if(direction == dirNone) {
+        // before any computation, we check whether the bomb is on the centre of the tile
+        // in which case we must take into account arrows that change its direction
+        if( getOption(x_originalBlock, y_originalBlock) == BlockMapProperty::arrow &&
+            centreOrig.x() == b->x && centreOrig.y() == b->y )
+        {
+            b->direction = getOptionDirection(x_originalBlock, y_originalBlock);
+        }
+
         direction = b->direction;
         distance = MOVE_STEP;
         isOnWalkway = false;
     }
 
-    bool wasRecentered = false;
 	int newx = b->x;
 	int newy = b->y;
 
@@ -433,8 +444,7 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
             Q_ASSERT(false);
 	}
 
-	int x_originalBlock, y_originalBlock;
-	getBlockPosition( b->x, b->y, x_originalBlock, y_originalBlock );
+
 	int x_nextBlock, y_nextBlock;
 	getBlockPosition( newx, newy, x_nextBlock, y_nextBlock );
 	//qDebug() << "next block" << x_nextBlock << y_nextBlock ;
@@ -445,14 +455,47 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
         int offset = coordinatePositionInBlock(b->y);
         if(offset != 0) {
             b->y -= offset;
-            wasRecentered = true;
+            return true;
         }
     }
     else {
         int offset = coordinatePositionInBlock(b->x);
         if(offset != 0) {
             b->x -= offset;
-            wasRecentered = true;
+            return true;
+        }
+    }
+
+    // before any move, we check if the bomb is going to cross the centre of the tile
+    // in that case we must take arrows into account
+    //
+    // s-------d  c         not crossing (yet)
+    // s---c---d            crossing
+    //
+    // s is the starting pixel, d the destination pixel. We must check if the centre is on
+    // that segment, however we must not include d itself, it will be dealt with during the
+    // next movement. And no need to check s because it's been dealt with earlier in the method.
+    //
+    // We compute the difference between s and c, c and d. If the signs are different,
+    // c is between them. In which case we limit the amount of movement so the bomb finishes
+    // its move on the center of the tile, where its direction can finally be changed.
+
+    if(getOption(x_originalBlock, y_originalBlock) == BlockMapProperty::arrow) {
+        if(b->x == centreOrig.x()) {
+            int off_sy = centreOrig.y() - b->y;
+            int off_dy = centreOrig.y() - newy;
+
+            if(off_sy > 0 && off_dy < 0 || off_sy < 0 && off_dy > 0)
+                newy += off_dy;
+        }
+        else {
+            Q_ASSERT(b->y == centreOrig.y());
+
+            int off_sx = centreOrig.x() - b->x;
+            int off_dx = centreOrig.x() - newx;
+
+            if(off_sx > 0 && off_dx < 0 || off_sx < 0 && off_dx > 0)
+                newx += off_dx;
         }
     }
 
@@ -466,9 +509,8 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
         anby == overlapTile.y() &&
         blockContainsPlayer(anbx, anby) )
     {
-        QPoint bounceHere = getCenterCoordForBlock(x_originalBlock, y_originalBlock);
-        b->x = bounceHere.x();
-        b->y = bounceHere.y();
+        b->x = centreOrig.x();
+        b->y = centreOrig.y();
 
         if(b->hasOil && !isOnWalkway)
             b->direction = reverseDirection(b->direction);
@@ -520,7 +562,7 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
 		}
 	}
 
-	return wasRecentered;
+	return false;
 }
 
 int MapServer::absMin(int a, int b) const
