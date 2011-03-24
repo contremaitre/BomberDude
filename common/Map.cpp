@@ -201,7 +201,7 @@ template<typename P, typename SL>
 void Map<P,SL>::newPlayer(int id)
 {
     NbPlayers++;
-    players.append(new P(id));
+    players[id] = new P(id);
 }
 
 template<typename P, typename SL>

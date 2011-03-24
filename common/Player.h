@@ -9,6 +9,8 @@
 
 class Player {
 public:
+    typedef qint8 playerId_t;
+
 	Player();
 	Player(qint8 playerId);
 
@@ -28,6 +30,7 @@ public:
 
     bool getIsSick() const              { return isSick; }
     void setIsSick(bool sick)           { isSick = sick; }
+
 protected:
 	qint8 id;
 
