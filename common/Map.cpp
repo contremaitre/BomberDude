@@ -259,6 +259,9 @@ void Map<P,SL>::addBomb(int plId, int squareX, int squareY, int bombId, bool rc)
 {
     Bomb *newBomb = new Bomb(plId, squareX, squareY, bombId, rc);
     bombs[bombId] = newBomb;
+    int bx, by;
+    getBlockPosition(squareX, squareY, bx, by);
+    tiles[bx][by].withBomb = newBomb;
     qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<"bombId: "<<newBomb->bombId;
 }
 
@@ -268,6 +271,9 @@ void Map<P,SL>::removeBomb(qint16 bombId)
 {
     QMap<Bomb::bombId_t, Bomb*>::iterator it = bombs.find(bombId);
     if(it != bombs.end()) {
+        int bx, by;
+        getBlockPosition(it.value()->x, it.value()->y, bx, by);
+        tiles[bx][by].withBomb = 0;
         delete it.value();
         bombs.erase(it);
     }
@@ -290,14 +296,7 @@ const Bomb * Map<P,SL>::getBomb(qint16 bombId)
 template<typename P, typename SL>
 Bomb *Map<P,SL>::blockContainsBomb(int x,int y) const
 {
-    foreach( Bomb *b, bombs)
-    {
-        int tx, ty;
-        getBlockPosition(b->x, b->y, tx, ty);
-        if(tx == x && ty == y)
-            return b;
-    }
-    return NULL;
+    return tiles[x][y].withBomb;
 }
 
 

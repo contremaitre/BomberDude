@@ -304,6 +304,7 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
                 ( (direction == dirUp   || direction == dirDown)  && x_origPixel == centerOfTile.x() )
               )
             {
+                // FIXME we must not start moving the bomb if it is blocked
                 bombOnNextBlock->direction = direction;
                 setPlayerPosition(id, centerOfTile.x(), centerOfTile.y());
                 return true;
@@ -745,7 +746,7 @@ Bomb* MapServer::addBomb(int playerId)
 Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
 {
     BlockMapProperty::BlockType type = getType(squareX,squareY);
-    if( blockContainsBomb(squareX,squareY) != NULL || type != BlockMapProperty::empty)
+    if(tiles[squareX][squareY].withBomb != 0 || type != BlockMapProperty::empty)
         return NULL;
 
 	// add the bomb
@@ -759,6 +760,7 @@ Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
                              players[playerId]->getOilBonus() );
 	bombs[newBomb->bombId] = newBomb;
 	qDebug() << " MapServer> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
+    tiles[squareX][squareY].withBomb = newBomb;
 	players[playerId]->decBombsAvailable();
 	return newBomb;
 }
@@ -773,6 +775,7 @@ Flame* MapServer::explosion(Bomb* b)
     int tx, ty;
     getBlockPosition(b->x, b->y, tx, ty);
 	QPoint tempPoint = QPoint(tx, ty);
+    tiles[tx][ty].withBomb = 0;
 	propagateFlame(*f, tempPoint, b->range);
 
     players[b->playerId]->incBombsAvailable();
@@ -824,20 +827,17 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 			return;
 		}
 
-		foreach(Bomb * b, bombs)
-		{
-            int tx, ty;
-            getBlockPosition(b->x, b->y, tx, ty);
-			if (tx == pTemp.x() && ty == pTemp.y())
-			{
-				bombs.remove(b->bombId);
-				f.addDetonatedBomb(*b);
-				QPoint newPos = QPoint(tx, ty);
-				propagateFlame(f, newPos, b->range);
-                players[b->playerId]->incBombsAvailable();
-				delete b;
-                return;
-			}
+        Tile<PlayerServer>& tempTile = tiles[pTemp.x()][pTemp.y()];
+        if(tempTile.withBomb) {
+            Bomb* b = tempTile.withBomb;
+            tempTile.withBomb = 0;
+
+            bombs.remove(b->bombId);
+            f.addDetonatedBomb(*b);
+            propagateFlame(f, pTemp, b->range);
+            players[b->playerId]->incBombsAvailable();
+            delete b;
+            return;
 		}
 
         // if a bonus is on the square it is destroyed immediately but the flame does not enter
@@ -1288,6 +1288,8 @@ void MapServer::newHeartBeat() {
     QList<Bomb*> movingBombs;
     foreach(Bomb* bombN, bombs) {
         bool hasMoved = false;
+        int sbx, sby;
+        getBlockPosition(bombN->x, bombN->y, sbx, sby);
 
         // conveyor belt has no effect on a rolling bomb, check both cases separately!
         if(bombN->direction != dirNone) {
@@ -1295,13 +1297,18 @@ void MapServer::newHeartBeat() {
         }
         else
         {
-            int bx,by;
-            getBlockPosition(bombN->x, bombN->y, bx, by);
-            if(getOption(bx, by) == BlockMapProperty::mov_walk)
-                hasMoved = tryMoveBomb(bombN, getOptionDirection(bx,by));
+            if(getOption(sbx, sby) == BlockMapProperty::mov_walk)
+                hasMoved = tryMoveBomb(bombN, getOptionDirection(sbx,sby));
         }
 
         if(hasMoved) {
+            int dbx, dby;
+            getBlockPosition(bombN->x, bombN->y, dbx, dby);
+            if(sbx != dbx || sby != dby) {
+                tiles[dbx][dby].withBomb = bombN;
+                tiles[sbx][sby].withBomb = 0;
+            }
+
             QPoint neighBlock = getOverlappingBlockPosition(bombN->x, bombN->y);
             delete removeBonus(neighBlock.x(), neighBlock.y());
             movingBombs.append(bombN);
