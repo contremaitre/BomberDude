@@ -19,7 +19,6 @@
 #define QTB_FLAME_H
 
 
-#include <QObject>
 #include <QSet>
 #include <QPoint>
 #include <QDataStream>
@@ -38,10 +37,11 @@ uint qHash(const QPoint& key);
   We store here the list of all cases in which a flame appears, as well as the list of
   blocks broken by the fire. In the future there should also be the list of destroyed bonus.
  */
-class Flame : public QObject {
-	Q_OBJECT
-
+class Flame
+{
 public:
+    typedef qint16 flameId_t;
+
 	Flame();
 
 	/**
@@ -51,7 +51,6 @@ public:
 	  @param duration Lifespan of the flames in number of heartbeats
 	  */
 	Flame(qint8 playerId, int duration);
-	virtual ~Flame();
 
 	void addFlame(int x, int y)                 { flames.insert(QPoint(x,y)); }
 	QSet<QPoint> getFlamePositions() const		{ return flames; }
@@ -90,11 +89,6 @@ private:
 
 QDataStream &operator>>(QDataStream & in, Flame& f);
 QDataStream &operator<<(QDataStream &out, const Flame& f);
-
-/**
-  This method is necessary in order to use QPoint in a QSet
-  */
-uint qHash(const Flame& key);
 
 
 #endif // QTB_FLAME_H

@@ -213,7 +213,7 @@ void Map<P,SL>::setMaxNbPlayers(int nb)
 template<typename P, typename SL>
 void Map<P,SL>::addFlame(Flame* flame)
 {
-    flames.append(flame);
+    flames[flame->getFlameId()] = flame;
     foreach (QPoint point, flame->getFlamePositions())
     {
         setType(BlockMapProperty::flame,point.x(),point.y());
@@ -223,37 +223,34 @@ void Map<P,SL>::addFlame(Flame* flame)
 template<typename P, typename SL>
 void Map<P,SL>::removeFlame(int flameId)
 {
-    QList<Flame*>::iterator itFlame = flames.begin();
-    while(itFlame != flames.end()) {
-        Flame *f = *itFlame;
-        if(f->getFlameId() == flameId)
-        {
-            QSet<QPoint> flamePositions = f->getFlamePositions();
-            QSet<QPoint>::const_iterator it = flamePositions.constBegin();
+    QMap<Flame::flameId_t, Flame*>::iterator itFlame = flames.find(flameId);
+    if(itFlame == flames.end())
+        return;
 
-            //remove flames
-            while(it != flamePositions.constEnd())
-            {
-                // FIXME there could be another (and more recent) flame on the same square!
-                setType(BlockMapProperty::empty, (*it).x(), (*it).y());
-                it++;
-            }
+    Flame *f = *itFlame;
+    QSet<QPoint> flamePositions = f->getFlamePositions();
+    QSet<QPoint>::const_iterator it = flamePositions.constBegin();
 
-            //remove broken blocks
-            QSet<QPoint> brokenBlocks = f->getBrokenBlocks();
-            foreach(QPoint bb, brokenBlocks)
-            {
-                //qDebug() << "GameArena brokenblock";
-                setType(BlockMapProperty::empty, bb.x(), bb.y());
-                brokenBlockRemoved(bb.x(), bb.y());
-                //getCase(i,j)->setItem(pixmaps.getPixmap(map->getType(i,j)));
-            }
-            flames.erase(itFlame);
-            delete f;
-            break;
-        }
-        itFlame++;
+    //remove flames
+    while(it != flamePositions.constEnd())
+    {
+        // FIXME there could be another (and more recent) flame on the same square!
+        setType(BlockMapProperty::empty, (*it).x(), (*it).y());
+        it++;
     }
+
+    //remove broken blocks
+    QSet<QPoint> brokenBlocks = f->getBrokenBlocks();
+    foreach(QPoint bb, brokenBlocks)
+    {
+        //qDebug() << "GameArena brokenblock";
+        setType(BlockMapProperty::empty, bb.x(), bb.y());
+        brokenBlockRemoved(bb.x(), bb.y());
+        //getCase(i,j)->setItem(pixmaps.getPixmap(map->getType(i,j)));
+    }
+
+    flames.erase(itFlame);
+    delete f;
 }
 
 

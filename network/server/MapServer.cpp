@@ -904,6 +904,18 @@ bool MapServer::checkPlayerInFlames(PlayerServer* playerN,
     return false;
 }
 
+bool MapServer::checkPlayerInFlames(PlayerServer* playerN,
+                         const QPoint& playerBlock,
+                         const QMap<Flame::flameId_t, Flame*>& flamesToCheck) {
+    foreach(Flame* f, flamesToCheck)
+        if(f->getFlamePositions().contains(playerBlock)) {
+            doPlayerDeath(playerN,f->getPlayerId());
+            return true;
+        }
+
+    return false;
+}
+
 void MapServer::exchangePlayersPositions(PlayerServer *p1, PlayerServer *p2)
 {
     int x = p1->getX();
@@ -1214,7 +1226,7 @@ void MapServer::newHeartBeat() {
 
 	// start by cleaning flames
 	QList<qint16> cleanList;
-	QList<Flame*>::iterator itFlame = flames.begin();
+	QMap<Flame::flameId_t, Flame*>::iterator itFlame = flames.begin();
 	while(itFlame != flames.end()) {
 		(*itFlame)->decreaseLifeSpan();
 		if( (*itFlame)->isFinished() ) {

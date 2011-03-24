@@ -39,10 +39,6 @@ Flame::Flame(qint8 playerId, int duration)
 	this->duration=duration;
 }
 
-Flame::~Flame() {
-	// TODO Auto-generated destructor stub
-}
-
 QDataStream &operator<<(QDataStream &out, const Flame& flame)
 {
 	out << flame.flameId;
@@ -72,9 +68,4 @@ QDataStream &operator>>(QDataStream & in, Flame& flame)
 	}
 
 	return in;
-}
-
-uint qHash(const Flame& key)
-{
-    return qHash(key.getFlameId());
 }

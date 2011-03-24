@@ -80,6 +80,9 @@ private:
     bool checkPlayerInFlames(PlayerServer* playerN,
                              const QPoint& playerBlock,
                              const QList<Flame*>& flamesToCheck);
+    bool checkPlayerInFlames(PlayerServer* playerN,
+                             const QPoint& playerBlock,
+                             const QMap<Flame::flameId_t, Flame*>& flamesToCheck);
     void doPlayerDeath(PlayerServer* playerN, int killedBy); //check what has to be done when a player die
     void checkPlayerSurroundings(PlayerServer* player);
     void exchangePlayersPositions();
