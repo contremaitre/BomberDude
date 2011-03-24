@@ -142,8 +142,8 @@ private:
 protected:
 	qint32 heartBeat;						///< timestamp of the game
     QVector<QVector<Tile<P> > > tiles;         ///< contents of each tile
-	QMap<typename P::playerId_t,P*> players;    ///< list of players currently on the field
-	QList<Bomb*> bombs;						///< list of bombs yet to explode
+	QMap<typename P::playerId_t, P*> players;   ///< list of players currently on the field
+	QMap<Bomb::bombId_t, Bomb*> bombs;          ///< list of bombs yet to explode
 	QList<Flame*> flames;					///< list of explosions
 
     // signals

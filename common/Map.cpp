@@ -261,36 +261,32 @@ template<typename P, typename SL>
 void Map<P,SL>::addBomb(int plId, int squareX, int squareY, int bombId, bool rc)
 {
     Bomb *newBomb = new Bomb(plId, squareX, squareY, bombId, rc);
-    bombs.append(newBomb);
+    bombs[bombId] = newBomb;
     qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<"bombId: "<<newBomb->bombId;
 }
+
 
 template<typename P, typename SL>
 void Map<P,SL>::removeBomb(qint16 bombId)
 {
-    foreach (Bomb *b, bombs)
-    {
-        if(b->bombId == bombId)
-        {
-            bombs.removeOne(b);
-            delete b;
-            return;
-        }
+    QMap<Bomb::bombId_t, Bomb*>::iterator it = bombs.find(bombId);
+    if(it != bombs.end()) {
+        delete it.value();
+        bombs.erase(it);
     }
-    qDebug() << "nothing has been removed";
+    else
+        qDebug() << "nothing has been removed";
 }
+
 
 template<typename P, typename SL>
 const Bomb * Map<P,SL>::getBomb(qint16 bombId)
 {
-    foreach (Bomb *b, bombs)
-    {
-      if(b->bombId == bombId)
-      {
-          return b;
-      }
-    }
-    return NULL;
+    QMap<Bomb::bombId_t, Bomb*>::iterator it = bombs.find(bombId);
+    if(it != bombs.end())
+        return it.value();
+    else
+        return 0;
 }
 
 

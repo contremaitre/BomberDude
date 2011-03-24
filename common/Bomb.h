@@ -30,6 +30,8 @@ class Bomb : public QObject
     Q_OBJECT
 
 public:
+    typedef qint16 bombId_t;
+
 	Bomb();
 	Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool remote, bool oil);
 	Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId, bool remote);
