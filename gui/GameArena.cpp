@@ -319,21 +319,21 @@ void GameArena::slotRemoveBonus(qint16 x, qint16 y) {
 
 void GameArena::slotAddBomb(int id)
 {
-    const Bomb *bomb = map->getBomb(id);
-    QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb->x - squareSize/2,
-                                                       bomb->y - squareSize/2,
+    const Bomb& bomb = map->getRefBomb(id);
+    QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb.x - squareSize/2,
+                                                       bomb.y - squareSize/2,
                                                        squareSize);
     pix->setZValue(1.0);
-    qDebug() << "new bomb, remote =" << bomb->remoteControlled;
-    pix->setItem(bomb->remoteControlled ? pixmaps.getPixmapBombrc() : pixmaps.getPixmapBomb());
+    qDebug() << "new bomb, remote =" << bomb.remoteControlled;
+    pix->setItem(bomb.remoteControlled ? pixmaps.getPixmapBombrc() : pixmaps.getPixmapBomb());
     bombs[id] = pix;
     scene->addItem(pix->getItem());
 }
 
 void GameArena::slotMovedBomb(int id)
 {
-    const Bomb *bomb = map->getBomb(id);
-    bombs[id]->setPos(bomb->x - squareSize/2, bomb->y - squareSize/2, squareSize);
+    const Bomb& bomb = map->getRefBomb(id);
+    bombs[id]->setPos(bomb.x - squareSize/2, bomb.y - squareSize/2, squareSize);
 }
 
 void GameArena::slotRemoveBomb(int id)
@@ -350,9 +350,9 @@ void GameArena::slotRemoveBombRC(int id)
     QMap<int, QGraphicsSquareItem*>::iterator itb = bombs.find(id);
     if(itb != bombs.end()) {
         scene->removeItem(itb.value());
-        const Bomb *bomb = map->getBomb(id);
-        QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb->x - squareSize/2,
-                                                           bomb->y - squareSize/2,
+        const Bomb& bomb = map->getRefBomb(id);
+        QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb.x - squareSize/2,
+                                                           bomb.y - squareSize/2,
                                                                 squareSize);
         pix->setItem(pixmaps.getPixmapBomb());
         *itb = pix;

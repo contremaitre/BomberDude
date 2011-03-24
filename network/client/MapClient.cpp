@@ -56,10 +56,10 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 	updateIn >> newBombsListSize;
 //	qDebug() << newBombsListSize << " new bombs received";
 	for(qint8 i = 0; i < newBombsListSize; i++) {
-		Bomb bombN;
-		updateIn >> bombN;
-		addBomb(bombN.playerId, bombN.x, bombN.y, bombN.bombId, bombN.remoteControlled);
-		emit sigAddBomb(bombN.bombId);
+		Bomb* bombN = new Bomb();
+		updateIn >> *bombN;
+		addBomb(bombN);
+		emit sigAddBomb(bombN->bombId);
 	}
 
     qint8 nbMovingBombs;
@@ -67,14 +67,10 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 	for(qint8 i = 0; i < nbMovingBombs; i++) {
 		qint16 bombId, nx, ny;
 		updateIn >> bombId >> nx >> ny;
-        foreach (Bomb *b, bombs)
-        {
-            if(b->bombId == bombId)
-            {
-                b->x = nx;
-                b->y = ny;
-                break;
-            }
+        Bomb* b = getBomb(bombId);
+        if(b != 0) {
+            b->x = nx;
+            b->y = ny;
         }
 		emit sigMovedBomb(bombId);
 	}
@@ -112,7 +108,7 @@ void MapClient::updateMap(QByteArray& updateBlock) {
         int plId = frag.first;
         sigKillPlayer(plId);
         //replace detonators bombs of this player with standard bombs
-        foreach (Bomb *b, bombs)
+        foreach (Bomb *b, getBombList())
         {
             if(b->playerId == plId && b->remoteControlled)
             {
@@ -147,6 +143,15 @@ const QList<mapStyle> *MapClient::getStyles() const
 {
     return &styles;
 }
+
+
+const Bomb& MapClient::getRefBomb(qint16 bombId)
+{
+    Bomb* b = getBomb(bombId);
+    Q_ASSERT(b != 0);
+    return *b;
+}
+
 
 QDataStream& operator>>(QDataStream& in, mapStyle& ms)
 {

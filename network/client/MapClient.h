@@ -27,6 +27,9 @@ public :
     void updateMap(QByteArray& updateBlock);
     void addStyle(const mapStyle &style);
     const QList<mapStyle> *getStyles() const;
+
+    const Bomb& getRefBomb(qint16 bombId);
+
 private:
     QMap<QPoint, QGraphicsItem*> bonus;
 

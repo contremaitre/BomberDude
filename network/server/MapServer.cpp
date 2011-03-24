@@ -758,9 +758,9 @@ Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
                              players[playerId]->getFlameLength(),
                              players[playerId]->getRemoteBonus(),
                              players[playerId]->getOilBonus() );
-	bombs[newBomb->bombId] = newBomb;
-	qDebug() << " MapServer> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
-    tiles[squareX][squareY].withBomb = newBomb;
+    // FIXME why the Map:: necessary?
+    Map::addBomb(newBomb);
+	qDebug() << " MapServer> AddBomb : " << getBombList().size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
 	players[playerId]->decBombsAvailable();
 	return newBomb;
 }
@@ -768,14 +768,13 @@ Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
 
 Flame* MapServer::explosion(Bomb* b)
 {
-	bombs.remove(b->bombId);
+    removeBomb(b->bombId);
 	Flame *f = new Flame(b->playerId,20);
 	f->addDetonatedBomb(*b);
 
     int tx, ty;
     getBlockPosition(b->x, b->y, tx, ty);
 	QPoint tempPoint = QPoint(tx, ty);
-    tiles[tx][ty].withBomb = 0;
 	propagateFlame(*f, tempPoint, b->range);
 
     players[b->playerId]->incBombsAvailable();
@@ -827,12 +826,9 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 			return;
 		}
 
-        Tile<PlayerServer>& tempTile = tiles[pTemp.x()][pTemp.y()];
-        if(tempTile.withBomb) {
-            Bomb* b = tempTile.withBomb;
-            tempTile.withBomb = 0;
-
-            bombs.remove(b->bombId);
+        Bomb* b = tiles[pTemp.x()][pTemp.y()].withBomb;
+        if(b != 0) {
+            removeBomb(b->bombId);
             f.addDetonatedBomb(*b);
             propagateFlame(f, pTemp, b->range);
             players[b->playerId]->incBombsAvailable();
@@ -857,7 +853,7 @@ void MapServer::doPlayerDeath(PlayerServer* playerN, int killedBy)
     playerN->setIsAlive(false);
     killedPlayers.append(killedPlayer(playerN->getId(), killedBy));
     //check if the player has detonators bomb on the field
-    foreach(Bomb * b, bombs)
+    foreach(Bomb * b, getBombList())
     {
         if (b->playerId == playerN->getId())
         {
@@ -1286,7 +1282,7 @@ void MapServer::newHeartBeat() {
 
     // move the bombs
     QList<Bomb*> movingBombs;
-    foreach(Bomb* bombN, bombs) {
+    foreach(Bomb* bombN, getBombList()) {
         bool hasMoved = false;
         int sbx, sby;
         getBlockPosition(bombN->x, bombN->y, sbx, sby);
@@ -1322,7 +1318,7 @@ void MapServer::newHeartBeat() {
 	}
 
 	// then decrease each bomb's counter
-	foreach(Bomb* bombN, bombs)
+	foreach(Bomb* bombN, getBombList())
 		bombN->decreaseLifeSpan();
 
 	// now we check which bombs must explode
@@ -1330,11 +1326,11 @@ void MapServer::newHeartBeat() {
 	//           we must restart from the beginning of the list every time
 	//           to ensure the iterator is still valid
 	QList<Flame*> explodeList;
-	QMap<Bomb::bombId_t, Bomb*>::iterator itBomb = bombs.begin();
-	while(itBomb != bombs.end()) {
+	QMap<Bomb::bombId_t, Bomb*>::const_iterator itBomb = getBombList().begin();
+	while(itBomb != getBombList().end()) {
 		if((*itBomb)->mustExplode() || ( (*itBomb)->remoteControlled && players[(*itBomb)->playerId]->getOptKey() ) ) {
 			explodeList.append(explosion(*itBomb));
-			itBomb = bombs.begin();
+			itBomb = getBombList().begin();
 		}
 		else
 			++itBomb;

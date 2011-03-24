@@ -111,9 +111,7 @@ public:
     void addFlame(Flame* f);
     void removeFlame(int flameId);
 
-    void addBomb(int plId, int x, int y,int bombId, bool rc);
-    void removeBomb(qint16 bombId);
-    const Bomb *getBomb(qint16 bombId);
+    //void addBomb(int plId, int x, int y,int bombId, bool rc);
     Bomb *blockContainsBomb(int x,int y) const;
 
 	void setHeartBeat(qint32 hb);
@@ -143,8 +141,16 @@ protected:
 	qint32 heartBeat;						///< timestamp of the game
     QVector<QVector<Tile<P> > > tiles;         ///< contents of each tile
 	QMap<typename P::playerId_t, P*> players;   ///< list of players currently on the field
-	QMap<Bomb::bombId_t, Bomb*> bombs;          ///< list of bombs yet to explode
     QMap<Flame::flameId_t, Flame*> flames;      ///< list of explosions
+
+// lists of items    
+private:
+	QMap<Bomb::bombId_t, Bomb*> bombs;          ///< list of bombs yet to explode
+protected:
+    void addBomb(Bomb* b);
+    void removeBomb(qint16 bombId);
+    Bomb* getBomb(qint16 bombId) const;
+    const QMap<Bomb::bombId_t, Bomb*>& getBombList() const          { return bombs; }
 
     // signals
 private:
