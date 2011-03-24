@@ -71,8 +71,9 @@ MapServer::MapServer()
 }
 
 MapServer::~MapServer() {
-    foreach(Bonus* b, bonus)
-        delete b;
+    foreach(QVector<Tile<PlayerServer> > col, tiles)
+        foreach(Tile<PlayerServer> t, col)
+            delete t.withBonus;
 }
 
 void MapServer::addStyle(const mapStyle &style)
@@ -612,8 +613,7 @@ bool MapServer::blockEmpty(int x, int y)
         return false;
     if(blockContainsPlayer(x, y))
         return false;
-    QMap<Point<qint8>, Bonus*>::iterator itb = bonus.find(Point<qint8>(x, y));
-    if(itb != bonus.end())
+    if(tiles[x][y].withBonus != 0)
         return false;
     return true;
 }
@@ -715,9 +715,9 @@ QList<Bomb*> MapServer::addBombMultiple(int playerId)
                 break;
             }
         }
+
         //check if a bonus is here
-        QMap<Point<qint8>, Bonus*>::iterator itb = bonus.find(Point<qint8>(squareX, squareY));
-        if(itb != bonus.end())
+        if(tiles[squareX][squareY].withBonus != 0)
         {
             qDebug() << "multibomb blocked by bonus";
             break;
@@ -1054,18 +1054,15 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
 }
 
 Bonus* MapServer::removeBonus(qint8 x, qint8 y) {
-    QMap<Point<qint8>, Bonus*>::iterator itb = bonus.find(Point<qint8>(x, y));
-    if(itb == bonus.end())
-        return NULL;
+    Bonus* remBonus = tiles[x][y].withBonus;
+    if(remBonus == 0)
+        return 0;
+    tiles[x][y].withBonus = 0;
 
-    Bonus* ret = itb.value();
+    createdBonus.removeAll(remBonus);
+    removedBonus.append(Point<qint8>(x, y));
 
-    // TODO check that the bonus cannot be created and destroyed in the same turn
-    removedBonus.append(Point<qint8>(ret->getX(), ret->getY()));
-
-    bonus.erase(itb);
-
-    return ret;
+    return remBonus;
 }
 
 void MapServer::brokenBlockRemoved(int x, int y) {
@@ -1077,7 +1074,7 @@ void MapServer::brokenBlockRemoved(int x, int y) {
     Bonus::Bonus_t result = bonusTable[randomDraw];
     if(result != Bonus::BONUS_NONE) {
         Bonus* newBonus = new Bonus(result, x, y);
-        bonus[Point<qint8>(x,y)] = newBonus;
+        tiles[x][y].withBonus = newBonus;
         createdBonus.append(newBonus);
     }
 }
@@ -1293,7 +1290,7 @@ void MapServer::newHeartBeat() {
 
         if(hasMoved) {
             QPoint neighBlock = getOverlappingBlockPosition(bombN->x, bombN->y);
-            removeBonus(neighBlock.x(), neighBlock.y());
+            delete removeBonus(neighBlock.x(), neighBlock.y());
             movingBombs.append(bombN);
         }
     }
@@ -1349,7 +1346,7 @@ void MapServer::newHeartBeat() {
         if(getRandomEmptyPosition(x,y))
         {
             Bonus* newBonus = new Bonus(bonus_type, x, y);
-            bonus[Point<qint8>(x,y)] = newBonus;
+            tiles[x][y].withBonus = newBonus;
             createdBonus.append(newBonus);
         }
         else

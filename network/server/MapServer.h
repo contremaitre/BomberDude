@@ -93,7 +93,6 @@ private:
     bool debugMode;
     bool spawningBlocks;
 
-    QMap<Point<qint8>, Bonus*> bonus;                       ///< list of bonus
     static const int BONUS_TABLE_LENGTH = NB_BONUS*16*2;    ///< todo
     Bonus::Bonus_t bonusTable[BONUS_TABLE_LENGTH];          ///< table to determine which bonus to add
     QList<const Bonus*> createdBonus;                       ///< list of bonus created during the heartbeat

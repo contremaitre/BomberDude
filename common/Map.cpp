@@ -72,9 +72,9 @@ void Map<P,SL>::Init()
     block_list = new BlockMapProperty[width*height];
 
     tiles.resize(width);
-    foreach(QVector<Tile<P> > col, tiles) {
-        col.resize(height);
-    }
+    qDebug() << tiles.size();
+    for(int i = 0; i < width; i++)
+        tiles[i].resize(height);
 
     qDebug() << "init";
 }
