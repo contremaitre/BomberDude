@@ -71,6 +71,11 @@ void Map<P,SL>::Init()
     delete[] block_list;
     block_list = new BlockMapProperty[width*height];
 
+    tiles.resize(width);
+    foreach(QVector<Tile<P> > col, tiles) {
+        col.resize(height);
+    }
+
     qDebug() << "init";
 }
 
