@@ -32,7 +32,6 @@
   */
 uint qHash(const QPoint& key);
 
-
 /**
   This class is used to store all the information related to the explosion of a bomb.
 
@@ -91,6 +90,11 @@ private:
 
 QDataStream &operator>>(QDataStream & in, Flame& f);
 QDataStream &operator<<(QDataStream &out, const Flame& f);
+
+/**
+  This method is necessary in order to use QPoint in a QSet
+  */
+uint qHash(const Flame& key);
 
 
 #endif // QTB_FLAME_H

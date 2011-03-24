@@ -74,3 +74,7 @@ QDataStream &operator>>(QDataStream & in, Flame& flame)
 	return in;
 }
 
+uint qHash(const Flame& key)
+{
+    return qHash(key.getFlameId());
+}

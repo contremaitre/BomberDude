@@ -16,7 +16,8 @@ HEADERS += BlockMapProperty.h \
     Player.h \
     constant.h \
     Bonus.h \
-    Point.h
+    Point.h \
+    Tile.h
 SOURCES += BlockMapProperty.cpp \
     Bomb.cpp \
     Flame.cpp \
