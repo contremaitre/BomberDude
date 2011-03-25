@@ -745,8 +745,7 @@ Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
                              players[playerId]->getFlameLength(),
                              players[playerId]->getRemoteBonus(),
                              players[playerId]->getOilBonus() );
-    // FIXME why the Map:: necessary?
-    Map::addBomb(newBomb);
+    Map<PlayerServer,mapStyle>::addBomb(newBomb);
 	qDebug() << " MapServer> AddBomb : " << getBombList().size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
 	players[playerId]->decBombsAvailable();
 	return newBomb;
