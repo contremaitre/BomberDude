@@ -110,10 +110,9 @@ void Map<P,SL>::setOption(int x, int y, BlockMapProperty::BlockOption option, gl
 }
 
 template<typename P, typename SL>
-void Map<P,SL>::getBlockPosition(int x, int y, int &xdest, int &ydest) const
+QPoint Map<P,SL>::getBlockPosition(int x, int y) const
 {
-    xdest = x / blockSize;
-    ydest = y / blockSize;
+    return QPoint(x / blockSize, y / blockSize);
 }
 
 template<typename P, typename SL>
@@ -257,9 +256,8 @@ void Map<P,SL>::removeBomb(qint16 bombId)
 {
     QMap<Bomb::bombId_t, Bomb*>::iterator it = bombs.find(bombId);
     if(it != bombs.end()) {
-        int bx, by;
-        getBlockPosition(it.value()->x, it.value()->y, bx, by);
-        tiles[bx][by].withBomb = 0;
+        QPoint bp = getBlockPosition(it.value()->x, it.value()->y);
+        tiles[bp.x()][bp.y()].withBomb = 0;
         bombs.erase(it);
     }
     else
@@ -308,9 +306,8 @@ void Map<P,SL>::addBomb(Bomb* b)
     Q_ASSERT(bombs.find(b->bombId) == bombs.end());
 
     bombs[b->bombId] = b;
-    int bx, by;
-    getBlockPosition(b->x, b->y, bx, by);
-    tiles[bx][by].withBomb = b;
+    QPoint bp = getBlockPosition(b->x, b->y);
+    tiles[bp.x()][bp.y()].withBomb = b;
 }
 
 
