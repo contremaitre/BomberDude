@@ -23,13 +23,13 @@
 #include <QGraphicsObject>
 
 
-enum caseType
-{
-    VOID,
-    BOMBERMAN,
-    BOMB,
+//enum caseType
+//{
+//    VOID,
+//    BOMBERMAN,
+//    BOMB,
     
-};
+//};
 
 class QGraphicsSquareItem : public QGraphicsObject
 {
@@ -42,7 +42,7 @@ public:
     QGraphicsSquareItem();
     QGraphicsSquareItem(int,int,int);
     void setPos(int, int, int);
-    void setItem(caseType);
+    //void setItem(caseType);
     void setItem(const QPixmap &);
     QGraphicsPixmapItem *getItem();
 };
