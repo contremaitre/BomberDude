@@ -32,6 +32,27 @@
 
 
 /**
+  * This class is used as template parameter for other classes
+  * that aren't supposed to know about the internals of pixels
+  * and tiles coordinates.
+  */
+class PixelToBlock
+{
+public:
+    PixelToBlock(qint16 blockSize) :
+        blockSize(blockSize)
+    {}
+
+    qint8 operator()(qint16 val) {
+        return val / blockSize;
+    }
+
+private:
+    const qint16 blockSize;
+};
+
+
+/**
  * This class represent a bomberman game map
  */
 
