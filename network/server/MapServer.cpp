@@ -485,7 +485,7 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
             int off_sy = centreOrig.y() - b->y;
             int off_dy = centreOrig.y() - newy;
 
-            if(off_sy > 0 && off_dy < 0 || off_sy < 0 && off_dy > 0)
+            if( (off_sy > 0 && off_dy < 0) || (off_sy < 0 && off_dy > 0) )
                 newy += off_dy;
         }
         else {
@@ -494,7 +494,7 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
             int off_sx = centreOrig.x() - b->x;
             int off_dx = centreOrig.x() - newx;
 
-            if(off_sx > 0 && off_dx < 0 || off_sx < 0 && off_dx > 0)
+            if( (off_sx > 0 && off_dx < 0) || (off_sx < 0 && off_dx > 0) )
                 newx += off_dx;
         }
     }
@@ -1414,6 +1414,8 @@ globalDirection MapServer::reverseDirection(globalDirection initialDir)
         case dirDown:   return dirUp;
         default:        Q_ASSERT(false);
     }
+
+    return dirNone;     // we should never arrive here, but it removes a GCC warning
 }
 
 //We only need this operator in the server, and it must match the >> operator in MapClient

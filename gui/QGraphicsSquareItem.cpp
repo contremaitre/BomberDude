@@ -59,19 +59,19 @@ QRectF QGraphicsSquareItem::boundingRect() const
     return pix.boundingRect();
 }
 
-void QGraphicsSquareItem::setItem(caseType t)
-{
-    switch(t)
-    {
-        case BOMBERMAN:
-            //QPixmap p("pictures/tux.png");
-            //QPixmap ps = p.scaled(QSizeF(size,size).toSize());
-            //QPainter painter(&p);
-            // Scale QGraphicsPixmapItem to wanted 'size' and keep the aspect ratio
-            //QSize pixmapSize = p.size();
-            //setPixmap(bomberman);
-            //scaled(QSizeF(size,size).toSize(), Qt::KeepAspectRatio);
-        break;
-    }
-}
+//void QGraphicsSquareItem::setItem(caseType t)
+//{
+//    switch(t)
+//    {
+//        case BOMBERMAN:
+//            //QPixmap p("pictures/tux.png");
+//            //QPixmap ps = p.scaled(QSizeF(size,size).toSize());
+//            //QPainter painter(&p);
+//            // Scale QGraphicsPixmapItem to wanted 'size' and keep the aspect ratio
+//            //QSize pixmapSize = p.size();
+//            //setPixmap(bomberman);
+//            //scaled(QSizeF(size,size).toSize(), Qt::KeepAspectRatio);
+//        break;
+//    }
+//}
 
