@@ -151,15 +151,15 @@ void MapServer::loadRandom()
     //randomly add players
     for (int i = 0; i < MAX_NB_PLAYER; i++)
     {
-        int x, y;
+        QPoint pos;
         int w = (qrand() % (width - 2)) + 1;
         int h = (qrand() % (height - 2)) + 1;
         qDebug() << "Player" << i << ", pos " << w << h;
         w = w * getBlockSize() + getBlockSize() / 2;
         h = h * getBlockSize() + getBlockSize() / 2;
         addPlayerSlot(w,h);
-        getBlockPosition(w, h, x, y);
-        setType(BlockMapProperty::empty, x, y);
+        pos = getBlockPosition(w, h);
+        setType(BlockMapProperty::empty, pos.x(), pos.y());
     }
 }
 
@@ -282,23 +282,21 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
             Q_ASSERT(false);
             //return false;
 	}
-	int x_originalBlock, y_originalBlock;
-	getBlockPosition( x_player, y_player, x_originalBlock, y_originalBlock );
+	QPoint originalBlock = getBlockPosition( x_player, y_player );
 	x_player += move_x + (move_x/distance)*(getBlockSize()/2);
 	y_player += move_y + (move_y/distance)*(getBlockSize()/2);
-	int x_nextBlock, y_nextBlock;
-	getBlockPosition( x_player, y_player, x_nextBlock, y_nextBlock );
-	//qDebug() << "next block" << x_nextBlock << y_nextBlock ;
-	BlockMapProperty::BlockType typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
+	QPoint nextBlock = getBlockPosition( x_player, y_player );
+	//qDebug() << "next block" << nextBlock.x() << nextBlock.y() ;
+	BlockMapProperty::BlockType typeOfNextBlock = getType(nextBlock.x(),nextBlock.y());
 
     // We store the result since we use it at least once
-    Bomb* bombOnNextBlock = blockContainsBomb(x_nextBlock,y_nextBlock);
+    Bomb* bombOnNextBlock = blockContainsBomb(nextBlock.x(),nextBlock.y());
 
     // Can we kick a bomb? First check that the bomb is on another tile
-    if(x_originalBlock != x_nextBlock || y_originalBlock != y_nextBlock) {
+    if(originalBlock.x() != nextBlock.x() || originalBlock.y() != nextBlock.y()) {
         if(bombOnNextBlock && players[id]->getKickBonus()) {
             // check that the player is at the center of the tile so he can kick
-            QPoint centerOfTile = getCenterCoordForBlock(x_originalBlock, y_originalBlock);
+            QPoint centerOfTile = getCenterCoordForBlock(originalBlock.x(), originalBlock.y());
             if( ( (direction == dirLeft || direction == dirRight) && y_origPixel == centerOfTile.y() ) ||
                 ( (direction == dirUp   || direction == dirDown)  && x_origPixel == centerOfTile.x() )
               )
@@ -312,7 +310,7 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
 
     //here we test if the next block is empty and if the next block does not contains a bomb or if the next block is the same as the actual block (if we are before the middle of the block)
     if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
-        (   (x_originalBlock == x_nextBlock && y_originalBlock == y_nextBlock) ||
+        (   (originalBlock.x() == nextBlock.x() && originalBlock.y() == nextBlock.y()) ||
             bombOnNextBlock == 0
         )
       )
@@ -362,10 +360,10 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
 			int sign = pos > 0 ? 1 : -1;
 			if( pos != 0)
 			{
-				getBlockPosition( x_player, y_player+sign*getBlockSize()/2, x_nextBlock, y_nextBlock );
-				typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
+                nextBlock = getBlockPosition( x_player, y_player+sign*getBlockSize()/2 );
+                typeOfNextBlock = getType(nextBlock.x(),nextBlock.y());
                 if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
-                     blockContainsBomb(x_nextBlock,y_nextBlock) == NULL)
+                     blockContainsBomb(nextBlock.x(),nextBlock.y()) == NULL)
 				{
 					setPlayerPosition(id,x+ move_x/2,y+absMin(pos,distance));
 					return true;
@@ -378,10 +376,10 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
 			int sign = pos > 0 ? 1 : -1;
 			if( pos != 0)
 			{
-				getBlockPosition( x_player+sign*getBlockSize()/2, y_player, x_nextBlock, y_nextBlock );
-				typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
+                nextBlock = getBlockPosition( x_player+sign*getBlockSize()/2, y_player );
+                typeOfNextBlock = getType(nextBlock.x(),nextBlock.y());
                 if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
-                    blockContainsBomb(x_nextBlock,y_nextBlock) == NULL)
+                    blockContainsBomb(nextBlock.x(),nextBlock.y()) == NULL)
 				{
 					setPlayerPosition(id,x+absMin(pos,distance),y+ move_y/2);
 					return true;
@@ -397,17 +395,16 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
     int distance = WALKWAY_SPEED;
     bool isOnWalkway = true;
 
-	int x_originalBlock, y_originalBlock;
-	getBlockPosition( b->x, b->y, x_originalBlock, y_originalBlock);
-    QPoint centreOrig = getCenterCoordForBlock(x_originalBlock, y_originalBlock);
+    QPoint originalBlock = getBlockPosition( b->x, b->y);
+    QPoint centreOrig = getCenterCoordForBlock(originalBlock.x(), originalBlock.y());
 
     if(direction == dirNone) {
         // before any computation, we check whether the bomb is on the centre of the tile
         // in which case we must take into account arrows that change its direction
-        if( getOption(x_originalBlock, y_originalBlock) == BlockMapProperty::arrow &&
+        if( getOption(originalBlock.x(), originalBlock.y()) == BlockMapProperty::arrow &&
             centreOrig.x() == b->x && centreOrig.y() == b->y )
         {
-            b->direction = getOptionDirection(x_originalBlock, y_originalBlock);
+            b->direction = getOptionDirection(originalBlock.x(), originalBlock.y());
         }
 
         direction = b->direction;
@@ -445,10 +442,9 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
 	}
 
 
-	int x_nextBlock, y_nextBlock;
-	getBlockPosition( newx, newy, x_nextBlock, y_nextBlock );
-	//qDebug() << "next block" << x_nextBlock << y_nextBlock ;
-	BlockMapProperty::BlockType typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
+	QPoint nextBlock = getBlockPosition( newx, newy );
+	//qDebug() << "next block" << nextBlock.x() << nextBlock.y() ;
+	BlockMapProperty::BlockType typeOfNextBlock = getType(nextBlock.x(),nextBlock.y());
 
     // recenter the bomb, if the bomb is moving in a given direction it must be centered along the other axis
     if(direction == dirLeft || direction == dirRight) {
@@ -480,7 +476,7 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
     // c is between them. In which case we limit the amount of movement so the bomb finishes
     // its move on the center of the tile, where its direction can finally be changed.
 
-    if(getOption(x_originalBlock, y_originalBlock) == BlockMapProperty::arrow) {
+    if(getOption(originalBlock.x(), originalBlock.y()) == BlockMapProperty::arrow) {
         if(b->x == centreOrig.x()) {
             int off_sy = centreOrig.y() - b->y;
             int off_dy = centreOrig.y() - newy;
@@ -504,7 +500,7 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
     // then we check whether a player is standing there, in which case the bomb must bounce back.
     QPoint overlapTile = getOverlappingBlockPosition(b->x, b->y);
     int anbx, anby;
-    getNextBlock(x_originalBlock, y_originalBlock, anbx, anby, direction);
+    getNextBlock(originalBlock.x(), originalBlock.y(), anbx, anby, direction);
     if( anbx == overlapTile.x() &&
         anby == overlapTile.y() &&
         blockContainsPlayer(anbx, anby) )
@@ -522,9 +518,9 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
     // here we test if the next block is empty 
     // and if the next block is the same as the actual block or does not contains a bomb nor a player
     if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
-        (   (x_originalBlock == x_nextBlock && y_originalBlock == y_nextBlock) ||
-            (   blockContainsBomb(x_nextBlock,y_nextBlock) == NULL &&
-                ! blockContainsPlayer(x_nextBlock, y_nextBlock)
+        (   (originalBlock.x() == nextBlock.x() && originalBlock.y() == nextBlock.y()) ||
+            (   blockContainsBomb(nextBlock.x(),nextBlock.y()) == NULL &&
+                ! blockContainsPlayer(nextBlock.x(), nextBlock.y())
             )
         )
       )
@@ -624,9 +620,8 @@ bool MapServer::blockContainsPlayer(int x, int y)
     {
         qint16 p_x, p_y;
         getPlayerPosition(i, p_x, p_y);
-        int p_squareX, p_squareY;
-        getBlockPosition(p_x, p_y, p_squareX, p_squareY);
-        if (x == p_squareX && y == p_squareY)
+        QPoint block = getBlockPosition(p_x, p_y);
+        if (x == block.x() && y == block.y())
             return true;
     }
     return false;
@@ -685,30 +680,28 @@ int MapServer::coordinatePositionInBlock(int coord)
 
 QList<Bomb*> MapServer::addBombMultiple(int playerId)
 {
-    int squareX,squareY;
     qint16 x,y;
     QList<Bomb*> newBombs;
     getPlayerPosition(playerId,x,y);
-    getBlockPosition(x,y,squareX,squareY);
+    QPoint block = getBlockPosition(x,y);
     //drop multibombs if the player already has a bomb here
     int blockBombPlayerId = -1;
-    Bomb *bomb = blockContainsBomb(squareX,squareY);
+    Bomb *bomb = blockContainsBomb(block.x(),block.y());
     if(bomb)
         blockBombPlayerId = bomb->getPlayer();
     if(players[playerId]->getHeading() == -1 || blockBombPlayerId != playerId)
         return newBombs;
     while(players[playerId]->getIsBombAvailable())
     {
-        getNextBlock(squareX,squareY,squareX,squareY,players[playerId]->getHeading());
+        getNextBlock(block.x(),block.y(),block.rx(),block.ry(),players[playerId]->getHeading());
         //we check that a player is not here
         bool isPlayer = false;
         for (int i=0;i<getNbPlayers();i++)
         {
             qint16 p_x, p_y;
             getPlayerPosition(i, p_x, p_y);
-            int p_squareX, p_squareY;
-            getBlockPosition(p_x, p_y, p_squareX, p_squareY);
-            if (squareX == p_squareX && squareY == p_squareY)
+            QPoint playerBlock = getBlockPosition(p_x, p_y);
+            if (block.x() == playerBlock.x() && block.y() == playerBlock.y())
             {
                 qDebug() << "multibomb blocked by player" << i;
                 isPlayer = true;
@@ -716,7 +709,7 @@ QList<Bomb*> MapServer::addBombMultiple(int playerId)
             }
         }
         //check if a bonus is here
-        QMap<Point<qint8>, Bonus*>::iterator itb = bonus.find(Point<qint8>(squareX, squareY));
+        QMap<Point<qint8>, Bonus*>::iterator itb = bonus.find(Point<qint8>(block.x(), block.y()));
         if(itb != bonus.end())
         {
             qDebug() << "multibomb blocked by bonus";
@@ -725,7 +718,7 @@ QList<Bomb*> MapServer::addBombMultiple(int playerId)
 
         if(isPlayer)
             break;
-        Bomb *b = addBomb(playerId, squareX, squareY);
+        Bomb *b = addBomb(playerId, block.x(), block.y());
         if( !b )
             break;
         newBombs << b;
@@ -735,11 +728,10 @@ QList<Bomb*> MapServer::addBombMultiple(int playerId)
 
 Bomb* MapServer::addBomb(int playerId)
 {
-	int squareX,squareY;
 	qint16 x,y;
 	getPlayerPosition(playerId,x,y);
-	getBlockPosition(x,y,squareX,squareY);
-	return addBomb(playerId,squareX,squareY);
+	QPoint block = getBlockPosition(x,y);
+	return addBomb(playerId,block.x(),block.y());
 }
 
 Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
@@ -770,9 +762,8 @@ Flame* MapServer::explosion(Bomb* b)
 	Flame *f = new Flame(b->playerId,20);
 	f->addDetonatedBomb(*b);
 
-    int tx, ty;
-    getBlockPosition(b->x, b->y, tx, ty);
-	QPoint tempPoint = QPoint(tx, ty);
+    QPoint block = getBlockPosition(b->x, b->y);
+    QPoint tempPoint = QPoint(block.x(), block.y());
 	propagateFlame(*f, tempPoint, b->range);
 
     players[b->playerId]->incBombsAvailable();
@@ -793,9 +784,8 @@ void MapServer::propagateFlame(Flame & f, const QPoint & p, int range)
 		{
 			qint16 x,y;
 			getPlayerPosition(i,x,y);
-			int squareX, squareY;
-			getBlockPosition(x,y,squareX,squareY);
-			if (p.x()==squareX && p.y()==squareY)
+			QPoint block = getBlockPosition(x,y);
+			if (p.x()==block.x() && p.y()==block.y())
 				qDebug() << "player "<<f.getPlayerId()<<" pwned player "<<i;
 		}
 	}
@@ -826,14 +816,12 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 
 		foreach(Bomb * b, bombs)
 		{
-            int tx, ty;
-            getBlockPosition(b->x, b->y, tx, ty);
-			if (tx == pTemp.x() && ty == pTemp.y())
+            QPoint block = getBlockPosition(b->x, b->y);
+			if (block.x() == pTemp.x() && block.y() == pTemp.y())
 			{
 				bombs.removeOne(b);
 				f.addDetonatedBomb(*b);
-				QPoint newPos = QPoint(tx, ty);
-				propagateFlame(f, newPos, b->range);
+				propagateFlame(f, block, b->range);
                 players[b->playerId]->incBombsAvailable();
 				delete b;
 			}
@@ -925,9 +913,7 @@ void MapServer::exchangePlayersPositions()
 }
 
 void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
-    int x, y;
-    getBlockPosition(playerN->getX(), playerN->getY(), x, y);
-    QPoint actPoint(x, y);
+    QPoint actPoint = getBlockPosition(playerN->getX(), playerN->getY());
 
     // check whether the player threw himself in a flame
     if(checkPlayerInFlames(playerN, actPoint, flames))
@@ -1025,7 +1011,7 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
     if(playerN->getOnTeleport() )
     {
         int id;
-        if(!blockContainsTeleport(x,y,id))
+        if(!blockContainsTeleport(actPoint.x(),actPoint.y(),id))
         {
             //qDebug("player moved out of the teleport");
             playerN->setOnTeleport(false);
@@ -1034,7 +1020,7 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
     else
     {
         int id;
-        if(blockContainsTeleport(x,y,id))
+        if(blockContainsTeleport(actPoint.x(),actPoint.y(),id))
         {
             int x_next_tp, y_next_tp;
             //qDebug() << "player moved in the teleport" << id;
@@ -1046,10 +1032,10 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
             return;
         }
     }
-    if(getOption(x,y) == BlockMapProperty::mov_walk)
+    if(getOption(actPoint.x(),actPoint.y()) == BlockMapProperty::mov_walk)
     {
         //qDebug() << "player" << playerN->getId() << "on moving walkway";
-        tryMovePlayer(playerN->getId(), getOptionDirection(x,y), WALKWAY_SPEED);
+        tryMovePlayer(playerN->getId(), getOptionDirection(actPoint.x(),actPoint.y()), WALKWAY_SPEED);
     }
 }
 
@@ -1151,9 +1137,8 @@ bool MapServer::shrinkMap()
        //Kill players on this block
        foreach(PlayerServer* playerN, players) {
            if(playerN->getIsAlive()) {
-               int px, py;
-               getBlockPosition(playerN->getX(), playerN->getY(), px, py);
-               if(px == shrink.x() && py == shrink.y())
+               QPoint playerBlock = getBlockPosition(playerN->getX(), playerN->getY());
+               if(playerBlock.x() == shrink.x() && playerBlock.y() == shrink.y())
                    doPlayerDeath(playerN,-1);
            }
        }
@@ -1285,10 +1270,9 @@ void MapServer::newHeartBeat() {
         }
         else
         {
-            int bx,by;
-            getBlockPosition(bombN->x, bombN->y, bx, by);
-            if(getOption(bx, by) == BlockMapProperty::mov_walk)
-                hasMoved = tryMoveBomb(bombN, getOptionDirection(bx,by));
+            QPoint bombBlock = getBlockPosition(bombN->x, bombN->y);
+            if(getOption(bombBlock.x(), bombBlock.y()) == BlockMapProperty::mov_walk)
+                hasMoved = tryMoveBomb(bombN, getOptionDirection(bombBlock.x(),bombBlock.y()));
         }
 
         if(hasMoved) {
@@ -1333,10 +1317,8 @@ void MapServer::newHeartBeat() {
     {
         if(playerN->getIsAlive())
         {
-            int px, py;
-            getBlockPosition(playerN->getX(), playerN->getY(), px, py);
-            QPoint actPoint(px, py);
-            checkPlayerInFlames(playerN, actPoint, explodeList);
+            QPoint playerBlock = getBlockPosition(playerN->getX(), playerN->getY());
+            checkPlayerInFlames(playerN, playerBlock, explodeList);
         }
     }
 

@@ -101,10 +101,9 @@ void Map<P,SL>::setOption(int x, int y, BlockMapProperty::BlockOption option, gl
 }
 
 template<typename P, typename SL>
-void Map<P,SL>::getBlockPosition(int x, int y, int &xdest, int &ydest) const
+QPoint Map<P,SL>::getBlockPosition(int x, int y) const
 {
-    xdest = x / blockSize;
-    ydest = y / blockSize;
+    return QPoint(x / blockSize, y / blockSize);
 }
 
 template<typename P, typename SL>
@@ -294,9 +293,8 @@ Bomb *Map<P,SL>::blockContainsBomb(int x,int y) const
 {
     foreach( Bomb *b, bombs)
     {
-        int tx, ty;
-        getBlockPosition(b->x, b->y, tx, ty);
-        if(tx == x && ty == y)
+        QPoint pos = getBlockPosition(b->x, b->y);
+        if(pos.x() == x && pos.y() == y)
             return b;
     }
     return NULL;

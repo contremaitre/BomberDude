@@ -69,7 +69,7 @@ public:
     globalDirection getOptionDirection(int w, int h) const     { return block_list[h*width+w].getOptionDirection(); }
     globalDirection getOptionDirection(int pos) const          { return block_list[pos].getOptionDirection(); }
 
-    void getBlockPosition(int x, int y, int &xdest, int &ydest) const;
+    QPoint getBlockPosition(int x, int y) const;
 
     /**
       Gives the "pixel" coordinates of the center of the given tile.
