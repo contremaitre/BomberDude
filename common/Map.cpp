@@ -51,6 +51,10 @@ Map<P,SL>::~Map()
 
     foreach(Flame* f, flames)
         delete f;
+
+    foreach(QVector<Tile<P> > col, tiles)
+        foreach(Tile<P> t, col)
+            delete t.withBonus;
 }
 
 template<typename P, typename SL>
@@ -266,6 +270,34 @@ void Map<P,SL>::removeBomb(qint16 bombId)
     }
     else
         qDebug() << "nothing has been removed";
+}
+
+
+template<typename P, typename SL>
+Bomb* Map<P,SL>::getTileBomb(qint8 tile_x, qint8 tile_y) const
+{
+    return tiles[tile_x][tile_y].withBomb;
+}
+
+
+template<typename P, typename SL>
+void Map<P,SL>::setTileBomb(qint8 tile_x, qint8 tile_y, Bomb* b)
+{
+    tiles[tile_x][tile_y].withBomb = b;
+}
+
+
+template<typename P, typename SL>
+Bonus* Map<P,SL>::getTileBonus(qint8 tile_x, qint8 tile_y) const
+{
+    return tiles[tile_x][tile_y].withBonus;
+}
+
+
+template<typename P, typename SL>
+void Map<P,SL>::setTileBonus(qint8 tile_x, qint8 tile_y, Bonus* b)
+{
+    tiles[tile_x][tile_y].withBonus = b;
 }
 
 

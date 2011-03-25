@@ -139,9 +139,17 @@ private:
 
 protected:
 	qint32 heartBeat;						///< timestamp of the game
-    QVector<QVector<Tile<P> > > tiles;         ///< contents of each tile
 	QMap<typename P::playerId_t, P*> players;   ///< list of players currently on the field
     QMap<Flame::flameId_t, Flame*> flames;      ///< list of explosions
+
+// contents of tiles
+private:
+    QVector<QVector<Tile<P> > > tiles;         ///< contents of each tile
+protected:
+    Bomb* getTileBomb(qint8 tile_x, qint8 tile_y) const;
+    void setTileBomb(qint8 tile_x, qint8 tile_y, Bomb* b);
+    Bonus* getTileBonus(qint8 tile_x, qint8 tile_y) const;
+    void setTileBonus(qint8 tile_x, qint8 tile_y, Bonus* b);
 
 // lists of items    
 private:
