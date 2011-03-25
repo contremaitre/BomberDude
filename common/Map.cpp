@@ -293,7 +293,7 @@ Bomb *Map<P,SL>::blockContainsBomb(int x,int y) const
 {
     foreach( Bomb *b, bombs)
     {
-        QPoint pos = getBlockPosition(b->x, b->y);
+        QPoint pos = getBlockPosition(b->getX(), b->getY());
         if(pos.x() == x && pos.y() == y)
             return b;
     }

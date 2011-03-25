@@ -10,7 +10,6 @@ INCLUDEPATH += .
 
 # Input
 HEADERS += BlockMapProperty.h \
-    Bomb.h \
     Flame.h \
     Map.h \
     Player.h \

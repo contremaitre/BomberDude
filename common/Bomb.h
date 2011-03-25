@@ -19,16 +19,13 @@
 #define QTB_BOMB_H
 
 
-#include <QObject>
-#include <QTimer>
+#include <QDataStream>
 
 #include "constant.h"
 
 
-class Bomb : public QObject
+class Bomb
 {
-    Q_OBJECT
-
 public:
 	Bomb();
 	Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool remote, bool oil);
@@ -40,12 +37,19 @@ public:
 	bool mustExplode()						{ return !remoteControlled && duration < 0; }
     qint8 getPlayer()                       { return playerId; }
 
+    qint16 getX() const                     { return x; }
+    qint16 getY() const                     { return y; }
+
+    void setX(qint16 val)                   { x = val; }
+    void setY(qint16 val)                   { y = val; }
+
 private:
 	static qint16 index;
 
-public:
     qint16 x;
     qint16 y;
+
+public:
     //owner
     qint8 playerId;
 	//duration in heartbeats

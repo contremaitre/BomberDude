@@ -19,6 +19,8 @@
 #define QTB_MAPSERVER_H
 
 
+#include <QTimer>
+
 #include "Map.h"
 #include "PlayerServer.h"
 #include "Bonus.h"

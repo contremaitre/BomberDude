@@ -320,8 +320,8 @@ void GameArena::slotRemoveBonus(qint16 x, qint16 y) {
 void GameArena::slotAddBomb(int id)
 {
     const Bomb *bomb = map->getBomb(id);
-    QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb->x - squareSize/2,
-                                                       bomb->y - squareSize/2,
+    QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb->getX() - squareSize/2,
+                                                       bomb->getY() - squareSize/2,
                                                        squareSize);
     pix->setZValue(1.0);
     qDebug() << "new bomb, remote =" << bomb->remoteControlled;
@@ -333,7 +333,7 @@ void GameArena::slotAddBomb(int id)
 void GameArena::slotMovedBomb(int id)
 {
     const Bomb *bomb = map->getBomb(id);
-    bombs[id]->setPos(bomb->x - squareSize/2, bomb->y - squareSize/2, squareSize);
+    bombs[id]->setPos(bomb->getX() - squareSize/2, bomb->getY() - squareSize/2, squareSize);
 }
 
 void GameArena::slotRemoveBomb(int id)
@@ -351,8 +351,8 @@ void GameArena::slotRemoveBombRC(int id)
     if(itb != bombs.end()) {
         scene->removeItem(itb.value());
         const Bomb *bomb = map->getBomb(id);
-        QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb->x - squareSize/2,
-                                                           bomb->y - squareSize/2,
+        QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb->getX() - squareSize/2,
+                                                           bomb->getY() - squareSize/2,
                                                                 squareSize);
         pix->setItem(pixmaps.getPixmapBomb());
         *itb = pix;

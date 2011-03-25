@@ -395,14 +395,14 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
     int distance = WALKWAY_SPEED;
     bool isOnWalkway = true;
 
-    QPoint originalBlock = getBlockPosition( b->x, b->y);
+    QPoint originalBlock = getBlockPosition( b->getX(), b->getY());
     QPoint centreOrig = getCenterCoordForBlock(originalBlock.x(), originalBlock.y());
 
     if(direction == dirNone) {
         // before any computation, we check whether the bomb is on the centre of the tile
         // in which case we must take into account arrows that change its direction
         if( getOption(originalBlock.x(), originalBlock.y()) == BlockMapProperty::arrow &&
-            centreOrig.x() == b->x && centreOrig.y() == b->y )
+            centreOrig.x() == b->getX() && centreOrig.y() == b->getY() )
         {
             b->direction = getOptionDirection(originalBlock.x(), originalBlock.y());
         }
@@ -412,8 +412,8 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
         isOnWalkway = false;
     }
 
-	int newx = b->x;
-	int newy = b->y;
+	int newx = b->getX();
+	int newy = b->getY();
 
 	int move_x = 0;
 	int move_y = 0;
@@ -448,16 +448,16 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
 
     // recenter the bomb, if the bomb is moving in a given direction it must be centered along the other axis
     if(direction == dirLeft || direction == dirRight) {
-        int offset = coordinatePositionInBlock(b->y);
+        int offset = coordinatePositionInBlock(b->getY());
         if(offset != 0) {
-            b->y -= offset;
+            b->setY(b->getY() - offset);
             return true;
         }
     }
     else {
-        int offset = coordinatePositionInBlock(b->x);
+        int offset = coordinatePositionInBlock(b->getX());
         if(offset != 0) {
-            b->x -= offset;
+            b->setX(b->getX() - offset);
             return true;
         }
     }
@@ -477,17 +477,17 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
     // its move on the center of the tile, where its direction can finally be changed.
 
     if(getOption(originalBlock.x(), originalBlock.y()) == BlockMapProperty::arrow) {
-        if(b->x == centreOrig.x()) {
-            int off_sy = centreOrig.y() - b->y;
+        if(b->getX() == centreOrig.x()) {
+            int off_sy = centreOrig.y() - b->getY();
             int off_dy = centreOrig.y() - newy;
 
             if( (off_sy > 0 && off_dy < 0) || (off_sy < 0 && off_dy > 0) )
                 newy += off_dy;
         }
         else {
-            Q_ASSERT(b->y == centreOrig.y());
+            Q_ASSERT(b->getY() == centreOrig.y());
 
-            int off_sx = centreOrig.x() - b->x;
+            int off_sx = centreOrig.x() - b->getX();
             int off_dx = centreOrig.x() - newx;
 
             if( (off_sx > 0 && off_dx < 0) || (off_sx < 0 && off_dx > 0) )
@@ -498,15 +498,15 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
     // we need to check the tile on which the bomb will overlap after the move
     // if it is the same than the next tile (i.e. the bomb rolled past the middle of the current tile)
     // then we check whether a player is standing there, in which case the bomb must bounce back.
-    QPoint overlapTile = getOverlappingBlockPosition(b->x, b->y);
+    QPoint overlapTile = getOverlappingBlockPosition(b->getX(), b->getY());
     int anbx, anby;
     getNextBlock(originalBlock.x(), originalBlock.y(), anbx, anby, direction);
     if( anbx == overlapTile.x() &&
         anby == overlapTile.y() &&
         blockContainsPlayer(anbx, anby) )
     {
-        b->x = centreOrig.x();
-        b->y = centreOrig.y();
+        b->setX(centreOrig.x());
+        b->setY(centreOrig.y());
 
         if(b->hasOil && !isOnWalkway)
             b->direction = reverseDirection(b->direction);
@@ -525,8 +525,8 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
         )
       )
     {
-        b->x += move_x;
-        b->y += move_y;
+        b->setX(b->getX() + move_x);
+        b->setY(b->getY() + move_y);
 		return true;
 	}
 	else
@@ -539,20 +539,20 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
 		// can we move closer to the next block ?
 		if(move_x != 0)
 		{
-			int pos = coordinatePositionInBlock(b->x);
+			int pos = coordinatePositionInBlock(b->getX());
 			//qDebug() << "Move closer ?" << pos << move_x;
 			if((pos<0 && move_x>0) || (pos>0 && move_x<0))
 			{
-                b->x -= pos;
+                b->setX(b->getX() - pos);
 				return true;
 			}
 		}
 		else
 		{
-			int pos = coordinatePositionInBlock(b->y);
+			int pos = coordinatePositionInBlock(b->getY());
 			if((pos<0 && move_y>0) || (pos>0 && move_y<0))
 			{
-				b->y -= pos;
+				b->setY(b->getY() - pos);
 				return true;
 			}
 		}
@@ -762,7 +762,7 @@ Flame* MapServer::explosion(Bomb* b)
 	Flame *f = new Flame(b->playerId,20);
 	f->addDetonatedBomb(*b);
 
-    QPoint block = getBlockPosition(b->x, b->y);
+    QPoint block = getBlockPosition(b->getX(), b->getY());
     QPoint tempPoint = QPoint(block.x(), block.y());
 	propagateFlame(*f, tempPoint, b->range);
 
@@ -816,7 +816,7 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 
 		foreach(Bomb * b, bombs)
 		{
-            QPoint block = getBlockPosition(b->x, b->y);
+            QPoint block = getBlockPosition(b->getX(), b->getY());
 			if (block.x() == pTemp.x() && block.y() == pTemp.y())
 			{
 				bombs.removeOne(b);
@@ -1270,13 +1270,13 @@ void MapServer::newHeartBeat() {
         }
         else
         {
-            QPoint bombBlock = getBlockPosition(bombN->x, bombN->y);
+            QPoint bombBlock = getBlockPosition(bombN->getX(), bombN->getY());
             if(getOption(bombBlock.x(), bombBlock.y()) == BlockMapProperty::mov_walk)
                 hasMoved = tryMoveBomb(bombN, getOptionDirection(bombBlock.x(),bombBlock.y()));
         }
 
         if(hasMoved) {
-            QPoint neighBlock = getOverlappingBlockPosition(bombN->x, bombN->y);
+            QPoint neighBlock = getOverlappingBlockPosition(bombN->getX(), bombN->getY());
             removeBonus(neighBlock.x(), neighBlock.y());
             movingBombs.append(bombN);
         }
@@ -1285,7 +1285,7 @@ void MapServer::newHeartBeat() {
     // serialize the moving bombs
 	updateOut << static_cast<qint8>(movingBombs.size());
 	foreach(Bomb* bombN, movingBombs) {
-		updateOut << bombN->bombId << bombN->x << bombN->y;
+		updateOut << bombN->bombId << bombN->getX() << bombN->getY();
 	}
 
 	// then decrease each bomb's counter

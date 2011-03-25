@@ -16,7 +16,6 @@
 */
 
 #include "Bomb.h"
-#include <QDebug>
 
 qint16 Bomb::index=1;
 

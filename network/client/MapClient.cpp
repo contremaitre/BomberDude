@@ -58,7 +58,7 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 	for(qint8 i = 0; i < newBombsListSize; i++) {
 		Bomb bombN;
 		updateIn >> bombN;
-		addBomb(bombN.playerId, bombN.x, bombN.y, bombN.bombId, bombN.remoteControlled);
+		addBomb(bombN.playerId, bombN.getX(), bombN.getY(), bombN.bombId, bombN.remoteControlled);
 		emit sigAddBomb(bombN.bombId);
 	}
 
@@ -71,8 +71,8 @@ void MapClient::updateMap(QByteArray& updateBlock) {
         {
             if(b->bombId == bombId)
             {
-                b->x = nx;
-                b->y = ny;
+                b->setX(nx);
+                b->setY(ny);
                 break;
             }
         }
