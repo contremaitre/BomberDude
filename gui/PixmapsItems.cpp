@@ -53,6 +53,7 @@ void PixmapsItems::loadAll()
     addBonusPixMap(Bonus::BONUS_BOXING_GLOVE,"pictures/bonus_boxing_glove.png");
     addBonusPixMap(Bonus::BONUS_RANDOM,"pictures/bonus_unknown.png");
 
+    flame = QPixmap("pictures/explosion.png").scaled(QSizeF(width,height).toSize());
     burnt = QPixmap("pictures/tux_burn.png").scaled(QSizeF(width,height).toSize());
     option_unknown = QPixmap("pictures/bonus_unknown.png").scaled(QSizeF(width,height).toSize());
     bomb = QPixmap("pictures/bomb.png").scaled(QSizeF(width,height).toSize());
@@ -60,7 +61,6 @@ void PixmapsItems::loadAll()
 
     addBlockPixMap(BlockMapProperty::brick,"pictures/brick.png");
     addBlockPixMap(BlockMapProperty::wall,"pictures/wall.png");
-    addBlockPixMap(BlockMapProperty::flame,"pictures/explosion.png");
     addBlockPixMap(BlockMapProperty::broken,"pictures/broken.png");
 
     addOptionPixMap(BlockMapProperty::teleport,"pictures/option_teleport.png");

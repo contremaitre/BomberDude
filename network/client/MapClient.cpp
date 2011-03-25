@@ -32,8 +32,10 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 
 	QList<qint16> cleanList;
 	updateIn >> cleanList;
-	foreach(qint16 flameId, cleanList)
+	foreach(qint16 flameId, cleanList) {
 		removeFlame(flameId);
+        emit sigRemoveFlame(flameId);
+    }
 
 	qint8 playerListSize;
 	updateIn >> playerListSize;
@@ -87,6 +89,9 @@ void MapClient::updateMap(QByteArray& updateBlock) {
             emit sigRemoveBomb(bombId);
 			removeBomb(bombId);
 		}
+
+        foreach(QPoint point, f->getFlamePositions())
+            emit sigAddFlame(f->getFlameId(), point.x(), point.y());
 
         QSet<QPoint> brokenBlocks = f->getBrokenBlocks();
         foreach(QPoint bb, brokenBlocks)

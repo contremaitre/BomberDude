@@ -290,7 +290,7 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
 	BlockMapProperty::BlockType typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
 
     // We store the result since we use it at least once
-    Bomb* bombOnNextBlock = blockContainsBomb(x_nextBlock,y_nextBlock);
+    Bomb* bombOnNextBlock = getTileBomb(x_nextBlock, y_nextBlock);
 
     // Can we kick a bomb? First check that the bomb is on another tile
     if(x_originalBlock != x_nextBlock || y_originalBlock != y_nextBlock) {
@@ -310,7 +310,7 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
     }
 
     //here we test if the next block is empty and if the next block does not contains a bomb or if the next block is the same as the actual block (if we are before the middle of the block)
-    if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
+    if( typeOfNextBlock == BlockMapProperty::empty &&
         (   (x_originalBlock == x_nextBlock && y_originalBlock == y_nextBlock) ||
             bombOnNextBlock == 0
         )
@@ -363,8 +363,7 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
 			{
 				getBlockPosition( x_player, y_player+sign*getBlockSize()/2, x_nextBlock, y_nextBlock );
 				typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
-                if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
-                     blockContainsBomb(x_nextBlock,y_nextBlock) == NULL)
+                if(typeOfNextBlock == BlockMapProperty::empty && getTileBomb(x_nextBlock,y_nextBlock) == 0)
 				{
 					setPlayerPosition(id,x+ move_x/2,y+absMin(pos,distance));
 					return true;
@@ -379,8 +378,7 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
 			{
 				getBlockPosition( x_player+sign*getBlockSize()/2, y_player, x_nextBlock, y_nextBlock );
 				typeOfNextBlock = getType(x_nextBlock,y_nextBlock);
-                if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
-                    blockContainsBomb(x_nextBlock,y_nextBlock) == NULL)
+                if(typeOfNextBlock == BlockMapProperty::empty && getTileBomb(x_nextBlock, y_nextBlock) == 0)
 				{
 					setPlayerPosition(id,x+absMin(pos,distance),y+ move_y/2);
 					return true;
@@ -520,9 +518,9 @@ bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
 
     // here we test if the next block is empty 
     // and if the next block is the same as the actual block or does not contains a bomb nor a player
-    if( (typeOfNextBlock == BlockMapProperty::empty || typeOfNextBlock == BlockMapProperty::flame) &&
+    if( typeOfNextBlock == BlockMapProperty::empty &&
         (   (x_originalBlock == x_nextBlock && y_originalBlock == y_nextBlock) ||
-            (   blockContainsBomb(x_nextBlock,y_nextBlock) == NULL &&
+            (   getTileBomb(x_nextBlock, y_nextBlock) == 0 &&
                 ! blockContainsPlayer(x_nextBlock, y_nextBlock)
             )
         )
@@ -607,7 +605,7 @@ bool MapServer::blockEmpty(int x, int y)
 {
     if(getType(x,y) != BlockMapProperty::empty)
         return false;
-    if(blockContainsBomb(x,y) != NULL)
+    if(getTileBomb(x, y) != 0)
         return false;
     if(blockContainsPlayer(x, y))
         return false;
@@ -690,7 +688,7 @@ QList<Bomb*> MapServer::addBombMultiple(int playerId)
     getBlockPosition(x,y,squareX,squareY);
     //drop multibombs if the player already has a bomb here
     int blockBombPlayerId = -1;
-    Bomb *bomb = blockContainsBomb(squareX,squareY);
+    Bomb* bomb = getTileBomb(squareX, squareY);
     if(bomb)
         blockBombPlayerId = bomb->getPlayer();
     if(players[playerId]->getHeading() == -1 || blockBombPlayerId != playerId)
@@ -766,7 +764,7 @@ Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
 Flame* MapServer::explosion(Bomb* b)
 {
     removeBomb(b->bombId);
-	Flame *f = new Flame(b->playerId,20);
+	Flame *f = new Flame(b->playerId, heartBeat, 20);
 	f->addDetonatedBomb(*b);
 
     int tx, ty;
@@ -788,15 +786,15 @@ void MapServer::propagateFlame(Flame & f, const QPoint & p, int range)
 	if (!f.getFlamePositions().contains(p))
 	{
 		f.addFlame(p.x(),p.y());
-		for (int i=0;i<getNbPlayers();i++)
-		{
-			qint16 x,y;
-			getPlayerPosition(i,x,y);
-			int squareX, squareY;
-			getBlockPosition(x,y,squareX,squareY);
-			if (p.x()==squareX && p.y()==squareY)
-				qDebug() << "player "<<f.getPlayerId()<<" pwned player "<<i;
-		}
+//		for (int i=0;i<getNbPlayers();i++)
+//		{
+//			qint16 x,y;
+//			getPlayerPosition(i,x,y);
+//			int squareX, squareY;
+//			getBlockPosition(x,y,squareX,squareY);
+//			if (p.x()==squareX && p.y()==squareY)
+//				qDebug() << "player "<<f.getPlayerId()<<" pwned player "<<i;
+//		}
 	}
 
 	directedFlameProgagation(f,p,planeDirUp,range);
@@ -885,26 +883,25 @@ void MapServer::doPlayerDeath(PlayerServer* playerN, int killedBy)
         bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_FASTER;
 }
 
-bool MapServer::checkPlayerInFlames(PlayerServer* playerN,
-                         const QPoint& playerBlock,
-                         const QList<Flame*>& flamesToCheck) {
-    foreach(Flame* f, flamesToCheck)
-        if(f->getFlamePositions().contains(playerBlock)) {
-            doPlayerDeath(playerN,f->getPlayerId());
-            return true;
-        }
+bool MapServer::checkPlayerInFlames(PlayerServer* playerN, const QPoint& playerBlock)
+{
+    const QSet<Flame*> flameList = getTileFlames(playerBlock.x(), playerBlock.y());
+    if(flameList.size() > 0) {
+        qint32 oldestTimestamp = 0x80000000;
+        Flame* f = 0;
 
-    return false;
-}
+        // we look for the oldest explosion thanks to the timestamp
+        // if there are several explosions at once, we keep the first one we find
+        // this is fair as long as flameList is unordered
+        foreach(Flame* flameN, flameList)
+            if(flameN->getTimestamp() > oldestTimestamp) {
+                oldestTimestamp = flameN->getTimestamp();
+                f = flameN;
+            }
 
-bool MapServer::checkPlayerInFlames(PlayerServer* playerN,
-                         const QPoint& playerBlock,
-                         const QMap<Flame::flameId_t, Flame*>& flamesToCheck) {
-    foreach(Flame* f, flamesToCheck)
-        if(f->getFlamePositions().contains(playerBlock)) {
-            doPlayerDeath(playerN,f->getPlayerId());
-            return true;
-        }
+        doPlayerDeath(playerN, f->getPlayerId());
+        return true;
+    }
 
     return false;
 }
@@ -936,7 +933,7 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
     QPoint actPoint(x, y);
 
     // check whether the player threw himself in a flame
-    if(checkPlayerInFlames(playerN, actPoint, flames))
+    if(checkPlayerInFlames(playerN, actPoint))
         return;
 
     // TODO check for other player close by for disease
@@ -1048,7 +1045,7 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
             getNextTeleportPosition(id, x_next_tp, y_next_tp);
             QPoint actPoint(x_next_tp * getBlockSize() + getBlockSize() / 2, y_next_tp * getBlockSize() + getBlockSize() / 2);
             setPlayerPosition(playerN->getId(),actPoint.x(),actPoint.y());
-            checkPlayerInFlames(playerN, actPoint, flames);
+            checkPlayerInFlames(playerN, actPoint);
             return;
         }
     }
@@ -1161,7 +1158,7 @@ bool MapServer::shrinkMap()
            }
        }
        //if there is a bomb, it must explode
-       Bomb *b = blockContainsBomb(shrink.x(), shrink.y());
+       Bomb* b = getTileBomb(shrink.x(), shrink.y());
        if(b)
        {
            b->remoteControlled = false;
@@ -1219,18 +1216,13 @@ void MapServer::newHeartBeat() {
 
 	// start by cleaning flames
 	QList<qint16> cleanList;
-	QMap<Flame::flameId_t, Flame*>::iterator itFlame = flames.begin();
-	while(itFlame != flames.end()) {
-		(*itFlame)->decreaseLifeSpan();
-		if( (*itFlame)->isFinished() ) {
-			cleanList.append((*itFlame)->getFlameId());
-			//TODO, maybe inneficient ? but easier as it correctly deletes broken blocks
-			removeFlame((*itFlame)->getFlameId());
-            ++itFlame;
-			//flames.erase(itFlame++);
+    QMap<Flame::flameId_t, Flame*> flameList = getFlameList();
+    foreach(Flame* flameN, flameList) {
+		flameN->decreaseLifeSpan();
+		if(flameN->isFinished()) {
+			cleanList.append(flameN->getFlameId());
+			removeFlame(flameN->getFlameId());
 		}
-		else
-		    ++itFlame;
 	}
 	updateOut << cleanList;
 
@@ -1346,7 +1338,7 @@ void MapServer::newHeartBeat() {
             int px, py;
             getBlockPosition(playerN->getX(), playerN->getY(), px, py);
             QPoint actPoint(px, py);
-            checkPlayerInFlames(playerN, actPoint, explodeList);
+            checkPlayerInFlames(playerN, actPoint);
         }
     }
 

@@ -50,7 +50,7 @@ public:
 	  @param playerId Id of the player to whom belongs the initial bomb
 	  @param duration Lifespan of the flames in number of heartbeats
 	  */
-	Flame(qint8 playerId, int duration);
+	Flame(qint8 playerId, qint32 timestamp, int duration);
 
 	void addFlame(int x, int y)                 { flames.insert(QPoint(x,y)); }
 	QSet<QPoint> getFlamePositions() const		{ return flames; }
@@ -61,6 +61,8 @@ public:
 	qint16 getFlameId() const					{ return flameId; }
 
 	qint8 getPlayerId() const					{ return playerId; }
+
+    qint32 getTimestamp() const                 { return timestamp; }
 
 	void decreaseLifeSpan()						{ duration--; }
 	bool isFinished()							{ return duration < 0; }
@@ -74,6 +76,7 @@ private:
 	qint16 flameId;
 	qint8 playerId;								///< owner of the bomb
 
+    qint32 timestamp;                           ///< creation date
 	int duration;								///< duration in number of heartbeats
 
 	QSet<QPoint> flames;

@@ -52,6 +52,7 @@ private:
     QMap<option_pixmaps_t, QPixmap> option_pixmaps;
 
     QPixmap bomberman[10];
+    QPixmap flame;
     QPixmap burnt;
     QPixmap sick;
     QPixmap option_unknown;
@@ -73,6 +74,7 @@ public:
     const QPixmap& getPixmap(BlockMapProperty::BlockType);
     const QPixmap& getPixmap(Bonus::Bonus_t);
     const QPixmap& getPixmap(int);
+    const QPixmap& getPixmapFlame() const                   { return flame; }
     const QPixmap& getPixmapBurnt() const                   { return burnt; }
     const QPixmap& getPixmapSick() const                    { return sick; }
     const QPixmap& getPixmapBomb() const                    { return bomb; }

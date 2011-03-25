@@ -77,12 +77,7 @@ private:
     bool blockContainsPlayer(int x, int y);
     bool blockContainsTeleport(int x, int y, int &id);
     void getNextTeleportPosition(int id, int &x, int &y);
-    bool checkPlayerInFlames(PlayerServer* playerN,
-                             const QPoint& playerBlock,
-                             const QList<Flame*>& flamesToCheck);
-    bool checkPlayerInFlames(PlayerServer* playerN,
-                             const QPoint& playerBlock,
-                             const QMap<Flame::flameId_t, Flame*>& flamesToCheck);
+    bool checkPlayerInFlames(PlayerServer* playerN, const QPoint& playerBlock);
     void doPlayerDeath(PlayerServer* playerN, int killedBy); //check what has to be done when a player die
     void checkPlayerSurroundings(PlayerServer* player);
     void exchangePlayersPositions();

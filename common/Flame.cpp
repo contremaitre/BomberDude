@@ -31,12 +31,12 @@ Flame::Flame() {
 }
 
 //constructor for server
-Flame::Flame(qint8 playerId, int duration)
+Flame::Flame(qint8 playerId, qint32 timestamp, int duration) :
+    playerId(playerId),
+    timestamp(timestamp),
+    duration(duration)
 {
-	this->playerId=playerId;
-	flameId=index;
-	index++;
-	this->duration=duration;
+	flameId = index++;
 }
 
 QDataStream &operator<<(QDataStream &out, const Flame& flame)

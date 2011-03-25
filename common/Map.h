@@ -108,12 +108,6 @@ public:
     qint8 getNbPlayers() const                                      { return NbPlayers; }
     void setMaxNbPlayers(int);
 
-    void addFlame(Flame* f);
-    void removeFlame(int flameId);
-
-    //void addBomb(int plId, int x, int y,int bombId, bool rc);
-    Bomb *blockContainsBomb(int x,int y) const;
-
 	void setHeartBeat(qint32 hb);
 	qint32 getHeartBeat() const                                     { return heartBeat; }
 
@@ -140,7 +134,6 @@ private:
 protected:
 	qint32 heartBeat;						///< timestamp of the game
 	QMap<typename P::playerId_t, P*> players;   ///< list of players currently on the field
-    QMap<Flame::flameId_t, Flame*> flames;      ///< list of explosions
 
 // contents of tiles
 private:
@@ -148,10 +141,19 @@ private:
 protected:
     Bomb* getTileBomb(qint8 tile_x, qint8 tile_y) const;
     void setTileBomb(qint8 tile_x, qint8 tile_y, Bomb* b);
+    const QSet<Flame*> getTileFlames(qint8 tile_x, qint8 tile_y);
     Bonus* getTileBonus(qint8 tile_x, qint8 tile_y) const;
     void setTileBonus(qint8 tile_x, qint8 tile_y, Bonus* b);
 
-// lists of items    
+// list of flames
+private:
+    QMap<Flame::flameId_t, Flame*> flames;      ///< list of explosions
+protected:
+    void addFlame(Flame* f);
+    void removeFlame(qint16 flameId);
+    const QMap<Flame::flameId_t, Flame*>& getFlameList() const      { return flames; }
+
+// list of bombs
 private:
 	QMap<Bomb::bombId_t, Bomb*> bombs;          ///< list of bombs yet to explode
 protected:

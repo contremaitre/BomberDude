@@ -40,6 +40,20 @@ GameArena::GameArena(QMainWindow * mainw, QGraphicsView *view, int s) :
     pixmaps.init(squareSize, squareSize);
 }
 
+GameArena::~GameArena()
+{
+    while(!optionsItems.empty())
+    {
+        QGraphicsSquareItem* item = optionsItems.takeFirst();
+        scene->removeItem(item);
+        delete item;
+    }
+    slotRemoveHurryUp();
+    clear();
+    delete graphicView;
+    //delete scene; todo crash ?
+}
+
 void GameArena::createGraphics()
 {
     for(int i = 0; i < width; i++)
@@ -135,6 +149,8 @@ void GameArena::setMap(MapClient *newMap)
     connect(map, SIGNAL(sigMovedBomb(int)), this, SLOT(slotMovedBomb(int)), Qt::DirectConnection);
     connect(map, SIGNAL(sigRemoveBomb(int)), this, SLOT(slotRemoveBomb(int)), Qt::DirectConnection);
     connect(map, SIGNAL(sigRemoveBombRC(int)), this, SLOT(slotRemoveBombRC(int)), Qt::DirectConnection);
+    connect(map, SIGNAL(sigAddFlame(int,qint16,qint16)), this, SLOT(slotAddFlame(int,qint16,qint16)));
+    connect(map, SIGNAL(sigRemoveFlame(int)), this, SLOT(slotRemoveFlame(int)));
 }
 
 void GameArena::movePlayer(int player, int x, int y)
@@ -387,17 +403,23 @@ void GameArena::slotMapWinner(qint8 playerId) {
     scene->addItem(text2);
 }
 
-GameArena::~GameArena()
+void GameArena::slotAddFlame(int id, qint16 x, qint16 y)
 {
-    while(!optionsItems.empty())
-    {
-        QGraphicsSquareItem* item = optionsItems.takeFirst();
-        scene->removeItem(item);
-        delete item;
-    }
-    slotRemoveHurryUp();
-    clear();
-    delete graphicView;
-    //delete scene; todo crash ?
+    QGraphicsSquareItem* pixBonus = new QGraphicsSquareItem(x * squareSize,
+                                                            y * squareSize,
+                                                            squareSize);
+    pixBonus->setItem(pixmaps.getPixmapFlame());
+
+    flames.insertMulti(id,pixBonus);
+    scene->addItem(pixBonus);
 }
 
+void GameArena::slotRemoveFlame(int id)
+{
+    QMap<int, QGraphicsSquareItem*>::iterator itb = flames.find(id);
+    while(itb != flames.end() && itb.key() == id) {
+        scene->removeItem(itb.value());
+        ++itb;
+    }
+    flames.remove(id);
+}

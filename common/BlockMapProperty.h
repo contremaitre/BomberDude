@@ -24,14 +24,14 @@
 
 /**
  * This class represent a block on the field
- * A block can be a wall, a brick or empty
+ * A block can be a wall, a brick, broken (being destroyed by an explosion) or empty
  * A block can also have an option like an arrow, a teleport etc...
  */
 class BlockMapProperty
 {
 public:
     //must be kept in sync in PixmapsItem
-    enum BlockType {wall,brick,empty,broken,flame};
+    enum BlockType {wall,brick,empty,broken};
     enum BlockOption {none,arrow,teleport,mov_walk, random_spawn};
 
     BlockMapProperty();

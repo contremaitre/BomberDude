@@ -54,6 +54,7 @@ private:
     QList<QGraphicsSquareItem*> optionsItems;
     QMap<QPoint, QGraphicsItem*> bonus;
     QMap<int, QGraphicsSquareItem*> bombs;
+    QMap<int, QGraphicsSquareItem*> flames;
 
     QGraphicsSquareItem *getCase(int);
     QGraphicsSquareItem *getCase(int, int);
@@ -100,6 +101,8 @@ private slots:
     void slotRemoveBomb(int id);
     void slotRemoveBombRC(int id);
     void slotRemoveHurryUp();
+    void slotAddFlame(int id, qint16 x, qint16 y);
+    void slotRemoveFlame(int id);
 
 public slots:
     void slotMapWinner(qint8 playerId);

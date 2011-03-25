@@ -220,12 +220,13 @@ void Map<P,SL>::addFlame(Flame* flame)
     flames[flame->getFlameId()] = flame;
     foreach (QPoint point, flame->getFlamePositions())
     {
-        setType(BlockMapProperty::flame,point.x(),point.y());
+        //setType(BlockMapProperty::flame,point.x(),point.y());
+        tiles[point.x()][point.y()].withFlames.insert(flame);
     }
 }
 
 template<typename P, typename SL>
-void Map<P,SL>::removeFlame(int flameId)
+void Map<P,SL>::removeFlame(qint16 flameId)
 {
     QMap<Flame::flameId_t, Flame*>::iterator itFlame = flames.find(flameId);
     if(itFlame == flames.end())
@@ -233,15 +234,9 @@ void Map<P,SL>::removeFlame(int flameId)
 
     Flame *f = *itFlame;
     QSet<QPoint> flamePositions = f->getFlamePositions();
-    QSet<QPoint>::const_iterator it = flamePositions.constBegin();
 
-    //remove flames
-    while(it != flamePositions.constEnd())
-    {
-        // FIXME there could be another (and more recent) flame on the same square!
-        setType(BlockMapProperty::empty, (*it).x(), (*it).y());
-        it++;
-    }
+    foreach(QPoint point, flamePositions)
+        tiles[point.x()][point.y()].withFlames.remove(f);
 
     //remove broken blocks
     QSet<QPoint> brokenBlocks = f->getBrokenBlocks();
@@ -250,7 +245,6 @@ void Map<P,SL>::removeFlame(int flameId)
         //qDebug() << "GameArena brokenblock";
         setType(BlockMapProperty::empty, bb.x(), bb.y());
         brokenBlockRemoved(bb.x(), bb.y());
-        //getCase(i,j)->setItem(pixmaps.getPixmap(map->getType(i,j)));
     }
 
     flames.erase(itFlame);
@@ -288,6 +282,13 @@ void Map<P,SL>::setTileBomb(qint8 tile_x, qint8 tile_y, Bomb* b)
 
 
 template<typename P, typename SL>
+const QSet<Flame*> Map<P,SL>::getTileFlames(qint8 tile_x, qint8 tile_y)
+{
+    return tiles[tile_x][tile_y].withFlames;
+}
+
+
+template<typename P, typename SL>
 Bonus* Map<P,SL>::getTileBonus(qint8 tile_x, qint8 tile_y) const
 {
     return tiles[tile_x][tile_y].withBonus;
@@ -321,13 +322,6 @@ Bomb* Map<P,SL>::getBomb(qint16 bombId) const
         return it.value();
     else
         return 0;
-}
-
-
-template<typename P, typename SL>
-Bomb *Map<P,SL>::blockContainsBomb(int x,int y) const
-{
-    return tiles[x][y].withBomb;
 }
 
 
