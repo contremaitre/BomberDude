@@ -10,14 +10,14 @@ INCLUDEPATH += .
 
 # Input
 HEADERS += BlockMapProperty.h \
-    Bomb.h \
     Flame.h \
     Map.h \
     Player.h \
     constant.h \
     Bonus.h \
     Point.h \
-    Tile.h
+    Tile.h \
+    Bomb.h
 SOURCES += BlockMapProperty.cpp \
     Bomb.cpp \
     Flame.cpp \

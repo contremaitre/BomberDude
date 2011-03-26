@@ -23,8 +23,6 @@
 #include <QPoint>
 #include <QDataStream>
 
-#include "Bomb.h"
-
 
 /**
   This method is necessary in order to use QPoint in a QSet
@@ -67,7 +65,7 @@ public:
 	void decreaseLifeSpan()						{ duration--; }
 	bool isFinished()							{ return duration < 0; }
 
-	void addDetonatedBomb(const Bomb& bombN)	{ detonatedBombs.append(bombN.bombId); }
+	void addDetonatedBomb(qint16 bombId)        { detonatedBombs.append(bombId); }
 	QList<qint16> getDetonatedBombs() const		{ return detonatedBombs; }
 
 private:

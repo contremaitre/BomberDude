@@ -174,7 +174,7 @@ void NetServerClient::sendMapRandom()
     tcpSocket->write(block);
 }
 
-void NetServerClient::sendMapPreview(const Map<PlayerServer,mapStyle> *map)
+void NetServerClient::sendMapPreview(const Map<PlayerServer,BombServer,mapStyle> *map)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
@@ -187,7 +187,7 @@ void NetServerClient::sendMapPreview(const Map<PlayerServer,mapStyle> *map)
     tcpSocket->write(block);
 }
 
-void NetServerClient::sendMap(const Map<PlayerServer,mapStyle>& map)
+void NetServerClient::sendMap(const Map<PlayerServer,BombServer,mapStyle>& map)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);

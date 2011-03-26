@@ -26,7 +26,6 @@
 
 #include "BlockMapProperty.h"
 #include "constant.h"
-#include "Bomb.h"
 #include "Flame.h"
 #include "Tile.h"
 
@@ -62,8 +61,9 @@ private:
 // WARNING! as signals are pure virtual ones).
 
 //P : players
+//B : bombs
 //SL : style list
-template<typename P, typename SL>
+template<typename P, typename B, typename SL>
 class Map : public QObject
 {
 protected:
@@ -158,10 +158,10 @@ protected:
 
 // contents of tiles
 private:
-    QVector<QVector<Tile<P> > > tiles;         ///< contents of each tile
+    QVector<QVector<Tile<P,B> > > tiles;         ///< contents of each tile
 protected:
-    Bomb* getTileBomb(qint8 tile_x, qint8 tile_y) const;
-    void setTileBomb(qint8 tile_x, qint8 tile_y, Bomb* b);
+    B* getTileBomb(qint8 tile_x, qint8 tile_y) const;
+    void setTileBomb(qint8 tile_x, qint8 tile_y, B* b);
     const QSet<Flame*> getTileFlames(qint8 tile_x, qint8 tile_y);
     Bonus* getTileBonus(qint8 tile_x, qint8 tile_y) const;
     void setTileBonus(qint8 tile_x, qint8 tile_y, Bonus* b);
@@ -176,12 +176,12 @@ protected:
 
 // list of bombs
 private:
-	QMap<Bomb::bombId_t, Bomb*> bombs;          ///< list of bombs yet to explode
+	QMap<typename B::bombId_t, B*> bombs;          ///< list of bombs yet to explode
 protected:
-    void addBomb(Bomb* b);
+    void addBomb(B* b);
     void removeBomb(qint16 bombId);
-    Bomb* getBomb(qint16 bombId) const;
-    const QMap<Bomb::bombId_t, Bomb*>& getBombList() const          { return bombs; }
+    B* getBomb(qint16 bombId) const;
+    const QMap<typename B::bombId_t, B*>& getBombList() const       { return bombs; }
 
     // signals
 private:

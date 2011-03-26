@@ -11,7 +11,7 @@
 #include "Bonus.h"
 
 
-template<typename P>
+template<typename P, typename B>
 struct Tile {
     Tile() :
         withBomb(0),
@@ -19,7 +19,7 @@ struct Tile {
     {}
 
     QMap<int, P*> withPlayers;
-    Bomb* withBomb;
+    B* withBomb;
     QSet<Flame*> withFlames;
     Bonus* withBonus;
 };

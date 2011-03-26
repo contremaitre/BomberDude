@@ -16,54 +16,24 @@
 */
 
 #include "Bomb.h"
-#include <QDebug>
-
-qint16 Bomb::index=1;
 
 //constructor for serialization
 Bomb::Bomb() :
+	bombId(-1),
+	playerId(-1),
 	x(-1),
 	y(-1),
-	playerId(-1),
-	duration(-1),
-	range(-1),
-	bombId(-1),
-	remoteControlled(false),
-    hasOil(false),
-    direction(dirNone)
+	remoteControlled(false)
 {}
 
-//constructor for server
-Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool remote, bool oil)
-{
-    this->range = range;
-    this->playerId = playerId;
-    this->duration = duration;
-    this->x = x;
-    this->y = y;
-    this->bombId = index;
-    this->remoteControlled = remote;
-    this->hasOil = oil;
-    this->direction = dirNone;
-    index++;
-}
-
-//constructor for client
-Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId, bool remote)
-{
-    this->playerId = playerId;
-    this->x = x;
-    this->y = y;
-    this->bombId = bombId;
-    this->remoteControlled = remote;
-    range = duration = -1;
-    hasOil = false;
-    direction = dirNone;
-}
+Bomb::Bomb(qint16 bombId, qint8 playerId, bool remoteControlled) :
+    bombId(bombId),
+    playerId(playerId),
+    remoteControlled(remoteControlled)
+{}
 
 Bomb::~Bomb()
-{
-}
+{}
 
 QDataStream& operator>>(QDataStream& in, Bomb& f)
 {

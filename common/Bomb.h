@@ -19,45 +19,46 @@
 #define QTB_BOMB_H
 
 
-#include <QObject>
-#include <QTimer>
+#include <QDataStream>
 
 #include "constant.h"
 
 
-class Bomb : public QObject
+class Bomb
 {
-    Q_OBJECT
-
 public:
     typedef qint16 bombId_t;
 
 	Bomb();
-	Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool remote, bool oil);
-	Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId, bool remote);
 	~Bomb();
 
-	void decreaseLifeSpan()					{ if(!remoteControlled) duration--; }
+protected:
+    Bomb(qint16 bombId, qint8 playerId, bool remoteControlled);
 
-	bool mustExplode()						{ return !remoteControlled && duration < 0; }
-    qint8 getPlayer()                       { return playerId; }
+public:    
+    qint16 getBombId() const                { return bombId; }
+    qint8 getPlayerId() const               { return playerId; }
+
+    qint16 getX() const                     { return x; }
+    qint16 getY() const                     { return y; }
+
+    void setX(qint16 val)                   { x = val; }
+    void setY(qint16 val)                   { y = val; }
+
+    bool getIsRC() const                    { return remoteControlled; }
+    void unsetRC()                          { remoteControlled = false; }
 
 private:
-	static qint16 index;
+    qint16 bombId;
+    // TODO stop sending playerId to client? Seems useless
+    qint8 playerId;                     /// owner of the bomb
 
-public:
     qint16 x;
     qint16 y;
-    //owner
-    qint8 playerId;
-	//duration in heartbeats
-    int duration;
-    int range;
-    qint16 bombId;
-    bool remoteControlled;
-    bool hasOil;
-    globalDirection direction;
 
+    bool remoteControlled;
+
+public:
 	friend QDataStream& operator>>(QDataStream& in, Bomb& f);
 	friend QDataStream& operator<<(QDataStream& out, const Bomb& f);
 };

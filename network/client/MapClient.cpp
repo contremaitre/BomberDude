@@ -61,7 +61,7 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 		Bomb* bombN = new Bomb();
 		updateIn >> *bombN;
 		addBomb(bombN);
-		emit sigAddBomb(bombN->bombId);
+		emit sigAddBomb(bombN->getBombId());
 	}
 
     qint8 nbMovingBombs;
@@ -71,8 +71,8 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 		updateIn >> bombId >> nx >> ny;
         Bomb* b = getBomb(bombId);
         if(b != 0) {
-            b->x = nx;
-            b->y = ny;
+            b->setX(nx);
+            b->setY(ny);
         }
 		emit sigMovedBomb(bombId);
 	}
@@ -115,10 +115,10 @@ void MapClient::updateMap(QByteArray& updateBlock) {
         //replace detonators bombs of this player with standard bombs
         foreach (Bomb *b, getBombList())
         {
-            if(b->playerId == plId && b->remoteControlled)
+            if(b->getPlayerId() == plId && b->getIsRC())
             {
-                b->remoteControlled = false;
-                emit sigRemoveBombRC(b->bombId);
+                b->unsetRC();
+                emit sigRemoveBombRC(b->getBombId());
             }
         }
     }

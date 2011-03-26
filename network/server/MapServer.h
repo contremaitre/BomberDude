@@ -19,8 +19,11 @@
 #define QTB_MAPSERVER_H
 
 
+#include <QTimer>
+
 #include "Map.h"
 #include "PlayerServer.h"
+#include "BombServer.h"
 #include "Bonus.h"
 #include "Point.h"
 
@@ -39,13 +42,13 @@ struct mapStyle
     QList<optionCoord> coordList;
 };
 
-class MapServer : public Map<PlayerServer,mapStyle>
+class MapServer : public Map<PlayerServer,BombServer,mapStyle>
 {
 	Q_OBJECT
 
 private:
     virtual void brokenBlockRemoved(int x, int y);
-	Flame* explosion(Bomb* b);
+	Flame* explosion(BombServer* b);
 	void propagateFlame(Flame & f, const QPoint & p, int range);
 	void directedFlameProgagation(Flame & f, const QPoint & p, const QPoint & direction, int range);
     void adjustPlayerPosition(int plId, int xDirection, int yDirection, int distance);
@@ -66,12 +69,12 @@ private:
       @param direction  Which way to move it
       @return           true if the bomb moved, false otherwise
       */
-    bool tryMoveBomb(Bomb* b, globalDirection direction);
+    bool tryMoveBomb(BombServer* b, globalDirection direction);
 
     int keyToDirection(int direction);
-    Bomb* addBomb(int id);
-    Bomb* addBomb(int id, int x, int y);
-    QList<Bomb*> addBombMultiple(int playerId);
+    BombServer* addBomb(int id);
+    BombServer* addBomb(int id, int x, int y);
+    QList<BombServer*> addBombMultiple(int playerId);
     bool getRandomEmptyPosition(qint16 &x, qint16 &y);
     bool blockEmpty(int x, int y);//return true if there is nothing on this block
     bool blockContainsPlayer(int x, int y);
