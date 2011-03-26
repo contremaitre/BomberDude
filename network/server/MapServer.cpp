@@ -1299,10 +1299,16 @@ void MapServer::newHeartBeat() {
 	// FIXME : because a bomb exploding can trigger several other ones
 	//           we must restart from the beginning of the list every time
 	//           to ensure the iterator is still valid
+    // FIXME if the bomb moves into the flames, we probably want to change the bomb's owner into the flame's owner
 	QList<Flame*> explodeList;
 	QMap<BombServer::bombId_t, BombServer*>::const_iterator itBomb = getBombList().begin();
 	while(itBomb != getBombList().end()) {
-		if((*itBomb)->mustExplode() || ( (*itBomb)->getIsRC() && players[(*itBomb)->getPlayerId()]->getOptKey() ) ) {
+        BombServer* b = *itBomb;
+		if( b->mustExplode() ||
+            ( b->getIsRC() && players[b->getPlayerId()]->getOptKey() ) ||
+            getTileFlames(b->getTileX(), b->getTileY()).size() > 0
+          )
+        {
 			explodeList.append(explosion(*itBomb));
 			itBomb = getBombList().begin();
 		}
