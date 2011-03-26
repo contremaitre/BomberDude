@@ -747,6 +747,11 @@ BombServer* MapServer::addBomb(int playerId, int squareX, int squareY)
                                          players[playerId]->getOilBonus(),
                                          getBlockSize() );
     Map<PlayerServer,BombServer,mapStyle>::addBomb(newBomb);
+    connect(newBomb,
+            SIGNAL(sigTileChanged(qint16,qint8,qint8,qint8,qint8)),
+            this,
+            SLOT(slotBombTileChanged(qint16,qint8,qint8,qint8,qint8)));
+
 	qDebug() << " MapServer> AddBomb : " << getBombList().size() << " BOMBS !!! x: " << squareX
              << " y: " << squareY << " bombId: " << newBomb->getBombId();
 	players[playerId]->decBombsAvailable();
@@ -1274,12 +1279,6 @@ void MapServer::newHeartBeat() {
         }
 
         if(hasMoved) {
-            QPoint destBlock = getBlockPosition(bombN->getX(), bombN->getY());
-            if(sourceBlock.x() != destBlock.x() || sourceBlock.y() != destBlock.y()) {
-                setTileBomb(sourceBlock.x(), sourceBlock.y(), 0);
-                setTileBomb(destBlock.x(), destBlock.y(), bombN);
-            }
-
             QPoint neighBlock = getOverlappingBlockPosition(bombN->getX(), bombN->getY());
             delete removeBonus(neighBlock.x(), neighBlock.y());
             movingBombs.append(bombN);
@@ -1389,6 +1388,11 @@ void MapServer::newHeartBeat() {
     }
 
     // TODO time over
+}
+
+void MapServer::slotBombTileChanged(qint16 bombId, qint8 oldx, qint8 oldy, qint8 newx, qint8 newy)
+{
+    Map<PlayerServer,BombServer,mapStyle>::slotBombTileChanged(bombId, oldx, oldy, newx, newy);
 }
 
 globalDirection MapServer::reverseDirection(globalDirection initialDir)

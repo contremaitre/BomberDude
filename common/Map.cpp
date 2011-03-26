@@ -276,13 +276,6 @@ B* Map<P,B,SL>::getTileBomb(qint8 tile_x, qint8 tile_y) const
 
 
 template<typename P, typename B, typename SL>
-void Map<P,B,SL>::setTileBomb(qint8 tile_x, qint8 tile_y, B* b)
-{
-    tiles[tile_x][tile_y].withBomb = b;
-}
-
-
-template<typename P, typename B, typename SL>
 const QSet<Flame*> Map<P,B,SL>::getTileFlames(qint8 tile_x, qint8 tile_y)
 {
     return tiles[tile_x][tile_y].withFlames;
@@ -338,6 +331,18 @@ int Map<P,B,SL>::coordinatePositionInBlock(int coord)
     int block = coord / blockSize;
     int middle = blockSize * block + blockSize/2;
     return coord - middle;
+}
+
+
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::slotBombTileChanged(qint16 bombId, qint8 oldx, qint8 oldy, qint8 newx, qint8 newy)
+{
+    Q_ASSERT(tiles[oldx][oldy].withBomb->getBombId() == bombId);
+    Q_ASSERT(tiles[newx][newy].withBomb == 0);
+
+    B* movingBomb = tiles[oldx][oldy].withBomb;
+    tiles[newx][newy].withBomb = movingBomb;
+    tiles[oldx][oldy].withBomb = 0;
 }
 
 

@@ -149,7 +149,7 @@ signals:
 
 public slots:
 	void newHeartBeat();
-
+    virtual void slotBombTileChanged(qint16 bombId, qint8 oldx, qint8 oldy, qint8 newx, qint8 newy);
 };
 
 //We only need this operator in the server, and it must match the >> operator in MapClient

@@ -52,6 +52,9 @@ public:
     void setX(qint16 val);
     void setY(qint16 val);
 
+    qint8 getTileX() const                  { return tx; }
+    qint8 getTileY() const                  { return ty; }
+
     bool getIsRC() const                    { return remoteControlled; }
     void unsetRC()                          { remoteControlled = false; }
 

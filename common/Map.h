@@ -161,7 +161,6 @@ private:
     QVector<QVector<Tile<P,B> > > tiles;         ///< contents of each tile
 protected:
     B* getTileBomb(qint8 tile_x, qint8 tile_y) const;
-    void setTileBomb(qint8 tile_x, qint8 tile_y, B* b);
     const QSet<Flame*> getTileFlames(qint8 tile_x, qint8 tile_y);
     Bonus* getTileBonus(qint8 tile_x, qint8 tile_y) const;
     void setTileBonus(qint8 tile_x, qint8 tile_y, Bonus* b);
@@ -188,6 +187,10 @@ private:
     virtual void sigBlockChanged(int pos) = 0;
 	virtual void sigBlockChanged(int i, int j) = 0;
     virtual void sigHeartbeatUpdated(qint32 value) = 0;
+
+    // slots
+protected:
+    virtual void slotBombTileChanged(qint16 bombId, qint8 oldx, qint8 oldy, qint8 newx, qint8 newy);
 };
 
 // FIXME it's not exactly a cpp file (doesn't give a .o), better extension name for it?
