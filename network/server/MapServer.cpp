@@ -744,7 +744,8 @@ BombServer* MapServer::addBomb(int playerId, int squareX, int squareY)
                                          DEFAULT_BOMB_DURATION,
                                          players[playerId]->getFlameLength(),
                                          players[playerId]->getRemoteBonus(),
-                                         players[playerId]->getOilBonus() );
+                                         players[playerId]->getOilBonus(),
+                                         getBlockSize() );
     Map<PlayerServer,BombServer,mapStyle>::addBomb(newBomb);
 	qDebug() << " MapServer> AddBomb : " << getBombList().size() << " BOMBS !!! x: " << squareX
              << " y: " << squareY << " bombId: " << newBomb->getBombId();

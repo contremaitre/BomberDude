@@ -3,14 +3,22 @@
 
 
 #include "Bomb.h"
+#include "Map.h"
 
 
-class BombServer: public Bomb<int>
+class BombServer: public Bomb<PixelToBlock>
 {
     Q_OBJECT
 
 public:
-	BombServer(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool remote, bool oil);
+	BombServer(qint8 playerId,
+               qint16 x,
+               qint16 y,
+               int duration,
+               int range,
+               bool remote,
+               bool oil,
+               qint16 blockSize);
     virtual ~BombServer();
 
 	void decreaseLifeSpan()					{ if(!getIsRC()) duration--; }
@@ -27,7 +35,7 @@ public:
     void setDirection(globalDirection dir)  { direction = dir; }
 
 signals:
-    void sigTileChanged();
+    void sigTileChanged(qint16 bombId, qint8 oldx, qint8 oldy, qint8 newx, qint8 newy);
 
 private:
 	static qint16 index;

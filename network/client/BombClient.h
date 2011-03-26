@@ -3,18 +3,19 @@
 
 
 #include "Bomb.h"
+#include "Map.h"
 
 
-class BombClient : public Bomb<int>
+class BombClient : public Bomb<PixelToBlock>
 {
     Q_OBJECT
 
 public:
-    BombClient();
+    BombClient(qint16 blockSize);
     virtual ~BombClient();
 
 signals:
-    void sigTileChanged();
+    void sigTileChanged(qint16 bombId, qint8 oldx, qint8 oldy, qint8 newx, qint8 newy);
 };
 
 

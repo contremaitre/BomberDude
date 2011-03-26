@@ -11,16 +11,14 @@ BombServer::BombServer(qint8 playerId,
                        int duration,
                        int range,
                        bool remote,
-                       bool oil) :
-    Bomb(index++, playerId, remote),
+                       bool oil,
+                       qint16 blockSize) :
+    Bomb(index++, playerId, x, y, remote, blockSize),
     duration(duration),
     range(range),
     hasOil(oil),
     direction(dirNone)
-{
-    setX(x);
-    setY(y);
-}
+{}
 
 BombServer::~BombServer()
 {}

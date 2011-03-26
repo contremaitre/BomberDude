@@ -33,8 +33,14 @@ public:
 	virtual ~Bomb();
 
 protected:
-	Bomb();
-    Bomb(qint16 bombId, qint8 playerId, bool remoteControlled);
+	Bomb(qint16 blockSize);
+
+    Bomb(qint16 bombId,
+         qint8 playerId,
+         qint16 x,
+         qint16 y,
+         bool remoteControlled,
+         qint16 blockSize);
 
 public:    
     qint16 getBombId() const                { return bombId; }
@@ -43,8 +49,8 @@ public:
     qint16 getX() const                     { return x; }
     qint16 getY() const                     { return y; }
 
-    void setX(qint16 val)                   { x = val; }
-    void setY(qint16 val)                   { y = val; }
+    void setX(qint16 val);
+    void setY(qint16 val);
 
     bool getIsRC() const                    { return remoteControlled; }
     void unsetRC()                          { remoteControlled = false; }
@@ -53,13 +59,20 @@ private:
     qint16 bombId;
     qint8 playerId;                     /// owner of the bomb
 
+    // coordinates in pixel, rw
     qint16 x;
     qint16 y;
 
+    // coordinates in tiles, ro
+    qint8 tx;
+    qint8 ty;
+
     bool remoteControlled;
 
+    TileComp functorToTiles;            /// this functor will convert pixel coordinate to tile coordinate
+
 public:
-    virtual void sigTileChanged() = 0;
+    virtual void sigTileChanged(qint16 bombId, qint8 oldx, qint8 oldy, qint8 newx, qint8 newy) = 0;
 
     template<typename T>
 	friend QDataStream& operator>>(QDataStream& in, Bomb<T>& f);
@@ -70,26 +83,66 @@ public:
 
 
 template<typename TileComp>
-Bomb<TileComp>::Bomb() :
+Bomb<TileComp>::Bomb(qint16 blockSize) :
 	bombId(-1),
 	playerId(-1),
 	x(-1),
 	y(-1),
-	remoteControlled(false)
+    tx(-1),
+    ty(-1),
+	remoteControlled(false),
+    functorToTiles(blockSize)
 {}
 
 
 template<typename TileComp>
-Bomb<TileComp>::Bomb(qint16 bombId, qint8 playerId, bool remoteControlled) :
+Bomb<TileComp>::Bomb(qint16 bombId,
+                     qint8 playerId,
+                     qint16 x,
+                     qint16 y,
+                     bool remoteControlled,
+                     qint16 blockSize) :
     bombId(bombId),
     playerId(playerId),
-    remoteControlled(remoteControlled)
-{}
+    x(x),
+    y(y),
+    remoteControlled(remoteControlled),
+    functorToTiles(blockSize)
+{
+    tx = functorToTiles(x);
+    ty = functorToTiles(y);
+}
 
 
 template<typename TileComp>
 Bomb<TileComp>::~Bomb()
 {}
+
+
+template<typename TileComp>
+void Bomb<TileComp>::setX(qint16 val)
+{
+    x = val;
+    qint8 ntx = functorToTiles(val);
+    if(ntx != tx) {
+        if(tx != -1)
+            emit sigTileChanged(bombId, tx, ty, ntx, ty);
+        tx = ntx;
+    }
+}
+
+
+template<typename TileComp>
+void Bomb<TileComp>::setY(qint16 val)
+{
+    y = val;
+    qint8 nty = functorToTiles(val);
+    if(nty != ty) {
+        if(ty != -1)
+            emit sigTileChanged(bombId, tx, ty, tx, nty);
+        ty = nty;
+    }
+}
 
 
 template<typename TileComp>

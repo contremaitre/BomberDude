@@ -58,7 +58,7 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 	updateIn >> newBombsListSize;
 //	qDebug() << newBombsListSize << " new bombs received";
 	for(qint8 i = 0; i < newBombsListSize; i++) {
-		BombClient* bombN = new BombClient();
+		BombClient* bombN = new BombClient(getBlockSize());
 		updateIn >> *bombN;
 		addBomb(bombN);
 		emit sigAddBomb(bombN->getBombId());
