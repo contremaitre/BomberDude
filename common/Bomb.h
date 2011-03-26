@@ -33,16 +33,16 @@ public:
 	virtual ~Bomb();
 
 protected:
-	Bomb(qint16 blockSize);
+	Bomb(TileComp tc);
 
     Bomb(qint16 bombId,
          qint8 playerId,
          qint16 x,
          qint16 y,
          bool remoteControlled,
-         qint16 blockSize);
+         TileComp tc);
 
-public:    
+public:
     qint16 getBombId() const                { return bombId; }
     qint8 getPlayerId() const               { return playerId; }
 
@@ -86,7 +86,7 @@ public:
 
 
 template<typename TileComp>
-Bomb<TileComp>::Bomb(qint16 blockSize) :
+Bomb<TileComp>::Bomb(TileComp tc) :
 	bombId(-1),
 	playerId(-1),
 	x(-1),
@@ -94,7 +94,7 @@ Bomb<TileComp>::Bomb(qint16 blockSize) :
     tx(-1),
     ty(-1),
 	remoteControlled(false),
-    functorToTiles(blockSize)
+    functorToTiles(tc)
 {}
 
 
@@ -104,13 +104,13 @@ Bomb<TileComp>::Bomb(qint16 bombId,
                      qint16 x,
                      qint16 y,
                      bool remoteControlled,
-                     qint16 blockSize) :
+                     TileComp tc) :
     bombId(bombId),
     playerId(playerId),
     x(x),
     y(y),
     remoteControlled(remoteControlled),
-    functorToTiles(blockSize)
+    functorToTiles(tc)
 {
     tx = functorToTiles(x);
     ty = functorToTiles(y);

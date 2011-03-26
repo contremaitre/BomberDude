@@ -745,7 +745,7 @@ BombServer* MapServer::addBomb(int playerId, int squareX, int squareY)
                                          players[playerId]->getFlameLength(),
                                          players[playerId]->getRemoteBonus(),
                                          players[playerId]->getOilBonus(),
-                                         getBlockSize() );
+                                         PixelToBlock(getBlockSize()) );
     Map<PlayerServer,BombServer,mapStyle>::addBomb(newBomb);
     connect(newBomb,
             SIGNAL(sigTileChanged(qint16,qint8,qint8,qint8,qint8)),

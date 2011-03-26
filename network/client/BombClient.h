@@ -11,7 +11,7 @@ class BombClient : public Bomb<PixelToBlock>
     Q_OBJECT
 
 public:
-    BombClient(qint16 blockSize);
+    BombClient(PixelToBlock ptc);
     virtual ~BombClient();
 
 signals:

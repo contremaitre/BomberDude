@@ -12,8 +12,8 @@ BombServer::BombServer(qint8 playerId,
                        int range,
                        bool remote,
                        bool oil,
-                       qint16 blockSize) :
-    Bomb(index++, playerId, x, y, remote, blockSize),
+                       PixelToBlock ptb) :
+    Bomb(index++, playerId, x, y, remote, ptb),
     duration(duration),
     range(range),
     hasOil(oil),

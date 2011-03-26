@@ -18,7 +18,7 @@ public:
                int range,
                bool remote,
                bool oil,
-               qint16 blockSize);
+               PixelToBlock ptb);
     virtual ~BombServer();
 
 	void decreaseLifeSpan()					{ if(!getIsRC()) duration--; }
