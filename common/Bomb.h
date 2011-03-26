@@ -28,13 +28,9 @@ class Bomb
 {
 public:
 	Bomb();
-	Bomb(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool remote, bool oil);
-	Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId, bool remote);
+	//Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId, bool remote);
 	~Bomb();
 
-	void decreaseLifeSpan()					{ if(!remoteControlled) duration--; }
-
-	bool mustExplode()						{ return !remoteControlled && duration < 0; }
     qint8 getPlayer()                       { return playerId; }
 
     qint16 getX() const                     { return x; }
@@ -44,7 +40,7 @@ public:
     void setY(qint16 val)                   { y = val; }
 
 private:
-	static qint16 index;
+
 
     qint16 x;
     qint16 y;
@@ -52,13 +48,9 @@ private:
 public:
     //owner
     qint8 playerId;
-	//duration in heartbeats
-    int duration;
-    int range;
+
     qint16 bombId;
     bool remoteControlled;
-    bool hasOil;
-    globalDirection direction;
 
 	friend QDataStream& operator>>(QDataStream& in, Bomb& f);
 	friend QDataStream& operator<<(QDataStream& out, const Bomb& f);

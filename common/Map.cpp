@@ -17,8 +17,8 @@
 
 #include <Map.h>
 
-template<typename P, typename SL>
-Map<P,SL>::Map() :
+template<typename P, typename B, typename SL>
+Map<P,B,SL>::Map() :
     NbPlayers(0),
     maxNbPlayers(0),
     width(0),
@@ -28,8 +28,8 @@ Map<P,SL>::Map() :
     heartBeat(-999999999)
 {}
 
-template<typename P, typename SL>
-Map<P,SL>::Map(qint16 w, qint16 h, qint16 bs) :
+template<typename P, typename B, typename SL>
+Map<P,B,SL>::Map(qint16 w, qint16 h, qint16 bs) :
     maxNbPlayers(0),
     NbPlayers(0),
     block_list(NULL),
@@ -38,23 +38,23 @@ Map<P,SL>::Map(qint16 w, qint16 h, qint16 bs) :
     setDim(w,h,bs);
 }
 
-template<typename P, typename SL>
-Map<P,SL>::~Map()
+template<typename P, typename B, typename SL>
+Map<P,B,SL>::~Map()
 {
     delete[] block_list;
 
     foreach(P* p, players)
         delete p;
 
-    foreach(Bomb* b, bombs)
+    foreach(B* b, bombs)
         delete b;
 
     foreach(Flame* f, flames)
         delete f;
 }
 
-template<typename P, typename SL>
-void Map<P,SL>::setDim(qint16 w, qint16 h, qint16 block_size)
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::setDim(qint16 w, qint16 h, qint16 block_size)
 {
     width = w;
     height = h;
@@ -62,8 +62,8 @@ void Map<P,SL>::setDim(qint16 w, qint16 h, qint16 block_size)
     Init();
 }
 
-template<typename P, typename SL>
-void Map<P,SL>::Init()
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::Init()
 {
     if( width * height <= 0 )
         return;
@@ -74,46 +74,46 @@ void Map<P,SL>::Init()
     qDebug() << "init";
 }
 
-template<typename P, typename SL>
-void Map<P,SL>::setType(BlockMapProperty::BlockType type, int pos)
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::setType(BlockMapProperty::BlockType type, int pos)
 {
     block_list[pos].setType(type);
     sigBlockChanged(pos);
 }
 
-template<typename P, typename SL>
-void Map<P,SL>::setType(BlockMapProperty::BlockType type, int x, int y)
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::setType(BlockMapProperty::BlockType type, int x, int y)
 {
     block_list[y*width+x].setType(type);
     sigBlockChanged(x,y);
 }
 
-template<typename P, typename SL>
-void Map<P,SL>::setOption(int pos, BlockMapProperty::BlockOption option, globalDirection dir)
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::setOption(int pos, BlockMapProperty::BlockOption option, globalDirection dir)
 {
     block_list[pos].setOption(option, dir);
 }
 
-template<typename P, typename SL>
-void Map<P,SL>::setOption(int x, int y, BlockMapProperty::BlockOption option, globalDirection dir)
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::setOption(int x, int y, BlockMapProperty::BlockOption option, globalDirection dir)
 {
     block_list[y*width+x].setOption(option, dir);
 }
 
-template<typename P, typename SL>
-QPoint Map<P,SL>::getBlockPosition(int x, int y) const
+template<typename P, typename B, typename SL>
+QPoint Map<P,B,SL>::getBlockPosition(int x, int y) const
 {
     return QPoint(x / blockSize, y / blockSize);
 }
 
-template<typename P, typename SL>
-QPoint Map<P,SL>::getCenterCoordForBlock(int x, int y) const
+template<typename P, typename B, typename SL>
+QPoint Map<P,B,SL>::getCenterCoordForBlock(int x, int y) const
 {
     return QPoint(x * blockSize + blockSize/2, y * blockSize + blockSize/2);
 }
 
-template<typename P, typename SL>
-QPoint Map<P,SL>::getOverlappingBlockPosition(int x, int y) const
+template<typename P, typename B, typename SL>
+QPoint Map<P,B,SL>::getOverlappingBlockPosition(int x, int y) const
 {
     int bx = x / blockSize;
     int by = y / blockSize;
@@ -133,8 +133,8 @@ QPoint Map<P,SL>::getOverlappingBlockPosition(int x, int y) const
     return QPoint(bx,by);
 }
 
-template<typename P, typename SL>
-void Map<P,SL>::getNextBlock(int x, int y, int &xdest, int &ydest, globalDirection direction) const
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::getNextBlock(int x, int y, int &xdest, int &ydest, globalDirection direction) const
 {
     xdest = x;
     ydest = y;
@@ -161,28 +161,28 @@ void Map<P,SL>::getNextBlock(int x, int y, int &xdest, int &ydest, globalDirecti
     }
 }
 
-template<typename P, typename SL>
-const QList<SL> *Map<P,SL>::getStylesList() const
+template<typename P, typename B, typename SL>
+const QList<SL> *Map<P,B,SL>::getStylesList() const
 {
     return &styles;
 }
 
-template<typename P, typename SL>
-void Map<P,SL>::getPlayerPosition(int pl, qint16 &x, qint16 &y) const
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::getPlayerPosition(int pl, qint16 &x, qint16 &y) const
 {
     x = players[pl]->getX();
     y = players[pl]->getY();
 }
 
-template<typename P, typename SL>
-void Map<P,SL>::setPlayerPosition(int id, qint16 x, qint16 y)
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::setPlayerPosition(int id, qint16 x, qint16 y)
 {
     players[id]->setX(x);
     players[id]->setY(y);
 }
 
-template<typename P, typename SL>
-bool Map<P,SL>::setPlayerSickness(int id, bool sick)
+template<typename P, typename B, typename SL>
+bool Map<P,B,SL>::setPlayerSickness(int id, bool sick)
 {
     if(players[id]->getIsSick() != sick)
     {
@@ -191,21 +191,21 @@ bool Map<P,SL>::setPlayerSickness(int id, bool sick)
     }
     return false;
 }
-template<typename P, typename SL>
-void Map<P,SL>::newPlayer(int id)
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::newPlayer(int id)
 {
     NbPlayers++;
     players.append(new P(id));
 }
 
-template<typename P, typename SL>
-void Map<P,SL>::setMaxNbPlayers(int nb)
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::setMaxNbPlayers(int nb)
 {
     maxNbPlayers = nb;
 }
 
-template<typename P, typename SL>
-void Map<P,SL>::addFlame(Flame* flame)
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::addFlame(Flame* flame)
 {
     flames.append(flame);
     foreach (QPoint point, flame->getFlamePositions())
@@ -214,8 +214,8 @@ void Map<P,SL>::addFlame(Flame* flame)
     }
 }
 
-template<typename P, typename SL>
-void Map<P,SL>::removeFlame(int flameId)
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::removeFlame(int flameId)
 {
     QList<Flame*>::iterator itFlame = flames.begin();
     while(itFlame != flames.end()) {
@@ -251,18 +251,19 @@ void Map<P,SL>::removeFlame(int flameId)
 }
 
 
-template<typename P, typename SL>
-void Map<P,SL>::addBomb(int plId, int squareX, int squareY, int bombId, bool rc)
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::addBomb(B* b)
 {
-    Bomb *newBomb = new Bomb(plId, squareX, squareY, bombId, rc);
-    bombs.append(newBomb);
-    qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<"bombId: "<<newBomb->bombId;
+    bombs.append(b);
+    QPoint sq = getBlockPosition(b->getX(), b->getY());
+    qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<< sq.x()
+             <<" y: "<< sq.y() << " bombId: " << b->bombId;
 }
 
-template<typename P, typename SL>
-void Map<P,SL>::removeBomb(qint16 bombId)
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::removeBomb(qint16 bombId)
 {
-    foreach (Bomb *b, bombs)
+    foreach (B *b, bombs)
     {
         if(b->bombId == bombId)
         {
@@ -274,10 +275,10 @@ void Map<P,SL>::removeBomb(qint16 bombId)
     qDebug() << "nothing has been removed";
 }
 
-template<typename P, typename SL>
-const Bomb * Map<P,SL>::getBomb(qint16 bombId)
+template<typename P, typename B, typename SL>
+const B * Map<P,B,SL>::getBomb(qint16 bombId)
 {
-    foreach (Bomb *b, bombs)
+    foreach (B *b, bombs)
     {
       if(b->bombId == bombId)
       {
@@ -288,10 +289,10 @@ const Bomb * Map<P,SL>::getBomb(qint16 bombId)
 }
 
 
-template<typename P, typename SL>
-Bomb *Map<P,SL>::blockContainsBomb(int x,int y) const
+template<typename P, typename B, typename SL>
+B *Map<P,B,SL>::blockContainsBomb(int x,int y) const
 {
-    foreach( Bomb *b, bombs)
+    foreach(B *b, bombs)
     {
         QPoint pos = getBlockPosition(b->getX(), b->getY());
         if(pos.x() == x && pos.y() == y)
@@ -301,15 +302,15 @@ Bomb *Map<P,SL>::blockContainsBomb(int x,int y) const
 }
 
 
-template<typename P, typename SL>
-void Map<P,SL>::setHeartBeat(qint32 hb) {
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::setHeartBeat(qint32 hb) {
     heartBeat = hb;
     sigHeartbeatUpdated(hb);
 }
 
 
-template<typename P, typename SL>
-int Map<P,SL>::coordinatePositionInBlock(int coord)
+template<typename P, typename B, typename SL>
+int Map<P,B,SL>::coordinatePositionInBlock(int coord)
 {
     int block = coord / blockSize;
     int middle = blockSize * block + blockSize/2;
@@ -317,8 +318,8 @@ int Map<P,SL>::coordinatePositionInBlock(int coord)
 }
 
 
-template<typename P, typename SL>
-QDataStream &operator>>(QDataStream & in, Map<P,SL> &map) {
+template<typename P, typename B, typename SL>
+QDataStream &operator>>(QDataStream & in, Map<P,B,SL> &map) {
     qint8 NbPlayers, MaxNbPlayer;
     qint16 width, height, blockSize;
     in >> MaxNbPlayer >> NbPlayers >> width >> height >> blockSize;
@@ -355,8 +356,8 @@ QDataStream &operator>>(QDataStream & in, Map<P,SL> &map) {
     return in;
 }
 
-template<typename P, typename SL>
-QDataStream &operator<<(QDataStream &out, const Map<P,SL> &map) {
+template<typename P, typename B, typename SL>
+QDataStream &operator<<(QDataStream &out, const Map<P,B,SL> &map) {
     out << map.getMaxNbPlayers() << map.getNbPlayers() << map.getWidth() << map.getHeight() << map.getBlockSize();
     //copy player positions in our data stream
     //out.writeBytes((const char *)map.getPlayersPosition(),map.getMaxNbPlayers()*sizeof(int));

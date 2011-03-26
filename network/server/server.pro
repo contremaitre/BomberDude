@@ -18,9 +18,11 @@ HEADERS = MapParser.h \
     NetServerClient.h \
     PlayerServer.h \
     ../NetMessage.h \
-    $${ROOT_PWD}common/constant.h
+    $${ROOT_PWD}common/constant.h \
+    BombServer.h
 SOURCES = MapParser.cpp \
     MapServer.cpp \
     NetServer.cpp \
     NetServerClient.cpp \
-    PlayerServer.cpp
+    PlayerServer.cpp \
+    BombServer.cpp

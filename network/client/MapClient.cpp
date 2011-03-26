@@ -56,10 +56,10 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 	updateIn >> newBombsListSize;
 //	qDebug() << newBombsListSize << " new bombs received";
 	for(qint8 i = 0; i < newBombsListSize; i++) {
-		Bomb bombN;
-		updateIn >> bombN;
-		addBomb(bombN.playerId, bombN.getX(), bombN.getY(), bombN.bombId, bombN.remoteControlled);
-		emit sigAddBomb(bombN.bombId);
+		Bomb* bombN = new Bomb();
+		updateIn >> *bombN;
+		addBomb(bombN);
+		emit sigAddBomb(bombN->bombId);
 	}
 
     qint8 nbMovingBombs;

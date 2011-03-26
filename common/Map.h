@@ -39,8 +39,9 @@
 // WARNING! as signals are pure virtual ones).
 
 //P : players
+//B : bombs
 //SL : style list
-template<typename P, typename SL>
+template<typename P, typename B, typename SL>
 class Map : public QObject
 {
 protected:
@@ -109,10 +110,11 @@ public:
     void addFlame(Flame* f);
     void removeFlame(int flameId);
 
-    void addBomb(int plId, int x, int y,int bombId, bool rc);
+    //void addBomb(int plId, int x, int y,int bombId, bool rc);
+    void addBomb(B* b);
     void removeBomb(qint16 bombId);
-    const Bomb *getBomb(qint16 bombId);
-    Bomb *blockContainsBomb(int x,int y) const;
+    const B *getBomb(qint16 bombId);
+    B *blockContainsBomb(int x,int y) const;
 
 	void setHeartBeat(qint32 hb);
 	qint32 getHeartBeat() const                                     { return heartBeat; }
@@ -140,7 +142,7 @@ private:
 protected:
 	qint32 heartBeat;						///< timestamp of the game
 	QList<P*> players;                      ///< list of players currently on the field
-	QList<Bomb*> bombs;						///< list of bombs yet to explode
+	QList<B*> bombs;						///< list of bombs yet to explode
 	QList<Flame*> flames;					///< list of explosions
 
     // signals

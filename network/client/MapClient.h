@@ -20,7 +20,7 @@ struct mapStyle
     BlockMapProperty::BlockOption option;
 };
 
-class MapClient : public Map<Player,mapStyle>
+class MapClient : public Map<Player,Bomb,mapStyle>
 {
     Q_OBJECT
 public :

@@ -290,7 +290,7 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
 	BlockMapProperty::BlockType typeOfNextBlock = getType(nextBlock.x(),nextBlock.y());
 
     // We store the result since we use it at least once
-    Bomb* bombOnNextBlock = blockContainsBomb(nextBlock.x(),nextBlock.y());
+    BombServer* bombOnNextBlock = blockContainsBomb(nextBlock.x(),nextBlock.y());
 
     // Can we kick a bomb? First check that the bomb is on another tile
     if(originalBlock.x() != nextBlock.x() || originalBlock.y() != nextBlock.y()) {
@@ -390,7 +390,7 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
 	return false;
 }
 
-bool MapServer::tryMoveBomb(Bomb* b, globalDirection direction)
+bool MapServer::tryMoveBomb(BombServer* b, globalDirection direction)
 {
     int distance = WALKWAY_SPEED;
     bool isOnWalkway = true;
@@ -678,15 +678,15 @@ int MapServer::coordinatePositionInBlock(int coord)
 	//return 1;
 }
 
-QList<Bomb*> MapServer::addBombMultiple(int playerId)
+QList<BombServer*> MapServer::addBombMultiple(int playerId)
 {
     qint16 x,y;
-    QList<Bomb*> newBombs;
+    QList<BombServer*> newBombs;
     getPlayerPosition(playerId,x,y);
     QPoint block = getBlockPosition(x,y);
     //drop multibombs if the player already has a bomb here
     int blockBombPlayerId = -1;
-    Bomb *bomb = blockContainsBomb(block.x(),block.y());
+    BombServer *bomb = blockContainsBomb(block.x(),block.y());
     if(bomb)
         blockBombPlayerId = bomb->getPlayer();
     if(players[playerId]->getHeading() == -1 || blockBombPlayerId != playerId)
@@ -718,7 +718,7 @@ QList<Bomb*> MapServer::addBombMultiple(int playerId)
 
         if(isPlayer)
             break;
-        Bomb *b = addBomb(playerId, block.x(), block.y());
+        BombServer *b = addBomb(playerId, block.x(), block.y());
         if( !b )
             break;
         newBombs << b;
@@ -726,7 +726,7 @@ QList<Bomb*> MapServer::addBombMultiple(int playerId)
     return newBombs;
 }
 
-Bomb* MapServer::addBomb(int playerId)
+BombServer* MapServer::addBomb(int playerId)
 {
 	qint16 x,y;
 	getPlayerPosition(playerId,x,y);
@@ -734,7 +734,7 @@ Bomb* MapServer::addBomb(int playerId)
 	return addBomb(playerId,block.x(),block.y());
 }
 
-Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
+BombServer* MapServer::addBomb(int playerId, int squareX, int squareY)
 {
     BlockMapProperty::BlockType type = getType(squareX,squareY);
     if( blockContainsBomb(squareX,squareY) != NULL || type != BlockMapProperty::empty)
@@ -742,13 +742,13 @@ Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
 
 	// add the bomb
     QPoint coords = getCenterCoordForBlock(squareX, squareY);
-	Bomb *newBomb = new Bomb(playerId,
-                             coords.x(),
-                             coords.y(),
-                             DEFAULT_BOMB_DURATION,
-                             players[playerId]->getFlameLength(),
-                             players[playerId]->getRemoteBonus(),
-                             players[playerId]->getOilBonus() );
+	BombServer *newBomb = new BombServer(playerId,
+                                         coords.x(),
+                                         coords.y(),
+                                         DEFAULT_BOMB_DURATION,
+                                         players[playerId]->getFlameLength(),
+                                         players[playerId]->getRemoteBonus(),
+                                         players[playerId]->getOilBonus() );
 	bombs.append(newBomb);
 	qDebug() << " MapServer> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
 	players[playerId]->decBombsAvailable();
@@ -756,7 +756,7 @@ Bomb* MapServer::addBomb(int playerId, int squareX, int squareY)
 }
 
 
-Flame* MapServer::explosion(Bomb* b)
+Flame* MapServer::explosion(BombServer* b)
 {
 	bombs.removeOne(b);
 	Flame *f = new Flame(b->playerId,20);
@@ -814,7 +814,7 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 			return;
 		}
 
-		foreach(Bomb * b, bombs)
+		foreach(BombServer * b, bombs)
 		{
             QPoint block = getBlockPosition(b->getX(), b->getY());
 			if (block.x() == pTemp.x() && block.y() == pTemp.y())
@@ -844,7 +844,7 @@ void MapServer::doPlayerDeath(PlayerServer* playerN, int killedBy)
     playerN->setIsAlive(false);
     killedPlayers.append(killedPlayer(playerN->getId(), killedBy));
     //check if the player has detonators bomb on the field
-    foreach(Bomb * b, bombs)
+    foreach(BombServer * b, bombs)
     {
         if (b->playerId == playerN->getId())
         {
@@ -1143,7 +1143,7 @@ bool MapServer::shrinkMap()
            }
        }
        //if there is a bomb, it must explode
-       Bomb *b = blockContainsBomb(shrink.x(), shrink.y());
+       BombServer *b = blockContainsBomb(shrink.x(), shrink.y());
        if(b)
        {
            b->remoteControlled = false;
@@ -1217,7 +1217,7 @@ void MapServer::newHeartBeat() {
 	updateOut << cleanList;
 
 	// now let each alive player lay a bomb, then move
-    QList<Bomb*> newBombs;
+    QList<BombServer*> newBombs;
 
     foreach(PlayerServer* playerN, players)
     {
@@ -1227,7 +1227,7 @@ void MapServer::newHeartBeat() {
             {
                 if(playerN->getIsBombAvailable())
                 {
-                    Bomb* newBomb = addBomb(playerN->getId());
+                    BombServer* newBomb = addBomb(playerN->getId());
                     if(newBomb != NULL)
                     newBombs << newBomb;
                     else if(playerN->getLayingBomb() && playerN->getMultibombBonus())
@@ -1255,13 +1255,13 @@ void MapServer::newHeartBeat() {
 
 	// serialize the new bombs
 	updateOut << static_cast<qint8>(newBombs.size());
-	foreach(Bomb* bombN, newBombs) {
+	foreach(BombServer* bombN, newBombs) {
 		updateOut << *bombN;
 	}
 
     // move the bombs
-    QList<Bomb*> movingBombs;
-    foreach(Bomb* bombN, bombs) {
+    QList<BombServer*> movingBombs;
+    foreach(BombServer* bombN, bombs) {
         bool hasMoved = false;
 
         // conveyor belt has no effect on a rolling bomb, check both cases separately!
@@ -1284,12 +1284,12 @@ void MapServer::newHeartBeat() {
 
     // serialize the moving bombs
 	updateOut << static_cast<qint8>(movingBombs.size());
-	foreach(Bomb* bombN, movingBombs) {
+	foreach(BombServer* bombN, movingBombs) {
 		updateOut << bombN->bombId << bombN->getX() << bombN->getY();
 	}
 
 	// then decrease each bomb's counter
-	foreach(Bomb* bombN, bombs)
+	foreach(BombServer* bombN, bombs)
 		bombN->decreaseLifeSpan();
 
 	// now we check which bombs must explode
@@ -1297,7 +1297,7 @@ void MapServer::newHeartBeat() {
 	//           we must restart from the beginning of the list every time
 	//           to ensure the iterator is still valid
 	QList<Flame*> explodeList;
-	QList<Bomb*>::iterator itBomb = bombs.begin();
+	QList<BombServer*>::iterator itBomb = bombs.begin();
 	while(itBomb != bombs.end()) {
 		if((*itBomb)->mustExplode() || ( (*itBomb)->remoteControlled && players[(*itBomb)->playerId]->getOptKey() ) ) {
 			explodeList.append(explosion(*itBomb));
