@@ -733,7 +733,7 @@ BombServer* MapServer::addBomb(int playerId)
 BombServer* MapServer::addBomb(int playerId, int squareX, int squareY)
 {
     BlockMapProperty::BlockType type = getType(squareX,squareY);
-    if(getTileBonus(squareX, squareY) != 0 || type != BlockMapProperty::empty)
+    if(getTileBomb(squareX, squareY) != 0 || type != BlockMapProperty::empty)
         return NULL;
 
 	// add the bomb
