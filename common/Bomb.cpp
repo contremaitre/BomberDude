@@ -19,29 +19,21 @@
 
 //constructor for serialization
 Bomb::Bomb() :
+	bombId(-1),
+	playerId(-1),
 	x(-1),
 	y(-1),
-	playerId(-1),
-	bombId(-1),
 	remoteControlled(false)
 {}
 
-//constructor for client
-//Bomb::Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId, bool remote)
-//{
-//    this->playerId = playerId;
-//    this->x = x;
-//    this->y = y;
-//    this->bombId = bombId;
-//    this->remoteControlled = remote;
-//    range = duration = -1;
-//    hasOil = false;
-//    direction = dirNone;
-//}
+Bomb::Bomb(qint16 bombId, qint8 playerId, bool remoteControlled) :
+    bombId(bombId),
+    playerId(playerId),
+    remoteControlled(remoteControlled)
+{}
 
 Bomb::~Bomb()
-{
-}
+{}
 
 QDataStream& operator>>(QDataStream& in, Bomb& f)
 {

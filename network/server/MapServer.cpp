@@ -688,7 +688,7 @@ QList<BombServer*> MapServer::addBombMultiple(int playerId)
     int blockBombPlayerId = -1;
     BombServer *bomb = blockContainsBomb(block.x(),block.y());
     if(bomb)
-        blockBombPlayerId = bomb->getPlayer();
+        blockBombPlayerId = bomb->getPlayerId();
     if(players[playerId]->getHeading() == -1 || blockBombPlayerId != playerId)
         return newBombs;
     while(players[playerId]->getIsBombAvailable())
@@ -750,7 +750,8 @@ BombServer* MapServer::addBomb(int playerId, int squareX, int squareY)
                                          players[playerId]->getRemoteBonus(),
                                          players[playerId]->getOilBonus() );
 	bombs.append(newBomb);
-	qDebug() << " MapServer> AddBomb : " << bombs.size() << " BOMBS !!! x: "<<squareX<<" y: "<<squareY<<" bombId: "<<newBomb->bombId;
+	qDebug() << " MapServer> AddBomb : " << bombs.size() << " BOMBS !!! x: " << squareX
+             << " y: " << squareY << " bombId: " << newBomb->getBombId();
 	players[playerId]->decBombsAvailable();
 	return newBomb;
 }
@@ -759,14 +760,14 @@ BombServer* MapServer::addBomb(int playerId, int squareX, int squareY)
 Flame* MapServer::explosion(BombServer* b)
 {
 	bombs.removeOne(b);
-	Flame *f = new Flame(b->playerId,20);
-	f->addDetonatedBomb(*b);
+	Flame *f = new Flame(b->getPlayerId(),20);
+	f->addDetonatedBomb(b->getBombId());
 
     QPoint block = getBlockPosition(b->getX(), b->getY());
     QPoint tempPoint = QPoint(block.x(), block.y());
 	propagateFlame(*f, tempPoint, b->range);
 
-    players[b->playerId]->incBombsAvailable();
+    players[b->getPlayerId()]->incBombsAvailable();
 	delete b;
 	addFlame(f);
 	//flames.append(f);
@@ -820,9 +821,9 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 			if (block.x() == pTemp.x() && block.y() == pTemp.y())
 			{
 				bombs.removeOne(b);
-				f.addDetonatedBomb(*b);
+				f.addDetonatedBomb(b->getBombId());
 				propagateFlame(f, block, b->range);
-                players[b->playerId]->incBombsAvailable();
+                players[b->getPlayerId()]->incBombsAvailable();
 				delete b;
 			}
 		}
@@ -846,10 +847,10 @@ void MapServer::doPlayerDeath(PlayerServer* playerN, int killedBy)
     //check if the player has detonators bomb on the field
     foreach(BombServer * b, bombs)
     {
-        if (b->playerId == playerN->getId())
+        if (b->getPlayerId() == playerN->getId())
         {
             qDebug("dead player has a detonator bomb");
-            b->remoteControlled = false;
+            b->unsetRC();
             b->duration = DEFAULT_BOMB_DURATION;
         }
     }
@@ -1146,7 +1147,7 @@ bool MapServer::shrinkMap()
        BombServer *b = blockContainsBomb(shrink.x(), shrink.y());
        if(b)
        {
-           b->remoteControlled = false;
+           b->unsetRC();
            b->duration = 0;
        }
        return true;
@@ -1285,7 +1286,7 @@ void MapServer::newHeartBeat() {
     // serialize the moving bombs
 	updateOut << static_cast<qint8>(movingBombs.size());
 	foreach(BombServer* bombN, movingBombs) {
-		updateOut << bombN->bombId << bombN->getX() << bombN->getY();
+		updateOut << bombN->getBombId() << bombN->getX() << bombN->getY();
 	}
 
 	// then decrease each bomb's counter
@@ -1299,7 +1300,7 @@ void MapServer::newHeartBeat() {
 	QList<Flame*> explodeList;
 	QList<BombServer*>::iterator itBomb = bombs.begin();
 	while(itBomb != bombs.end()) {
-		if((*itBomb)->mustExplode() || ( (*itBomb)->remoteControlled && players[(*itBomb)->playerId]->getOptKey() ) ) {
+		if((*itBomb)->mustExplode() || ( (*itBomb)->getIsRC() && players[(*itBomb)->getPlayerId()]->getOptKey() ) ) {
 			explodeList.append(explosion(*itBomb));
 			itBomb = bombs.begin();
 		}

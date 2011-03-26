@@ -28,10 +28,14 @@ class Bomb
 {
 public:
 	Bomb();
-	//Bomb(qint8 playerId, qint16 x, qint16 y, qint16 bombId, bool remote);
 	~Bomb();
 
-    qint8 getPlayer()                       { return playerId; }
+protected:
+    Bomb(qint16 bombId, qint8 playerId, bool remoteControlled);
+
+public:    
+    qint16 getBombId() const                { return bombId; }
+    qint8 getPlayerId() const               { return playerId; }
 
     qint16 getX() const                     { return x; }
     qint16 getY() const                     { return y; }
@@ -39,19 +43,20 @@ public:
     void setX(qint16 val)                   { x = val; }
     void setY(qint16 val)                   { y = val; }
 
-private:
+    bool getIsRC() const                    { return remoteControlled; }
+    void unsetRC()                          { remoteControlled = false; }
 
+private:
+    qint16 bombId;
+    // TODO stop sending playerId to client? Seems useless
+    qint8 playerId;                     /// owner of the bomb
 
     qint16 x;
     qint16 y;
 
-public:
-    //owner
-    qint8 playerId;
-
-    qint16 bombId;
     bool remoteControlled;
 
+public:
 	friend QDataStream& operator>>(QDataStream& in, Bomb& f);
 	friend QDataStream& operator<<(QDataStream& out, const Bomb& f);
 };

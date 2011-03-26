@@ -257,7 +257,7 @@ void Map<P,B,SL>::addBomb(B* b)
     bombs.append(b);
     QPoint sq = getBlockPosition(b->getX(), b->getY());
     qDebug() << " Map> AddBomb : " << bombs.size() << " BOMBS !!! x: "<< sq.x()
-             <<" y: "<< sq.y() << " bombId: " << b->bombId;
+             <<" y: "<< sq.y() << " bombId: " << b->getBombId();
 }
 
 template<typename P, typename B, typename SL>
@@ -265,7 +265,7 @@ void Map<P,B,SL>::removeBomb(qint16 bombId)
 {
     foreach (B *b, bombs)
     {
-        if(b->bombId == bombId)
+        if(b->getBombId() == bombId)
         {
             bombs.removeOne(b);
             delete b;
@@ -280,7 +280,7 @@ const B * Map<P,B,SL>::getBomb(qint16 bombId)
 {
     foreach (B *b, bombs)
     {
-      if(b->bombId == bombId)
+      if(b->getBombId() == bombId)
       {
           return b;
       }
