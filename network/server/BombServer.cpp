@@ -21,3 +21,6 @@ BombServer::BombServer(qint8 playerId,
     setX(x);
     setY(y);
 }
+
+BombServer::~BombServer()
+{}

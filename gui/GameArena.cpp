@@ -335,7 +335,7 @@ void GameArena::slotRemoveBonus(qint16 x, qint16 y) {
 
 void GameArena::slotAddBomb(int id)
 {
-    const Bomb& bomb = map->getRefBomb(id);
+    const BombClient& bomb = map->getRefBomb(id);
     QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb.getX() - squareSize/2,
                                                        bomb.getY() - squareSize/2,
                                                        squareSize);
@@ -348,7 +348,7 @@ void GameArena::slotAddBomb(int id)
 
 void GameArena::slotMovedBomb(int id)
 {
-    const Bomb& bomb = map->getRefBomb(id);
+    const BombClient& bomb = map->getRefBomb(id);
     bombs[id]->setPos(bomb.getX() - squareSize/2, bomb.getY() - squareSize/2, squareSize);
 }
 
@@ -366,7 +366,7 @@ void GameArena::slotRemoveBombRC(int id)
     QMap<int, QGraphicsSquareItem*>::iterator itb = bombs.find(id);
     if(itb != bombs.end()) {
         scene->removeItem(itb.value());
-        const Bomb& bomb = map->getRefBomb(id);
+        const BombClient& bomb = map->getRefBomb(id);
         QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb.getX() - squareSize/2,
                                                            bomb.getY() - squareSize/2,
                                                            squareSize);

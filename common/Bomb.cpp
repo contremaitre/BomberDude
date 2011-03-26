@@ -18,34 +18,4 @@
 #include "Bomb.h"
 
 //constructor for serialization
-Bomb::Bomb() :
-	bombId(-1),
-	playerId(-1),
-	x(-1),
-	y(-1),
-	remoteControlled(false)
-{}
 
-Bomb::Bomb(qint16 bombId, qint8 playerId, bool remoteControlled) :
-    bombId(bombId),
-    playerId(playerId),
-    remoteControlled(remoteControlled)
-{}
-
-Bomb::~Bomb()
-{}
-
-QDataStream& operator>>(QDataStream& in, Bomb& f)
-{
-    qint8 rc;
-    in >> f.bombId >> f.x >> f.y >> f.playerId;
-    in >> rc;
-    f.remoteControlled = rc != 0;
-    return in;
-}
-
-QDataStream& operator<<(QDataStream& out, const Bomb& f)
-{
-    out << f.bombId << f.x << f.y << f.playerId << static_cast<qint8>(f.remoteControlled);
-    return out;
-}

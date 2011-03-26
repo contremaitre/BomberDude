@@ -58,7 +58,7 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 	updateIn >> newBombsListSize;
 //	qDebug() << newBombsListSize << " new bombs received";
 	for(qint8 i = 0; i < newBombsListSize; i++) {
-		Bomb* bombN = new Bomb();
+		BombClient* bombN = new BombClient();
 		updateIn >> *bombN;
 		addBomb(bombN);
 		emit sigAddBomb(bombN->getBombId());
@@ -69,7 +69,7 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 	for(qint8 i = 0; i < nbMovingBombs; i++) {
 		qint16 bombId, nx, ny;
 		updateIn >> bombId >> nx >> ny;
-        Bomb* b = getBomb(bombId);
+        BombClient* b = getBomb(bombId);
         if(b != 0) {
             b->setX(nx);
             b->setY(ny);
@@ -113,7 +113,7 @@ void MapClient::updateMap(QByteArray& updateBlock) {
         int plId = frag.first;
         sigKillPlayer(plId);
         //replace detonators bombs of this player with standard bombs
-        foreach (Bomb *b, getBombList())
+        foreach (BombClient *b, getBombList())
         {
             if(b->getPlayerId() == plId && b->getIsRC())
             {
@@ -150,9 +150,9 @@ const QList<mapStyle> *MapClient::getStyles() const
 }
 
 
-const Bomb& MapClient::getRefBomb(qint16 bombId)
+const BombClient& MapClient::getRefBomb(qint16 bombId)
 {
-    Bomb* b = getBomb(bombId);
+    BombClient* b = getBomb(bombId);
     Q_ASSERT(b != 0);
     return *b;
 }

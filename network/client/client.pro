@@ -15,6 +15,8 @@ LIBS += -L$${ROOT_PWD}common \
 HEADERS = NetClient.h \
     MapClient.h \
     ../NetMessage.h \
-    $${ROOT_PWD}common/constant.h
+    $${ROOT_PWD}common/constant.h \
+    BombClient.h
 SOURCES = NetClient.cpp \
-    MapClient.cpp
+    MapClient.cpp \
+    BombClient.cpp

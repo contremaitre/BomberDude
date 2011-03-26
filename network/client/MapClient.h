@@ -4,6 +4,7 @@
 
 #include "Map.h"
 #include "Player.h"
+#include "BombClient.h"
 #include "Flame.h"
 #include "Bonus.h"
 
@@ -20,7 +21,7 @@ struct mapStyle
     BlockMapProperty::BlockOption option;
 };
 
-class MapClient : public Map<Player,Bomb,mapStyle>
+class MapClient : public Map<Player,BombClient,mapStyle>
 {
     Q_OBJECT
 public :
@@ -28,7 +29,7 @@ public :
     void addStyle(const mapStyle &style);
     const QList<mapStyle> *getStyles() const;
 
-    const Bomb& getRefBomb(qint16 bombId);
+    const BombClient& getRefBomb(qint16 bombId);
 
 private:
     QMap<QPoint, QGraphicsItem*> bonus;

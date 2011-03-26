@@ -24,15 +24,16 @@
 #include "constant.h"
 
 
-class Bomb
+template<typename TileComp>
+class Bomb : public QObject
 {
 public:
     typedef qint16 bombId_t;
 
-	Bomb();
-	~Bomb();
+	virtual ~Bomb();
 
 protected:
+	Bomb();
     Bomb(qint16 bombId, qint8 playerId, bool remoteControlled);
 
 public:    
@@ -50,7 +51,6 @@ public:
 
 private:
     qint16 bombId;
-    // TODO stop sending playerId to client? Seems useless
     qint8 playerId;                     /// owner of the bomb
 
     qint16 x;
@@ -59,12 +59,56 @@ private:
     bool remoteControlled;
 
 public:
-	friend QDataStream& operator>>(QDataStream& in, Bomb& f);
-	friend QDataStream& operator<<(QDataStream& out, const Bomb& f);
+    virtual void sigTileChanged() = 0;
+
+    template<typename T>
+	friend QDataStream& operator>>(QDataStream& in, Bomb<T>& f);
+
+    template<typename T>
+	friend QDataStream& operator<<(QDataStream& out, const Bomb<T>& f);
 };
 
-QDataStream& operator>>(QDataStream& in, Bomb& f);
-QDataStream& operator<<(QDataStream& out, const Bomb& f);
+
+template<typename TileComp>
+Bomb<TileComp>::Bomb() :
+	bombId(-1),
+	playerId(-1),
+	x(-1),
+	y(-1),
+	remoteControlled(false)
+{}
+
+
+template<typename TileComp>
+Bomb<TileComp>::Bomb(qint16 bombId, qint8 playerId, bool remoteControlled) :
+    bombId(bombId),
+    playerId(playerId),
+    remoteControlled(remoteControlled)
+{}
+
+
+template<typename TileComp>
+Bomb<TileComp>::~Bomb()
+{}
+
+
+template<typename TileComp>
+QDataStream& operator>>(QDataStream& in, Bomb<TileComp>& f)
+{
+    qint8 rc;
+    in >> f.bombId >> f.x >> f.y >> f.playerId;
+    in >> rc;
+    f.remoteControlled = rc != 0;
+    return in;
+}
+
+
+template<typename TileComp>
+QDataStream& operator<<(QDataStream& out, const Bomb<TileComp>& f)
+{
+    out << f.bombId << f.x << f.y << f.playerId << static_cast<qint8>(f.remoteControlled);
+    return out;
+}
 
 
 #endif // QTB_BOMB_H

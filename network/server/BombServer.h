@@ -5,10 +5,13 @@
 #include "Bomb.h"
 
 
-class BombServer: public Bomb
+class BombServer: public Bomb<int>
 {
+    Q_OBJECT
+
 public:
 	BombServer(qint8 playerId, qint16 x, qint16 y, int duration, int range, bool remote, bool oil);
+    virtual ~BombServer();
 
 	void decreaseLifeSpan()					{ if(!getIsRC()) duration--; }
 
@@ -22,6 +25,9 @@ public:
 
     globalDirection getDirection() const    { return direction; }
     void setDirection(globalDirection dir)  { direction = dir; }
+
+signals:
+    void sigTileChanged();
 
 private:
 	static qint16 index;
