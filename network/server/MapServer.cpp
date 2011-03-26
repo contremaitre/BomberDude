@@ -301,7 +301,7 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
                 ( (direction == dirUp   || direction == dirDown)  && x_origPixel == centerOfTile.x() )
               )
             {
-                bombOnNextBlock->direction = direction;
+                bombOnNextBlock->setDirection(direction);
                 setPlayerPosition(id, centerOfTile.x(), centerOfTile.y());
                 return true;
             }
@@ -404,10 +404,10 @@ bool MapServer::tryMoveBomb(BombServer* b, globalDirection direction)
         if( getOption(originalBlock.x(), originalBlock.y()) == BlockMapProperty::arrow &&
             centreOrig.x() == b->getX() && centreOrig.y() == b->getY() )
         {
-            b->direction = getOptionDirection(originalBlock.x(), originalBlock.y());
+            b->setDirection(getOptionDirection(originalBlock.x(), originalBlock.y()));
         }
 
-        direction = b->direction;
+        direction = b->getDirection();
         distance = MOVE_STEP;
         isOnWalkway = false;
     }
@@ -508,10 +508,10 @@ bool MapServer::tryMoveBomb(BombServer* b, globalDirection direction)
         b->setX(centreOrig.x());
         b->setY(centreOrig.y());
 
-        if(b->hasOil && !isOnWalkway)
-            b->direction = reverseDirection(b->direction);
+        if(b->getHasOil() && !isOnWalkway)
+            b->setDirection(reverseDirection(b->getDirection()));
         else
-            b->direction = dirNone;
+            b->setDirection(dirNone);
         return true;
     }
 
@@ -533,8 +533,8 @@ bool MapServer::tryMoveBomb(BombServer* b, globalDirection direction)
 	{
         // TODO we should check first for an arrow
         // we hit something, maybe the oil option was enabled?
-        if(b->hasOil && !isOnWalkway)
-            b->direction = reverseDirection(b->direction);
+        if(b->getHasOil() && !isOnWalkway)
+            b->setDirection(reverseDirection(b->getDirection()));
 
 		// can we move closer to the next block ?
 		if(move_x != 0)
@@ -765,7 +765,7 @@ Flame* MapServer::explosion(BombServer* b)
 
     QPoint block = getBlockPosition(b->getX(), b->getY());
     QPoint tempPoint = QPoint(block.x(), block.y());
-	propagateFlame(*f, tempPoint, b->range);
+	propagateFlame(*f, tempPoint, b->getRange());
 
     players[b->getPlayerId()]->incBombsAvailable();
 	delete b;
@@ -822,7 +822,7 @@ void MapServer::directedFlameProgagation(Flame & f, const QPoint & p, const QPoi
 			{
 				bombs.removeOne(b);
 				f.addDetonatedBomb(b->getBombId());
-				propagateFlame(f, block, b->range);
+				propagateFlame(f, block, b->getRange());
                 players[b->getPlayerId()]->incBombsAvailable();
 				delete b;
 			}
@@ -851,7 +851,7 @@ void MapServer::doPlayerDeath(PlayerServer* playerN, int killedBy)
         {
             qDebug("dead player has a detonator bomb");
             b->unsetRC();
-            b->duration = DEFAULT_BOMB_DURATION;
+            b->setDuration(DEFAULT_BOMB_DURATION);
         }
     }
 
@@ -1148,7 +1148,7 @@ bool MapServer::shrinkMap()
        if(b)
        {
            b->unsetRC();
-           b->duration = 0;
+           b->setDuration(0);
        }
        return true;
     }
@@ -1266,7 +1266,7 @@ void MapServer::newHeartBeat() {
         bool hasMoved = false;
 
         // conveyor belt has no effect on a rolling bomb, check both cases separately!
-        if(bombN->direction != dirNone) {
+        if(bombN->getDirection() != dirNone) {
             hasMoved = tryMoveBomb(bombN, dirNone);
         }
         else
