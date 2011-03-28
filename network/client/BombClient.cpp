@@ -2,7 +2,7 @@
 
 
 BombClient::BombClient(PixelToBlock ptc) :
-    Bomb(ptc)
+    Bomb<PixelToBlock>(ptc)
 {}
 
 BombClient::~BombClient()
