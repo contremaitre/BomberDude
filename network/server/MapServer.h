@@ -82,6 +82,7 @@ private:
     void getNextTeleportPosition(int id, int &x, int &y);
     bool checkPlayerInFlames(PlayerServer* playerN, const QPoint& playerBlock);
     void doPlayerDeath(PlayerServer* playerN, int killedBy); //check what has to be done when a player die
+    void applyWalkwayToPlayer(PlayerServer*);
     void checkPlayerSurroundings(PlayerServer* player);
     void exchangePlayersPositions();
     void exchangePlayersPositions(PlayerServer *p1, PlayerServer *p2);

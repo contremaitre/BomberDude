@@ -923,6 +923,16 @@ void MapServer::exchangePlayersPositions()
     }
 }
 
+void MapServer::applyWalkwayToPlayer(PlayerServer* playerN)
+{
+    QPoint actPoint = getBlockPosition(playerN->getX(), playerN->getY());
+    if(getOption(actPoint.x(),actPoint.y()) == BlockMapProperty::mov_walk)
+    {
+        //qDebug() << "player" << playerN->getId() << "on moving walkway";
+        tryMovePlayer(playerN->getId(), getOptionDirection(actPoint.x(),actPoint.y()), WALKWAY_SPEED);
+    }
+}
+
 void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
     QPoint actPoint = getBlockPosition(playerN->getX(), playerN->getY());
 
@@ -1042,11 +1052,6 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
             checkPlayerInFlames(playerN, actPoint);
             return;
         }
-    }
-    if(getOption(actPoint.x(),actPoint.y()) == BlockMapProperty::mov_walk)
-    {
-        //qDebug() << "player" << playerN->getId() << "on moving walkway";
-        tryMovePlayer(playerN->getId(), getOptionDirection(actPoint.x(),actPoint.y()), WALKWAY_SPEED);
     }
 }
 
@@ -1238,6 +1243,7 @@ void MapServer::newHeartBeat() {
                 }
                 playerN->clearLayingBomb();
             }
+            applyWalkwayToPlayer(playerN);
             if(playerN->getDirection() != -1)
             {
                 movePlayer(playerN->getId(), playerN->getDirection(), playerN->getMoveDistance());
