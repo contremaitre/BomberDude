@@ -220,18 +220,21 @@ void MapServer::requestMovePlayer(int id, int direction) {
 	players[id]->setDirection(direction);
 }
 
-bool MapServer::movePlayer(int id, int direction, int distance)
+globalDirection MapServer::movePlayer(int id, int direction, int distance, bool &againstWall)
 {
-	bool ret = false;
-	if(direction == 7 || direction == 0 || direction == 1)
-		ret = tryMovePlayer(id, dirLeft, distance);
-	if(!ret && (direction == 7 || direction == 6 || direction == 5))
-		ret = tryMovePlayer(id, dirUp, distance);
-	if(!ret && (direction == 5 || direction == 4 || direction == 3))
-		ret = tryMovePlayer(id, dirRight, distance);
-	if(!ret && (direction == 1 || direction == 2 || direction == 3))
-		ret = tryMovePlayer(id, dirDown, distance);
-	return ret;
+    if (direction == 7 || direction == 0 || direction == 1)
+        if (tryMovePlayer(id, dirLeft, distance, againstWall))
+            return dirLeft;
+    if (direction == 7 || direction == 6 || direction == 5)
+        if (tryMovePlayer(id, dirUp, distance, againstWall))
+            return dirUp;
+    if (direction == 5 || direction == 4 || direction == 3)
+        if (tryMovePlayer(id, dirRight, distance, againstWall))
+            return dirRight;
+    if (direction == 1 || direction == 2 || direction == 3)
+        if (tryMovePlayer(id, dirDown, distance, againstWall))
+            return dirDown;
+    return dirNone;
 }
 
 
@@ -243,7 +246,7 @@ bool MapServer::movePlayer(int id, int direction, int distance)
  *      |
  *      3
  */
-bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
+bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance, bool &againstWall)
 {
 	/**
 	 * Rules for a player move :
@@ -335,6 +338,7 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
 			if(pos != 0 && ((pos<0 && move_x>0) || (pos>0&&move_x<0)))
 			{
 				setPlayerPosition(id,x-pos,y);
+				againstWall = true;
 				return true;
 			}
 		}
@@ -350,9 +354,6 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance)
 
 		getPlayerPosition(id,x,y);
 		//try to circle the block
-		//is this can still happening ? : (player is * and he can go in . )
-		//   * #
-		//   # .
 		if(move_x != 0)
 		{
 			pos = coordinatePositionInBlock(y);
@@ -923,13 +924,22 @@ void MapServer::exchangePlayersPositions()
     }
 }
 
-void MapServer::applyWalkwayToPlayer(PlayerServer* playerN)
+void MapServer::applyWalkwayToPlayer(PlayerServer* playerN, globalDirection playerDirection)
 {
     QPoint actPoint = getBlockPosition(playerN->getX(), playerN->getY());
     if(getOption(actPoint.x(),actPoint.y()) == BlockMapProperty::mov_walk)
     {
         //qDebug() << "player" << playerN->getId() << "on moving walkway";
-        tryMovePlayer(playerN->getId(), getOptionDirection(actPoint.x(),actPoint.y()), WALKWAY_SPEED);
+        // no effect if directions are othogonal (cf AB)
+        globalDirection walkDir = getOptionDirection(actPoint.x(),actPoint.y());
+        if( (walkDir == dirUp || walkDir == dirDown)
+            && (playerDirection == dirRight || playerDirection == dirLeft) )
+            return;
+        if( (walkDir == dirRight || walkDir == dirLeft)
+            && (playerDirection == dirUp || playerDirection == dirDown) )
+            return;
+        bool dummy;
+        tryMovePlayer(playerN->getId(), walkDir, WALKWAY_SPEED,dummy);
     }
 }
 
@@ -1243,12 +1253,21 @@ void MapServer::newHeartBeat() {
                 }
                 playerN->clearLayingBomb();
             }
-            applyWalkwayToPlayer(playerN);
             if(playerN->getDirection() != -1)
             {
-                movePlayer(playerN->getId(), playerN->getDirection(), playerN->getMoveDistance());
+                bool againstWall = false;
+                globalDirection move = movePlayer(playerN->getId(), playerN->getDirection(), playerN->getMoveDistance(), againstWall);
                 playerN->setDirection(-1);
+                /* if the player couldn't move because of a block there is no need to apply the walkway because :
+                 * - the walkway does not apply if its direction is orthogonal to the player direction
+                 * - the walkway must not get the player backwark if he is blocked by a wall
+                 */
+                if(!againstWall && move != dirNone)
+                    applyWalkwayToPlayer(playerN,move);
             }
+            else
+                applyWalkwayToPlayer(playerN,dirNone);
+
             checkPlayerSurroundings(playerN);
         }
     }

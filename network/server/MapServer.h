@@ -55,8 +55,8 @@ private:
     //Test if a coordinate is bellow (-1) on (0) or above (1) the middle of the block
     int coordinatePositionInBlock(int coord);
     int absMin(int a, int b) const;
-    bool movePlayer(int id, int direction, int distance);
-    bool tryMovePlayer(int id, globalDirection direction, int distance);
+    globalDirection movePlayer(int id, int direction, int distance, bool &againstWall);
+    bool tryMovePlayer(int id, globalDirection direction, int distance, bool &againstWall);
 
     /**
       Tries to move the bomb on the map.
@@ -82,7 +82,7 @@ private:
     void getNextTeleportPosition(int id, int &x, int &y);
     bool checkPlayerInFlames(PlayerServer* playerN, const QPoint& playerBlock);
     void doPlayerDeath(PlayerServer* playerN, int killedBy); //check what has to be done when a player die
-    void applyWalkwayToPlayer(PlayerServer*);
+    void applyWalkwayToPlayer(PlayerServer*, globalDirection);
     void checkPlayerSurroundings(PlayerServer* player);
     void exchangePlayersPositions();
     void exchangePlayersPositions(PlayerServer *p1, PlayerServer *p2);
