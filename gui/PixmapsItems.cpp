@@ -64,7 +64,7 @@ void PixmapsItems::loadAll()
     addBlockPixMap(BlockMapProperty::broken,"pictures/broken.png");
 
     addOptionPixMap(BlockMapProperty::teleport,"pictures/option_teleport.png");
-    addOptionPixMapRotate(BlockMapProperty::mov_walk,"pictures/mov_walk.png");
+    addOptionPixMapRotate(BlockMapProperty::mov_walk,"pictures/mov_walk_left.png");
     addOptionPixMapRotate(BlockMapProperty::arrow,"pictures/arrow_left.svg");
 }
 
