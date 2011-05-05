@@ -1291,7 +1291,6 @@ void MapServer::newHeartBeat() {
     QList<BombServer*> movingBombs;
     foreach(BombServer* bombN, getBombList()) {
         bool hasMoved = false;
-        QPoint sourceBlock = getBlockPosition(bombN->getX(), bombN->getY());
 
         // conveyor belt has no effect on a rolling bomb, check both cases separately!
         if(bombN->getDirection() != dirNone) {
@@ -1299,6 +1298,7 @@ void MapServer::newHeartBeat() {
         }
         else
         {
+            QPoint sourceBlock = getBlockPosition(bombN->getX(), bombN->getY());
             if(getOption(sourceBlock.x(), sourceBlock.y()) == BlockMapProperty::mov_walk)
                 hasMoved = tryMoveBomb(bombN, getOptionDirection(sourceBlock.x(), sourceBlock.y()));
         }
