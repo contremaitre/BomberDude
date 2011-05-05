@@ -302,7 +302,6 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance, b
                 ( (direction == dirUp   || direction == dirDown)  && x_origPixel == centerOfTile.x() )
               )
             {
-                // FIXME we must not start moving the bomb if it is blocked
                 bombOnNextBlock->setDirection(direction);
                 setPlayerPosition(id, centerOfTile.x(), centerOfTile.y());
                 return true;
@@ -1295,6 +1294,13 @@ void MapServer::newHeartBeat() {
         // conveyor belt has no effect on a rolling bomb, check both cases separately!
         if(bombN->getDirection() != dirNone) {
             hasMoved = tryMoveBomb(bombN, dirNone);
+            if(!bombN->getHasMoved())
+            {
+                if(hasMoved)
+                    bombN->setHasMoved(true);
+                else
+                    bombN->setDirection(dirNone);
+            }
         }
         else
         {

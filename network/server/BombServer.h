@@ -34,6 +34,9 @@ public:
     globalDirection getDirection() const    { return direction; }
     void setDirection(globalDirection dir)  { direction = dir; }
 
+    bool getHasMoved() const                { return hasMoved; }
+    void setHasMoved(bool m)                { hasMoved = m; }
+
 signals:
     void sigTileChanged(qint16 bombId, qint8 oldx, qint8 oldy, qint8 newx, qint8 newy);
 
@@ -44,6 +47,7 @@ private:
     int range;
     bool hasOil;
     globalDirection direction;
+    bool hasMoved;                          /// true when the bomb started to move
 };
 
 

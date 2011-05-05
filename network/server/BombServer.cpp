@@ -17,7 +17,8 @@ BombServer::BombServer(qint8 playerId,
     duration(duration),
     range(range),
     hasOil(oil),
-    direction(dirNone)
+    direction(dirNone),
+    hasMoved(false)
 {}
 
 BombServer::~BombServer()
