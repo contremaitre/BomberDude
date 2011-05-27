@@ -91,7 +91,7 @@ private:
 
     static globalDirection reverseDirection(globalDirection initialDir);
 
-	QTimer timerHeartBeat;
+	QTimer *timerHeartBeat; //the timer must be created and started in the same thread, so must be allocated later.
     bool debugMode;
     bool spawningBlocks;
 

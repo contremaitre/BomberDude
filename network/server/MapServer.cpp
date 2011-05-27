@@ -34,8 +34,6 @@ MapServer::MapServer()
             shrink(-1,0),
             shrinkDirection(planeDirRight)
 {
-	connect(&timerHeartBeat, SIGNAL(timeout()), this, SLOT(newHeartBeat()));
-
     int index = 0;
     for(int i = 0; i < 16; i++, index++)
         bonusTable[index] = Bonus::BONUS_BOMB;
@@ -1185,7 +1183,9 @@ void MapServer::startHeartBeat(qint32 startValue, int intervals) {
     shrinkLimitDown.setX(width);
     shrinkLimitDown.setY(height);
 	setHeartBeat(startValue);
-	timerHeartBeat.start(intervals);
+	timerHeartBeat = new QTimer;
+    connect(timerHeartBeat, SIGNAL(timeout()), this, SLOT(newHeartBeat()));
+	timerHeartBeat->start(intervals);
 }
 
 void MapServer::newHeartBeat() {
@@ -1413,13 +1413,13 @@ void MapServer::newHeartBeat() {
 
     // is there a draw? in this case we send -1 as winner's id
     if(playersAlive.size() == 0) {
-        timerHeartBeat.stop();
+        timerHeartBeat->stop();
         emit sigWinner(-1);
         return;
     }
 
     if((! debugMode) && playersAlive.size() == 1) {
-        timerHeartBeat.stop();
+        timerHeartBeat->stop();
         emit sigWinner(playersAlive.first());
         return;
     }
