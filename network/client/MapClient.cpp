@@ -51,7 +51,6 @@ void MapClient::updateMap(QByteArray& updateBlock) {
         	if(setPlayerSickness(id, playerN.getIsSick()))
         	    emit sigPlayerSickChanged(id, playerN.getIsSick());
         }
-
 	}
 
 	qint8 newBombsListSize;

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Sébastien Escudier
+    Copyright (C) 2010,2011 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 //Game
 #define MAX_NB_PLAYER 4 //for random maps
 #define DEFAULT_BOMB_DURATION 40 //ticks
+#define DEFAULT_BOMB_DUD_MALUS 3 //dud bomb duration = DEFAULT_BOMB_DURATION * DEFAULT_BOMB_DUD_MALUS
 #define DEFAULT_BOMB_RANGE 2
 #define DEFAULT_BOMB_CAPACITY 1
 #define DEFAULT_DISEASE_DURATION 150

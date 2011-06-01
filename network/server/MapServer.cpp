@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Sébastien Escudier
+    Copyright (C) 2010,2011 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -744,6 +744,11 @@ BombServer* MapServer::addBomb(int playerId, int squareX, int squareY)
                                          players[playerId]->getRemoteBonus(),
                                          players[playerId]->getOilBonus(),
                                          PixelToBlock(getBlockSize()) );
+    if ( !newBomb->getIsRC() && (qrand() % 100) == 0 )// 1% of dud bomb
+    {
+        newBomb->setDudBomb();
+        newBomb->setDuration(DEFAULT_BOMB_DURATION * DEFAULT_BOMB_DUD_MALUS);
+    }
     Map<PlayerServer,BombServer,mapStyle>::addBomb(newBomb);
     connect(newBomb,
             SIGNAL(sigTileChanged(qint16,qint8,qint8,qint8,qint8)),

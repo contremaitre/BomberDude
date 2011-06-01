@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Sébastien Escudier
+    Copyright (C) 2010,2011 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -58,6 +58,7 @@ void PixmapsItems::loadAll()
     option_unknown = QPixmap("pictures/bonus_unknown.png").scaled(QSizeF(width,height).toSize());
     bomb = QPixmap("pictures/bomb.png").scaled(QSizeF(width,height).toSize());
     bombrc = QPixmap("pictures/bomb_rc.png").scaled(QSizeF(width,height).toSize());
+    bombdud = QPixmap("pictures/bomb_dud.png").scaled(QSizeF(width,height).toSize());
 
     addBlockPixMap(BlockMapProperty::brick,"pictures/brick.png");
     addBlockPixMap(BlockMapProperty::wall,"pictures/wall.png");

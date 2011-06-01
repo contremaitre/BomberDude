@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Sébastien Escudier
+    Copyright (C) 2010,2011 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -59,6 +59,7 @@ private:
     QPixmap none;
     QPixmap bomb;
     QPixmap bombrc;
+    QPixmap bombdud;
     void loadAll();
     void addBlockPixMap(BlockMapProperty::BlockType, const char *);
     void addOptionPixMap(BlockMapProperty::BlockOption, const char *);
@@ -79,6 +80,7 @@ public:
     const QPixmap& getPixmapSick() const                    { return sick; }
     const QPixmap& getPixmapBomb() const                    { return bomb; }
     const QPixmap& getPixmapBombrc() const                  { return bombrc; }
+    const QPixmap& getPixmapBombDud() const                 { return bombdud; }
 };
 
 

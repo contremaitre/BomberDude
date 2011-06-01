@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Sébastien Escudier
+    Copyright (C) 2010,2011 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -341,7 +341,12 @@ void GameArena::slotAddBomb(int id)
                                                        squareSize);
     pix->setZValue(1.0);
     qDebug() << "new bomb, remote =" << bomb.getIsRC();
-    pix->setItem(bomb.getIsRC() ? pixmaps.getPixmapBombrc() : pixmaps.getPixmapBomb());
+    if(bomb.getIsRC())
+        pix->setItem(pixmaps.getPixmapBombrc());
+    else if(bomb.getDudBomb())
+        pix->setItem(pixmaps.getPixmapBombDud());
+    else
+        pix->setItem(pixmaps.getPixmapBomb());
     bombs[id] = pix;
     scene->addItem(pix->getItem());
 }

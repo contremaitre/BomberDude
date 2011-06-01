@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Sébastien Escudier
+    Copyright (C) 2010,2011 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 #include <QDataStream>
 
 #include "constant.h"
-
 
 template<typename TileComp>
 class Bomb : public QObject
@@ -58,6 +57,9 @@ public:
     bool getIsRC() const                    { return remoteControlled; }
     void unsetRC()                          { remoteControlled = false; }
 
+    void setDudBomb()                       { dud_bomb = true; }
+    bool getDudBomb() const                 { return dud_bomb; }
+
 private:
     qint16 bombId;
     qint8 playerId;                     /// owner of the bomb
@@ -71,6 +73,7 @@ private:
     qint8 ty;
 
     bool remoteControlled;
+    bool dud_bomb;
 
     TileComp functorToTiles;            /// this functor will convert pixel coordinate to tile coordinate
 
@@ -93,7 +96,8 @@ Bomb<TileComp>::Bomb(TileComp tc) :
 	y(-1),
     tx(-1),
     ty(-1),
-	remoteControlled(false),
+    remoteControlled(false),
+    dud_bomb(false),
     functorToTiles(tc)
 {}
 
@@ -110,6 +114,7 @@ Bomb<TileComp>::Bomb(qint16 bombId,
     x(x),
     y(y),
     remoteControlled(remoteControlled),
+    dud_bomb(false),
     functorToTiles(tc)
 {
     tx = functorToTiles(x);
@@ -151,10 +156,12 @@ void Bomb<TileComp>::setY(qint16 val)
 template<typename TileComp>
 QDataStream& operator>>(QDataStream& in, Bomb<TileComp>& f)
 {
-    qint8 rc;
+    qint8 tmp;
     in >> f.bombId >> f.x >> f.y >> f.playerId;
-    in >> rc;
-    f.remoteControlled = rc != 0;
+    in >> tmp;
+    f.remoteControlled = tmp != 0;
+    in >> tmp;
+    f.dud_bomb = tmp != 0;
     return in;
 }
 
@@ -162,7 +169,8 @@ QDataStream& operator>>(QDataStream& in, Bomb<TileComp>& f)
 template<typename TileComp>
 QDataStream& operator<<(QDataStream& out, const Bomb<TileComp>& f)
 {
-    out << f.bombId << f.x << f.y << f.playerId << static_cast<qint8>(f.remoteControlled);
+    out << f.bombId << f.x << f.y << f.playerId << static_cast<qint8>(f.remoteControlled)
+        << static_cast<qint8>(f.dud_bomb);
     return out;
 }
 
