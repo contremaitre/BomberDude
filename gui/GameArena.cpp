@@ -147,6 +147,7 @@ void GameArena::setMap(MapClient *newMap)
     connect(map, SIGNAL(sigRemoveBonus(qint16,qint16)), this, SLOT(slotRemoveBonus(qint16,qint16)));
     connect(map, SIGNAL(sigAddBomb(int)), this, SLOT(slotAddBomb(int)), Qt::DirectConnection);
     connect(map, SIGNAL(sigMovedBomb(int)), this, SLOT(slotMovedBomb(int)), Qt::DirectConnection);
+    connect(map, SIGNAL(sigFlyingBomb(int)), this, SLOT(slotFlyingBomb(int)), Qt::DirectConnection);
     connect(map, SIGNAL(sigRemoveBomb(int)), this, SLOT(slotRemoveBomb(int)), Qt::DirectConnection);
     connect(map, SIGNAL(sigRemoveBombRC(int)), this, SLOT(slotRemoveBombRC(int)), Qt::DirectConnection);
     connect(map, SIGNAL(sigAddFlame(int,qint16,qint16)), this, SLOT(slotAddFlame(int,qint16,qint16)));
@@ -355,6 +356,13 @@ void GameArena::slotMovedBomb(int id)
 {
     const BombClient& bomb = map->getRefBomb(id);
     bombs[id]->setPos(bomb.getX() - squareSize/2, bomb.getY() - squareSize/2, squareSize);
+}
+
+void GameArena::slotFlyingBomb(int id)
+{
+    const BombClient& bomb = map->getRefBomb(id);
+    //qDebug() << "GameArena : new flying bomb";
+    /* Todo : animate the flying bomb */
 }
 
 void GameArena::slotRemoveBomb(int id)

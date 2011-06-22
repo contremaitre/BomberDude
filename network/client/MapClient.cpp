@@ -72,9 +72,26 @@ void MapClient::updateMap(QByteArray& updateBlock) {
         if(b != 0) {
             b->setX(nx);
             b->setY(ny);
+            b->setFlying(false);
         }
 		emit sigMovedBomb(bombId);
 	}
+
+    qint8 nbFlyingBombs;
+    updateIn >> nbFlyingBombs;
+    for(qint8 i = 0; i < nbFlyingBombs; i++) {
+        qint16 bombId, nx, ny;
+        qint32 hb;
+        updateIn >> bombId >> nx >> ny >> hb;
+        BombClient* b = getBomb(bombId);
+        if(b != 0) {
+            QPoint dest(nx,ny);
+            b->setFlying(true);
+            b->setDestination(dest);
+            b->setFlHeartbeat(hb);
+        }
+        emit sigFlyingBomb(bombId);
+    }
 
 	qint8 nbExplosions;
 	updateIn >> nbExplosions;

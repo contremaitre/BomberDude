@@ -146,7 +146,7 @@ QPoint Map<P,B,SL>::getOverlappingBlockPosition(int x, int y) const
 }
 
 template<typename P, typename B, typename SL>
-void Map<P,B,SL>::getNextBlock(int x, int y, int &xdest, int &ydest, globalDirection direction) const
+void Map<P,B,SL>::getNextBlock(int x, int y, int &xdest, int &ydest, globalDirection direction, bool loop) const
 {
     xdest = x;
     ydest = y;
@@ -155,18 +155,26 @@ void Map<P,B,SL>::getNextBlock(int x, int y, int &xdest, int &ydest, globalDirec
         case dirLeft:
             if(xdest > 0)
                 xdest--;
+            else if(loop)
+                xdest = width - 1;
             break;
         case dirRight:
             if(xdest < width - 1)
                 xdest++;
+            else if(loop)
+                xdest = 0;
             break;
         case dirDown:
             if(ydest > 0)
                 ydest--;
+            else if(loop)
+                ydest = height - 1;
             break;
         case dirUp:
             if(ydest < height - 1)
                 ydest++;
+            else if(loop)
+                ydest = 0;
             break;
         default:
             break;
@@ -338,7 +346,7 @@ template<typename P, typename B, typename SL>
 void Map<P,B,SL>::slotBombTileChanged(qint16 bombId, qint8 oldx, qint8 oldy, qint8 newx, qint8 newy)
 {
     Q_ASSERT(tiles[oldx][oldy].withBomb->getBombId() == bombId);
-    Q_ASSERT(tiles[newx][newy].withBomb == 0);
+    Q_ASSERT(tiles[newx][newy].withBomb == 0 || tiles[oldx][oldy].withBomb->getFlying());
 
     B* movingBomb = tiles[oldx][oldy].withBomb;
     tiles[newx][newy].withBomb = movingBomb;

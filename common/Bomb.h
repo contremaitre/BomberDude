@@ -20,7 +20,7 @@
 
 
 #include <QDataStream>
-
+#include <QPoint>
 #include "constant.h"
 
 template<typename TileComp>
@@ -57,8 +57,13 @@ public:
     bool getIsRC() const                    { return remoteControlled; }
     void unsetRC()                          { remoteControlled = false; }
 
-    void setDudBomb()                       { dud_bomb = true; }
     bool getDudBomb() const                 { return dud_bomb; }
+    void setFlying(bool f)                  { flying = f; }
+    bool getFlying() const                  { return flying; }
+    void setDestination(const QPoint& block){ fl_destination = block; }
+    QPoint getDestination() const           { return fl_destination; }
+    void setFlHeartbeat(qint32 h)           { fl_Heartbeat = h; }
+    qint32 getFlHeartbeat() const           { return fl_Heartbeat; }
 
 private:
     qint16 bombId;
@@ -73,9 +78,14 @@ private:
     qint8 ty;
 
     bool remoteControlled;
-    bool dud_bomb;
 
     TileComp functorToTiles;            /// this functor will convert pixel coordinate to tile coordinate
+
+protected:
+    bool dud_bomb;
+    bool flying;                            /// When a player use a glove, the bomb is flying above the blocks
+    QPoint fl_destination;                  /// If a bomb if flying indicate its destination
+    qint32 fl_Heartbeat;                       /// Indicate at which heartbeat the bomb will arrive
 
 public:
     virtual void sigTileChanged(qint16 bombId, qint8 oldx, qint8 oldy, qint8 newx, qint8 newy) = 0;
@@ -97,8 +107,10 @@ Bomb<TileComp>::Bomb(TileComp tc) :
     tx(-1),
     ty(-1),
     remoteControlled(false),
+    functorToTiles(tc),
     dud_bomb(false),
-    functorToTiles(tc)
+    flying(false),
+    fl_Heartbeat(0)
 {}
 
 
@@ -114,8 +126,10 @@ Bomb<TileComp>::Bomb(qint16 bombId,
     x(x),
     y(y),
     remoteControlled(remoteControlled),
+    functorToTiles(tc),
     dud_bomb(false),
-    functorToTiles(tc)
+    flying(false),
+    fl_Heartbeat(0)
 {
     tx = functorToTiles(x);
     ty = functorToTiles(y);

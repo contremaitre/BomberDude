@@ -31,6 +31,8 @@ public:
 
     bool getHasOil() const                  { return hasOil; }
 
+    void setDudBomb()                       { dud_bomb = true; }
+
     globalDirection getDirection() const    { return direction; }
     void setDirection(globalDirection dir)  { direction = dir; }
 
@@ -48,6 +50,7 @@ private:
     bool hasOil;
     globalDirection direction;
     bool hasMoved;                          /// true when the bomb started to move
+
 };
 
 

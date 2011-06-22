@@ -385,6 +385,42 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance, b
 	return false;
 }
 
+void MapServer::throwBomb(BombServer *bomb, globalDirection direction, int distance)
+{
+    QPoint bombPoint(bomb->getTileX(), bomb->getTileY());
+    for(int i = 0 ; i < distance; ++i)
+        getNextBlock(bombPoint.x(), bombPoint.y(), bombPoint.rx(), bombPoint.ry(), direction, true);
+    bomb->setFlying(true);
+    bomb->setDirection(direction);
+    bomb->setDestination(bombPoint);
+    bomb->setFlHeartbeat(heartBeat - 20); //todo remove this value
+    //qDebug() << "throwing a bomb" << (int)direction << bombPoint.x() << bombPoint.y();
+}
+
+bool MapServer::moveFlyingBomb(BombServer* b)
+{
+    //qDebug() << "moveFlyingBomb" << heartBeat << b->getFlHeartbeat();
+    if(b->getFlHeartbeat() == heartBeat)
+    {
+        QPoint dest = b->getDestination();
+        bool bEmply = getType(dest.x(),dest.y()) == BlockMapProperty::empty
+                      && !blockContainsPlayer(dest.x(), dest.y()) && !getTileBomb(dest.x(), dest.y());
+        QPoint centre = getCenterCoordForBlock(dest.x(), dest.y());
+        b->setX(centre.x());
+        b->setY(centre.y());
+        //qDebug("flying bomb arrived");
+        if(bEmply)
+        {
+            b->setFlying(false);
+            b->setDirection(dirNone);
+        }
+        else
+            throwBomb(b, b->getDirection(), 1);
+        return true;
+    }
+    return false;
+}
+
 bool MapServer::tryMoveBomb(BombServer* b, globalDirection direction)
 {
     int distance = WALKWAY_SPEED;
@@ -959,9 +995,8 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
         // TODO does the code belong to MapServer or to PlayerServer?
         if(pickedUpBonus->getType() == Bonus::BONUS_RANDOM)
         {
-            int randomDraw = static_cast<int>((static_cast<double>(qrand()) / RAND_MAX) * (NB_BONUS-1));
-            if(randomDraw == Bonus::BONUS_RANDOM)
-                randomDraw++;
+            int randomDraw = static_cast<int>((static_cast<double>(qrand()) / RAND_MAX) * (NB_BONUS-2));
+            Q_ASSERT(randomDraw != Bonus::BONUS_RANDOM && randomDraw != Bonus::BONUS_NONE);
             qDebug() << "random bonus" << randomDraw;
             pickedUpBonus->setType(static_cast<Bonus::Bonus_t>(randomDraw));
         }
@@ -1240,6 +1275,7 @@ void MapServer::newHeartBeat() {
 
 	// now let each alive player lay a bomb, then move
     QList<BombServer*> newBombs;
+    QList<BombServer*> flyingBombs;
 
     foreach(PlayerServer* playerN, players)
     {
@@ -1251,9 +1287,21 @@ void MapServer::newHeartBeat() {
                 {
                     BombServer* newBomb = addBomb(playerN->getId());
                     if(newBomb != NULL)
-                    newBombs << newBomb;
+                        newBombs << newBomb;
                     else if(playerN->getLayingBomb() && playerN->getMultibombBonus())
-                    newBombs << addBombMultiple(playerN->getId());
+                        newBombs << addBombMultiple(playerN->getId());
+                    else if(playerN->getThrowbombBonus())
+                    {
+                        QPoint block = getBlockPosition(playerN->getX(), playerN->getY());
+                        BombServer *bomb = getTileBomb(block.x(), block.y());
+                        //qDebug("try to throw a bomb");
+                        if(bomb)
+                        {
+                            //qDebug("ok");
+                            throwBomb(bomb, playerN->getHeading(),3);
+                            flyingBombs << bomb;
+                        }
+                    }
                 }
                 playerN->clearLayingBomb();
             }
@@ -1272,6 +1320,19 @@ void MapServer::newHeartBeat() {
             else
                 applyWalkwayToPlayer(playerN,dirNone);
 
+            /* Check if the player wants to throw a bomb */
+            if(playerN->getBoxingGloveBonus() && playerN->getOptKey())
+            {
+                QPoint block = getBlockPosition(playerN->getX(),playerN->getY());
+                getNextBlock(block.x(), block.y(), block.rx(), block.ry(), playerN->getHeading());
+                BombServer *bomb = getTileBomb(block.x(), block.y());
+                if(bomb)
+                {
+                    throwBomb(bomb, playerN->getHeading(),3);
+                    flyingBombs << bomb;
+                }
+
+            }
             checkPlayerSurroundings(playerN);
         }
     }
@@ -1298,13 +1359,22 @@ void MapServer::newHeartBeat() {
 
         // conveyor belt has no effect on a rolling bomb, check both cases separately!
         if(bombN->getDirection() != dirNone) {
-            hasMoved = tryMoveBomb(bombN, dirNone);
-            if(!bombN->getHasMoved())
+            if(bombN->getFlying())
             {
-                if(hasMoved)
-                    bombN->setHasMoved(true);
-                else
-                    bombN->setDirection(dirNone);
+                hasMoved = moveFlyingBomb(bombN);
+                if(hasMoved &&  bombN->getFlying())
+                    flyingBombs << bombN;
+            }
+            else
+            {
+                hasMoved = tryMoveBomb(bombN, dirNone);
+                if(!bombN->getHasMoved())
+                {
+                    if(hasMoved)
+                        bombN->setHasMoved(true);
+                    else
+                        bombN->setDirection(dirNone);
+                }
             }
         }
         else
@@ -1327,9 +1397,18 @@ void MapServer::newHeartBeat() {
 		updateOut << bombN->getBombId() << bombN->getX() << bombN->getY();
 	}
 
+	// serialize the new flying bombs
+	updateOut << static_cast<qint8>(flyingBombs.size());
+	foreach(BombServer* bombN, flyingBombs) {
+	    QPoint p = bombN->getDestination();
+	    updateOut << bombN->getBombId() << static_cast<qint16>(p.x()) << static_cast<qint16>(p.y()) << bombN->getFlHeartbeat();
+	}
 	// then decrease each bomb's counter
-	foreach(BombServer* bombN, getBombList())
-		bombN->decreaseLifeSpan();
+    foreach(BombServer* bombN, getBombList())
+    {
+       if(!bombN->getFlying())
+           bombN->decreaseLifeSpan();
+    }
 
 	// now we check which bombs must explode
 	// FIXME : because a bomb exploding can trigger several other ones

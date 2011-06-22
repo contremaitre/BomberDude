@@ -70,6 +70,8 @@ private:
       @return           true if the bomb moved, false otherwise
       */
     bool tryMoveBomb(BombServer* b, globalDirection direction);
+    bool moveFlyingBomb(BombServer* b);
+    void throwBomb(BombServer *, globalDirection, int);
 
     int keyToDirection(int direction);
     BombServer* addBomb(int id);

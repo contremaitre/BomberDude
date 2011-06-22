@@ -20,7 +20,7 @@ public:
     static const Bonus_t BONUS_MULTIBOMB = 8;
     static const Bonus_t BONUS_THROW_GLOVE = 9;
     static const Bonus_t BONUS_BOXING_GLOVE = 10;
-    static const Bonus_t BONUS_RANDOM = 11;
+    static const Bonus_t BONUS_RANDOM = 11; //must remain on the last position
 
     Bonus() :
         type(BONUS_NONE),

@@ -118,7 +118,7 @@ public:
      */
     QPoint getOverlappingBlockPosition(int x, int y) const;
 
-    void getNextBlock(int x, int y, int &xdest, int &ydest, globalDirection direction) const;
+    void getNextBlock(int x, int y, int &xdest, int &ydest, globalDirection direction, bool loop = false) const;
     const QList<SL> *getStylesList() const;
 
     void setPlayerPosition(int id, qint16 , qint16);
