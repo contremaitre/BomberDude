@@ -131,7 +131,6 @@ public:
 	void loadRandom();
 	void addPlayerSlot(int, int);
 	bool assignPlayer(int id);
-	//int getFreePlayerSlot();
 	void requestMovePlayer(int id, int direction);
 	void requestOptKey(int id);
 	void requestBombPlayer(int id);

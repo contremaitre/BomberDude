@@ -159,25 +159,6 @@ void MapServer::loadRandom()
     }
 }
 
-/*
-int MapServer::getFreePlayerSlot()
-{
-    int ret = -1;
-    QList<initialPlayerPosition>::iterator it = startPlayerSlots.begin();
-    for(int cpt = 0; it != startPlayerSlots.end(); ++it, ++cpt)
-    {
-        if(it->freeSlot)
-        {
-            ret = cpt;
-            it->freeSlot = false;
-            setPlayerPosition(ret, it->coord.x(), it->coord.y());
-            break;
-        }
-    }
-    return ret;
-}
-*/
-
 bool MapServer::assignPlayer(int id)
 {
     if(id >= startPlayerSlots.size() || !startPlayerSlots.at(id).freeSlot )
