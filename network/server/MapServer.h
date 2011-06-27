@@ -74,7 +74,6 @@ private:
     void throwBomb(BombServer *, globalDirection, int);
 
     int keyToDirection(int direction);
-    BombServer* addBomb(int id);
     BombServer* addBomb(int id, int x, int y);
     QList<BombServer*> addBombMultiple(int playerId);
     bool getRandomEmptyPosition(qint16 &x, qint16 &y);

@@ -737,14 +737,6 @@ QList<BombServer*> MapServer::addBombMultiple(int playerId)
     return newBombs;
 }
 
-BombServer* MapServer::addBomb(int playerId)
-{
-	qint16 x,y;
-	getPlayerPosition(playerId,x,y);
-	QPoint block = getBlockPosition(x,y);
-	return addBomb(playerId,block.x(),block.y());
-}
-
 BombServer* MapServer::addBomb(int playerId, int squareX, int squareY)
 {
     BlockMapProperty::BlockType type = getType(squareX,squareY);
@@ -1264,25 +1256,23 @@ void MapServer::newHeartBeat() {
         {
             if(playerN->getLayingBomb() || playerN->getSickness() == SICK_DIARRHEA)
             {
+                QPoint plBlock = getBlockPosition(playerN->getX(),playerN->getY());
+                BombServer *currentBomb = getTileBomb(plBlock.x(), plBlock.y());
                 if(playerN->getIsBombAvailable())
                 {
-                    BombServer* newBomb = addBomb(playerN->getId());
-                    if(newBomb != NULL)
-                        newBombs << newBomb;
+                    if(!currentBomb)
+                    {
+                        BombServer* newBomb = addBomb(playerN->getId(), plBlock.x(), plBlock.y());
+                        if(newBomb != NULL)
+                            newBombs << newBomb;
+                    }
                     else if(playerN->getLayingBomb() && playerN->getMultibombBonus())
                         newBombs << addBombMultiple(playerN->getId());
-                    else if(playerN->getThrowbombBonus())
-                    {
-                        QPoint block = getBlockPosition(playerN->getX(), playerN->getY());
-                        BombServer *bomb = getTileBomb(block.x(), block.y());
-                        //qDebug("try to throw a bomb");
-                        if(bomb)
-                        {
-                            //qDebug("ok");
-                            throwBomb(bomb, playerN->getHeading(),3);
-                            flyingBombs << bomb;
-                        }
-                    }
+                }
+                if(currentBomb && playerN->getThrowbombBonus())
+                {
+                    throwBomb(currentBomb, playerN->getHeading(),3);
+                    flyingBombs << currentBomb;
                 }
                 playerN->clearLayingBomb();
             }
