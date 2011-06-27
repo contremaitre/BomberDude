@@ -38,7 +38,7 @@
 #include "ui_main_window.h"
 
 
-class StartUi : public QMainWindow
+class StartUi : public QMainWindow, private Ui_MainWindow
 {
   Q_OBJECT
 public:
@@ -47,7 +47,6 @@ public:
 
 private:
     //QMainWindow mainw;
-    Ui_MainWindow *mainWindow;
     GamePlay *gamePlay;
     Settings *settings;
     QSound *music;
