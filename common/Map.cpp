@@ -279,7 +279,9 @@ void Map<P,B,SL>::removeBomb(qint16 bombId)
 template<typename P, typename B, typename SL>
 B* Map<P,B,SL>::getTileBomb(qint8 tile_x, qint8 tile_y) const
 {
-    return tiles[tile_x][tile_y].withBomb;
+    if(tiles[tile_x][tile_y].withBomb && !tiles[tile_x][tile_y].withBomb->getFlying())
+        return tiles[tile_x][tile_y].withBomb;
+    return NULL;
 }
 
 
