@@ -295,9 +295,7 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance, b
         )
       )
     {
-		qint16 x,y;
-		getPlayerPosition(id,x,y);
-		setPlayerPosition(id,x+move_x,y+move_y);
+		setPlayerPosition(id,players[id]->getX()+move_x,players[id]->getY()+move_y);
 		//We want to stay on the middle of blocks.
 		adjustPlayerPosition(id,move_x,move_y, distance);
 		return true;
@@ -305,36 +303,33 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance, b
 	else
 	{
 		int pos;
-		qint16 x,y;
-		getPlayerPosition(id,x,y);
 		//can we move closer of the next block ?
 		//todo : adjust player position in the case ?
 		if(move_x != 0)
 		{
-			pos = coordinatePositionInBlock(x);
+			pos = coordinatePositionInBlock(players[id]->getX());
 			//qDebug() << "Move closer ?" << pos << move_x;
-			if(pos != 0 && ((pos<0 && move_x>0) || (pos>0&&move_x<0)))
+			if (pos != 0 && ((pos < 0 && move_x > 0) || (pos > 0 && move_x < 0)))
 			{
-				setPlayerPosition(id,x-pos,y);
+				setPlayerPosition(id,players[id]->getX()-pos,players[id]->getY());
 				againstWall = true;
 				return true;
 			}
 		}
 		else
 		{
-			pos = coordinatePositionInBlock(y);
+			pos = coordinatePositionInBlock(players[id]->getY());
 			if(pos != 0 && ((pos<0 && move_y>0) || (pos>0&&move_y<0)))
 			{
-				setPlayerPosition(id,x,y-pos);
+				setPlayerPosition(id,players[id]->getX(),players[id]->getY()-pos);
 				return true;
 			}
 		}
 
-		getPlayerPosition(id,x,y);
 		//try to circle the block
 		if(move_x != 0)
 		{
-			pos = coordinatePositionInBlock(y);
+			pos = coordinatePositionInBlock(players[id]->getY());
 			int sign = pos > 0 ? 1 : -1;
 			if( pos != 0)
 			{
@@ -342,14 +337,14 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance, b
                 typeOfNextBlock = getType(nextBlock.x(),nextBlock.y());
                 if(typeOfNextBlock == BlockMapProperty::empty && getTileBomb(nextBlock.x(),nextBlock.y()) == NULL)
 				{
-					setPlayerPosition(id,x+ move_x/2,y+absMin(pos,distance));
+					setPlayerPosition(id,players[id]->getX()+ move_x/2,players[id]->getY()+absMin(pos,distance));
 					return true;
 				}
 			}
 		}
 		else
 		{
-			pos = coordinatePositionInBlock(x);
+			pos = coordinatePositionInBlock(players[id]->getX());
 			int sign = pos > 0 ? 1 : -1;
 			if( pos != 0)
 			{
@@ -357,7 +352,7 @@ bool MapServer::tryMovePlayer(int id, globalDirection direction, int distance, b
                 typeOfNextBlock = getType(nextBlock.x(),nextBlock.y());
                 if(typeOfNextBlock == BlockMapProperty::empty && getTileBomb(nextBlock.x(),nextBlock.y()) == 0)
 				{
-					setPlayerPosition(id,x+absMin(pos,distance),y+ move_y/2);
+					setPlayerPosition(id,players[id]->getX()+absMin(pos,distance),players[id]->getY()+ move_y/2);
 					return true;
 				}
 			}
@@ -663,17 +658,15 @@ bool MapServer::getRandomEmptyPosition(qint16 &x, qint16 &y)
 
 void MapServer::adjustPlayerPosition(int plId, int xDirection, int yDirection, int distance)
 {
-	qint16 x,y;
-	getPlayerPosition(plId,x,y);
 	if(xDirection != 0)
 	{
-		int pos = coordinatePositionInBlock(y);
-		setPlayerPosition(plId,x,y-absMin(pos,distance));
+		int pos = coordinatePositionInBlock(players[plId]->getY());
+		setPlayerPosition(plId,players[plId]->getX(),players[plId]->getY()-absMin(pos,distance));
 	}
 	else
 	{
-		int pos = coordinatePositionInBlock(x);
-		setPlayerPosition(plId,x-absMin(pos,distance),y);
+		int pos = coordinatePositionInBlock(players[plId]->getX());
+		setPlayerPosition(plId,players[plId]->getX()-absMin(pos,distance),players[plId]->getY());
 	}
 }
 
@@ -691,10 +684,8 @@ int MapServer::coordinatePositionInBlock(int coord)
 
 QList<BombServer*> MapServer::addBombMultiple(int playerId)
 {
-    qint16 x,y;
     QList<BombServer*> newBombs;
-    getPlayerPosition(playerId,x,y);
-    QPoint block = getBlockPosition(x,y);
+    QPoint block = getBlockPosition(players[playerId]->getX(),players[playerId]->getY());
     //drop multibombs if the player already has a bomb here
     int blockBombPlayerId = -1;
     BombServer* bomb = getTileBomb(block.x(),block.y());
@@ -709,9 +700,7 @@ QList<BombServer*> MapServer::addBombMultiple(int playerId)
         bool isPlayer = false;
         for (int i=0;i<getNbPlayers();i++)
         {
-            qint16 p_x, p_y;
-            getPlayerPosition(i, p_x, p_y);
-            QPoint playerBlock = getBlockPosition(p_x, p_y);
+            QPoint playerBlock = getBlockPosition(players[i]->getX(), players[i]->getY());
             if (block.x() == playerBlock.x() && block.y() == playerBlock.y())
             {
                 qDebug() << "multibomb blocked by player" << i;
