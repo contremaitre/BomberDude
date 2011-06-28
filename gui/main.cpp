@@ -23,7 +23,12 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     StartUi startui(&app);
-    startui.show();
+
+    QScrollArea *scrollArea = new QScrollArea;
+    scrollArea->setWidget(&startui);
+    scrollArea->resize(800+10,610+10); //todo, find a better way to set the initial size of this scroll area
+    scrollArea->show();
+    //startui.show();
     app.exec();
 
     return 0;
