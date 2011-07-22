@@ -366,7 +366,8 @@ void MapServer::throwBomb(BombServer *bomb, globalDirection direction, int dista
     QPoint bombPoint(bomb->getTileX(), bomb->getTileY());
     for(int i = 0 ; i < distance; ++i)
         getNextBlock(bombPoint.x(), bombPoint.y(), bombPoint.rx(), bombPoint.ry(), direction, true);
-    bomb->setFlying(true);
+    if(!bomb->getFlying())
+        bomb->setFlying(true);
     bomb->setDirection(direction);
     bomb->setDestination(bombPoint);
     bomb->setFlHeartbeat(heartBeat - 20); //todo remove this value
@@ -389,6 +390,7 @@ bool MapServer::moveFlyingBomb(BombServer* b)
         {
             b->setFlying(false);
             b->setDirection(dirNone);
+            //tiles[dest.x()][dest.y()].withBomb = b; todo
         }
         else
             throwBomb(b, b->getDirection(), 1);
@@ -752,7 +754,10 @@ BombServer* MapServer::addBomb(int playerId, int squareX, int squareY)
             SIGNAL(sigTileChanged(qint16,qint8,qint8,qint8,qint8)),
             this,
             SLOT(slotBombTileChanged(qint16,qint8,qint8,qint8,qint8)));
-
+    connect(newBomb,
+            SIGNAL(sigFlyingBombChange(qint16)),
+            this,
+            SLOT(slotFlyingBombChange(qint16)));
 	qDebug() << " MapServer> AddBomb : " << getBombList().size() << " BOMBS !!! x: " << squareX
              << " y: " << squareY << " bombId: " << newBomb->getBombId();
 	players[playerId]->decBombsAvailable();
@@ -1474,6 +1479,11 @@ void MapServer::newHeartBeat() {
 void MapServer::slotBombTileChanged(qint16 bombId, qint8 oldx, qint8 oldy, qint8 newx, qint8 newy)
 {
     Map<PlayerServer,BombServer,mapStyle>::slotBombTileChanged(bombId, oldx, oldy, newx, newy);
+}
+
+void MapServer::slotFlyingBombChange(qint16 bombId)
+{
+    Map<PlayerServer,BombServer,mapStyle>::slotFlyingBombChange(bombId);
 }
 
 globalDirection MapServer::reverseDirection(globalDirection initialDir)

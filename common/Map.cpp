@@ -279,9 +279,7 @@ void Map<P,B,SL>::removeBomb(qint16 bombId)
 template<typename P, typename B, typename SL>
 B* Map<P,B,SL>::getTileBomb(qint8 tile_x, qint8 tile_y) const
 {
-    if(tiles[tile_x][tile_y].withBomb && !tiles[tile_x][tile_y].withBomb->getFlying())
-        return tiles[tile_x][tile_y].withBomb;
-    return NULL;
+    return tiles[tile_x][tile_y].withBomb;
 }
 
 
@@ -348,11 +346,31 @@ template<typename P, typename B, typename SL>
 void Map<P,B,SL>::slotBombTileChanged(qint16 bombId, qint8 oldx, qint8 oldy, qint8 newx, qint8 newy)
 {
     Q_ASSERT(tiles[oldx][oldy].withBomb->getBombId() == bombId);
-    Q_ASSERT(tiles[newx][newy].withBomb == 0 || tiles[oldx][oldy].withBomb->getFlying());
+    Q_ASSERT(tiles[newx][newy].withBomb == 0);
 
     B* movingBomb = tiles[oldx][oldy].withBomb;
     tiles[newx][newy].withBomb = movingBomb;
     tiles[oldx][oldy].withBomb = 0;
+}
+
+template<typename P, typename B, typename SL>
+void Map<P,B,SL>::slotFlyingBombChange(qint16 bombId)
+{
+    //qDebug() << "Debug flying bomb slotFlyingBombChange";
+    //a flying bomb is not attached to a tile
+    B *bomb = bombs[bombId];
+    QPoint bp = getBlockPosition(bomb->getX(), bomb->getY());
+    if(bomb->getFlying())
+    {
+        Q_ASSERT(tiles[bp.x()][bp.y()].withBomb == bomb);
+        tiles[bp.x()][bp.y()].withBomb = NULL;
+    }
+    else
+    {
+        Q_ASSERT(tiles[bp.x()][bp.y()].withBomb == NULL);
+        tiles[bp.x()][bp.y()].withBomb = bomb;
+    }
+
 }
 
 

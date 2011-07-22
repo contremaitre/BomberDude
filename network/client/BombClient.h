@@ -16,6 +16,7 @@ public:
 
 signals:
     void sigTileChanged(qint16 bombId, qint8 oldx, qint8 oldy, qint8 newx, qint8 newy);
+    void sigFlyingBombChange(qint16 bombId);
 };
 
 

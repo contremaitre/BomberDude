@@ -58,7 +58,7 @@ public:
     void unsetRC()                          { remoteControlled = false; }
 
     bool getDudBomb() const                 { return dud_bomb; }
-    void setFlying(bool f)                  { flying = f; }
+    void setFlying(bool f);
     bool getFlying() const                  { return flying; }
     void setDestination(const QPoint& block){ fl_destination = block; }
     QPoint getDestination() const           { return fl_destination; }
@@ -89,6 +89,7 @@ protected:
 
 public:
     virtual void sigTileChanged(qint16 bombId, qint8 oldx, qint8 oldy, qint8 newx, qint8 newy) = 0;
+    virtual void sigFlyingBombChange(qint16 bombId) = 0;
 
     template<typename T>
 	friend QDataStream& operator>>(QDataStream& in, Bomb<T>& f);
@@ -140,6 +141,12 @@ template<typename TileComp>
 Bomb<TileComp>::~Bomb()
 {}
 
+template<typename TileComp>
+void Bomb<TileComp>::setFlying( bool f )
+{
+    flying = f;
+    emit sigFlyingBombChange(bombId);
+}
 
 template<typename TileComp>
 void Bomb<TileComp>::setX(qint16 val)
@@ -147,7 +154,7 @@ void Bomb<TileComp>::setX(qint16 val)
     x = val;
     qint8 ntx = functorToTiles(val);
     if(ntx != tx) {
-        if(tx != -1)
+        if(!flying && tx != -1) //we must not emit this signal if the bomb is flying because it is not attached to the tile
             emit sigTileChanged(bombId, tx, ty, ntx, ty);
         tx = ntx;
     }
@@ -160,7 +167,7 @@ void Bomb<TileComp>::setY(qint16 val)
     y = val;
     qint8 nty = functorToTiles(val);
     if(nty != ty) {
-        if(ty != -1)
+        if(!flying && ty != -1) //we must not emit this signal if the bomb is flying because it is not attached to the tile
             emit sigTileChanged(bombId, tx, ty, tx, nty);
         ty = nty;
     }

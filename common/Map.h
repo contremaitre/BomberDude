@@ -191,6 +191,8 @@ private:
     // slots
 protected:
     virtual void slotBombTileChanged(qint16 bombId, qint8 oldx, qint8 oldy, qint8 newx, qint8 newy);
+    virtual void slotFlyingBombChange(qint16 bombId);
+
 };
 
 // FIXME it's not exactly a cpp file (doesn't give a .o), better extension name for it?
