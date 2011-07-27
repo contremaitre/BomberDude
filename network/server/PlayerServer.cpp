@@ -61,7 +61,6 @@ void PlayerServer::setSickness(sickness s)
 
 bool PlayerServer::getRemoteBonus()
 {
-    qDebug() << "getRemoteOption" << nbRemoteControl;
     if(nbRemoteControl > 0)
     {
         nbRemoteControl--;

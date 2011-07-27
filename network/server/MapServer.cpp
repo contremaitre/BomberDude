@@ -74,13 +74,12 @@ MapServer::~MapServer() {
 void MapServer::addStyle(const mapStyle &style)
 {
     styles << style;
-    qDebug() << "MapServer, style added, size = " << styles.size() << ", positions = " << style.coordList.size();
+    //qDebug() << "MapServer, style added, size = " << styles.size() << ", positions = " << style.coordList.size();
 }
 
 void MapServer::selectStyle(int style)
 {
     /* sanity check */
-    qDebug() << "select style : " << style;
     if(style >= styles.size())
         return;
 
@@ -150,7 +149,6 @@ void MapServer::loadRandom()
         QPoint pos;
         int w = (qrand() % (width - 2)) + 1;
         int h = (qrand() % (height - 2)) + 1;
-        qDebug() << "Player" << i << ", pos " << w << h;
         w = w * getBlockSize() + getBlockSize() / 2;
         h = h * getBlockSize() + getBlockSize() / 2;
         addPlayerSlot(w,h);
@@ -705,7 +703,6 @@ QList<BombServer*> MapServer::addBombMultiple(int playerId)
             QPoint playerBlock = getBlockPosition(players[i]->getX(), players[i]->getY());
             if (block.x() == playerBlock.x() && block.y() == playerBlock.y())
             {
-                qDebug() << "multibomb blocked by player" << i;
                 isPlayer = true;
                 break;
             }
@@ -713,10 +710,7 @@ QList<BombServer*> MapServer::addBombMultiple(int playerId)
 
         //check if a bonus is here
         if(getTileBonus(block.x(), block.y()) != 0)
-        {
-            qDebug() << "multibomb blocked by bonus";
             break;
-        }
 
         if(isPlayer)
             break;
@@ -758,8 +752,8 @@ BombServer* MapServer::addBomb(int playerId, int squareX, int squareY)
             SIGNAL(sigFlyingBombChange(qint16)),
             this,
             SLOT(slotFlyingBombChange(qint16)));
-	qDebug() << " MapServer> AddBomb : " << getBombList().size() << " BOMBS !!! x: " << squareX
-             << " y: " << squareY << " bombId: " << newBomb->getBombId();
+	//qDebug() << " MapServer> AddBomb : " << getBombList().size() << " BOMBS !!! x: " << squareX
+    //         << " y: " << squareY << " bombId: " << newBomb->getBombId();
 	players[playerId]->decBombsAvailable();
 	return newBomb;
 }
@@ -780,7 +774,7 @@ Flame* MapServer::explosion(BombServer* b)
 	addFlame(f);
 	//flames.append(f);
 
-	qDebug()<<"BOOM !";
+	//qDebug()<<"BOOM !";
 	return f;
 }
 
@@ -854,7 +848,7 @@ void MapServer::doPlayerDeath(PlayerServer* playerN, int killedBy)
     {
         if (b->getPlayerId() == playerN->getId())
         {
-            qDebug("dead player has a detonator bomb");
+            //qDebug("dead player has a detonator bomb");
             b->unsetRC();
             b->setDuration(DEFAULT_BOMB_DURATION);
         }
@@ -964,7 +958,7 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
         {
             int randomDraw = static_cast<int>((static_cast<double>(qrand()) / RAND_MAX) * (NB_BONUS-2));
             Q_ASSERT(randomDraw != Bonus::BONUS_RANDOM && randomDraw != Bonus::BONUS_NONE);
-            qDebug() << "random bonus" << randomDraw;
+            //qDebug() << "random bonus" << randomDraw;
             pickedUpBonus->setType(static_cast<Bonus::Bonus_t>(randomDraw));
         }
         switch(pickedUpBonus->getType()) {
@@ -988,7 +982,7 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
                 sickness sick = static_cast<sickness> (random);
                 if(sick == SICK_SHUFFLE)
                 {
-                    qDebug() << "sick shuffle";
+                    //qDebug() << "sick shuffle";
                     exchangePlayersPositions();
                 }
                 else
@@ -1197,7 +1191,7 @@ void MapServer::startHeartBeat(qint32 startValue, int intervals) {
 
 void MapServer::newHeartBeat() {
 	heartBeat--;
-    if(heartBeat % 100 == 0)
+    if(heartBeat % 1000 == 0)
         qDebug() << "send Hearbeat #" << heartBeat;
 
     killedPlayers.clear();
@@ -1416,7 +1410,7 @@ void MapServer::newHeartBeat() {
     {
         Bonus::Bonus_t bonus_type = bonusToSpawn.takeFirst();
         qint16 x,y;
-        qDebug() << "bonus to spawn" << bonus_type;
+        //qDebug() << "bonus to spawn" << bonus_type;
         if(getRandomEmptyPosition(x,y))
         {
             Bonus* newBonus = new Bonus(bonus_type, x, y);
@@ -1425,7 +1419,7 @@ void MapServer::newHeartBeat() {
         }
         else
         {
-            qDebug() << "plus de place";
+            qDebug() << "spawn bonus, plus de place";
             bonusToSpawn.clear();
             break;
         }

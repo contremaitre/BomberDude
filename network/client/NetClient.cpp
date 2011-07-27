@@ -147,7 +147,7 @@ void NetClient::sendPlayerData(const QString& playerName) {
     out << playerName;
     setBlockSize(block, out);
     tcpSocket->write(block);
-    qDebug() << "NetClient send player data";
+    //qDebug() << "NetClient send player data";
 }
 
 void NetClient::selectMap(int direction)
@@ -160,7 +160,7 @@ void NetClient::selectMap(int direction)
     out << static_cast<qint8>(direction);
     setBlockSize(block, out);
     tcpSocket->write(block);
-    qDebug() << "NetClient select map";
+    //qDebug() << "NetClient select map";
 }
 
 void NetClient::stopServer()
@@ -292,7 +292,7 @@ void NetClient::handleTcpMsg(QDataStream &in)
 	}
 	case msg_is_admin:
 	{
-	    qDebug() << "NetClient, msg_is_admin";
+	    //qDebug() << "NetClient, msg_is_admin";
         isAdmin = true;
 	    emit sigIsServerAdmin();
 	    break;
@@ -335,7 +335,7 @@ void NetClient::handleTcpMsg(QDataStream &in)
             break;
         }
     case msg_start_game:
-        qDebug() << "NetClient emit sigGameStarted";
+        //qDebug() << "NetClient emit sigGameStarted";
         emit sigGameStarted();
         break;
     case msg_server_stopped:

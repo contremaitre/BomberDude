@@ -59,7 +59,6 @@ bool MapParser::startElement(const QString&, const QString&, const QString& qNam
         // Initialize the map
         if (width >= 0 && height >= 0)
             map->setDim(width, height);
-        qDebug() << "map parser width x height = " << width << height;
         // initialize random generator
         qsrand(QDateTime::currentDateTime().toTime_t());
     }

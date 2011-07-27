@@ -79,11 +79,8 @@ void Map<P,B,SL>::Init()
     block_list = new BlockMapProperty[width*height];
 
     tiles.resize(width);
-    qDebug() << tiles.size();
     for(int i = 0; i < width; i++)
         tiles[i].resize(height);
-
-    qDebug() << "init";
 }
 
 template<typename P, typename B, typename SL>

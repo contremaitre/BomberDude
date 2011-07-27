@@ -188,7 +188,7 @@ void StartUi::startServer()
     connect( netclient, SIGNAL(sigMapRandom()), this, SLOT(slotMapRandom()));
     connect( netclient, SIGNAL(sigGameStarted()), this, SLOT(slotGameStarted()));
     connect( netclient, SIGNAL(mapPreviewReceived(MapClient*)),this,SLOT(slotMapPreviewReceived(MapClient*)));
-    connect( netclient, SIGNAL(sigGameQuit()), this, SLOT(slotGameQuit()));
+    //connect( netclient, SIGNAL(sigGameQuit()), this, SLOT(slotGameQuit()));
 
     // must be queued otherwise NetClient instance is deleted before finishing its processing
     connect( netclient, SIGNAL(sigServerStopped()), this, SLOT(slotServerStopped()), Qt::QueuedConnection);
@@ -318,7 +318,6 @@ void StartUi::closeGame()
 
 void StartUi::slotServerLaunched()
 {
-    qDebug("StartUi::slotServerLaunched");
 }
 
 void StartUi::slotServerLaunchedError(QProcess::ProcessError error)
@@ -340,14 +339,14 @@ void StartUi::slotMapRandom()
 void StartUi::slotStartGame()
 {
     int styleIndex = mapOptionCBox->currentIndex();
-    qDebug() << "startui start game, style =" << styleIndex;
+    //qDebug() << "startui start game, style =" << styleIndex;
     if(gamePlay)
         gamePlay->getNetClient()->startGame(styleIndex-1);
 }
 
 void StartUi::slotStopGame()
 {
-    qDebug() << "startui stop game";
+    //qDebug() << "startui stop game";
     if(gamePlay) {
         if(gamePlay->getNetClient()->getIsAdmin())
             gamePlay->getNetClient()->stopServer();
@@ -373,10 +372,7 @@ void StartUi::slotMapPreviewReceived(MapClient *map)
     mapOptionCBox->clear();
     mapOptionCBox->addItem ( "no style" );
     foreach(mapStyle s, *styles)
-    {
-        qDebug() << "startui style" << s.name;
         mapOptionCBox->addItem ( s.name );
-    }
 }
 
 void StartUi::randomMapCheckedChanged(int state)

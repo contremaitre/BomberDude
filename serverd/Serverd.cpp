@@ -41,7 +41,6 @@ void Serverd::launch()
     //others players can join later
     //the way the game is launched will be changed later.
     connect(server, SIGNAL(allPlayersLeft()), this, SLOT(allPlayersLeft()));
-    qDebug() << "launch server";
     server->start();
 }
 

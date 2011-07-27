@@ -68,7 +68,7 @@ void NetServer::restart()
 
 void NetServer::run()
 {
-    qDebug() << "NetServer run, admin passord : " << adminPasswd;
+    //qDebug() << "NetServer run, admin passord : " << adminPasswd;
     tcpServer = new QTcpServer();
     if (!tcpServer->listen(QHostAddress::Any, port)) {
         qDebug() << "server tcp error :" << tcpServer->errorString();
@@ -91,7 +91,7 @@ void NetServer::run()
 
 void NetServer::startHeartBeat() {
     qint32 initHB = DEFAULT_GAME_DURATION * (1000/HEARTBEAT);
-    qDebug() << "NetServer::startHeartBeat" << initHB;
+    //qDebug() << "NetServer::startHeartBeat" << initHB;
     map->startHeartBeat(initHB, HEARTBEAT);
 }
 
@@ -104,7 +104,7 @@ void NetServer::setBlockSize(const QByteArray &block, QDataStream & out)
 void NetServer::incomingClient()
 {
     QTcpSocket *clientConnection = tcpServer->nextPendingConnection();
-    qDebug() << "NetServer::incomingClient" << map;
+    qDebug() << "NetServer::incomingClient";
     if(clients.size() < maxNbPlayers)
     {
         int freeIndex;
@@ -127,7 +127,7 @@ void NetServer::incomingClient()
         clients.insert(freeIndex,client);
         if(gameStarted) //we allow clients to join a game already started
             client->sendMap(*map);
-        qDebug() << "NetServer new client " << client->getId() << clients.size();
+        //qDebug() << "NetServer new client " << client->getId() << clients.size();
 
         // we send him the list of all clients (including himself) already connected
         foreach(NetServerClient* Nclient, clients) {
@@ -197,7 +197,6 @@ void NetServer::startGame(int styleIndex)
     //in non debug mode, require at least two players
     if(!gameStarted && (debugMode || clients.size() > 1))
     {
-        qDebug() << "NetServer start , nb =" << clients.size();
         loadMap(styleIndex);
         foreach(NetServerClient *client, clients)
             map->assignPlayer(client->getId());
@@ -212,7 +211,6 @@ void NetServer::startGame(int styleIndex)
 
 void NetServer::selectMap(qint8 direction)
 {
-    qDebug() << "NetServer selectMap" << direction << currentMapInList;
     if(gameStarted)
     {
         qDebug("NetServer selectMap and game already started");
@@ -233,7 +231,6 @@ void NetServer::selectMap(qint8 direction)
             //no change
             return;
         }
-        qDebug() << "NetServer non random map";
         randomMap = false;
         currentMapInList--;
         direction = 1;
@@ -250,7 +247,6 @@ void NetServer::selectMap(qint8 direction)
         bool found = false;
         do
         {
-            qDebug() << "going to load map" << mapList[currentMapInList].fileName();
             delete mapPreview;
             mapPreview = new MapServer;
             MapParser mapParser(mapPreview);
@@ -500,10 +496,8 @@ bool NetServer::loadMap(int styleIndex)
 
     allocMap();
     map->setDebugMode(debugMode);
-    qDebug() << "loadMap :" << currentMapInList << mapList.size();
     if(!randomMap && !mapList.isEmpty() && currentMapInList >= 0 && currentMapInList < mapList.size()) //file
     {
-        qDebug() << "going to load map" << mapList[currentMapInList].fileName();
         MapParser mapParser(map);
         QFile mapXmlFile(mapList[currentMapInList].absoluteFilePath());
         QXmlInputSource source(&mapXmlFile);
@@ -512,11 +506,9 @@ bool NetServer::loadMap(int styleIndex)
         reader.setContentHandler(&mapParser);
         // Parse the XML file
         reader.parse(source);
-        qDebug() << "map loaded";
     }
     else //random
     {
-        qDebug() << "set Dimensions "<< mapW << mapH << blockSize;
         map->setDim(mapW,mapH,blockSize);
         map->loadRandom();
     }

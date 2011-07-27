@@ -341,7 +341,6 @@ void GameArena::slotAddBomb(int id)
                                                        bomb.getY() - squareSize/2,
                                                        squareSize);
     pix->setZValue(1.0);
-    qDebug() << "new bomb, remote =" << bomb.getIsRC();
     if(bomb.getIsRC())
         pix->setItem(pixmaps.getPixmapBombrc());
     else if(bomb.getDudBomb())
