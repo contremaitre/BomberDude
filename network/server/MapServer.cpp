@@ -391,7 +391,16 @@ bool MapServer::moveFlyingBomb(BombServer* b)
             //tiles[dest.x()][dest.y()].withBomb = b; todo
         }
         else
-            throwBomb(b, b->getDirection(), 1);
+        {
+            if(b->getHasOil())
+            {
+                /* direction aleatoire (entre 0 et 3) */
+                int randomDraw = qrand()%4;
+                throwBomb(b, static_cast<globalDirection>(randomDraw), 1);
+            }
+            else
+                throwBomb(b, b->getDirection(), 1);
+        }
         return true;
     }
     return false;
