@@ -23,6 +23,7 @@
 #include <QList>
 #include <QGraphicsView>
 #include <QMainWindow>
+#include <qbomb.h>
 
 #include "QGraphicsSquareItem.h"
 #include "MapClient.h"
@@ -53,7 +54,7 @@ private:
     QList<QGraphicsSquareItem*> burntPlayers;
     QList<QGraphicsSquareItem*> optionsItems;
     QMap<QPoint, QGraphicsItem*> bonus;
-    QMap<int, QGraphicsSquareItem*> bombs;
+    QMap<int, QBomb*> bombs;
     QMap<int, QGraphicsSquareItem*> flames;
 
     QGraphicsSquareItem *getCase(int);

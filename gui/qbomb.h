@@ -9,8 +9,7 @@
 class QBomb : public QGraphicsItem
 {
 private:
-    int x,y,size,currentPix;
-    QRectF bRect;
+    int size,currentPix;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QRectF boundingRect() const;
     QList<QPixmap*>  pixmaps;

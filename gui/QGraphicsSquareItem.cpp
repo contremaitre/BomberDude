@@ -45,6 +45,7 @@ QGraphicsPixmapItem *QGraphicsSquareItem::getItem()
 
 void QGraphicsSquareItem::paint(QPainter*p, const QStyleOptionGraphicsItem* qs, QWidget* qw)
 {
+    qDebug() <<"qgsi painter"<<p;
     pix.paint(p,qs,qw);
 }
 

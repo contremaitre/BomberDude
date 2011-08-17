@@ -18,68 +18,62 @@
 
 QBomb::QBomb()
 {
-    if (pixmaps.size()==0)
-    {
-        initPixList();
-    }
-
-    x=0;
-    y=0;
     size=0;
     currentPix=0;
+    initPixList();
 }
 void QBomb::initPixList()
 {
     QPixmap * tmpPix= new QPixmap("pictures/bomb.png");
     tmpPix->scaled(QSizeF(size,size).toSize());
     pixmaps.append(tmpPix);
-    tmpPix=&(QPixmap("pictures/bomb2.png").scaled(QSizeF(size,size).toSize()));
+
+    tmpPix= new QPixmap("pictures/bomb2.png");
+    tmpPix->scaled(QSizeF(size,size).toSize());
     pixmaps.append(tmpPix);
-    tmpPix=&(QPixmap("pictures/bomb3.png").scaled(QSizeF(size,size).toSize()));
+/*
+    tmpPix= new QPixmap("pictures/bomb3.png");
+    tmpPix->scaled(QSizeF(size,size).toSize());
     pixmaps.append(tmpPix);
 
-    qDebug()<<"test"<<pixmaps.at(0)<<pixmaps.at(0)->height();
-    qDebug()<<"size"<<size;
+    tmpPix= new QPixmap("pictures/bomb4.png");
+    tmpPix->scaled(QSizeF(size,size).toSize());
+    pixmaps.append(tmpPix);
+*/
 }
 
 QBomb::QBomb(int x, int y , int size)
 {
     currentPix=0;
     setPos(x,y,size);
-    bRect.setX(x);
-    bRect.setY(y);
-    bRect.setHeight(size);
-    bRect.setWidth(size);
     initPixList();
 
 }
 
 void QBomb::setPos(int x,int y,int size)
 {
-    this->x=x;
-    this->y=y;
+    setX(x);
+    setY(y);
     this->size=size;
-    bRect.setX(x);
-    bRect.setY(y);
-    bRect.setHeight(size);
-    bRect.setWidth(size);
-    //pix.setOffset(QPointF(x,y));
-}
-
-void QBomb::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-    qDebug() <<"ca paint "<<x<<" "<<y<<" "<<size;
-    qDebug() <<"bomb painter"<<painter;
-    qDebug() <<pixmaps.at(currentPix);
-    qDebug() <<pixmaps.at(currentPix)->isQBitmap();
-    painter->drawPixmap(x,y,size,size,*(pixmaps.at(currentPix)));
-   // pix.paint(painter,option,widget);
 }
 
 QRectF QBomb::boundingRect() const
 {
-    //qDebug() <<"boundingRect"<<pixmaps.at(currentPix)->rect().x()<<" "<<pixmaps.at(currentPix)->rect().y()<<" "<<pixmaps.at(currentPix)->rect().height();
-   // return pixmaps.at(currentPix)->rect();
-    qDebug()<<"boundingRect"<<bRect.x()<<" "<<bRect.y()<<" "<<bRect.height();
-    return bRect;
+    return QRectF(0,0,size,size);
+}
+
+void QBomb::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    painter->drawPixmap(0,0,size,size,*(pixmaps.at(currentPix)));
+}
+
+
+
+void QBomb::nextFrame()
+{
+    if (currentPix>=pixmaps.size()-1)
+        currentPix=0;
+    else
+        currentPix++;
+    update();
 }

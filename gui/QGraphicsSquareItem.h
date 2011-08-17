@@ -21,7 +21,7 @@
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsObject>
-
+#include <QDebug>
 
 //enum caseType
 //{

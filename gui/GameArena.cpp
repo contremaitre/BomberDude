@@ -277,6 +277,15 @@ void GameArena::slotHearbeatUpdated(qint32 value) {
         scene->addItem(textHurryUp2);
         QTimer::singleShot(3000, this, SLOT(slotRemoveHurryUp()));
     }
+
+    QMap<int, QBomb*>::iterator itb;
+    for (itb = bombs.begin();itb!=bombs.end();++itb)
+    {
+        itb.value()->nextFrame();
+    }
+
+
+
 }
 
 void GameArena::removeBurnt() {
@@ -337,18 +346,24 @@ void GameArena::slotRemoveBonus(qint16 x, qint16 y) {
 void GameArena::slotAddBomb(int id)
 {
     const BombClient& bomb = map->getRefBomb(id);
-    QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb.getX() - squareSize/2,
-                                                       bomb.getY() - squareSize/2,
-                                                       squareSize);
+    QBomb* pix = new QBomb(bomb.getX()-squareSize/2,
+                           bomb.getY() - squareSize/2,
+                           squareSize);
+   // QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb.getX() - squareSize/2,
+   //                                                    bomb.getY() - squareSize/2,
+   //                                                    squareSize);
+
+    //set order in the stack of the bomb (behind everything else)
     pix->setZValue(1.0);
-    if(bomb.getIsRC())
+    /*if(bomb.getIsRC())
         pix->setItem(pixmaps.getPixmapBombrc());
     else if(bomb.getDudBomb())
         pix->setItem(pixmaps.getPixmapBombDud());
     else
         pix->setItem(pixmaps.getPixmapBomb());
+    */
     bombs[id] = pix;
-    scene->addItem(pix->getItem());
+    scene->addItem(pix);
 }
 
 void GameArena::slotMovedBomb(int id)
@@ -363,26 +378,26 @@ void GameArena::slotFlyingBomb(int id)
     //qDebug() << "GameArena : new flying bomb";
     /* Todo : animate the flying bomb */
 }
-
+//todo vérifier s'il existe pas un moyen moins chelou pour supprimer un couple
 void GameArena::slotRemoveBomb(int id)
 {
-    QMap<int, QGraphicsSquareItem*>::iterator itb = bombs.find(id);
+    QMap<int, QBomb*>::iterator itb = bombs.find(id);
     if(itb != bombs.end()) {
-        scene->removeItem(itb.value()->getItem());
+        scene->removeItem(itb.value());
         bombs.erase(itb);
     }
 }
 
 void GameArena::slotRemoveBombRC(int id)
 {
-    QMap<int, QGraphicsSquareItem*>::iterator itb = bombs.find(id);
+    QMap<int, QBomb*>::iterator itb = bombs.find(id);
     if(itb != bombs.end()) {
         scene->removeItem(itb.value());
         const BombClient& bomb = map->getRefBomb(id);
-        QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb.getX() - squareSize/2,
+        QBomb* pix = new QBomb(bomb.getX() - squareSize/2,
                                                            bomb.getY() - squareSize/2,
                                                            squareSize);
-        pix->setItem(pixmaps.getPixmapBomb());
+        //pix->setItem(pixmaps.getPixmapBomb());
         *itb = pix;
         scene->addItem(pix);
         qDebug() << "gamearene : bomb lost rc";

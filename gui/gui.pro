@@ -1,8 +1,9 @@
 ROOT_PWD = ../
-DEPENDENCY_LIBRARIES = common network/client
+DEPENDENCY_LIBRARIES = common \
+    network/client
 include($${ROOT_PWD}lib_dep.pri)
-
-QT += network xml
+QT += network \
+    xml
 CONFIG += DEBUG
 TEMPLATE = app
 TARGET = ../QtBomberman
@@ -24,13 +25,14 @@ HEADERS += QGraphicsSquareItem.h \
     GamePlay.h \
     PixmapsItems.h \
     Settings.h \
-    startUi.h
+    startUi.h \
+    qbomb.h
 FORMS += ui/main_window.ui
-
 SOURCES += QGraphicsSquareItem.cpp \
     GameArena.cpp \
     GamePlay.cpp \
     main.cpp \
     PixmapsItems.cpp \
     Settings.cpp \
-    startUi.cpp
+    startUi.cpp \
+    qbomb.cpp
