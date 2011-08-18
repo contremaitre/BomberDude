@@ -283,7 +283,11 @@ void GameArena::slotHearbeatUpdated(qint32 value) {
     {
         itb.value()->nextFrame();
     }
-
+    QMap<int, QFlame*>::iterator itf;
+    for (itf = flames.begin();itf!=flames.end();++itf)
+    {
+        itf.value()->nextFrame();
+    }
 
 
 }
@@ -420,10 +424,10 @@ void GameArena::slotMapWinner(qint8 playerId) {
 
 void GameArena::slotAddFlame(int id, qint16 x, qint16 y)
 {
-    QGraphicsSquareItem* pixBonus = new QGraphicsSquareItem(x * squareSize,
-                                                            y * squareSize,
-                                                            squareSize);
-    pixBonus->setItem(pixmaps.getPixmapFlame());
+    QFlame* pixBonus = new QFlame(x * squareSize,
+                                   y * squareSize,
+                                   squareSize);
+    //pixBonus->setItem(pixmaps.getPixmapFlame());
 
     flames.insertMulti(id,pixBonus);
     scene->addItem(pixBonus);
@@ -431,7 +435,7 @@ void GameArena::slotAddFlame(int id, qint16 x, qint16 y)
 
 void GameArena::slotRemoveFlame(int id)
 {
-    QMap<int, QGraphicsSquareItem*>::iterator itb = flames.find(id);
+    QMap<int, QFlame*>::iterator itb = flames.find(id);
     while(itb != flames.end() && itb.key() == id) {
         scene->removeItem(itb.value());
         ++itb;

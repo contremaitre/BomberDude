@@ -26,7 +26,8 @@ HEADERS += QGraphicsSquareItem.h \
     PixmapsItems.h \
     Settings.h \
     startUi.h \
-    qbomb.h
+    qbomb.h \
+    QFlame.h
 FORMS += ui/main_window.ui
 SOURCES += QGraphicsSquareItem.cpp \
     GameArena.cpp \
@@ -35,4 +36,5 @@ SOURCES += QGraphicsSquareItem.cpp \
     PixmapsItems.cpp \
     Settings.cpp \
     startUi.cpp \
-    qbomb.cpp
+    qbomb.cpp \
+    QFlame.cpp
