@@ -349,19 +349,14 @@ void GameArena::slotAddBomb(int id)
     QBomb* pix = new QBomb(bomb.getX()-squareSize/2,
                            bomb.getY() - squareSize/2,
                            squareSize);
-   // QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb.getX() - squareSize/2,
-   //                                                    bomb.getY() - squareSize/2,
-   //                                                    squareSize);
 
     //set order in the stack of the bomb (behind everything else)
     pix->setZValue(1.0);
-    /*if(bomb.getIsRC())
-        pix->setItem(pixmaps.getPixmapBombrc());
+    if(bomb.getIsRC())
+        pix->setRC();
     else if(bomb.getDudBomb())
-        pix->setItem(pixmaps.getPixmapBombDud());
-    else
-        pix->setItem(pixmaps.getPixmapBomb());
-    */
+        pix->setDudBomb();
+
     bombs[id] = pix;
     scene->addItem(pix);
 }
@@ -392,15 +387,8 @@ void GameArena::slotRemoveBombRC(int id)
 {
     QMap<int, QBomb*>::iterator itb = bombs.find(id);
     if(itb != bombs.end()) {
-        scene->removeItem(itb.value());
-        const BombClient& bomb = map->getRefBomb(id);
-        QBomb* pix = new QBomb(bomb.getX() - squareSize/2,
-                                                           bomb.getY() - squareSize/2,
-                                                           squareSize);
-        //pix->setItem(pixmaps.getPixmapBomb());
-        *itb = pix;
-        scene->addItem(pix);
-        qDebug() << "gamearene : bomb lost rc";
+        itb.value()->setNormalBomb();
+
     }
 }
 
