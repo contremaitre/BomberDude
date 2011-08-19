@@ -27,7 +27,8 @@ HEADERS += QGraphicsSquareItem.h \
     Settings.h \
     startUi.h \
     qbomb.h \
-    QFlame.h
+    QFlame.h \
+    QAnimateditem.h
 FORMS += ui/main_window.ui
 SOURCES += QGraphicsSquareItem.cpp \
     GameArena.cpp \
@@ -37,4 +38,5 @@ SOURCES += QGraphicsSquareItem.cpp \
     Settings.cpp \
     startUi.cpp \
     qbomb.cpp \
-    QFlame.cpp
+    QFlame.cpp \
+    QAnimateditem.cpp

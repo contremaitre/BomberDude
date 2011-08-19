@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010,2011 Sébastien Escudier
+    Copyright (C) 2010 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,23 +13,42 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-#ifndef QFLAME_H
-#define QFLAME_H
-
-#include <QDebug>
+*/
 #include "QAnimateditem.h"
 
-class QFlame : public QAnimatedItem
+QAnimatedItem::QAnimatedItem()
 {
-private:
-     void initPixList();
+    size=0;
+    currentPix=0;
+}
 
-public:
-    QFlame();
-    QFlame(int,int,int);
-    static QList<QPixmap*> explosionPix;
-};
 
-#endif // QFLAME_H
+void QAnimatedItem::setPos(int x, int y, int size)
+{
+    setX(x);
+    setY(y);
+    this->size=size;
+}
+
+QRectF QAnimatedItem::boundingRect() const
+{
+    return QRectF(0,0,size,size);
+}
+
+
+void QAnimatedItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    painter->drawPixmap(0,0,size,size,*(currentAnim->at(currentPix)));
+}
+
+
+
+void QAnimatedItem::nextFrame()
+{
+    if (currentPix>=currentAnim->size()-1)
+        currentPix=0;
+    else
+        currentPix++;
+    update();
+}
+

@@ -19,12 +19,7 @@
 QList<QPixmap*> QFlame::explosionPix= QList<QPixmap*>();
 
 
-QFlame::QFlame()
-{
-    initPixList();
-    size=0;
-    currentPix=0;
-}
+
 void QFlame::initPixList()
 {
     if (QFlame::explosionPix.isEmpty())
@@ -44,33 +39,4 @@ QFlame::QFlame(int x, int y , int size)
     currentAnim=&QFlame::explosionPix;
     setPos(x,y,size);
 
-}
-
-
-void QFlame::setPos(int x,int y,int size)
-{
-    setX(x);
-    setY(y);
-    this->size=size;
-}
-
-QRectF QFlame::boundingRect() const
-{
-    return QRectF(0,0,size,size);
-}
-
-void QFlame::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-    painter->drawPixmap(0,0,size,size,*(currentAnim->at(currentPix)));
-}
-
-
-
-void QFlame::nextFrame()
-{
-    if (currentPix>=currentAnim->size()-1)
-        currentPix=0;
-    else
-        currentPix++;
-    update();
 }

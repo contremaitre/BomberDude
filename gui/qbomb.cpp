@@ -73,30 +73,7 @@ void QBomb::setRC()
     currentAnim=&QBomb::rcPix;
 }
 
-void QBomb::setPos(int x,int y,int size)
-{
-    setX(x);
-    setY(y);
-    this->size=size;
-}
-
-QRectF QBomb::boundingRect() const
-{
-    return QRectF(0,0,size,size);
-}
-
-void QBomb::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-    painter->drawPixmap(0,0,size,size,*(currentAnim->at(currentPix)));
-}
 
 
 
-void QBomb::nextFrame()
-{
-    if (currentPix>=currentAnim->size()-1)
-        currentPix=0;
-    else
-        currentPix++;
-    update();
-}
+
