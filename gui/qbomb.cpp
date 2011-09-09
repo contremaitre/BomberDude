@@ -41,10 +41,14 @@ void QBomb::initPixList()
     {
         QPixmap * tmpPix= new QPixmap("pictures/bomb_rc.png");
         QBomb::rcPix.append(tmpPix);
+        tmpPix= new QPixmap("pictures/bomb_rc2.png");
+        QBomb::rcPix.append(tmpPix);
     }
     if (QBomb::dudPix.isEmpty())
     {
         QPixmap * tmpPix= new QPixmap("pictures/bomb_dud.png");
+        QBomb::dudPix.append(tmpPix);
+        tmpPix= new QPixmap("pictures/bomb2.png");
         QBomb::dudPix.append(tmpPix);
     }
 }
