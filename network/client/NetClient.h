@@ -54,7 +54,7 @@ public:
     void stopServer();
     void selectMap(int direction);
     bool getIsAdmin()                   { return isAdmin; }
-    void quitGame();
+    void disconnectFromServer();
 
 private:
     QTcpSocket *tcpSocket;
@@ -95,7 +95,7 @@ signals:
     void sigUpdatePlayerData(qint32 playerId, QString playerName);
     void sigPlayerLeft(qint32 playerId);
 
-    void sigMapRandom();
+    void sigMapRandom(bool);
     void sigConnected();
     void sigConnectionError();
     void sigStatPing(int);
@@ -105,7 +105,7 @@ signals:
     void sigMapWinner(qint8 playerId);
     void sigGameStarted();
     void sigServerStopped();
-    void sigGameQuit();
+    void sigNetClientEnd();
 };
 
 

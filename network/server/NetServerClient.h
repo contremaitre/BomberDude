@@ -45,7 +45,7 @@ class NetServerClient : public QObject
   ~NetServerClient();
   void sendMap(const Map<PlayerServer,BombServer,mapStyle>&);
   void sendMapPreview(const Map<PlayerServer,BombServer,mapStyle>*);
-  void sendMapRandom();
+  void sendMapRandom(bool);
   void sendGameStarted();
   void sendUpdate(const QByteArray& block);
   void sendTcpBlock(const QByteArray& block);

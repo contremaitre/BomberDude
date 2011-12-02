@@ -27,7 +27,6 @@ Settings::Settings()
     serverAddress = qsettings->value("serverAddress",SERVER_ADDRESS).toString();
     serverPort = qsettings->value("serverPort",SERVER_PORT).toInt();
     sound = qsettings->value("sound", true).toBool();
-    showIpStats = qsettings->value("showIpStats", true).toBool();
     playerName = qsettings->value("playerName", "player").toString();
     if(playerName.isEmpty())
         playerName = "player"; //the user may have set an empty name
@@ -40,7 +39,6 @@ void Settings::save()
     qsettings->setValue("sound",sound);
     qsettings->setValue("serverAddress",serverAddress);
     qsettings->setValue("serverPort",serverPort);
-    qsettings->setValue("showIpStats",showIpStats);
     qsettings->setValue("playerName", playerName);
     qsettings->setValue("debugMode", debugMode);
 }
@@ -48,11 +46,6 @@ void Settings::save()
 bool Settings::isServer() const
 {
     return b_isServer;
-}
-
-bool Settings::getShowIpStats() const
-{
-    return showIpStats;
 }
 
 QString Settings::getServerAddress() const
@@ -81,11 +74,6 @@ bool Settings::isDebugMode() const {
 void Settings::setServer(bool val)
 {
     b_isServer = val;
-}
-
-void Settings::setShowIpStats(bool val)
-{
-    showIpStats = val;
 }
 
 void Settings::setServerPort(int port)

@@ -222,7 +222,7 @@ void NetServer::selectMap(qint8 direction)
         randomMap = true;
         return;
     }
-
+    bool randomMapOldValue = randomMap;
     if(direction == 2)
     {
         //switch to non random map and select the first available map
@@ -290,8 +290,13 @@ void NetServer::selectMap(qint8 direction)
         foreach(NetServerClient *client, clients)
         {
             client->sendMapPreview(mapPreview); //only usefull to send the map style list. Could be improved
-            client->sendMapRandom();
+            client->sendMapRandom(true);
         }
+    }
+    else if(randomMapOldValue)
+    {
+        foreach(NetServerClient *client, clients)
+                client->sendMapRandom(false);
     }
 }
 

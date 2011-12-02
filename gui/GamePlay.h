@@ -73,7 +73,7 @@ private slots:
     void mapReceived(MapClient*);
 //	void updateMap(QByteArray updateBlock);
     void mapPreviewReceived(MapClient*);
-    void slotMapRandom();
+    void slotMapRandom(bool);
     void slotTimeUpdated(int timeInSeconds);
     void gameStarted();
     void slotNewPlayerGraphic(int,const QPixmap &);

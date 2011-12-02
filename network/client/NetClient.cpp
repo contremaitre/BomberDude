@@ -175,9 +175,9 @@ void NetClient::stopServer()
     tcpSocket->write(block);
 }
 
-void NetClient::quitGame() {
+void NetClient::disconnectFromServer() {
     tcpSocket->close();
-    emit sigGameQuit();
+    emit sigNetClientEnd();
 }
 
 void NetClient::receiveUdp()
@@ -277,11 +277,15 @@ void NetClient::handleTcpMsg(QDataStream &in)
         emit mapPreviewReceived(mapPreview);
         break;
     case msg_map_random:
+    {
+        bool rand;
+        in >> rand;
         qDebug("NetClient random map");
         delete mapPreview;
         mapPreview = NULL;
-        emit sigMapRandom();
+        emit sigMapRandom(rand);
         break;
+    }
 	case msg_udp_stat:
 	{
 	    quint16 nbErrors;
