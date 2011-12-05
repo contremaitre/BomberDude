@@ -40,6 +40,7 @@ signals:
     void sigMaxPlayersValueChanged(int);
     void sigStart(int);
     void sigDisconnect();
+    void sigKickPlayer(int);
 
 private slots:
     void isServerChanged(int);
@@ -54,6 +55,7 @@ private slots:
     void slotStartButton();
     void slotDisconnectButton();
     void slotStartServer();
+    void slotKickButton();
 };
 
 

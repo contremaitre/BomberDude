@@ -309,13 +309,23 @@ void NetServer::setMaxPlayers(int value)
         qDebug() << "setMaxPlayers, too many players, disconnecting one";
         NetServerClient *last = clients.takeLast();
         delete last;
-
     }
 
     foreach(NetServerClient *client, clients)
         client->sendMaxPlayers(maxNbPlayers);
     if(!randomMap)
         selectMap(2); //check if the current map is ok with this number of player
+}
+
+void NetServer::kickPlayer(int id)
+{
+    for (QList<NetServerClient*>::iterator i = clients.begin(); i != clients.end(); ++i) {
+        if((*i)->getId() == id)
+        {
+            clientDisconected(*i);
+            break;
+        }
+    }
 }
 
 void NetServer::clientDisconected(NetServerClient *client)

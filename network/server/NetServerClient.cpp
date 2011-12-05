@@ -110,6 +110,14 @@ void NetServerClient::handleMsg(QDataStream &in)
             server->selectMap(direction);
         break;
     }
+    case msg_kick_player :
+    {
+        qint8 playerId;
+        in >> playerId;
+        if(isAdmin)
+            server->kickPlayer(playerId);
+        break;
+    }
     case msg_player_data: {
             QString name;
             in >> name;

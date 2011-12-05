@@ -85,6 +85,7 @@ private slots:
     void slotNewPlayerGraphic(int, const QPixmap &);
     void slotServerStopped();
     void closeGame();
+    void slotKickPlayer(int);
 };
 
 

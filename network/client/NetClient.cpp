@@ -163,6 +163,18 @@ void NetClient::selectMap(int direction)
     //qDebug() << "NetClient select map";
 }
 
+void NetClient::kickPlayer(int playerId)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << static_cast<quint16>(0);
+    out << static_cast<quint16>(msg_kick_player);
+    out << static_cast<qint8>(playerId);
+    setBlockSize(block, out);
+    tcpSocket->write(block);
+}
+
 void NetClient::stopServer()
 {
     QByteArray block;

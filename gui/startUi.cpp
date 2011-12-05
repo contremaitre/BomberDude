@@ -48,6 +48,7 @@ void StartUi::loadMenuFrame()
     connect(menuFrame->ui.randomMapCheck, SIGNAL(stateChanged(int)), this, SLOT(randomMapCheckedChanged(int)));
     connect(menuFrame, SIGNAL(sigStart(int)),this,SLOT(slotStartGame(int)));
     connect(menuFrame, SIGNAL(sigDisconnect()),this,SLOT(slotDisconnectGame()));
+    connect(menuFrame, SIGNAL(sigKickPlayer(int)), this, SLOT(slotKickPlayer(int)));
     gridLayout->addWidget(menuFrame);
 }
 
@@ -197,6 +198,11 @@ void StartUi::slotStartGame(int styleIndex)
     //qDebug() << "startui start game, style =" << styleIndex;
     if(gamePlay)
         gamePlay->getNetClient()->startGame(styleIndex-1);
+}
+
+void StartUi::slotKickPlayer(int playerId)
+{
+    gamePlay->getNetClient()->kickPlayer(playerId);
 }
 
 void StartUi::slotDisconnectGame()

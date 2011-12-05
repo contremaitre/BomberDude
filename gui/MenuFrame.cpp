@@ -20,6 +20,7 @@ MenuFrame::MenuFrame(Settings *settings, IpStats *ipStats, QSound *music, QFrame
     connect(ui.startGameButton,SIGNAL(clicked()),this,SLOT(slotStartButton()));
     connect(ui.disconnectButton,SIGNAL(clicked()),this,SLOT(slotDisconnectButton()));
     connect(ui.serverButton,SIGNAL(clicked()),this,SLOT(slotStartServer()));
+    connect(ui.kickButton,SIGNAL(clicked()),this,SLOT(slotKickButton()));
 
     //connect(ui.stopGame, SIGNAL(clicked()), this, SLOT(closeGame())); TODO
 
@@ -139,6 +140,17 @@ void MenuFrame::slotPlayerLeft(qint32 playerId)
     delete ui.playersList->takeItem(playerId,1);
 }
 
+void MenuFrame::slotKickButton()
+{
+    QList<QTableWidgetItem *> list = ui.playersList->selectedItems ();
+    if( !list.empty())
+    {
+        QTableWidgetItem *item = list.first();
+        int num = item->text().toInt();
+        emit sigKickPlayer(num);
+    }
+}
+
 void MenuFrame::slotMapRandom(bool rand)
 {
     if(rand)
@@ -169,7 +181,9 @@ void MenuFrame::slotStartButton()
 void MenuFrame::slotUpdatePlayerData(qint32 playerId, QString playerName) {
     QTableWidgetItem *newItem = new QTableWidgetItem(tr("%1").arg(playerId));
     ui.playersList->setItem(playerId, 0, newItem);
+    newItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     newItem = new QTableWidgetItem(playerName);
+    newItem->setFlags(Qt::ItemIsEnabled);
     ui.playersList->setItem(playerId, 1, newItem);
 }
 

@@ -24,7 +24,7 @@
 #ifndef NETMESSAGE_H
 #define NETMESSAGE_H
 
-#define NET_VERSION 7 //update this number if network compatibility is broken
+#define NET_VERSION 8 //update this number if network compatibility is broken
 
 enum NetMsgType
 {
@@ -51,6 +51,7 @@ enum NetMsgType
     msg_client_disconnected,// TCP server -> client, player left
     msg_opt_key,            // UDP client -> server, key option 1
     msg_server_stopped,     // TCP server -> client, the server has stopped (shut down or admin GUI crashed)
+    msg_kick_player,        // TCP client -> server, kick a player
 };
 
 #endif
