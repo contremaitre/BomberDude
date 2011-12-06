@@ -559,6 +559,7 @@ void NetServer::updateMap(QByteArray updateData) {
 }
 
 void NetServer::slotWinner(qint8 playerId) {
+    gameStarted = false;
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);

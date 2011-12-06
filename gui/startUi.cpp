@@ -22,6 +22,7 @@
 #include "GamePlay.h"
 #include "GameFrame.h"
 #include "MenuFrame.h"
+#include "InterGameFrame.h"
 
 StartUi::StartUi(QApplication *a)
 {
@@ -29,6 +30,8 @@ StartUi::StartUi(QApplication *a)
     server = NULL;
     menuFrame = NULL;
     gameFrame = NULL;
+    interGameFrame = NULL;
+    styleIndex = -1;
     qapp = a;
     settings = new Settings;
     setupUi(this);
@@ -52,6 +55,14 @@ void StartUi::loadMenuFrame()
     gridLayout->addWidget(menuFrame);
 }
 
+void StartUi::loagInterGameFrame()
+{
+    delete interGameFrame;
+    interGameFrame = new InterGameFrame( &playerListWidget, gamePlay->getNetClient()->getIsAdmin() );
+    connect(interGameFrame->ui.nextRoundButton,SIGNAL(clicked()),this,SLOT(slotNextRound()));
+    gridLayout->addWidget(interGameFrame);
+}
+
 void StartUi::loadGameFrame()
 {
     if( gameFrame )
@@ -60,6 +71,15 @@ void StartUi::loadGameFrame()
     connect( gamePlay, SIGNAL(sigTimeUpdated(int)), gameFrame->ui.gameClock, SLOT(display(int)));
     connect( gameFrame->ui.disconnectGameButton, SIGNAL(clicked()), this, SLOT(slotDisconnectGame()));
     gridLayout->addWidget(gameFrame);
+}
+
+void StartUi::slotLoadInterGame()
+{
+    delete menuFrame;
+    menuFrame = NULL;
+    delete gameFrame;
+    gameFrame = NULL;
+    loagInterGameFrame();
 }
 
 void StartUi::slotStartServer()
@@ -100,7 +120,7 @@ void StartUi::slotStartServer()
     {
         adminPassword = menuFrame->getAdminPassword();
     }
-    gamePlay = new GamePlay(this, settings, menuFrame->getGraphicPreview());
+    gamePlay = new GamePlay(settings, menuFrame->getGraphicPreview());
     NetClient *netclient = gamePlay->getNetClient();
 
     connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );
@@ -110,6 +130,7 @@ void StartUi::slotStartServer()
     connect( netclient, SIGNAL(sigConnectionError()), this, SLOT(slotConnectionError()), Qt::QueuedConnection);
     connect( netclient, SIGNAL(sigGameStarted()), this, SLOT(slotGameStarted()));
     connect( netclient, SIGNAL(sigNetClientEnd()), this, SLOT(closeGame()));
+    connect( netclient, SIGNAL(sigMapWinner(qint8)), this, SLOT(slotEndRound(qint8)));
 
     /* Connect some signals to the IP stats widget */
     connect( netclient, SIGNAL(sigStatPing(int)), &ipStats, SLOT(slotStatPing(int)));
@@ -169,6 +190,8 @@ void StartUi::closeGame()
     }
     delete gameFrame;
     gameFrame = NULL;
+    delete interGameFrame;
+    interGameFrame = NULL;
     loadMenuFrame();
 }
 
@@ -187,11 +210,17 @@ void StartUi::slotConnectionError()
     closeGame();
 }
 
-void StartUi::slotStartGame(int styleIndex)
+void StartUi::slotStartGame(int style)
 {
     //qDebug() << "startui start game, style =" << styleIndex;
+    styleIndex = style;
     if(gamePlay)
         gamePlay->getNetClient()->startGame(styleIndex-1);
+}
+
+void StartUi::slotNextRound()
+{
+    gamePlay->getNetClient()->startGame(styleIndex-1);
 }
 
 void StartUi::slotKickPlayer(int playerId)
@@ -214,7 +243,10 @@ void StartUi::slotGameStarted()
     qDebug() << "StartUi game started";
     delete menuFrame;
     menuFrame = NULL;
+    delete interGameFrame;
+    interGameFrame = NULL;
     loadGameFrame();
+    gamePlay->gameStarted(gameFrame->ui.gameGraphicView);
 }
 
 void StartUi::randomMapCheckedChanged(int state)
@@ -273,6 +305,11 @@ void StartUi::slotServerStopped()
     QMessageBox::warning(this, QString("Server stopped"),QString("The server was shut down, either by admin command or because the connection with the admin GUI was lost"));
 }
 
+void StartUi::slotEndRound(qint8)
+{
+    QTimer::singleShot(1000*5, this, SLOT(slotLoadInterGame()));
+}
+
 StartUi::~StartUi()
 {
     //setSettings(); TODO
@@ -292,4 +329,5 @@ StartUi::~StartUi()
     delete music;
     delete gameFrame;
     delete menuFrame;
+    delete interGameFrame;
 }

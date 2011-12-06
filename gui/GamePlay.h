@@ -41,10 +41,11 @@ class GamePlay : public QObject
   Q_OBJECT
 
 public:
-    GamePlay(QMainWindow *, Settings *, QGraphicsView *);
+    GamePlay(Settings *, QGraphicsView *);
     ~GamePlay();
     void cliConnect(const QString &pass);
     NetClient *getNetClient();
+    void gameStarted(QGraphicsView *);
 
 private:
     GameArena *gameArena;
@@ -75,7 +76,6 @@ private slots:
     void mapPreviewReceived(MapClient*);
     void slotMapRandom(bool);
     void slotTimeUpdated(int timeInSeconds);
-    void gameStarted();
     void slotNewPlayerGraphic(int,const QPixmap &);
 
 signals:

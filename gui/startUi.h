@@ -42,6 +42,7 @@ class Settings;
 class GameFrame;
 class MenuFrame;
 class GamePlay;
+class InterGameFrame;
 
 class StartUi : public QMainWindow, private Ui_MainWindow
 {
@@ -55,6 +56,7 @@ private:
     MenuFrame *menuFrame;
     GamePlay *gamePlay;
     GameFrame *gameFrame;
+    InterGameFrame *interGameFrame;
     PlayerListWidget playerListWidget;
     IpStats ipStats;
     Settings *settings;
@@ -63,8 +65,11 @@ private:
     QApplication *qapp;
     QString adminPassword;
 
+    int styleIndex; //remember the map style the first time we start the game
+
     void loadMenuFrame();
     void loadGameFrame();
+    void loagInterGameFrame();
 
 private slots:
     void slotStartServer();
@@ -76,6 +81,7 @@ private slots:
     void slotServerLaunchedError(QProcess::ProcessError error);
     void slotReadServerDebug();
     void slotStartGame(int);
+    void slotNextRound();
     void slotDisconnectGame();
     void slotMapLeftButton();
     void slotMapRightButton();
@@ -84,6 +90,8 @@ private slots:
     void slotServerStopped();
     void closeGame();
     void slotKickPlayer(int);
+    void slotEndRound(qint8);
+    void slotLoadInterGame();
 };
 
 

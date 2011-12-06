@@ -21,15 +21,16 @@
 #include "GamePlay.h"
 #include "constant.h"
 
-GamePlay::GamePlay(QMainWindow *mainw, Settings *set, QGraphicsView *mapGraphicPreview)
+GamePlay::GamePlay(Settings *set, QGraphicsView *mapGraphicPreview)
 {
     connect(&timer, SIGNAL(timeout()),this,SLOT(slotMoveTimer()));
     connect(&timerPing, SIGNAL(timeout()),this,SLOT(slotPingTimer()));
     timerPing.start(2000); // Ping every 2s
 
     leftK = rightK = upK = downK = false;
-    gameArena = new GameArena(mainw, NULL, BLOCK_SIZE);
-    gameArenaPreview = new GameArena(mainw, mapGraphicPreview, BLOCK_SIZE/2);  //todo : create a light class for the preview
+    gameArena = new GameArena(BLOCK_SIZE);
+    gameArenaPreview = new GameArena(BLOCK_SIZE/2);  //todo : create a light class for the preview
+    gameArenaPreview->setGraphicView(mapGraphicPreview);
     gameArena->getEventFilter(this);
     connect(gameArena, SIGNAL(sigTimeUpdated(int)), this, SLOT(slotTimeUpdated(int)));
     connect(gameArena, SIGNAL(sigNewPlayerGraphic(int,const QPixmap &)), this, SLOT(slotNewPlayerGraphic(int,const QPixmap &)));
@@ -37,7 +38,6 @@ GamePlay::GamePlay(QMainWindow *mainw, Settings *set, QGraphicsView *mapGraphicP
     //MAP_SIZE
     client = new NetClient;
     connect(client,SIGNAL(mapReceived(MapClient*)),this,SLOT(mapReceived(MapClient*)));
-    connect(client,SIGNAL(sigGameStarted()),this,SLOT(gameStarted()));
     connect(client,SIGNAL(mapPreviewReceived(MapClient*)),this,SLOT(mapPreviewReceived(MapClient*)));
     connect(client,SIGNAL(sigMapRandom(bool)),this,SLOT(slotMapRandom(bool)));
     connect(client, SIGNAL(sigMapWinner(qint8)), gameArena, SLOT(slotMapWinner(qint8)));
@@ -60,10 +60,10 @@ void GamePlay::mapReceived(MapClient *map)
     gameArena->setMap(map);
 }
 
-void GamePlay::gameStarted()
+void GamePlay::gameStarted(QGraphicsView *graphicView)
 {
     //qDebug() << "map received";
-    gameArena->createGraphics();
+    gameArena->setGraphicView(graphicView);
 }
 
 void GamePlay::slotMapRandom(bool rand)
@@ -74,9 +74,7 @@ void GamePlay::slotMapRandom(bool rand)
 
 void GamePlay::mapPreviewReceived(MapClient *map)
 {
-    //qDebug() << "map received, create graphics";
     gameArenaPreview->setMap(map);
-    gameArenaPreview->createGraphics();
 }
 
 void GamePlay::slotTimeUpdated(int timeInSeconds) {
@@ -207,5 +205,6 @@ NetClient *GamePlay::getNetClient()
 GamePlay::~GamePlay()
 {
     delete gameArena;
+    delete gameArenaPreview;
     delete client;
 }

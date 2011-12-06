@@ -23,7 +23,7 @@
 #include "GameArena.h"
 #include "Bonus.h"
 
-GameArena::GameArena(QMainWindow * mainw, QGraphicsView *view, int s) :
+GameArena::GameArena(int s) :
 	map(NULL),
 	textHurryUp1(NULL),
 	textHurryUp2(NULL),
@@ -35,27 +35,27 @@ GameArena::GameArena(QMainWindow * mainw, QGraphicsView *view, int s) :
 	squaresItem = NULL;
 	playersItem = NULL;
     scene = new QGraphicsScene;
-    mainWindow = mainw;
-    graphicView = view;
     pixmaps.init(squareSize, squareSize);
 }
 
 GameArena::~GameArena()
 {
-    while(!optionsItems.empty())
-    {
-        QGraphicsSquareItem* item = optionsItems.takeFirst();
-        scene->removeItem(item);
-        delete item;
-    }
-    slotRemoveHurryUp();
     clear();
-    delete graphicView;
-    //delete scene; todo crash ?
+    delete scene;
+}
+
+void GameArena::setGraphicView(QGraphicsView *gv)
+{
+    graphicView = gv;
+    Q_ASSERT(graphicView);
+    graphicView->setFocus();
+    graphicView->setScene(scene);
 }
 
 void GameArena::createGraphics()
 {
+
+
     for(int i = 0; i < width; i++)
     {
         for(int j = 0; j < height; j++)
@@ -64,6 +64,7 @@ void GameArena::createGraphics()
             scene->addItem(m_case->getItem());
         }
     }
+    /*
     if(!graphicView)
     {
         graphicView = new QGraphicsView(mainWindow);
@@ -78,6 +79,7 @@ void GameArena::createGraphics()
     {
         graphicView->setScene(scene);
     }
+    */
 }
 
 void GameArena::getEventFilter(QObject *obj)
@@ -87,6 +89,7 @@ void GameArena::getEventFilter(QObject *obj)
 
 void GameArena::clear()
 {
+    /* if we dont delete squaresItem manually, the scene->clear crash... why ? */
     if (squaresItem)
     {
         for (int i = 0; i < width * height; i++)
@@ -94,8 +97,18 @@ void GameArena::clear()
         delete[] squaresItem;
         squaresItem = NULL;
     }
-    delete[] playersItem;
+    delete []playersItem;
     playersItem = NULL;
+
+    while(!optionsItems.empty())
+    {
+        QGraphicsSquareItem* item = optionsItems.takeFirst();
+        //scene->removeItem(item);
+        delete item;
+    }
+    slotRemoveHurryUp();
+
+    scene->clear();
 }
 
 void GameArena::setMap(MapClient *newMap)
@@ -152,6 +165,7 @@ void GameArena::setMap(MapClient *newMap)
     connect(map, SIGNAL(sigRemoveBombRC(int)), this, SLOT(slotRemoveBombRC(int)), Qt::DirectConnection);
     connect(map, SIGNAL(sigAddFlame(int,qint16,qint16)), this, SLOT(slotAddFlame(int,qint16,qint16)));
     connect(map, SIGNAL(sigRemoveFlame(int)), this, SLOT(slotRemoveFlame(int)));
+    createGraphics();
 }
 
 void GameArena::movePlayer(int player, int x, int y)
@@ -238,12 +252,7 @@ QGraphicsSquareItem *GameArena::getCase(int pos)
 {
 	return squaresItem[pos];
 }
-/*
-QGraphicsSquareItem *GameArena::getPlayer(int id)
-{
-    return &playersItem[id].item;
-}
-*/
+
 void GameArena::slotHearbeatUpdated(qint32 value) {
     int newTime = value / (1000 / HEARTBEAT);
 
@@ -290,8 +299,8 @@ void GameArena::slotRemoveHurryUp()
 {
     if(textHurryUp1 && textHurryUp2)
     {
-        scene->removeItem(textHurryUp1);
-        scene->removeItem(textHurryUp2);
+        //scene->removeItem(textHurryUp1);
+        //scene->removeItem(textHurryUp2);
         delete textHurryUp1;
         delete textHurryUp2;
         textHurryUp1 = NULL;
