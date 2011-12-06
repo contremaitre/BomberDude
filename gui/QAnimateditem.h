@@ -31,11 +31,16 @@ private:
         virtual void initPixList()=0;
 
 public:
-        int size, currentPix;
+        /** size of the item (it is supposed to be a square*/
+        int size;
+        /** index of the picture currently displayed from currentAnim*/
+        int currentPix;
+        /** list of the pictures for the animation currently displayed*/
         QList<QPixmap*>* currentAnim;
         QAnimatedItem();
         void setPos(int,int,int);
         void nextFrame();
+        static void appendNewFrame(QList<QPixmap*>* anim, char const* path);
 };
 
 #endif // QANIMATEDITEM_H

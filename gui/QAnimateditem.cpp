@@ -52,3 +52,8 @@ void QAnimatedItem::nextFrame()
     update();
 }
 
+void QAnimatedItem::appendNewFrame(QList<QPixmap*>* anim, char const* path)
+{
+    QPixmap * tmpPix= new QPixmap(path);
+    anim->append(tmpPix);
+}

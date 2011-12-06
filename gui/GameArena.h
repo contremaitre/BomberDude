@@ -29,7 +29,7 @@
 #include "QGraphicsSquareItem.h"
 #include "MapClient.h"
 #include "PixmapsItems.h"
-
+#include "QPlayer.h"
 
 // necessary to use QPoint in a QMap
 bool operator<(const QPoint&, const QPoint&);
