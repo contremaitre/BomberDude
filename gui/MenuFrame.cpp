@@ -5,10 +5,11 @@
 #include "constant.h"
 #include "Settings.h"
 #include "IpStats.h"
+#include "PlayerListWidget.h"
 #include "NetClient.h"
 
-MenuFrame::MenuFrame(Settings *settings, IpStats *ipStats, QSound *music, QFrame *parent)
-    : QFrame(parent), settings(settings), ipStats(ipStats), music(music)
+MenuFrame::MenuFrame(Settings *settings, IpStats *ipStats, PlayerListWidget *playerListWidget, QSound *music, QFrame *parent)
+    : QFrame(parent), settings(settings), ipStats(ipStats), playerListWidget(playerListWidget), music(music)
 {
     ui.setupUi(this);
     ui.playerName->setMaxLength(MAX_PLAYER_NAME_LENGTH);
@@ -25,6 +26,7 @@ MenuFrame::MenuFrame(Settings *settings, IpStats *ipStats, QSound *music, QFrame
     //connect(ui.stopGame, SIGNAL(clicked()), this, SLOT(closeGame())); TODO
 
     ipStats->setParent(ui.IpStatHolder);
+    playerListWidget->setParent(ui.playerListWidgetHolder);
     QSize size2(ui.serverStatus->width(), ui.serverStatus->height());
     QPixmap load = QPixmap("pictures/loading.png");
     loading = load.scaled(size2);
@@ -236,4 +238,5 @@ MenuFrame::~MenuFrame()
 {
     //todo destroy player list
     ipStats->setParent(NULL);
+    playerListWidget->setParent(NULL);
 }

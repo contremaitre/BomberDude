@@ -40,7 +40,7 @@ void StartUi::loadMenuFrame()
 {
     if( menuFrame )
         delete menuFrame;
-    menuFrame = new MenuFrame(settings, &ipStats, music);
+    menuFrame = new MenuFrame(settings, &ipStats, &playerListWidget, music);
     connect(menuFrame->ui.maxPlayersBox, SIGNAL(valueChanged(int)), this, SLOT(slotMaxPlayersValueChanged(int)));
     connect(menuFrame->ui.serverButton,SIGNAL(clicked()),this,SLOT(slotStartServer()));
     connect(menuFrame->ui.mapRightButton, SIGNAL(clicked()), this, SLOT(slotMapRightButton()));
@@ -56,7 +56,7 @@ void StartUi::loadGameFrame()
 {
     if( gameFrame )
         return;
-    gameFrame = new GameFrame( &ipStats );
+    gameFrame = new GameFrame( &ipStats, &playerListWidget );
     connect( gamePlay, SIGNAL(sigTimeUpdated(int)), gameFrame->ui.gameClock, SLOT(display(int)));
     connect( gameFrame->ui.disconnectGameButton, SIGNAL(clicked()), this, SLOT(slotDisconnectGame()));
     gridLayout->addWidget(gameFrame);
@@ -104,7 +104,6 @@ void StartUi::slotStartServer()
     NetClient *netclient = gamePlay->getNetClient();
 
     connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );
-    connect( gamePlay, SIGNAL(sigNewPlayerGraphic(int,const QPixmap &)), this, SLOT(slotNewPlayerGraphic(int,const QPixmap &)));
     menuFrame->setNetClient(netclient);
     connect( netclient, SIGNAL(sigConnected()), this, SLOT(slotConnectedToServer()));
     connect( netclient, SIGNAL(sigConnectionError()), this, SLOT(slotConnectionError()), Qt::QueuedConnection);
@@ -112,6 +111,10 @@ void StartUi::slotStartServer()
     connect( netclient, SIGNAL(sigStatPacketLoss(double)), this, SLOT(statPacketLoss(double)));
     connect( netclient, SIGNAL(sigGameStarted()), this, SLOT(slotGameStarted()));
     connect( netclient, SIGNAL(sigNetClientEnd()), this, SLOT(closeGame()));
+
+    connect( netclient, SIGNAL(sigUpdatePlayerData(qint32, QString)), &playerListWidget, SLOT(slotAddPlayer(qint32, QString)));
+    connect( gamePlay, SIGNAL(sigNewPlayerGraphic(int,const QPixmap &)), &playerListWidget, SLOT(slotNewPlayerGraphic(int,const QPixmap &)));
+    connect( netclient, SIGNAL(sigPlayerLeft(qint32)), &playerListWidget, SLOT(slotRemovePlayer(qint32)));
 
     // must be queued otherwise NetClient instance is deleted before finishing its processing
     connect( netclient, SIGNAL(sigServerStopped()), this, SLOT(slotServerStopped()), Qt::QueuedConnection);
@@ -171,8 +174,6 @@ void StartUi::closeGame()
         delete gamePlay;
         gamePlay = NULL;
     }
-    while(!labelsPlayerList.empty())
-        delete labelsPlayerList.takeFirst();
     delete gameFrame;
     gameFrame = NULL;
     loadMenuFrame();

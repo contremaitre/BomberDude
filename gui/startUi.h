@@ -36,6 +36,7 @@
 #include "ui_MainWindow.h"
 #include "MenuFrame.h"
 #include "IpStats.h"
+#include "PlayerListWidget.h"
 
 class Settings;
 class GameFrame;
@@ -54,14 +55,13 @@ private:
     MenuFrame *menuFrame;
     GamePlay *gamePlay;
     GameFrame *gameFrame;
+    PlayerListWidget playerListWidget;
     IpStats ipStats;
     Settings *settings;
     QSound *music;
     QProcess *server;
     QApplication *qapp;
     QString adminPassword;
-
-    QList <QLabel *> labelsPlayerList;
 
     void loadMenuFrame();
     void loadGameFrame();

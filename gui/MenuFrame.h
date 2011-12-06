@@ -5,6 +5,7 @@
 
 class Settings;
 class IpStats;
+class PlayerListWidget;
 class QSound;
 class NetClient;
 class MapClient;
@@ -14,7 +15,7 @@ class MenuFrame : public QFrame
     Q_OBJECT
 
 public:
-    MenuFrame(Settings *settings, IpStats *ipStats, QSound *music, QFrame *parent = 0);
+    MenuFrame(Settings *settings, IpStats *ipStats, PlayerListWidget *playerListWidget, QSound *music, QFrame *parent = 0);
     ~MenuFrame();
     QString getAdminPassword() const;
     QGraphicsView *getGraphicPreview() const;
@@ -26,6 +27,8 @@ public:
 private:
     Settings *settings;
     IpStats *ipStats;
+    PlayerListWidget *playerListWidget;
+
     QPixmap loading;
 
     QSound *music; //TODO, move music handling in StartUi

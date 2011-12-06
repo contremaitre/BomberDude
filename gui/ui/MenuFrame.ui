@@ -107,21 +107,6 @@
     </property>
    </widget>
   </widget>
-  <widget class="QWidget" name="gridLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>660</x>
-     <y>140</y>
-     <width>121</width>
-     <height>121</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="playerListLayout">
-    <property name="spacing">
-     <number>0</number>
-    </property>
-   </layout>
-  </widget>
   <widget class="QWidget" name="adminWidget" native="true">
    <property name="geometry">
     <rect>
@@ -491,6 +476,22 @@
    </property>
    <property name="text">
     <string>Disconnect</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="playerListWidgetHolder" native="true">
+   <property name="geometry">
+    <rect>
+     <x>640</x>
+     <y>90</y>
+     <width>150</width>
+     <height>200</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
   </widget>
  </widget>

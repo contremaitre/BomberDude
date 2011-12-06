@@ -64,6 +64,16 @@
     <string>Disconnect</string>
    </property>
   </widget>
+  <widget class="QWidget" name="playerListWidgetHolder" native="true">
+   <property name="geometry">
+    <rect>
+     <x>640</x>
+     <y>220</y>
+     <width>150</width>
+     <height>200</height>
+    </rect>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
