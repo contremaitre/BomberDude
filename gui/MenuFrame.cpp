@@ -208,17 +208,6 @@ void MenuFrame::soundChanged(int state)
     toggleMusic(state != 0);
 }
 
-void MenuFrame::setNetClient(NetClient *netclient)
-{
-    connect( netclient, SIGNAL(sigConnected()), this, SLOT(slotConnectedToServer()));
-    connect( netclient, SIGNAL(sigIsServerAdmin()), this, SLOT(slotIsServerAdmin()));
-    connect( netclient, SIGNAL(sigUpdatePlayerData(qint32,QString)), this, SLOT(slotUpdatePlayerData(qint32,QString)));
-    connect( netclient, SIGNAL(sigMaxPlayersChanged(int)), this, SLOT(slotMaxPlayersValueChanged(int)));
-    connect( netclient, SIGNAL(sigMapRandom(bool)), this, SLOT(slotMapRandom(bool)));
-    connect( netclient, SIGNAL(mapPreviewReceived(MapClient*)),this,SLOT(slotMapPreviewReceived(MapClient*)));
-    connect( netclient, SIGNAL(sigPlayerLeft(qint32)), this, SLOT(slotPlayerLeft(qint32)));
-}
-
 const QString MenuFrame::getPlayerName() const
 {
     return ui.playerName->text();

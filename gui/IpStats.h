@@ -3,10 +3,6 @@
 
 #include "ui_IpStats.h"
 
-enum IpState { STATUS_OK,
-                STATUS_WARN,
-                STATUS_BAD,
-              };
 
 class IpStats : public QWidget
 {
@@ -14,8 +10,7 @@ class IpStats : public QWidget
 
 public:
     IpStats(QWidget *parent = 0);
-    void setPingState(IpState state);
-    void setPacketLostState(IpState state);
+
 private:
     Ui_IpStats ui;
     QPixmap statusGrey;
@@ -25,9 +20,9 @@ private:
 
     void loadPixmaps();
 
-signals:
-
 private slots:
+    void slotStatPacketLoss(double);
+    void slotStatPing(int);
 };
 
 

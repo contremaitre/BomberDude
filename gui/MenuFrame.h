@@ -20,7 +20,6 @@ public:
     QString getAdminPassword() const;
     QGraphicsView *getGraphicPreview() const;
     const QString getPlayerName() const;
-    void setNetClient(NetClient *);
     Ui_MenuFrame ui;
     bool setSettings();
 

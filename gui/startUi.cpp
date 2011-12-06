@@ -104,14 +104,27 @@ void StartUi::slotStartServer()
     NetClient *netclient = gamePlay->getNetClient();
 
     connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );
-    menuFrame->setNetClient(netclient);
+
+    /* Connect some signals to the ourselves */
     connect( netclient, SIGNAL(sigConnected()), this, SLOT(slotConnectedToServer()));
     connect( netclient, SIGNAL(sigConnectionError()), this, SLOT(slotConnectionError()), Qt::QueuedConnection);
-    connect( netclient, SIGNAL(sigStatPing(int)), this, SLOT(statPing(int)));
-    connect( netclient, SIGNAL(sigStatPacketLoss(double)), this, SLOT(statPacketLoss(double)));
     connect( netclient, SIGNAL(sigGameStarted()), this, SLOT(slotGameStarted()));
     connect( netclient, SIGNAL(sigNetClientEnd()), this, SLOT(closeGame()));
 
+    /* Connect some signals to the IP stats widget */
+    connect( netclient, SIGNAL(sigStatPing(int)), &ipStats, SLOT(slotStatPing(int)));
+    connect( netclient, SIGNAL(sigStatPacketLoss(double)), &ipStats, SLOT(slotStatPacketLoss(double)));
+
+    /* Connect some signals to the frame menu */
+    connect( netclient, SIGNAL(sigConnected()), menuFrame, SLOT(slotConnectedToServer()));
+    connect( netclient, SIGNAL(sigIsServerAdmin()), menuFrame, SLOT(slotIsServerAdmin()));
+    connect( netclient, SIGNAL(sigUpdatePlayerData(qint32,QString)), menuFrame, SLOT(slotUpdatePlayerData(qint32,QString)));
+    connect( netclient, SIGNAL(sigMaxPlayersChanged(int)), menuFrame, SLOT(slotMaxPlayersValueChanged(int)));
+    connect( netclient, SIGNAL(sigMapRandom(bool)), menuFrame, SLOT(slotMapRandom(bool)));
+    connect( netclient, SIGNAL(mapPreviewReceived(MapClient*)), menuFrame,SLOT(slotMapPreviewReceived(MapClient*)));
+    connect( netclient, SIGNAL(sigPlayerLeft(qint32)), menuFrame, SLOT(slotPlayerLeft(qint32)));
+
+    /* Connect some signals to the player list */
     connect( netclient, SIGNAL(sigUpdatePlayerData(qint32, QString)), &playerListWidget, SLOT(slotAddPlayer(qint32, QString)));
     connect( gamePlay, SIGNAL(sigNewPlayerGraphic(int,const QPixmap &)), &playerListWidget, SLOT(slotNewPlayerGraphic(int,const QPixmap &)));
     connect( netclient, SIGNAL(sigPlayerLeft(qint32)), &playerListWidget, SLOT(slotRemovePlayer(qint32)));
@@ -128,26 +141,6 @@ void StartUi::slotMaxPlayersValueChanged(int value)
 {
     if(gamePlay)
         gamePlay->getNetClient()->setMaxPlayers(value);
-}
-
-void StartUi::statPacketLoss(double packet_loss)
-{
-    if (packet_loss == 0)
-        ipStats.setPacketLostState(STATUS_OK);
-    else if (packet_loss <= 0.01)
-        ipStats.setPacketLostState(STATUS_WARN);
-    else
-        ipStats.setPacketLostState(STATUS_BAD);
-}
-
-void StartUi::statPing(int ping)
-{
-    if (ping < 60)
-        ipStats.setPingState(STATUS_OK);
-    else if (ping < 100)
-        ipStats.setPingState(STATUS_WARN);
-    else
-        ipStats.setPingState(STATUS_BAD);
 }
 
 void StartUi::slotConnectedToServer()

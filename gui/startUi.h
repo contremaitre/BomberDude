@@ -69,8 +69,6 @@ private:
 private slots:
     void slotStartServer();
     void slotMaxPlayersValueChanged(int);
-    void statPing(int);
-    void statPacketLoss(double);
     void randomMapCheckedChanged(int);
     void slotConnectionError();
     void slotConnectedToServer();

@@ -29,34 +29,22 @@ void IpStats::loadPixmaps()
 
 }
 
-void IpStats::setPingState(IpState state)
+void IpStats::slotStatPacketLoss(double packet_loss)
 {
-    switch(state)
-    {
-    case STATUS_OK:
-        ui.ping_pic->setPixmap(statusGreen);
-        break;
-    case STATUS_WARN:
-        ui.ping_pic->setPixmap(statusYellow);
-        break;
-    case STATUS_BAD:
-        ui.ping_pic->setPixmap(statusRed);
-        break;
-    }
+    if (packet_loss == 0)
+        ui.pack_loss_pic->setPixmap(statusGreen);
+    else if (packet_loss <= 0.01)
+        ui.pack_loss_pic->setPixmap(statusYellow);
+    else
+        ui.pack_loss_pic->setPixmap(statusRed);
 }
 
-void IpStats::setPacketLostState(IpState state)
+void IpStats::slotStatPing(int ping)
 {
-    switch(state)
-    {
-    case STATUS_OK:
-        ui.pack_loss_pic->setPixmap(statusGreen);
-        break;
-    case STATUS_WARN:
-        ui.pack_loss_pic->setPixmap(statusYellow);
-        break;
-    case STATUS_BAD:
-        ui.pack_loss_pic->setPixmap(statusRed);
-        break;
-    }
+    if (ping < 60)
+        ui.ping_pic->setPixmap(statusGreen);
+    else if (ping < 100)
+        ui.ping_pic->setPixmap(statusYellow);
+    else
+        ui.ping_pic->setPixmap(statusRed);
 }
