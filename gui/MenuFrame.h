@@ -42,7 +42,7 @@ signals:
     void sigMaxPlayersValueChanged(int);
     void sigStart(int);
     void sigDisconnect();
-    void sigKickPlayer(int);
+    void sigKickPlayer(qint8);
 
 private slots:
     void isServerChanged(int);
@@ -50,10 +50,10 @@ private slots:
     void slotConnectedToServer();
     void slotIsServerAdmin();
     void slotMaxPlayersValueChanged(int);
-    void slotUpdatePlayerData(qint32 playerId, QString playerName);
+    void slotUpdatePlayerData(qint8 playerId, QString playerName);
     void slotMapRandom(bool);
     void slotMapPreviewReceived(MapClient*);
-    void slotPlayerLeft(qint32 playerId);
+    void slotPlayerLeft(qint8 playerId);
     void slotStartButton();
     void slotDisconnectButton();
     void slotStartServer();

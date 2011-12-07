@@ -136,7 +136,7 @@ void MenuFrame::slotMaxPlayersValueChanged(int maxPlayers)
     ui.maxPlayersBox->setValue(maxPlayers);
 }
 
-void MenuFrame::slotPlayerLeft(qint32 playerId)
+void MenuFrame::slotPlayerLeft(qint8 playerId)
 {
     delete ui.playersList->takeItem(playerId,0);
     delete ui.playersList->takeItem(playerId,1);
@@ -180,7 +180,7 @@ void MenuFrame::slotStartButton()
     emit sigStart(ui.mapOptionCBox->currentIndex());
 }
 
-void MenuFrame::slotUpdatePlayerData(qint32 playerId, QString playerName) {
+void MenuFrame::slotUpdatePlayerData(qint8 playerId, QString playerName) {
     QTableWidgetItem *newItem = new QTableWidgetItem(tr("%1").arg(playerId));
     ui.playersList->setItem(playerId, 0, newItem);
     newItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);

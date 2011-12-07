@@ -32,7 +32,7 @@ NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, bool admi
     peerAddress = tcpSocket->peerAddress();
     peerUdpPort = tcpSocket->peerPort();
     playerId = id;
-    playerNumber = -1;
+    score = 0;
     blockSize = 0;
     udpCpt = 0;
     packetErrors = 0;
@@ -236,9 +236,19 @@ void NetServerClient::sendUdpStats()
     tcpSocket->write(block);
 }
 
-int NetServerClient::getId() const
+qint8 NetServerClient::getId() const
 {
     return playerId;
+}
+
+qint16 NetServerClient::getScore() const
+{
+    return score;
+}
+
+void NetServerClient::setScore(qint16 s)
+{
+    score = s;
 }
 
 QHostAddress NetServerClient::getAddress() const

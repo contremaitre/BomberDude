@@ -86,10 +86,10 @@ private slots:
     void slotMapLeftButton();
     void slotMapRightButton();
     void slotGameStarted();
-    void slotNewPlayerGraphic(int, const QPixmap &);
+    void slotNewPlayerGraphic(qint8, const QPixmap &);
     void slotServerStopped();
     void closeGame();
-    void slotKickPlayer(int);
+    void slotKickPlayer(qint8);
     void slotEndRound(qint8);
     void slotLoadInterGame();
 };

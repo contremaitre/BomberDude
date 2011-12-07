@@ -52,7 +52,9 @@ class NetServerClient : public QObject
   QHostAddress getAddress() const;
   quint16 getPeerUdpPort() const;
 
-  int getId() const;
+  qint8 getId() const;
+  qint16 getScore() const;
+  void setScore(qint16);
   const QString& getPlayerName() const      { return playerName; }
 
   void udpReceived(quint32 pckNum);
@@ -73,9 +75,9 @@ class NetServerClient : public QObject
   void handleMsg(QDataStream &);
   void sendIsAdmin();
 
-  int playerId;
-  int playerNumber;
+  qint8 playerId;
   QString playerName;
+  qint16 score;
 
   quint16 blockSize; //size of the current message
 
@@ -85,7 +87,7 @@ private slots:
 
 signals:
     void disconected(NetServerClient*);
-    void sigUpdatePlayerData(int playerId, QString playerName);
+    void sigUpdatePlayerData(qint8 playerId, QString playerName);
 };
 
 

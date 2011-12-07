@@ -53,7 +53,7 @@ public:
     //call this function when the game is launched
     bool loadMap(int);
     void setMaxPlayers(int);
-    void kickPlayer(int);
+    void kickPlayer(qint8);
     void startGame(int);
     void selectMap(qint8 direction);
     bool passwordReceived(int id, QString &pass);
@@ -81,7 +81,7 @@ private:
     int readMove(QDataStream &in);
     void sendUdpWelcomeAck(QHostAddress sender, quint16 senderPort);
     void sendPingBack(quint32 cpt, QHostAddress sender, quint16 senderPort);
-    void sendCLientDisconnected(int playerId);
+    void sendCLientDisconnected(qint8 playerId);
     void allocMap();
     void setBlockSize(const QByteArray &block, QDataStream & out);
 
@@ -89,7 +89,7 @@ private slots:
     void incomingClient();
     void clientDisconected(NetServerClient *);
     void receiveUdp();
-    void slotUpdatePlayerData(int playerId, QString playerName);
+    void slotUpdatePlayerData(qint8 playerId, QString playerName);
     void slotNoAdmin();             // if started from the GUI yet no admin connection after a few seconds  
 
 	// to be called in its own thread (otherwise the QTimer object can fail to send signals)

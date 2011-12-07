@@ -7,7 +7,7 @@ PlayerListWidget::PlayerListWidget(QWidget *parent) : QWidget(parent)
     ui.setupUi(this);
 }
 
-void PlayerListWidget::slotAddPlayer(qint32 playerId, QString name)
+void PlayerListWidget::slotAddPlayer(qint8 playerId, QString name)
 {
     qDebug() << "PlayerListWidget new player" << playerId << name;
     QLayoutItem * old = ui.playerListLayout->itemAtPosition ( playerId, 1 );
@@ -19,10 +19,11 @@ void PlayerListWidget::slotAddPlayer(qint32 playerId, QString name)
     {
         QLabel *label = new QLabel(name);
         ui.playerListLayout->addWidget(label,playerId,1);
+        slotUpdatePlayerScore(playerId, 0);
     }
 }
 
-void PlayerListWidget::slotNewPlayerGraphic(int playerId, const QPixmap &pix)
+void PlayerListWidget::slotNewPlayerGraphic(qint8 playerId, const QPixmap &pix)
 {
     qDebug() << "PlayerListWidget new graphic" << playerId;
     QLayoutItem * old = ui.playerListLayout->itemAtPosition ( playerId, 0 );
@@ -38,9 +39,9 @@ void PlayerListWidget::slotNewPlayerGraphic(int playerId, const QPixmap &pix)
     }
 }
 
-void PlayerListWidget::slotUpdatePlayerScore(int playerId, int score)
+void PlayerListWidget::slotUpdatePlayerScore(qint8 playerId, qint16 score)
 {
-    qDebug() << "PlayerListWidget new score" << playerId;
+    qDebug() << "PlayerListWidget new score" << playerId << score;
     QLayoutItem * old = ui.playerListLayout->itemAtPosition ( playerId, 2 );
     if(old)
     {
@@ -53,7 +54,7 @@ void PlayerListWidget::slotUpdatePlayerScore(int playerId, int score)
     }
 }
 
-void PlayerListWidget::slotRemovePlayer(qint32 playerId)
+void PlayerListWidget::slotRemovePlayer(qint8 playerId)
 {
     QLayoutItem *child;
     for(int i = 0; i < 3; i++)
@@ -66,7 +67,7 @@ void PlayerListWidget::slotRemovePlayer(qint32 playerId)
     }
 }
 
-PlayerListWidget::~PlayerListWidget()
+void PlayerListWidget::clear()
 {
     QLayoutItem *child;
     while ((child = ui.playerListLayout->takeAt(0)) != 0)
@@ -74,4 +75,9 @@ PlayerListWidget::~PlayerListWidget()
         delete child->widget();
         delete child;
     }
+}
+
+PlayerListWidget::~PlayerListWidget()
+{
+    clear();
 }

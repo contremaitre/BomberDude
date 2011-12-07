@@ -33,7 +33,7 @@ GamePlay::GamePlay(Settings *set, QGraphicsView *mapGraphicPreview)
     gameArenaPreview->setGraphicView(mapGraphicPreview);
     gameArena->getEventFilter(this);
     connect(gameArena, SIGNAL(sigTimeUpdated(int)), this, SLOT(slotTimeUpdated(int)));
-    connect(gameArena, SIGNAL(sigNewPlayerGraphic(int,const QPixmap &)), this, SLOT(slotNewPlayerGraphic(int,const QPixmap &)));
+    connect(gameArena, SIGNAL(sigNewPlayerGraphic(qint8,const QPixmap &)), this, SLOT(slotNewPlayerGraphic(qint8,const QPixmap &)));
 
     //MAP_SIZE
     client = new NetClient;
@@ -81,7 +81,7 @@ void GamePlay::slotTimeUpdated(int timeInSeconds) {
     emit sigTimeUpdated(timeInSeconds);
 }
 
-void GamePlay::slotNewPlayerGraphic(int pl, const QPixmap &pix) {
+void GamePlay::slotNewPlayerGraphic(qint8 pl, const QPixmap &pix) {
     emit sigNewPlayerGraphic(pl,pix);
 }
 

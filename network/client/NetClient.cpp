@@ -163,7 +163,7 @@ void NetClient::selectMap(int direction)
     //qDebug() << "NetClient select map";
 }
 
-void NetClient::kickPlayer(int playerId)
+void NetClient::kickPlayer(qint8 playerId)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
@@ -322,7 +322,7 @@ void NetClient::handleTcpMsg(QDataStream &in)
 	}
 
     case msg_update_player_data: {
-            qint32 playerId;
+            qint8 playerId;
             QString playerName;
 
             in >> playerId;
@@ -338,15 +338,22 @@ void NetClient::handleTcpMsg(QDataStream &in)
         }
     case msg_client_disconnected :
     {
-        qint32 playerId;
+        qint8 playerId;
         in >> playerId;
         qDebug() << "Client #" << playerId << "left";
         emit sigPlayerLeft(playerId);
     }
     case msg_map_winner: {
-            qint8 playerId;
+            qint8 playerId, listSize;
             in >> playerId;
-
+            in >> listSize;
+            for(qint8 i = 0; i < listSize; i++)
+            {
+                qint8 id;
+                qint16 score;
+                in >> id >> score;
+                emit sigScoreUpdate(id,score);
+            }
             emit sigMapWinner(playerId);
             break;
         }

@@ -76,7 +76,7 @@ private slots:
     void mapPreviewReceived(MapClient*);
     void slotMapRandom(bool);
     void slotTimeUpdated(int timeInSeconds);
-    void slotNewPlayerGraphic(int,const QPixmap &);
+    void slotNewPlayerGraphic(qint8,const QPixmap &);
 
 signals:
     void connectedToServer();
@@ -86,7 +86,7 @@ signals:
     void sigStatPacketLoss(double);
     void sigIsServerAdmin(int);
     void sigTimeUpdated(int timeInSeconds);
-    void sigNewPlayerGraphic(int, const QPixmap &);
+    void sigNewPlayerGraphic(qint8, const QPixmap &);
 };
 
 

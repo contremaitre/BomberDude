@@ -51,7 +51,7 @@ void StartUi::loadMenuFrame()
     connect(menuFrame->ui.randomMapCheck, SIGNAL(stateChanged(int)), this, SLOT(randomMapCheckedChanged(int)));
     connect(menuFrame, SIGNAL(sigStart(int)),this,SLOT(slotStartGame(int)));
     connect(menuFrame, SIGNAL(sigDisconnect()),this,SLOT(slotDisconnectGame()));
-    connect(menuFrame, SIGNAL(sigKickPlayer(int)), this, SLOT(slotKickPlayer(int)));
+    connect(menuFrame, SIGNAL(sigKickPlayer(qint8)), this, SLOT(slotKickPlayer(qint8)));
     gridLayout->addWidget(menuFrame);
 }
 
@@ -139,17 +139,17 @@ void StartUi::slotStartServer()
     /* Connect some signals to the frame menu */
     connect( netclient, SIGNAL(sigConnected()), menuFrame, SLOT(slotConnectedToServer()));
     connect( netclient, SIGNAL(sigIsServerAdmin()), menuFrame, SLOT(slotIsServerAdmin()));
-    connect( netclient, SIGNAL(sigUpdatePlayerData(qint32,QString)), menuFrame, SLOT(slotUpdatePlayerData(qint32,QString)));
+    connect( netclient, SIGNAL(sigUpdatePlayerData(qint8,QString)), menuFrame, SLOT(slotUpdatePlayerData(qint8,QString)));
     connect( netclient, SIGNAL(sigMaxPlayersChanged(int)), menuFrame, SLOT(slotMaxPlayersValueChanged(int)));
     connect( netclient, SIGNAL(sigMapRandom(bool)), menuFrame, SLOT(slotMapRandom(bool)));
     connect( netclient, SIGNAL(mapPreviewReceived(MapClient*)), menuFrame,SLOT(slotMapPreviewReceived(MapClient*)));
-    connect( netclient, SIGNAL(sigPlayerLeft(qint32)), menuFrame, SLOT(slotPlayerLeft(qint32)));
+    connect( netclient, SIGNAL(sigPlayerLeft(qint8)), menuFrame, SLOT(slotPlayerLeft(qint8)));
 
     /* Connect some signals to the player list */
-    connect( netclient, SIGNAL(sigUpdatePlayerData(qint32, QString)), &playerListWidget, SLOT(slotAddPlayer(qint32, QString)));
-    connect( gamePlay, SIGNAL(sigNewPlayerGraphic(int,const QPixmap &)), &playerListWidget, SLOT(slotNewPlayerGraphic(int,const QPixmap &)));
-    connect( netclient, SIGNAL(sigPlayerLeft(qint32)), &playerListWidget, SLOT(slotRemovePlayer(qint32)));
-
+    connect( netclient, SIGNAL(sigUpdatePlayerData(qint8, QString)), &playerListWidget, SLOT(slotAddPlayer(qint8, QString)));
+    connect( gamePlay, SIGNAL(sigNewPlayerGraphic(qint8,const QPixmap &)), &playerListWidget, SLOT(slotNewPlayerGraphic(qint8,const QPixmap &)));
+    connect( netclient, SIGNAL(sigPlayerLeft(qint8)), &playerListWidget, SLOT(slotRemovePlayer(qint8)));
+    connect( netclient, SIGNAL(sigScoreUpdate(qint8, qint16)), &playerListWidget, SLOT(slotUpdatePlayerScore(qint8, qint16)));
     // must be queued otherwise NetClient instance is deleted before finishing its processing
     connect( netclient, SIGNAL(sigServerStopped()), this, SLOT(slotServerStopped()), Qt::QueuedConnection);
 
@@ -188,6 +188,7 @@ void StartUi::closeGame()
         delete gamePlay;
         gamePlay = NULL;
     }
+    playerListWidget.clear();
     delete gameFrame;
     gameFrame = NULL;
     delete interGameFrame;
@@ -223,7 +224,7 @@ void StartUi::slotNextRound()
     gamePlay->getNetClient()->startGame(styleIndex-1);
 }
 
-void StartUi::slotKickPlayer(int playerId)
+void StartUi::slotKickPlayer(qint8 playerId)
 {
     gamePlay->getNetClient()->kickPlayer(playerId);
 }
@@ -269,7 +270,7 @@ void StartUi::slotMapRightButton()
     gamePlay->getNetClient()->selectMap(1);
 }
 
-void StartUi::slotNewPlayerGraphic(int player, const QPixmap &pix)
+void StartUi::slotNewPlayerGraphic(qint8 player, const QPixmap &pix)
 {
     /*TODO Move this to a separate widget
     qDebug() << "Startui new player graphic" << player;

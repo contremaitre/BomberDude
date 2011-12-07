@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>150</width>
-    <height>200</height>
+    <width>210</width>
+    <height>250</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,17 +16,20 @@
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>151</width>
-     <height>201</height>
+     <x>10</x>
+     <y>10</y>
+     <width>191</width>
+     <height>231</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="playerListLayout">
-    <property name="margin">
+    <property name="horizontalSpacing">
+     <number>10</number>
+    </property>
+    <property name="verticalSpacing">
      <number>0</number>
     </property>
-    <property name="spacing">
+    <property name="margin">
      <number>0</number>
     </property>
    </layout>

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>850</width>
     <height>585</height>
    </rect>
   </property>
@@ -22,7 +22,7 @@
   <widget class="QWidget" name="IpStatHolder" native="true">
    <property name="geometry">
     <rect>
-     <x>670</x>
+     <x>710</x>
      <y>10</y>
      <width>120</width>
      <height>80</height>
@@ -35,9 +35,9 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>670</x>
+     <x>720</x>
      <y>100</y>
-     <width>121</width>
+     <width>111</width>
      <height>41</height>
     </rect>
    </property>
@@ -54,7 +54,7 @@
   <widget class="QPushButton" name="disconnectGameButton">
    <property name="geometry">
     <rect>
-     <x>670</x>
+     <x>730</x>
      <y>160</y>
      <width>101</width>
      <height>27</height>
@@ -68,9 +68,9 @@
    <property name="geometry">
     <rect>
      <x>640</x>
-     <y>220</y>
-     <width>150</width>
-     <height>200</height>
+     <y>200</y>
+     <width>210</width>
+     <height>250</height>
     </rect>
    </property>
   </widget>

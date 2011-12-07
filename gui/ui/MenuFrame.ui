@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>850</width>
     <height>585</height>
    </rect>
   </property>
@@ -309,7 +309,7 @@
    <property name="geometry">
     <rect>
      <x>460</x>
-     <y>300</y>
+     <y>320</y>
      <width>281</width>
      <height>261</height>
     </rect>
@@ -455,7 +455,7 @@
   <widget class="QWidget" name="IpStatHolder" native="true">
    <property name="geometry">
     <rect>
-     <x>660</x>
+     <x>480</x>
      <y>10</y>
      <width>120</width>
      <height>80</height>
@@ -478,20 +478,20 @@
     <string>Disconnect</string>
    </property>
   </widget>
-  <widget class="QWidget" name="playerListWidgetHolder" native="true">
+  <widget class="QFrame" name="playerListWidgetHolder">
    <property name="geometry">
     <rect>
      <x>640</x>
-     <y>90</y>
-     <width>150</width>
-     <height>200</height>
+     <y>10</y>
+     <width>200</width>
+     <height>250</height>
     </rect>
    </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
    </property>
   </widget>
  </widget>

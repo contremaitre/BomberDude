@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>378</width>
+    <height>369</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,8 +22,8 @@
   <widget class="QPushButton" name="nextRoundButton">
    <property name="geometry">
     <rect>
-     <x>140</x>
-     <y>240</y>
+     <x>110</x>
+     <y>290</y>
      <width>93</width>
      <height>27</height>
     </rect>
@@ -35,10 +35,10 @@
   <widget class="QWidget" name="playerListWidgetHolder" native="true">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>10</y>
-     <width>150</width>
-     <height>200</height>
+     <x>60</x>
+     <y>20</y>
+     <width>210</width>
+     <height>250</height>
     </rect>
    </property>
   </widget>

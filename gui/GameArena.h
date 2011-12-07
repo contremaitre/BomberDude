@@ -109,7 +109,7 @@ public slots:
 
 signals:
     void sigTimeUpdated(int valueInSeconds);
-    void sigNewPlayerGraphic(int,const QPixmap &);
+    void sigNewPlayerGraphic(qint8,const QPixmap &);
 };
 
 

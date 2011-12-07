@@ -12,16 +12,14 @@ class PlayerListWidget : public QWidget
 public:
     PlayerListWidget(QWidget *parent = 0);
     ~PlayerListWidget();
+    void clear();
     Ui_PlayerListWidget ui;
-/*
-    removePlayer(int playerId);
-    setScore(int playerId, int score);*/
 
 private slots:
-    void slotAddPlayer(qint32 playerId, QString name);
-    void slotNewPlayerGraphic(int playerId, const QPixmap &pix);
-    void slotUpdatePlayerScore(int playerId, int score);
-    void slotRemovePlayer(qint32 playerId);
+    void slotAddPlayer(qint8 playerId, QString name);
+    void slotNewPlayerGraphic(qint8 playerId, const QPixmap &pix);
+    void slotUpdatePlayerScore(qint8 playerId, qint16 score);
+    void slotRemovePlayer(qint8 playerId);
 };
 
 
