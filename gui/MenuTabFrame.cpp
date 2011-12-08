@@ -6,12 +6,15 @@
 #include "Settings.h"
 #include "IpStats.h"
 #include "PlayerListWidget.h"
+#include "KeySettingsWidget.h"
 #include "NetClient.h"
 
 MenuTabFrame::MenuTabFrame(Settings *settings, IpStats *ipStats, PlayerListWidget *playerListWidget, QSound *music, QFrame *parent)
     : QFrame(parent), settings(settings), ipStats(ipStats), playerListWidget(playerListWidget), music(music)
 {
     TabUi.setupUi(this);
+    keySettingsWidget = new KeySettingsWidget(settings,TabUi.Keys);
+    //KeysUi.setupUi(TabUi.Keys);
     MainUi.setupUi(TabUi.Main);
     MainUi.playerName->setMaxLength(MAX_PLAYER_NAME_LENGTH);
     loadNetWidget();

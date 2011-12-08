@@ -29,6 +29,7 @@ HEADERS += QGraphicsSquareItem.h \
     GameFrame.h \
     InterGameFrame.h \
     PlayerListWidget.h \
+    KeySettingsWidget.h \
     startUi.h
     
 FORMS += ui/MainWindow.ui \
@@ -37,6 +38,7 @@ FORMS += ui/MainWindow.ui \
     ui/MenuTabFrame.ui \
     ui/InterGameFrame.ui \
     ui/PlayerListWidget.ui \
+    ui/KeySettingsWidget.ui \
     ui/IpStats.ui
 
 SOURCES += QGraphicsSquareItem.cpp \
@@ -50,4 +52,5 @@ SOURCES += QGraphicsSquareItem.cpp \
     GameFrame.cpp \
     InterGameFrame.cpp \
     PlayerListWidget.cpp \
+    KeySettingsWidget.cpp \
     startUi.cpp

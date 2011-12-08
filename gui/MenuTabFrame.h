@@ -1,5 +1,5 @@
-#ifndef MENUFRAME_H
-#define MENUFRAME_H
+#ifndef MENUTABFRAME_H
+#define MENUTABFRAME_H
 
 #include "ui_MenuTabFrame.h"
 #include "ui_MainMenuWidget.h"
@@ -7,6 +7,7 @@
 class Settings;
 class IpStats;
 class PlayerListWidget;
+class KeySettingsWidget;
 class QSound;
 class NetClient;
 class MapClient;
@@ -22,6 +23,7 @@ public:
     QGraphicsView *getGraphicPreview() const;
     const QString getPlayerName() const;
     Ui_MainMenuWidget MainUi;
+    //Ui_KeySettingsWidget KeysUi;
     Ui_MenuTabFrame TabUi;
     bool setSettings();
 
@@ -29,6 +31,7 @@ private:
     Settings *settings;
     IpStats *ipStats;
     PlayerListWidget *playerListWidget;
+    KeySettingsWidget *keySettingsWidget;
 
     QPixmap loading;
 

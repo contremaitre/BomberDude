@@ -36,7 +36,7 @@
      <string>Main</string>
     </attribute>
    </widget>
-   <widget class="QWidget" name="keys">
+   <widget class="QWidget" name="Keys">
     <attribute name="title">
      <string>Control keys</string>
     </attribute>
