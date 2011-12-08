@@ -27,7 +27,9 @@ GamePlay::GamePlay(Settings *set, QGraphicsView *mapGraphicPreview)
     connect(&timerPing, SIGNAL(timeout()),this,SLOT(slotPingTimer()));
     timerPing.start(2000); // Ping every 2s
 
-    leftK = rightK = upK = downK = false;
+    leftK1 = rightK1 = upK1 = downK1 = false;
+    leftK2 = rightK2 = upK2 = downK2 = false;
+
     gameArena = new GameArena(BLOCK_SIZE);
     gameArenaPreview = new GameArena(BLOCK_SIZE/2);  //todo : create a light class for the preview
     gameArenaPreview->setGraphicView(mapGraphicPreview);
@@ -42,6 +44,9 @@ GamePlay::GamePlay(Settings *set, QGraphicsView *mapGraphicPreview)
     connect(client,SIGNAL(sigMapRandom(bool)),this,SLOT(slotMapRandom(bool)));
     connect(client, SIGNAL(sigMapWinner(qint8)), gameArena, SLOT(slotMapWinner(qint8)));
     settings = set;
+
+    memset(&player1Keys, 0, sizeof(player1Keys));
+    memset(&player2Keys, 0, sizeof(player2Keys));
 }
 
 void GamePlay::cliConnect(const QString &pass)
@@ -52,6 +57,8 @@ void GamePlay::cliConnect(const QString &pass)
         client->connectToServer("127.0.0.1", settings->getServerPort());
     else
         client->connectToServer(settings->getServerAddress(), settings->getServerPort());
+    player1Keys = settings->getPlayer1Keys();
+    player2Keys = settings->getPlayer2Keys();
 }
 
 void GamePlay::mapReceived(MapClient *map)
@@ -105,29 +112,29 @@ void GamePlay::move(int direction)
 void GamePlay::slotMoveTimer()
 {
     int direction = -1;
-    if(leftK)
+    if(leftK1)
     {
-        if(upK)
+        if(upK1)
             direction = 1;
-        else if(downK)
+        else if(downK1)
             direction = 7;
         else
             direction = 0;
     }
-    else if(rightK)
+    else if(rightK1)
     {
-        if(upK)
+        if(upK1)
             direction = 3;
-        else if(downK)
+        else if(downK1)
             direction = 5;
         else
             direction = 4;
     }
-    else if(upK)
+    else if(upK1)
     {
         direction = 2;
     }
-    else if(downK)
+    else if(downK1)
     {
         direction = 6;
     }
@@ -156,12 +163,12 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
             emit quitGame();
             return true;
         }
-        else if(c->key() == Qt::Key_Space)
+        else if(c->key() == player1Keys.drop)
         {
             dropBomb();
             return true;
         }
-        else if(c->key() == Qt::Key_Control)
+        else if(c->key() == player1Keys.opt)
         {
             client->sendOptKey();
         }
@@ -172,14 +179,22 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
         if(c->isAutoRepeat())
             return true;
         bool press = event->type() == QEvent::KeyPress;
-        if(c->key() == Qt::Key_Left)
-            leftK = press;
-        else if(c->key() == Qt::Key_Up)
-            upK = press;
-        else if(c->key() == Qt::Key_Right)
-            rightK = press;
-        else if(c->key() == Qt::Key_Down)
-            downK = press;
+        if(c->key() == player1Keys.left)
+            leftK1 = press;
+        else if(c->key() == player1Keys.up)
+            upK1 = press;
+        else if(c->key() == player1Keys.right)
+            rightK1 = press;
+        else if(c->key() == player1Keys.down)
+            downK1 = press;
+        else if(c->key() == player2Keys.left)
+            leftK2 = press;
+        else if(c->key() == player2Keys.up)
+            upK2 = press;
+        else if(c->key() == player2Keys.right)
+            rightK2 = press;
+        else if(c->key() == player2Keys.down)
+            downK2 = press;
         else
             return QObject::eventFilter(obj, event);
         if(press && !timer.isActive())
@@ -187,7 +202,10 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
             timer.start(HEARTBEAT);
             slotMoveTimer();
         }
-        if(!press && !leftK && !upK && !rightK && !downK && timer.isActive())
+        if(        !press
+                && !leftK1 && !upK1 && !rightK1 && !downK1
+                && !leftK2 && !upK2 && !rightK2 && !downK2
+                && timer.isActive() )
         {
             timer.stop();
         }

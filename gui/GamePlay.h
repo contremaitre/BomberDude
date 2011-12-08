@@ -43,6 +43,7 @@ class GamePlay : public QObject
 public:
     GamePlay(Settings *, QGraphicsView *);
     ~GamePlay();
+    /* control keys are set in this function */
     void cliConnect(const QString &pass);
     NetClient *getNetClient();
     void gameStarted(QGraphicsView *);
@@ -54,7 +55,11 @@ private:
     NetClient *client;
     Settings *settings;
 
-    bool leftK, rightK, upK, downK;
+    /* remember which key is pressed */
+    bool leftK1, rightK1, upK1, downK1;
+    bool leftK2, rightK2, upK2, downK2;
+    key_set_t player1Keys;
+    key_set_t player2Keys;
     QTimer timer;
     QTimer timerPing;
     

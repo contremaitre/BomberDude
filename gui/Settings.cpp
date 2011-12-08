@@ -19,8 +19,6 @@
 #include "Settings.h"
 #include "constant.h"
 
-#include <QDebug>
-
 #define DEFAULT_KEY_1_LEFT Qt::Key_Left
 #define DEFAULT_KEY_1_RIGHT Qt::Key_Right
 #define DEFAULT_KEY_1_UP Qt::Key_Up
