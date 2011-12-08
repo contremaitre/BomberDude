@@ -49,6 +49,7 @@ void StartUi::loadMenuFrame()
     connect(menuFrame->ui.mapRightButton, SIGNAL(clicked()), this, SLOT(slotMapRightButton()));
     connect(menuFrame->ui.mapLeftButton, SIGNAL(clicked()), this, SLOT(slotMapLeftButton()));
     connect(menuFrame->ui.randomMapCheck, SIGNAL(stateChanged(int)), this, SLOT(randomMapCheckedChanged(int)));
+    connect(menuFrame->ui.addLocalPlayerButton, SIGNAL(clicked()), this, SLOT(slotAddLocalPlayer()));
     connect(menuFrame, SIGNAL(sigStart(int)),this,SLOT(slotStartGame(int)));
     connect(menuFrame, SIGNAL(sigDisconnect()),this,SLOT(slotDisconnectGame()));
     connect(menuFrame, SIGNAL(sigKickPlayer(qint8)), this, SLOT(slotKickPlayer(qint8)));
@@ -120,13 +121,12 @@ void StartUi::slotStartServer()
     {
         adminPassword = menuFrame->getAdminPassword();
     }
-    gamePlay = new GamePlay(settings, menuFrame->getGraphicPreview());
+    gamePlay = new GamePlay(settings, menuFrame->getGraphicPreview(), menuFrame->getPlayerName());
     NetClient *netclient = gamePlay->getNetClient();
 
     connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );
 
     /* Connect some signals to the ourselves */
-    connect( netclient, SIGNAL(sigConnected()), this, SLOT(slotConnectedToServer()));
     connect( netclient, SIGNAL(sigConnectionError()), this, SLOT(slotConnectionError()), Qt::QueuedConnection);
     connect( netclient, SIGNAL(sigGameStarted()), this, SLOT(slotGameStarted()));
     connect( netclient, SIGNAL(sigNetClientEnd()), this, SLOT(closeGame()));
@@ -162,13 +162,6 @@ void StartUi::slotMaxPlayersValueChanged(int value)
 {
     if(gamePlay)
         gamePlay->getNetClient()->setMaxPlayers(value);
-}
-
-void StartUi::slotConnectedToServer()
-{
-    qDebug("StartUi::slotConnected");
-    if(gamePlay)
-        gamePlay->getNetClient()->sendPlayerData(menuFrame->getPlayerName());
 }
 
 void StartUi::closeGame()
@@ -268,6 +261,11 @@ void StartUi::slotMapLeftButton()
 void StartUi::slotMapRightButton()
 {
     gamePlay->getNetClient()->selectMap(1);
+}
+
+void StartUi::slotAddLocalPlayer()
+{
+    gamePlay->addPlayer(menuFrame->getPlayerName());
 }
 
 void StartUi::slotNewPlayerGraphic(qint8 player, const QPixmap &pix)

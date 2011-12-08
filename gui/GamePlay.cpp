@@ -21,7 +21,8 @@
 #include "GamePlay.h"
 #include "constant.h"
 
-GamePlay::GamePlay(Settings *set, QGraphicsView *mapGraphicPreview)
+GamePlay::GamePlay(Settings *set, QGraphicsView *mapGraphicPreview, QString player1name)
+                    : player1name(player1name)
 {
     connect(&timer, SIGNAL(timeout()),this,SLOT(slotMoveTimer()));
     connect(&timerPing, SIGNAL(timeout()),this,SLOT(slotPingTimer()));
@@ -37,16 +38,33 @@ GamePlay::GamePlay(Settings *set, QGraphicsView *mapGraphicPreview)
     connect(gameArena, SIGNAL(sigTimeUpdated(int)), this, SLOT(slotTimeUpdated(int)));
     connect(gameArena, SIGNAL(sigNewPlayerGraphic(qint8,const QPixmap &)), this, SLOT(slotNewPlayerGraphic(qint8,const QPixmap &)));
 
-    //MAP_SIZE
     client = new NetClient;
+    clientPlayer2 = NULL;
     connect(client,SIGNAL(mapReceived(MapClient*)),this,SLOT(mapReceived(MapClient*)));
     connect(client,SIGNAL(mapPreviewReceived(MapClient*)),this,SLOT(mapPreviewReceived(MapClient*)));
     connect(client,SIGNAL(sigMapRandom(bool)),this,SLOT(slotMapRandom(bool)));
     connect(client, SIGNAL(sigMapWinner(qint8)), gameArena, SLOT(slotMapWinner(qint8)));
+    connect(client, SIGNAL(sigConnected()), this, SLOT(slotConnectedToServer()));
+
     settings = set;
 
     memset(&player1Keys, 0, sizeof(player1Keys));
     memset(&player2Keys, 0, sizeof(player2Keys));
+}
+
+void GamePlay::addPlayer(const QString &name)
+{
+    player2name = name;
+    delete clientPlayer2;
+    clientPlayer2 = new NetClient;
+    connect( clientPlayer2, SIGNAL(sigConnected()), this, SLOT(slotConnectedToServer()));
+    connect( clientPlayer2, SIGNAL(sigConnectionError()), this, SLOT(slotPlayer2Disconnected()), Qt::QueuedConnection);
+    connect( clientPlayer2, SIGNAL(sigNetClientEnd()), this, SLOT(slotPlayer2Disconnected()));
+
+    if( settings->isServer() )
+        clientPlayer2->connectToServer("127.0.0.1", settings->getServerPort());
+    else
+        clientPlayer2->connectToServer(settings->getServerAddress(), settings->getServerPort());
 }
 
 void GamePlay::cliConnect(const QString &pass)
@@ -90,6 +108,21 @@ void GamePlay::slotTimeUpdated(int timeInSeconds) {
 
 void GamePlay::slotNewPlayerGraphic(qint8 pl, const QPixmap &pix) {
     emit sigNewPlayerGraphic(pl,pix);
+}
+
+void GamePlay::slotConnectedToServer()
+{
+    qDebug("GamePlay::slotConnected");
+    if(!clientPlayer2)
+        client->sendPlayerData(player1name);
+    else
+        clientPlayer2->sendPlayerData(player2name);
+}
+
+void GamePlay::slotPlayer2Disconnected()
+{
+    delete clientPlayer2;
+    clientPlayer2 = NULL;
 }
 
 void GamePlay::move(int direction)
@@ -139,17 +172,46 @@ void GamePlay::slotMoveTimer()
         direction = 6;
     }
     //qDebug() << "GamePlay direction=" << direction;
-    client->sendMove(direction);
+    if( direction != -1 )
+        client->sendMove(direction);
+
+    if( !clientPlayer2 )
+        return;
+
+    direction = -1;
+    if(leftK2)
+    {
+        if(upK2)
+            direction = 1;
+        else if(downK2)
+            direction = 7;
+        else
+            direction = 0;
+    }
+    else if(rightK2)
+    {
+        if(upK2)
+            direction = 3;
+        else if(downK2)
+            direction = 5;
+        else
+            direction = 4;
+    }
+    else if(upK2)
+    {
+        direction = 2;
+    }
+    else if(downK2)
+    {
+        direction = 6;
+    }
+    if( direction != -1 )
+        clientPlayer2->sendMove(direction);
 }
 
 void GamePlay::slotPingTimer()
 {
     client->sendPing();
-}
-
-void GamePlay::dropBomb()
-{
-    client->sendBomb();
 }
 
 bool GamePlay::eventFilter(QObject *obj, QEvent *event)
@@ -165,12 +227,24 @@ bool GamePlay::eventFilter(QObject *obj, QEvent *event)
         }
         else if(c->key() == player1Keys.drop)
         {
-            dropBomb();
+            client->sendBomb();
             return true;
         }
         else if(c->key() == player1Keys.opt)
         {
             client->sendOptKey();
+        }
+        else if( clientPlayer2 )
+        {
+            if(c->key() == player2Keys.drop)
+            {
+                clientPlayer2->sendBomb();
+                return true;
+            }
+            else if(c->key() == player2Keys.opt)
+            {
+                clientPlayer2->sendOptKey();
+            }
         }
     }
     if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
@@ -225,4 +299,5 @@ GamePlay::~GamePlay()
     delete gameArena;
     delete gameArenaPreview;
     delete client;
+    delete clientPlayer2;
 }

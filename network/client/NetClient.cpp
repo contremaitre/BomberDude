@@ -332,7 +332,7 @@ void NetClient::handleTcpMsg(QDataStream &in)
                         << " instead of " << MAX_PLAYER_NAME_LENGTH;
                 playerName.clear();
             }
-            //qDebug() << "Id: " << playerId << ", name: " << playerName;
+            qDebug() << "Id: " << playerId << ", name: " << playerName;
             emit sigUpdatePlayerData(playerId, playerName);
             break;
         }
@@ -342,6 +342,7 @@ void NetClient::handleTcpMsg(QDataStream &in)
         in >> playerId;
         qDebug() << "Client #" << playerId << "left";
         emit sigPlayerLeft(playerId);
+        break;
     }
     case msg_map_winner: {
             qint8 playerId, listSize;

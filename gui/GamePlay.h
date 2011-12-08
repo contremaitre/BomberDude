@@ -41,18 +41,23 @@ class GamePlay : public QObject
   Q_OBJECT
 
 public:
-    GamePlay(Settings *, QGraphicsView *);
+    GamePlay(Settings *, QGraphicsView *, QString);
     ~GamePlay();
     /* control keys are set in this function */
     void cliConnect(const QString &pass);
     NetClient *getNetClient();
     void gameStarted(QGraphicsView *);
+    void addPlayer(const QString &);
 
 private:
     GameArena *gameArena;
     GameArena *gameArenaPreview; //todo : create a light class for the preview
     QGraphicsView *mapGraphicPreview;
     NetClient *client;
+    NetClient *clientPlayer2;
+    QString player1name;
+    QString player2name;
+
     Settings *settings;
 
     /* remember which key is pressed */
@@ -74,7 +79,6 @@ private:
 
 private slots:
     void slotMoveTimer();
-    void dropBomb();
     void slotPingTimer();
     void mapReceived(MapClient*);
 //	void updateMap(QByteArray updateBlock);
@@ -82,9 +86,10 @@ private slots:
     void slotMapRandom(bool);
     void slotTimeUpdated(int timeInSeconds);
     void slotNewPlayerGraphic(qint8,const QPixmap &);
+    void slotConnectedToServer();
+    void slotPlayer2Disconnected();
 
 signals:
-    void connectedToServer();
     void connectionError();
     void quitGame();
     void sigStatPing(int);

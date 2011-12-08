@@ -123,6 +123,7 @@ void MenuFrame::slotStartServer()
 {
     ui.network_pref->setEnabled(false);
     ui.disconnectButton->setEnabled(true);
+    ui.addLocalPlayerButton->setEnabled(true);
 }
 
 void MenuFrame::slotIsServerAdmin()

@@ -76,7 +76,6 @@ private slots:
     void slotMaxPlayersValueChanged(int);
     void randomMapCheckedChanged(int);
     void slotConnectionError();
-    void slotConnectedToServer();
     void slotServerLaunched();
     void slotServerLaunchedError(QProcess::ProcessError error);
     void slotReadServerDebug();
@@ -92,6 +91,7 @@ private slots:
     void slotKickPlayer(qint8);
     void slotEndRound(qint8);
     void slotLoadInterGame();
+    void slotAddLocalPlayer();
 };
 
 
