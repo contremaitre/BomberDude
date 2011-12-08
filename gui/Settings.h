@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Sébastien Escudier
+    Copyright (C) 2010,2011 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,16 @@
 #include <QSettings>
 
 
+struct key_set_t
+{
+    Qt::Key left;
+    Qt::Key up;
+    Qt::Key down;
+    Qt::Key right;
+    Qt::Key drop;
+    Qt::Key opt;
+};
+
 class Settings : public QObject
 {
     Q_OBJECT
@@ -34,6 +44,8 @@ private:
     bool sound;
     QString playerName;
     bool debugMode;
+    key_set_t player1Keys;
+    key_set_t player2Keys;
 
 public:
     Settings();
@@ -47,6 +59,8 @@ public:
     bool isSound() const;
     QString getPlayerName() const;
     bool isDebugMode() const;
+    key_set_t getPlayer1Keys() const;
+    key_set_t getPlayer2Keys() const;
 
     void setServer(bool);
     void setServerPort(int);
