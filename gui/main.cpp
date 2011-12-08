@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 
     QScrollArea *scrollArea = new QScrollArea;
     scrollArea->setWidget(&startui);
-    scrollArea->resize(850+10,610+10); //todo, find a better way to set the initial size of this scroll area
+    scrollArea->resize(850+10,650+10); //todo, find a better way to set the initial size of this scroll area
     scrollArea->show();
     //startui.show();
     app.exec();

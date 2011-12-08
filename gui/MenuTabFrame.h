@@ -1,7 +1,8 @@
 #ifndef MENUFRAME_H
 #define MENUFRAME_H
 
-#include "ui_MenuFrame.h"
+#include "ui_MenuTabFrame.h"
+#include "ui_MainMenuWidget.h"
 
 class Settings;
 class IpStats;
@@ -10,17 +11,18 @@ class QSound;
 class NetClient;
 class MapClient;
 
-class MenuFrame : public QFrame
+class MenuTabFrame : public QFrame
 {
     Q_OBJECT
 
 public:
-    MenuFrame(Settings *settings, IpStats *ipStats, PlayerListWidget *playerListWidget, QSound *music, QFrame *parent = 0);
-    ~MenuFrame();
+    MenuTabFrame(Settings *settings, IpStats *ipStats, PlayerListWidget *playerListWidget, QSound *music, QFrame *parent = 0);
+    ~MenuTabFrame();
     QString getAdminPassword() const;
     QGraphicsView *getGraphicPreview() const;
     const QString getPlayerName() const;
-    Ui_MenuFrame ui;
+    Ui_MainMenuWidget MainUi;
+    Ui_MenuTabFrame TabUi;
     bool setSettings();
 
 private:

@@ -21,39 +21,39 @@
 #include "Settings.h"
 #include "GamePlay.h"
 #include "GameFrame.h"
-#include "MenuFrame.h"
+#include "MenuTabFrame.h"
 #include "InterGameFrame.h"
 
 StartUi::StartUi(QApplication *a)
 {
     gamePlay = NULL;
     server = NULL;
-    menuFrame = NULL;
+    menuTabFrame = NULL;
     gameFrame = NULL;
     interGameFrame = NULL;
     styleIndex = -1;
     qapp = a;
     settings = new Settings;
     setupUi(this);
-    loadMenuFrame();
+    loadMenuTabFrame();
     music = new QSound("sounds/music.wav",this);
 }
 
-void StartUi::loadMenuFrame()
+void StartUi::loadMenuTabFrame()
 {
-    if( menuFrame )
-        delete menuFrame;
-    menuFrame = new MenuFrame(settings, &ipStats, &playerListWidget, music);
-    connect(menuFrame->ui.maxPlayersBox, SIGNAL(valueChanged(int)), this, SLOT(slotMaxPlayersValueChanged(int)));
-    connect(menuFrame->ui.serverButton,SIGNAL(clicked()),this,SLOT(slotStartServer()));
-    connect(menuFrame->ui.mapRightButton, SIGNAL(clicked()), this, SLOT(slotMapRightButton()));
-    connect(menuFrame->ui.mapLeftButton, SIGNAL(clicked()), this, SLOT(slotMapLeftButton()));
-    connect(menuFrame->ui.randomMapCheck, SIGNAL(stateChanged(int)), this, SLOT(randomMapCheckedChanged(int)));
-    connect(menuFrame->ui.addLocalPlayerButton, SIGNAL(clicked()), this, SLOT(slotAddLocalPlayer()));
-    connect(menuFrame, SIGNAL(sigStart(int)),this,SLOT(slotStartGame(int)));
-    connect(menuFrame, SIGNAL(sigDisconnect()),this,SLOT(slotDisconnectGame()));
-    connect(menuFrame, SIGNAL(sigKickPlayer(qint8)), this, SLOT(slotKickPlayer(qint8)));
-    gridLayout->addWidget(menuFrame);
+    if( menuTabFrame )
+        delete menuTabFrame;
+    menuTabFrame = new MenuTabFrame(settings, &ipStats, &playerListWidget, music);
+    connect(menuTabFrame->MainUi.maxPlayersBox, SIGNAL(valueChanged(int)), this, SLOT(slotMaxPlayersValueChanged(int)));
+    connect(menuTabFrame->MainUi.serverButton,SIGNAL(clicked()),this,SLOT(slotStartServer()));
+    connect(menuTabFrame->MainUi.mapRightButton, SIGNAL(clicked()), this, SLOT(slotMapRightButton()));
+    connect(menuTabFrame->MainUi.mapLeftButton, SIGNAL(clicked()), this, SLOT(slotMapLeftButton()));
+    connect(menuTabFrame->MainUi.randomMapCheck, SIGNAL(stateChanged(int)), this, SLOT(randomMapCheckedChanged(int)));
+    connect(menuTabFrame->MainUi.addLocalPlayerButton, SIGNAL(clicked()), this, SLOT(slotAddLocalPlayer()));
+    connect(menuTabFrame, SIGNAL(sigStart(int)),this,SLOT(slotStartGame(int)));
+    connect(menuTabFrame, SIGNAL(sigDisconnect()),this,SLOT(slotDisconnectGame()));
+    connect(menuTabFrame, SIGNAL(sigKickPlayer(qint8)), this, SLOT(slotKickPlayer(qint8)));
+    gridLayout->addWidget(menuTabFrame);
 }
 
 void StartUi::loagInterGameFrame()
@@ -76,8 +76,8 @@ void StartUi::loadGameFrame()
 
 void StartUi::slotLoadInterGame()
 {
-    delete menuFrame;
-    menuFrame = NULL;
+    delete menuTabFrame;
+    menuTabFrame = NULL;
     delete gameFrame;
     gameFrame = NULL;
     loagInterGameFrame();
@@ -89,7 +89,7 @@ void StartUi::slotStartServer()
     if(!settings->getShowIpStats())
         ip_stats->hide();
 */
-    menuFrame->setSettings();
+    menuTabFrame->setSettings();
 
     if(settings->isServer())
     {
@@ -119,9 +119,9 @@ void StartUi::slotStartServer()
     }
     else
     {
-        adminPassword = menuFrame->getAdminPassword();
+        adminPassword = menuTabFrame->getAdminPassword();
     }
-    gamePlay = new GamePlay(settings, menuFrame->getGraphicPreview(), menuFrame->getPlayerName());
+    gamePlay = new GamePlay(settings, menuTabFrame->getGraphicPreview(), menuTabFrame->getPlayerName());
     NetClient *netclient = gamePlay->getNetClient();
 
     connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );
@@ -137,13 +137,13 @@ void StartUi::slotStartServer()
     connect( netclient, SIGNAL(sigStatPacketLoss(double)), &ipStats, SLOT(slotStatPacketLoss(double)));
 
     /* Connect some signals to the frame menu */
-    connect( netclient, SIGNAL(sigConnected()), menuFrame, SLOT(slotConnectedToServer()));
-    connect( netclient, SIGNAL(sigIsServerAdmin()), menuFrame, SLOT(slotIsServerAdmin()));
-    connect( netclient, SIGNAL(sigUpdatePlayerData(qint8,QString)), menuFrame, SLOT(slotUpdatePlayerData(qint8,QString)));
-    connect( netclient, SIGNAL(sigMaxPlayersChanged(int)), menuFrame, SLOT(slotMaxPlayersValueChanged(int)));
-    connect( netclient, SIGNAL(sigMapRandom(bool)), menuFrame, SLOT(slotMapRandom(bool)));
-    connect( netclient, SIGNAL(mapPreviewReceived(MapClient*)), menuFrame,SLOT(slotMapPreviewReceived(MapClient*)));
-    connect( netclient, SIGNAL(sigPlayerLeft(qint8)), menuFrame, SLOT(slotPlayerLeft(qint8)));
+    connect( netclient, SIGNAL(sigConnected()), menuTabFrame, SLOT(slotConnectedToServer()));
+    connect( netclient, SIGNAL(sigIsServerAdmin()), menuTabFrame, SLOT(slotIsServerAdmin()));
+    connect( netclient, SIGNAL(sigUpdatePlayerData(qint8,QString)), menuTabFrame, SLOT(slotUpdatePlayerData(qint8,QString)));
+    connect( netclient, SIGNAL(sigMaxPlayersChanged(int)), menuTabFrame, SLOT(slotMaxPlayersValueChanged(int)));
+    connect( netclient, SIGNAL(sigMapRandom(bool)), menuTabFrame, SLOT(slotMapRandom(bool)));
+    connect( netclient, SIGNAL(mapPreviewReceived(MapClient*)), menuTabFrame,SLOT(slotMapPreviewReceived(MapClient*)));
+    connect( netclient, SIGNAL(sigPlayerLeft(qint8)), menuTabFrame, SLOT(slotPlayerLeft(qint8)));
 
     /* Connect some signals to the player list */
     connect( netclient, SIGNAL(sigUpdatePlayerData(qint8, QString)), &playerListWidget, SLOT(slotAddPlayer(qint8, QString)));
@@ -186,7 +186,7 @@ void StartUi::closeGame()
     gameFrame = NULL;
     delete interGameFrame;
     interGameFrame = NULL;
-    loadMenuFrame();
+    loadMenuTabFrame();
 }
 
 void StartUi::slotServerLaunched()
@@ -235,8 +235,8 @@ void StartUi::slotDisconnectGame()
 void StartUi::slotGameStarted()
 {
     qDebug() << "StartUi game started";
-    delete menuFrame;
-    menuFrame = NULL;
+    delete menuTabFrame;
+    menuTabFrame = NULL;
     delete interGameFrame;
     interGameFrame = NULL;
     loadGameFrame();
@@ -265,7 +265,7 @@ void StartUi::slotMapRightButton()
 
 void StartUi::slotAddLocalPlayer()
 {
-    gamePlay->addPlayer(menuFrame->getPlayerName());
+    gamePlay->addPlayer(menuTabFrame->getPlayerName());
 }
 
 void StartUi::slotNewPlayerGraphic(qint8 player, const QPixmap &pix)
@@ -327,6 +327,6 @@ StartUi::~StartUi()
     delete settings;
     delete music;
     delete gameFrame;
-    delete menuFrame;
+    delete menuTabFrame;
     delete interGameFrame;
 }

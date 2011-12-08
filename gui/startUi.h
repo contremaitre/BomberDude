@@ -34,13 +34,13 @@
 
 #include "NetClient.h"
 #include "ui_MainWindow.h"
-#include "MenuFrame.h"
+#include "MenuTabFrame.h"
 #include "IpStats.h"
 #include "PlayerListWidget.h"
 
 class Settings;
 class GameFrame;
-class MenuFrame;
+class MenuTabFrame;
 class GamePlay;
 class InterGameFrame;
 
@@ -53,7 +53,7 @@ public:
 
 private:
 
-    MenuFrame *menuFrame;
+    MenuTabFrame *menuTabFrame;
     GamePlay *gamePlay;
     GameFrame *gameFrame;
     InterGameFrame *interGameFrame;
@@ -67,7 +67,7 @@ private:
 
     int styleIndex; //remember the map style the first time we start the game
 
-    void loadMenuFrame();
+    void loadMenuTabFrame();
     void loadGameFrame();
     void loagInterGameFrame();
 

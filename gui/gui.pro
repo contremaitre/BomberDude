@@ -25,15 +25,16 @@ HEADERS += QGraphicsSquareItem.h \
     PixmapsItems.h \
     Settings.h \
     IpStats.h \
-    MenuFrame.h \
+    MenuTabFrame.h \
     GameFrame.h \
     InterGameFrame.h \
     PlayerListWidget.h \
     startUi.h
     
 FORMS += ui/MainWindow.ui \
+    ui/MainMenuWidget.ui \
     ui/GameFrame.ui \
-    ui/MenuFrame.ui \
+    ui/MenuTabFrame.ui \
     ui/InterGameFrame.ui \
     ui/PlayerListWidget.ui \
     ui/IpStats.ui
@@ -45,7 +46,7 @@ SOURCES += QGraphicsSquareItem.cpp \
     PixmapsItems.cpp \
     Settings.cpp \
     IpStats.cpp \
-    MenuFrame.cpp \
+    MenuTabFrame.cpp \
     GameFrame.cpp \
     InterGameFrame.cpp \
     PlayerListWidget.cpp \
