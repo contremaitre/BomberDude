@@ -29,7 +29,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Next roud</string>
+    <string>Next round</string>
    </property>
   </widget>
   <widget class="QWidget" name="playerListWidgetHolder" native="true">
