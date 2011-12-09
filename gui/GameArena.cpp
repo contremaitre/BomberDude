@@ -100,10 +100,38 @@ void GameArena::clear()
     delete []playersItem;
     playersItem = NULL;
 
+    /* remove bombs */
+    QMap<int, QGraphicsSquareItem*>::iterator it;
+    while( (it = bombs.begin()) != bombs.end())
+    {
+        delete it.value();
+        bombs.erase(it);
+    }
+    /* remove flames */
+    while( (it = flames.begin()) != flames.end())
+    {
+        delete it.value();
+        flames.erase(it);
+    }
+    /* remove bonus */
+    QMap<QPoint, QGraphicsItem*>::iterator itbonus;
+    while( (itbonus = bonus.begin()) != bonus.end())
+    {
+        delete itbonus.value();
+        bonus.erase(itbonus);
+    }
+
+    /* remove just dead players*/
+    while(!burntPlayers.empty())
+    {
+        QGraphicsSquareItem* item = burntPlayers.takeFirst();
+        delete item;
+    }
+
+    /* remove options */
     while(!optionsItems.empty())
     {
         QGraphicsSquareItem* item = optionsItems.takeFirst();
-        //scene->removeItem(item);
         delete item;
     }
     slotRemoveHurryUp();
@@ -291,7 +319,6 @@ void GameArena::slotHearbeatUpdated(qint32 value) {
 void GameArena::removeBurnt() {
     QGraphicsSquareItem* item = burntPlayers.first();
     burntPlayers.pop_front();
-    scene->removeItem(item);
     delete item;
 }
 
@@ -299,8 +326,6 @@ void GameArena::slotRemoveHurryUp()
 {
     if(textHurryUp1 && textHurryUp2)
     {
-        //scene->removeItem(textHurryUp1);
-        //scene->removeItem(textHurryUp2);
         delete textHurryUp1;
         delete textHurryUp2;
         textHurryUp1 = NULL;
@@ -329,7 +354,7 @@ void GameArena::slotAddBonus(Bonus::Bonus_t bonusType, qint16 x, qint16 y) {
     QPoint key(x, y);
     QMap<QPoint, QGraphicsItem*>::iterator itb = bonus.find(key);
     if(itb != bonus.end())
-        scene->removeItem(itb.value());
+        delete itb.value();
     bonus[key] = pixBonus;
     scene->addItem(pixBonus);    
 }
@@ -338,7 +363,7 @@ void GameArena::slotRemoveBonus(qint16 x, qint16 y) {
     QPoint key(x, y);
     QMap<QPoint, QGraphicsItem*>::iterator itb = bonus.find(key);
     if(itb != bonus.end()) {
-        scene->removeItem(itb.value());
+        delete itb.value();
         bonus.erase(itb);
     }
 }
@@ -377,7 +402,7 @@ void GameArena::slotRemoveBomb(int id)
 {
     QMap<int, QGraphicsSquareItem*>::iterator itb = bombs.find(id);
     if(itb != bombs.end()) {
-        scene->removeItem(itb.value()->getItem());
+        delete itb.value();
         bombs.erase(itb);
     }
 }
@@ -386,7 +411,8 @@ void GameArena::slotRemoveBombRC(int id)
 {
     QMap<int, QGraphicsSquareItem*>::iterator itb = bombs.find(id);
     if(itb != bombs.end()) {
-        scene->removeItem(itb.value());
+        //Todo : we could change the pixmap instead of creating a new one
+        delete  itb.value();
         const BombClient& bomb = map->getRefBomb(id);
         QGraphicsSquareItem* pix = new QGraphicsSquareItem(bomb.getX() - squareSize/2,
                                                            bomb.getY() - squareSize/2,
@@ -439,7 +465,7 @@ void GameArena::slotRemoveFlame(int id)
 {
     QMap<int, QGraphicsSquareItem*>::iterator itb = flames.find(id);
     while(itb != flames.end() && itb.key() == id) {
-        scene->removeItem(itb.value());
+        delete itb.value();
         ++itb;
     }
     flames.remove(id);
