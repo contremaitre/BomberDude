@@ -20,6 +20,8 @@ MenuTabFrame::MenuTabFrame(Settings *settings, IpStats *ipStats, PlayerListWidge
     loadNetWidget();
     loadSound();
     loadPlayerData();
+    setAboutBox();
+
     connect(MainUi.isServer, SIGNAL(stateChanged(int)), this, SLOT(isServerChanged(int)));
     connect(MainUi.sound, SIGNAL(stateChanged(int)), this, SLOT(soundChanged(int)));
     connect(MainUi.startGameButton,SIGNAL(clicked()),this,SLOT(slotStartButton()));
@@ -222,6 +224,13 @@ const QString MenuTabFrame::getPlayerName() const
 QString MenuTabFrame::getAdminPassword() const
 {
     return MainUi.password->toPlainText();
+}
+
+void MenuTabFrame::setAboutBox()
+{
+    QString versionPrefix = "v. ";
+    TabUi.qt_version_label->setText(versionPrefix+QString(QT_VERSION_STR));
+    TabUi.prog_version_label->setText(versionPrefix+QString::number ( VERSION, 'g', 2 ));
 }
 
 QGraphicsView *MenuTabFrame::getGraphicPreview() const

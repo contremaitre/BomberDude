@@ -20,7 +20,8 @@
 #define CONSTANT_H_
 
 
-//constants that may be later removed or changed in a configuration menu
+//constants or defaults values
+#define VERSION 0.1
 
 //Graphics
 #define BLOCK_SIZE 30

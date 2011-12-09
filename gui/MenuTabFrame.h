@@ -42,6 +42,7 @@ private:
     void loadPlayerData();
     void updateNetWidgetState(bool);
     void toggleMusic(bool);//TODO, move music handling in StartUi
+    void setAboutBox();
 
 signals:
     void sigMaxPlayersValueChanged(int);
