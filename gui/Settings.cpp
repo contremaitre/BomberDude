@@ -163,6 +163,16 @@ void Settings::setDebugMode(bool val) {
     debugMode = val;
 }
 
+void Settings::setPlayer1Keys(const key_set_t &keys)
+{
+    player1Keys = keys;
+}
+
+void Settings::setPlayer2Keys(const key_set_t &keys)
+{
+    player2Keys = keys;
+}
+
 Settings::~Settings()
 {
     save();

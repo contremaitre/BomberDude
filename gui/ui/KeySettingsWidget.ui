@@ -67,7 +67,7 @@
      <string>Player 1</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -91,20 +91,6 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QPushButton" name="rightButton1">
-       <property name="text">
-        <string>RIGHT</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QPushButton" name="leftButton1">
-       <property name="text">
-        <string>LEFT</string>
-       </property>
-      </widget>
-     </item>
      <item row="4" column="0">
       <widget class="QPushButton" name="dropButton1">
        <property name="text">
@@ -123,7 +109,7 @@
       </widget>
      </item>
      <item row="5" column="0">
-      <widget class="QPushButton" name="optionButton1">
+      <widget class="QPushButton" name="optButton1">
        <property name="text">
         <string>OPTION</string>
        </property>
@@ -149,16 +135,6 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QLabel" name="key_right_1">
-       <property name="text">
-        <string>key_right</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="1">
       <widget class="QLabel" name="key_down_1">
        <property name="text">
@@ -169,10 +145,34 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="2" column="0">
+      <widget class="QPushButton" name="leftButton1">
+       <property name="text">
+        <string>LEFT</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QPushButton" name="rightButton1">
+       <property name="text">
+        <string>RIGHT</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
       <widget class="QLabel" name="key_left_1">
        <property name="text">
         <string>key_left</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="key_right_1">
+       <property name="text">
+        <string>key_right</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -210,13 +210,13 @@
      <string>Player 2</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>40</y>
       <width>161</width>
-      <height>201</height>
+      <height>194</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_2">
@@ -228,23 +228,9 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QPushButton" name="downButton1_2">
+      <widget class="QPushButton" name="downButton2">
        <property name="text">
         <string>DOWN</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QPushButton" name="rightButton2">
-       <property name="text">
-        <string>RIGHT</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QPushButton" name="leftButton2">
-       <property name="text">
-        <string>LEFT</string>
        </property>
       </widget>
      </item>
@@ -266,7 +252,7 @@
       </widget>
      </item>
      <item row="5" column="0">
-      <widget class="QPushButton" name="optionButton2">
+      <widget class="QPushButton" name="optButton2">
        <property name="text">
         <string>OPTION</string>
        </property>
@@ -292,16 +278,6 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QLabel" name="key_right_2">
-       <property name="text">
-        <string>key_right</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="1">
       <widget class="QLabel" name="key_down_2">
        <property name="text">
@@ -312,7 +288,21 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="2" column="0">
+      <widget class="QPushButton" name="leftButton2">
+       <property name="text">
+        <string>LEFT</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QPushButton" name="rightButton2">
+       <property name="text">
+        <string>RIGHT</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
       <widget class="QLabel" name="key_left_2">
        <property name="text">
         <string>key_left</string>
@@ -322,8 +312,34 @@
        </property>
       </widget>
      </item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="key_right_2">
+       <property name="text">
+        <string>key_right</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
+  </widget>
+  <widget class="QLabel" name="listenKeyLabel">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>20</y>
+     <width>181</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>listenKeyLabel</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
   </widget>
  </widget>
  <resources/>

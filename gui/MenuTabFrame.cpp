@@ -128,6 +128,7 @@ void MenuTabFrame::slotStartServer()
     MainUi.network_pref->setEnabled(false);
     MainUi.disconnectButton->setEnabled(true);
     MainUi.addLocalPlayerButton->setEnabled(true);
+    TabUi.Keys->setEnabled(false);
 }
 
 void MenuTabFrame::slotIsServerAdmin()
