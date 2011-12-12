@@ -43,7 +43,7 @@ GamePlay::GamePlay(Settings *set, QGraphicsView *mapGraphicPreview, QString play
     connect(client,SIGNAL(mapReceived(MapClient*)),this,SLOT(mapReceived(MapClient*)));
     connect(client,SIGNAL(mapPreviewReceived(MapClient*)),this,SLOT(mapPreviewReceived(MapClient*)));
     connect(client,SIGNAL(sigMapRandom(bool)),this,SLOT(slotMapRandom(bool)));
-    connect(client, SIGNAL(sigMapWinner(qint8)), gameArena, SLOT(slotMapWinner(qint8)));
+    connect(client, SIGNAL(sigMapWinner(qint8,bool)), gameArena, SLOT(slotMapWinner(qint8,bool)));
     connect(client, SIGNAL(sigConnected()), this, SLOT(slotConnectedToServer()));
 
     settings = set;

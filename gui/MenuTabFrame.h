@@ -56,6 +56,7 @@ private slots:
     void slotConnectedToServer();
     void slotIsServerAdmin();
     void slotMaxPlayersValueChanged(int);
+    void slotMaxWinsValueChanged(int);
     void slotUpdatePlayerData(qint8 playerId, QString playerName);
     void slotMapRandom(bool);
     void slotMapPreviewReceived(MapClient*);

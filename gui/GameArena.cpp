@@ -424,7 +424,7 @@ void GameArena::slotRemoveBombRC(int id)
     }
 }
 
-void GameArena::slotMapWinner(qint8 playerId) {
+void GameArena::slotMapWinner(qint8 playerId, bool end) {
     QFont bigText;
     bigText.setPointSize(32);
     bigText.setWeight(QFont::Bold);

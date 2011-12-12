@@ -48,6 +48,7 @@ public:
     void sendBomb();
     void sendOptKey();
     void setMaxPlayers(int);
+    void setMaxWins(int);
     void kickPlayer(qint8);
     void startGame(int);
     void sendPlayerData(const QString& playerName);
@@ -103,7 +104,8 @@ signals:
     void sigStatPacketLoss(double);
     void sigIsServerAdmin();
     void sigMaxPlayersChanged(int);
-    void sigMapWinner(qint8 playerId);
+    void sigMaxWinsChanged(int);
+    void sigMapWinner(qint8 , bool);
     void sigScoreUpdate(qint8, qint16);
     void sigGameStarted();
     void sigServerStopped();

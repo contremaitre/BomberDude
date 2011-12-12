@@ -40,7 +40,8 @@ NetServer::NetServer(int port, QString adminPasswd, bool debugMode, bool started
     mapList = mapDirectory.entryInfoList(QStringList("*.xml"));
     currentMapInList = 0;
     gameStarted = false;
-    maxNbPlayers = 2; //1
+    maxNbPlayers = MAX_PLAYERS;
+    maxWins = MAX_WINS;
     adminConnected = false;
     randomMap = false;
     this->debugMode = debugMode;
@@ -120,7 +121,7 @@ void NetServer::incomingClient()
         Q_ASSERT(freeIndex < maxNbPlayers);
 
         //if freeIndex == 0 && !adminPasswd, this client will be the admin of the server
-        NetServerClient *client = new NetServerClient(clientConnection,udpSocket,freeIndex, freeIndex == 0 && adminPasswd.isEmpty(), maxNbPlayers, this);
+        NetServerClient *client = new NetServerClient(clientConnection,udpSocket,freeIndex, freeIndex == 0 && adminPasswd.isEmpty(), maxNbPlayers, maxWins, this);
         connect(client, SIGNAL(disconected(NetServerClient*)), this, SLOT(clientDisconected(NetServerClient*)));
         connect(client, SIGNAL(sigUpdatePlayerData(qint8,QString)), this, SLOT(slotUpdatePlayerData(qint8,QString)));
 
@@ -315,6 +316,14 @@ void NetServer::setMaxPlayers(int value)
         client->sendMaxPlayers(maxNbPlayers);
     if(!randomMap)
         selectMap(2); //check if the current map is ok with this number of player
+}
+
+void NetServer::setMaxWins(int value)
+{
+    maxWins = value;
+
+    foreach(NetServerClient *client, clients)
+        client->sendMaxWins(maxWins);
 }
 
 void NetServer::kickPlayer(qint8 id)
@@ -559,6 +568,7 @@ void NetServer::updateMap(QByteArray updateData) {
 }
 
 void NetServer::slotWinner(qint8 playerId) {
+    bool theEnd = false;
     gameStarted = false;
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
@@ -566,16 +576,18 @@ void NetServer::slotWinner(qint8 playerId) {
     out << static_cast<quint16>(0);
     out << static_cast<quint16>(msg_map_winner);
     out << playerId;
-    // TODO send statistics (score, kills) so that the client is up-to-date
     out << static_cast<qint8>(clients.size());
     foreach(NetServerClient *client, clients)
     {
         if( client->getId() == playerId )
         {
             client->setScore(client->getScore()+1);
+            if(maxWins > 0 && client->getScore() >= maxWins)
+                theEnd = true;
         }
         out << static_cast<qint8>(client->getId()) << static_cast<qint16>(client->getScore());
     }
+    out << theEnd;
     setBlockSize(block, out);
 
     foreach(NetServerClient *client, clients)

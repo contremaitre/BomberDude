@@ -74,6 +74,7 @@ private:
 private slots:
     void slotStartServer();
     void slotMaxPlayersValueChanged(int);
+    void slotMaxWinsValueChanged(int);
     void randomMapCheckedChanged(int);
     void slotConnectionError();
     void slotServerLaunched();
@@ -85,11 +86,10 @@ private slots:
     void slotMapLeftButton();
     void slotMapRightButton();
     void slotGameStarted();
-    void slotNewPlayerGraphic(qint8, const QPixmap &);
     void slotServerStopped();
     void closeGame();
     void slotKickPlayer(qint8);
-    void slotEndRound(qint8);
+    void slotEndRound(qint8, bool);
     void slotLoadInterGame();
     void slotAddLocalPlayer();
 };

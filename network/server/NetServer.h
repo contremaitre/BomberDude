@@ -38,7 +38,6 @@
 #include "Flame.h"
 #include "NetServerClient.h"
 
-class QDir;
 class MapServer;
 
 class NetServer : public QThread
@@ -53,6 +52,7 @@ public:
     //call this function when the game is launched
     bool loadMap(int);
     void setMaxPlayers(int);
+    void setMaxWins(int);
     void kickPlayer(qint8);
     void startGame(int);
     void selectMap(qint8 direction);
@@ -68,6 +68,7 @@ private:
     int port;
     bool gameStarted;
     int maxNbPlayers;
+    int maxWins;
     QTcpServer *tcpServer;
     QUdpSocket *udpSocket;
     /* Connected client list, sorted by id */

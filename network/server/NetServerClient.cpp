@@ -20,7 +20,7 @@
 #include "../NetMessage.h"
 
 
-NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, bool admin, int maxPl, NetServer *s)
+NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, bool admin, int maxPl, int maxWins, NetServer *s)
 {
     tcpSocket = t;
     udpSocket = u;
@@ -39,6 +39,7 @@ NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, bool admi
     lastReceivedPckt = 0;
     server = s;
     sendMaxPlayers(maxPl);
+    sendMaxWins(maxWins);
     if(admin)
         sendIsAdmin();
     qDebug() << "new NetServerClient " << id << peerAddress;
@@ -92,6 +93,14 @@ void NetServerClient::handleMsg(QDataStream &in)
         in >> value;
         if(isAdmin)
             server->setMaxPlayers(value);
+        break;
+    }
+    case msg_max_wins:
+    {
+        quint16 value;
+        in >> value;
+        if(isAdmin)
+            server->setMaxWins(value);
         break;
     }
     case msg_start_game:
@@ -164,6 +173,19 @@ void NetServerClient::sendMaxPlayers(int value)
     out.setVersion(QDataStream::Qt_4_0);
     out << (quint16)0;
     out << (quint16)msg_max_players;
+    out << (quint16)value;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    tcpSocket->write(block);
+}
+
+void NetServerClient::sendMaxWins(int value)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_max_wins;
     out << (quint16)value;
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));

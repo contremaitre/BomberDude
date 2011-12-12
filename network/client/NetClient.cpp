@@ -320,7 +320,13 @@ void NetClient::handleTcpMsg(QDataStream &in)
         emit sigMaxPlayersChanged((int)maxPl);
 	    break;
 	}
-
+    case msg_max_wins:
+    {
+        quint16 maxWin;
+        in >> maxWin;
+        emit sigMaxWinsChanged((int)maxWin);
+        break;
+    }
     case msg_update_player_data: {
             qint8 playerId;
             QString playerName;
@@ -346,6 +352,7 @@ void NetClient::handleTcpMsg(QDataStream &in)
     }
     case msg_map_winner: {
             qint8 playerId, listSize;
+            bool theEnd;
             in >> playerId;
             in >> listSize;
             for(qint8 i = 0; i < listSize; i++)
@@ -355,7 +362,8 @@ void NetClient::handleTcpMsg(QDataStream &in)
                 in >> id >> score;
                 emit sigScoreUpdate(id,score);
             }
-            emit sigMapWinner(playerId);
+            in >> theEnd;
+            emit sigMapWinner(playerId, theEnd);
             break;
         }
     case msg_start_game:
@@ -405,6 +413,18 @@ void NetClient::setMaxPlayers(int value)
     out.setVersion(QDataStream::Qt_4_0);
     out << (quint16)0;
     out << (quint16)msg_max_players;
+    out << (qint16)value;
+    setBlockSize(block, out);
+    tcpSocket->write(block);
+}
+
+void NetClient::setMaxWins(int value)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_max_wins;
     out << (qint16)value;
     setBlockSize(block, out);
     tcpSocket->write(block);

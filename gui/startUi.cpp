@@ -45,6 +45,7 @@ void StartUi::loadMenuTabFrame()
         delete menuTabFrame;
     menuTabFrame = new MenuTabFrame(settings, &ipStats, &playerListWidget, music);
     connect(menuTabFrame->MainUi.maxPlayersBox, SIGNAL(valueChanged(int)), this, SLOT(slotMaxPlayersValueChanged(int)));
+    connect(menuTabFrame->MainUi.maxWinsBox, SIGNAL(valueChanged(int)), this, SLOT(slotMaxWinsValueChanged(int)));
     connect(menuTabFrame->MainUi.serverButton,SIGNAL(clicked()),this,SLOT(slotStartServer()));
     connect(menuTabFrame->MainUi.mapRightButton, SIGNAL(clicked()), this, SLOT(slotMapRightButton()));
     connect(menuTabFrame->MainUi.mapLeftButton, SIGNAL(clicked()), this, SLOT(slotMapLeftButton()));
@@ -130,7 +131,7 @@ void StartUi::slotStartServer()
     connect( netclient, SIGNAL(sigConnectionError()), this, SLOT(slotConnectionError()), Qt::QueuedConnection);
     connect( netclient, SIGNAL(sigGameStarted()), this, SLOT(slotGameStarted()));
     connect( netclient, SIGNAL(sigNetClientEnd()), this, SLOT(closeGame()));
-    connect( netclient, SIGNAL(sigMapWinner(qint8)), this, SLOT(slotEndRound(qint8)));
+    connect( netclient, SIGNAL(sigMapWinner(qint8,bool)), this, SLOT(slotEndRound(qint8,bool)));
 
     /* Connect some signals to the IP stats widget */
     connect( netclient, SIGNAL(sigStatPing(int)), &ipStats, SLOT(slotStatPing(int)));
@@ -141,6 +142,7 @@ void StartUi::slotStartServer()
     connect( netclient, SIGNAL(sigIsServerAdmin()), menuTabFrame, SLOT(slotIsServerAdmin()));
     connect( netclient, SIGNAL(sigUpdatePlayerData(qint8,QString)), menuTabFrame, SLOT(slotUpdatePlayerData(qint8,QString)));
     connect( netclient, SIGNAL(sigMaxPlayersChanged(int)), menuTabFrame, SLOT(slotMaxPlayersValueChanged(int)));
+    connect( netclient, SIGNAL(sigMaxWinsChanged(int)), menuTabFrame, SLOT(slotMaxWinsValueChanged(int)));
     connect( netclient, SIGNAL(sigMapRandom(bool)), menuTabFrame, SLOT(slotMapRandom(bool)));
     connect( netclient, SIGNAL(mapPreviewReceived(MapClient*)), menuTabFrame,SLOT(slotMapPreviewReceived(MapClient*)));
     connect( netclient, SIGNAL(sigPlayerLeft(qint8)), menuTabFrame, SLOT(slotPlayerLeft(qint8)));
@@ -162,6 +164,13 @@ void StartUi::slotMaxPlayersValueChanged(int value)
 {
     if(gamePlay)
         gamePlay->getNetClient()->setMaxPlayers(value);
+}
+
+void StartUi::slotMaxWinsValueChanged(int value)
+{
+    qDebug() << "StartUi::slotMaxWinsValueChanged" << value;
+    if(gamePlay)
+        gamePlay->getNetClient()->setMaxWins(value);
 }
 
 void StartUi::closeGame()
@@ -268,20 +277,6 @@ void StartUi::slotAddLocalPlayer()
     gamePlay->addPlayer(menuTabFrame->getPlayerName());
 }
 
-void StartUi::slotNewPlayerGraphic(qint8 player, const QPixmap &pix)
-{
-    /*TODO Move this to a separate widget
-    qDebug() << "Startui new player graphic" << player;
-    QLabel *label = new QLabel;
-    label->setPixmap(pix);
-    playerListLayout->addWidget(label,player,0);
-
-    QLabel *label2 = new QLabel(playersList->item(player,1)->text());
-    playerListLayout->addWidget(label2,player,1);
-    labelsPlayerList.push_back(label);
-    labelsPlayerList.push_back(label2);*/
-}
-
 void StartUi::slotReadServerDebug()
 {
     QByteArray array = server->readAllStandardOutput();
@@ -304,9 +299,10 @@ void StartUi::slotServerStopped()
     QMessageBox::warning(this, QString("Server stopped"),QString("The server was shut down, either by admin command or because the connection with the admin GUI was lost"));
 }
 
-void StartUi::slotEndRound(qint8)
+void StartUi::slotEndRound(qint8, bool end)
 {
-    QTimer::singleShot(1000*5, this, SLOT(slotLoadInterGame()));
+    if(!end)
+        QTimer::singleShot(1000*5, this, SLOT(slotLoadInterGame()));
 }
 
 StartUi::~StartUi()

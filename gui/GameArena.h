@@ -105,7 +105,7 @@ private slots:
     void slotRemoveFlame(int id);
 
 public slots:
-    void slotMapWinner(qint8 playerId);
+    void slotMapWinner(qint8 playerId, bool end);
 
 signals:
     void sigTimeUpdated(int valueInSeconds);

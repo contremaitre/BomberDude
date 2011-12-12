@@ -41,7 +41,7 @@ class NetServerClient : public QObject
     Q_OBJECT
 
       public:
-  NetServerClient(QTcpSocket *, QUdpSocket *, int id, bool admin, int maxPl, NetServer *);
+  NetServerClient(QTcpSocket *, QUdpSocket *, int id, bool admin, int maxPl, int maxWins, NetServer *);
   ~NetServerClient();
   void sendMap(const Map<PlayerServer,BombServer,mapStyle>&);
   void sendMapPreview(const Map<PlayerServer,BombServer,mapStyle>*);
@@ -60,6 +60,7 @@ class NetServerClient : public QObject
   void udpReceived(quint32 pckNum);
   void sendUdpStats();
   void sendMaxPlayers(int);
+  void sendMaxWins(int);
   void setAdmin();
   bool getAdmin() const { return isAdmin; }
  private:

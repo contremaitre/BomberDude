@@ -144,6 +144,11 @@ void MenuTabFrame::slotMaxPlayersValueChanged(int maxPlayers)
     MainUi.maxPlayersBox->setValue(maxPlayers);
 }
 
+void MenuTabFrame::slotMaxWinsValueChanged(int max)
+{
+    MainUi.maxWinsBox->setValue(max);
+}
+
 void MenuTabFrame::slotPlayerLeft(qint8 playerId)
 {
     delete MainUi.playersList->takeItem(playerId,0);
