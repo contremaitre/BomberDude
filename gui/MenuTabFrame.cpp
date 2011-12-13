@@ -40,7 +40,7 @@ MenuTabFrame::MenuTabFrame(Settings *settings, IpStats *ipStats, PlayerListWidge
 
 void MenuTabFrame::loadSound()
 {
-    if(!QSound::isAvailable())
+    if(1 || !QSound::isAvailable())
     {
         qDebug() << "No Sound available";
         MainUi.sound->setEnabled(false);
@@ -54,7 +54,9 @@ void MenuTabFrame::loadSound()
 
 void MenuTabFrame::toggleMusic(bool on)
 {
-    qDebug() << "music" << on;
+    qDebug() << "music" << music << on;
+    if(!music)
+        return;
     if(on)
     {
         music->setLoops(-1);

@@ -36,7 +36,8 @@ StartUi::StartUi(QApplication *a)
     settings = new Settings;
     setupUi(this);
     loadMenuTabFrame();
-    music = new QSound("sounds/music.wav",this);
+    //music = new QSound("sounds/music.wav",this);
+    music = NULL;
 }
 
 void StartUi::loadMenuTabFrame()
