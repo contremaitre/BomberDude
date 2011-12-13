@@ -11,11 +11,19 @@ void PlayerListWidget::slotAddPlayer(qint8 playerId, QString name)
 {
     qDebug() << "PlayerListWidget new player" << playerId << name;
     QLayoutItem * old = ui.playerListLayout->itemAtPosition ( playerId, 1 );
-    if(old)
+    if(old && old->widget())
     {
-        dynamic_cast<QLabel*>(old->widget())->setText(name);
+        QLabel* oldLabel = dynamic_cast<QLabel*>(old->widget());
+        if(!oldLabel)
+        {
+            delete old->widget();
+            ui.playerListLayout->removeItem(old);
+            old = NULL;
+        }
+        else
+            oldLabel->setText(name);
     }
-    else
+    if(!old || !old->widget())
     {
         QLabel *label = new QLabel(name);
         ui.playerListLayout->addWidget(label,playerId,1);
@@ -29,9 +37,17 @@ void PlayerListWidget::slotNewPlayerGraphic(qint8 playerId, const QPixmap &pix)
     QLayoutItem * old = ui.playerListLayout->itemAtPosition ( playerId, 0 );
     if(old)
     {
-        dynamic_cast<QLabel*>(old->widget())->setPixmap(pix);
+        QLabel* oldLabel = dynamic_cast<QLabel*>(old->widget());
+        if(!oldLabel)
+        {
+            delete old->widget();
+            ui.playerListLayout->removeItem(old);
+            old = NULL;
+        }
+        else
+            oldLabel->setPixmap(pix);
     }
-    else
+    if(!old || !old->widget())
     {
         QLabel *label = new QLabel();
         label->setPixmap(pix);
@@ -45,9 +61,17 @@ void PlayerListWidget::slotUpdatePlayerScore(qint8 playerId, qint16 score)
     QLayoutItem * old = ui.playerListLayout->itemAtPosition ( playerId, 2 );
     if(old)
     {
-        dynamic_cast<QLabel*>(old->widget())->setText(QString::number(score));
+        QLabel* oldLabel = dynamic_cast<QLabel*>(old->widget());
+        if(!oldLabel)
+        {
+            delete old->widget();
+            ui.playerListLayout->removeItem(old);
+            old = NULL;
+        }
+        else
+            oldLabel->setText(QString::number(score));
     }
-    else
+    if(!old || !old->widget())
     {
         QLabel *label = new QLabel(QString::number(score));
         ui.playerListLayout->addWidget(label,playerId,2);
