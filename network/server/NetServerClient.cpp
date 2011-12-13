@@ -148,8 +148,8 @@ void NetServerClient::handleMsg(QDataStream &in)
     }
     case msg_shutdown_server:
         qDebug() << "NetServerClient msg_shutdown_server" << isAdmin;
-        if(isAdmin)
-            server->shutdown();
+        if(isAdmin) //just disconnect, the server will shutdown by itself
+            clientDisconected();
         break;
     default:
         //trash the message
