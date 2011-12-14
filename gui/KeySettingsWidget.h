@@ -42,6 +42,7 @@ private slots:
     void slotPl2Down();
     void slotPl2Drop();
     void slotPl2Opt();
+    void slotDefault();
 };
 
 

@@ -20,6 +20,7 @@ KeySettingsWidget::KeySettingsWidget(Settings *settings,QWidget *parent)
     connect(ui.dropButton2,SIGNAL(clicked()),this,SLOT(slotPl2Drop()));
     connect(ui.optButton1,SIGNAL(clicked()),this,SLOT(slotPl1Opt()));
     connect(ui.optButton2,SIGNAL(clicked()),this,SLOT(slotPl2Opt()));
+    connect(ui.defaultButton, SIGNAL(clicked()), this, SLOT(slotDefault()));
 
     stopListening();
     memset(&listenedKey,0, sizeof(listenedKey));
@@ -237,6 +238,12 @@ void KeySettingsWidget::changeKey(int k)
 void KeySettingsWidget::focusOutEvent(QFocusEvent *event)
 {
     stopListening();
+}
+
+void KeySettingsWidget::slotDefault()
+{
+    settings->loadDefaultKeys();
+    loadKeys();
 }
 
 QString KeySettingsWidget::keyToString(int key)

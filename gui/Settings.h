@@ -70,6 +70,8 @@ public:
     void setDebugMode(bool);
     void setPlayer1Keys(const key_set_t&);
     void setPlayer2Keys(const key_set_t&);
+
+    void loadDefaultKeys();
 };
 
 

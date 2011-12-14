@@ -134,6 +134,22 @@ key_set_t Settings::getPlayer2Keys() const {
     return player2Keys;
 }
 
+void Settings::loadDefaultKeys()
+{
+    player1Keys.left = DEFAULT_KEY_1_LEFT;
+    player1Keys.right = DEFAULT_KEY_1_RIGHT;
+    player1Keys.up = DEFAULT_KEY_1_UP;
+    player1Keys.down = DEFAULT_KEY_1_DOWN;
+    player1Keys.drop = DEFAULT_KEY_1_DROP;
+    player1Keys.opt = DEFAULT_KEY_1_OPT;
+
+    player2Keys.left = DEFAULT_KEY_2_LEFT;
+    player2Keys.right = DEFAULT_KEY_2_RIGHT;
+    player2Keys.up = DEFAULT_KEY_2_UP;
+    player2Keys.down = DEFAULT_KEY_2_DOWN;
+    player2Keys.drop = DEFAULT_KEY_2_DROP;
+    player2Keys.opt = DEFAULT_KEY_2_OPT;
+}
 
 void Settings::setServer(bool val)
 {
