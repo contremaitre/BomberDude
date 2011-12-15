@@ -17,7 +17,7 @@ enum sickness { SICK_NONE=0,
 class PlayerServer: public Player
 {
 public:
-    PlayerServer(int playerId);
+    PlayerServer(qint8 playerId);
     ~PlayerServer();
 
     // these methods modify the variables inherited from Player

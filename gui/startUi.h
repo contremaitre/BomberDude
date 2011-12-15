@@ -32,11 +32,17 @@
 #include <QProcess>
 #include <QSound>
 
-#include "Settings.h"
-#include "GamePlay.h"
 #include "NetClient.h"
-#include "ui_main_window.h"
+#include "ui_MainWindow.h"
+#include "MenuTabFrame.h"
+#include "IpStats.h"
+#include "PlayerListWidget.h"
 
+class Settings;
+class GameFrame;
+class MenuTabFrame;
+class GamePlay;
+class InterGameFrame;
 
 class StartUi : public QMainWindow, private Ui_MainWindow
 {
@@ -46,59 +52,46 @@ public:
     ~StartUi();
 
 private:
-    //QMainWindow mainw;
+
+    MenuTabFrame *menuTabFrame;
     GamePlay *gamePlay;
+    GameFrame *gameFrame;
+    InterGameFrame *interGameFrame;
+    PlayerListWidget playerListWidget;
+    IpStats ipStats;
     Settings *settings;
     QSound *music;
     QProcess *server;
     QApplication *qapp;
     QString adminPassword;
 
-    QPixmap statusGrey;
-    QPixmap statusGreen;
-    QPixmap statusYellow;
-    QPixmap statusRed;
-    QPixmap loading;
+    int styleIndex; //remember the map style the first time we start the game
 
-    QList <QLabel *> labelsPlayerList;
-
-    void loadPixmaps();
-    void loadNetWidget();
-    void loadSound();
-    void loadIpStats();
-    void loadPlayerData();
-    bool setSettings();
-    void updateNetWidgetState(bool);
-    void toggleMusic(bool);
+    void loadMenuTabFrame();
+    void loadGameFrame();
+    void loagInterGameFrame();
 
 private slots:
-    void startServer();
-    void isServerChanged(int);
-    void maxPlayersValueChanged(int);
-    void soundChanged(int);
-    void statPing(int);
-    void statPacketLoss(double);
-    void statsCheckedChanged(int);
+    void slotStartServer();
+    void slotMaxPlayersValueChanged(int);
+    void slotMaxWinsValueChanged(int);
     void randomMapCheckedChanged(int);
     void slotConnectionError();
-    void slotConnectedToServer();
     void slotServerLaunched();
     void slotServerLaunchedError(QProcess::ProcessError error);
     void slotReadServerDebug();
-    void slotIsServerAdmin();
-    void slotMaxPlayersChanged(int);
-    void slotUpdatePlayerData(qint32 playerId, QString playerName);
-    void slotPlayerLeft(qint32 playerId);
-    void slotStartGame();
-    void slotStopGame();
-    void slotMapRandom();
+    void slotStartGame(int);
+    void slotNextRound();
+    void slotDisconnectGame();
     void slotMapLeftButton();
     void slotMapRightButton();
-    void slotMapPreviewReceived(MapClient*);
     void slotGameStarted();
-    void slotNewPlayerGraphic(int, const QPixmap &);
     void slotServerStopped();
     void closeGame();
+    void slotKickPlayer(qint8);
+    void slotEndRound(qint8, bool);
+    void slotLoadInterGame();
+    void slotAddLocalPlayer();
 };
 
 

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Sébastien Escudier
+    Copyright (C) 2010,2011 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,6 +19,20 @@
 #include "Settings.h"
 #include "constant.h"
 
+#define DEFAULT_KEY_1_LEFT Qt::Key_Left
+#define DEFAULT_KEY_1_RIGHT Qt::Key_Right
+#define DEFAULT_KEY_1_UP Qt::Key_Up
+#define DEFAULT_KEY_1_DOWN Qt::Key_Down
+#define DEFAULT_KEY_1_DROP Qt::Key_Control
+#define DEFAULT_KEY_1_OPT Qt::Key_Shift
+
+#define DEFAULT_KEY_2_LEFT Qt::Key_S
+#define DEFAULT_KEY_2_RIGHT Qt::Key_F
+#define DEFAULT_KEY_2_UP Qt::Key_E
+#define DEFAULT_KEY_2_DOWN Qt::Key_D
+#define DEFAULT_KEY_2_DROP Qt::Key_Space
+#define DEFAULT_KEY_2_OPT Qt::Key_Alt
+
 Settings::Settings()
 {
     qsettings = new QSettings("QtBomberman", "QtBomberman");
@@ -27,32 +41,67 @@ Settings::Settings()
     serverAddress = qsettings->value("serverAddress",SERVER_ADDRESS).toString();
     serverPort = qsettings->value("serverPort",SERVER_PORT).toInt();
     sound = qsettings->value("sound", true).toBool();
-    showIpStats = qsettings->value("showIpStats", true).toBool();
     playerName = qsettings->value("playerName", "player").toString();
     if(playerName.isEmpty())
         playerName = "player"; //the user may have set an empty name
     debugMode = qsettings->value("debugMode", false).toBool();
+    qsettings->endGroup();
+
+    /* Keys */
+    qsettings->beginGroup("Control Keys");
+    qsettings->beginGroup("Player 1");
+    player1Keys.left = static_cast<Qt::Key>(qsettings->value("key_left", DEFAULT_KEY_1_LEFT).toInt());
+    player1Keys.right = static_cast<Qt::Key>(qsettings->value("key_right", DEFAULT_KEY_1_RIGHT).toInt());
+    player1Keys.up = static_cast<Qt::Key>(qsettings->value("key_up", DEFAULT_KEY_1_UP).toInt());
+    player1Keys.down = static_cast<Qt::Key>(qsettings->value("key_down", DEFAULT_KEY_1_DOWN).toInt());
+    player1Keys.drop = static_cast<Qt::Key>(qsettings->value("key_drop", DEFAULT_KEY_1_DROP).toInt());
+    player1Keys.opt = static_cast<Qt::Key>(qsettings->value("key_opt", DEFAULT_KEY_1_OPT).toInt());
+    qsettings->endGroup();
+    qsettings->beginGroup("Player 2");
+    player2Keys.left = static_cast<Qt::Key>(qsettings->value("key_left", DEFAULT_KEY_2_LEFT).toInt());
+    player2Keys.right = static_cast<Qt::Key>(qsettings->value("key_right", DEFAULT_KEY_2_RIGHT).toInt());
+    player2Keys.up = static_cast<Qt::Key>(qsettings->value("key_up", DEFAULT_KEY_2_UP).toInt());
+    player2Keys.down = static_cast<Qt::Key>(qsettings->value("key_down", DEFAULT_KEY_2_DOWN).toInt());
+    player2Keys.drop = static_cast<Qt::Key>(qsettings->value("key_drop", DEFAULT_KEY_2_DROP).toInt());
+    player2Keys.opt = static_cast<Qt::Key>(qsettings->value("key_opt", DEFAULT_KEY_2_OPT).toInt());
+    qsettings->endGroup();
+    qsettings->endGroup();
 }
 
 void Settings::save()
 {
+    qsettings->beginGroup("Network");
     qsettings->setValue("isServer",b_isServer);
     qsettings->setValue("sound",sound);
     qsettings->setValue("serverAddress",serverAddress);
     qsettings->setValue("serverPort",serverPort);
-    qsettings->setValue("showIpStats",showIpStats);
     qsettings->setValue("playerName", playerName);
     qsettings->setValue("debugMode", debugMode);
+    qsettings->endGroup();
+
+    qsettings->beginGroup("Control Keys");
+    qsettings->beginGroup("Player 1");
+    qsettings->setValue("key_left", player1Keys.left);
+    qsettings->setValue("key_right", player1Keys.right);
+    qsettings->setValue("key_up", player1Keys.up);
+    qsettings->setValue("key_down", player1Keys.down);
+    qsettings->setValue("key_drop", player1Keys.drop);
+    qsettings->setValue("key_opt", player1Keys.opt);
+    qsettings->endGroup();
+    qsettings->beginGroup("Player 2");
+    qsettings->setValue("key_left", player2Keys.left);
+    qsettings->setValue("key_right", player2Keys.right);
+    qsettings->setValue("key_up", player2Keys.up);
+    qsettings->setValue("key_down", player2Keys.down);
+    qsettings->setValue("key_drop", player2Keys.drop);
+    qsettings->setValue("key_opt", player2Keys.opt);
+    qsettings->endGroup();
+    qsettings->endGroup();
 }
 
 bool Settings::isServer() const
 {
     return b_isServer;
-}
-
-bool Settings::getShowIpStats() const
-{
-    return showIpStats;
 }
 
 QString Settings::getServerAddress() const
@@ -78,14 +127,33 @@ bool Settings::isDebugMode() const {
     return debugMode;
 }
 
+key_set_t Settings::getPlayer1Keys() const {
+    return player1Keys;
+}
+key_set_t Settings::getPlayer2Keys() const {
+    return player2Keys;
+}
+
+void Settings::loadDefaultKeys()
+{
+    player1Keys.left = DEFAULT_KEY_1_LEFT;
+    player1Keys.right = DEFAULT_KEY_1_RIGHT;
+    player1Keys.up = DEFAULT_KEY_1_UP;
+    player1Keys.down = DEFAULT_KEY_1_DOWN;
+    player1Keys.drop = DEFAULT_KEY_1_DROP;
+    player1Keys.opt = DEFAULT_KEY_1_OPT;
+
+    player2Keys.left = DEFAULT_KEY_2_LEFT;
+    player2Keys.right = DEFAULT_KEY_2_RIGHT;
+    player2Keys.up = DEFAULT_KEY_2_UP;
+    player2Keys.down = DEFAULT_KEY_2_DOWN;
+    player2Keys.drop = DEFAULT_KEY_2_DROP;
+    player2Keys.opt = DEFAULT_KEY_2_OPT;
+}
+
 void Settings::setServer(bool val)
 {
     b_isServer = val;
-}
-
-void Settings::setShowIpStats(bool val)
-{
-    showIpStats = val;
 }
 
 void Settings::setServerPort(int port)
@@ -109,6 +177,16 @@ void Settings::setPlayerName(const QString& name) {
 
 void Settings::setDebugMode(bool val) {
     debugMode = val;
+}
+
+void Settings::setPlayer1Keys(const key_set_t &keys)
+{
+    player1Keys = keys;
+}
+
+void Settings::setPlayer2Keys(const key_set_t &keys)
+{
+    player2Keys = keys;
 }
 
 Settings::~Settings()

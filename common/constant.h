@@ -20,7 +20,8 @@
 #define CONSTANT_H_
 
 
-//constants that may be later removed or changed in a configuration menu
+//constants or defaults values
+#define VERSION 0.1
 
 //Graphics
 #define BLOCK_SIZE 30
@@ -29,6 +30,8 @@
 #define MAP_PATH "maps/"
 
 //Game
+#define MAX_PLAYERS 4 //initial max player value when creating a game
+#define MAX_WINS 5 //initial max wins to end a tournament
 #define MAX_NB_PLAYER 4 //for random maps
 #define DEFAULT_BOMB_DURATION 40 //ticks
 #define DEFAULT_BOMB_DUD_MALUS 3 //dud bomb duration = DEFAULT_BOMB_DURATION * DEFAULT_BOMB_DUD_MALUS

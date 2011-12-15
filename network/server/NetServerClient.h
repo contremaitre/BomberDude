@@ -41,23 +41,26 @@ class NetServerClient : public QObject
     Q_OBJECT
 
       public:
-  NetServerClient(QTcpSocket *, QUdpSocket *, int id, bool admin, int maxPl, NetServer *);
+  NetServerClient(QTcpSocket *, QUdpSocket *, int id, bool admin, int maxPl, int maxWins, NetServer *);
   ~NetServerClient();
   void sendMap(const Map<PlayerServer,BombServer,mapStyle>&);
   void sendMapPreview(const Map<PlayerServer,BombServer,mapStyle>*);
-  void sendMapRandom();
+  void sendMapRandom(bool);
   void sendGameStarted();
   void sendUpdate(const QByteArray& block);
   void sendTcpBlock(const QByteArray& block);
   QHostAddress getAddress() const;
   quint16 getPeerUdpPort() const;
 
-  int getId() const;
+  qint8 getId() const;
+  qint16 getScore() const;
+  void setScore(qint16);
   const QString& getPlayerName() const      { return playerName; }
 
   void udpReceived(quint32 pckNum);
   void sendUdpStats();
   void sendMaxPlayers(int);
+  void sendMaxWins(int);
   void setAdmin();
   bool getAdmin() const { return isAdmin; }
  private:
@@ -73,9 +76,9 @@ class NetServerClient : public QObject
   void handleMsg(QDataStream &);
   void sendIsAdmin();
 
-  int playerId;
-  int playerNumber;
+  qint8 playerId;
   QString playerName;
+  qint16 score;
 
   quint16 blockSize; //size of the current message
 
@@ -85,7 +88,7 @@ private slots:
 
 signals:
     void disconected(NetServerClient*);
-    void sigUpdatePlayerData(int playerId, QString playerName);
+    void sigUpdatePlayerData(qint8 playerId, QString playerName);
 };
 
 

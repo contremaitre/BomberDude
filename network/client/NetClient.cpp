@@ -163,6 +163,18 @@ void NetClient::selectMap(int direction)
     //qDebug() << "NetClient select map";
 }
 
+void NetClient::kickPlayer(qint8 playerId)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << static_cast<quint16>(0);
+    out << static_cast<quint16>(msg_kick_player);
+    out << static_cast<qint8>(playerId);
+    setBlockSize(block, out);
+    tcpSocket->write(block);
+}
+
 void NetClient::stopServer()
 {
     QByteArray block;
@@ -175,9 +187,9 @@ void NetClient::stopServer()
     tcpSocket->write(block);
 }
 
-void NetClient::quitGame() {
+void NetClient::disconnectFromServer() {
     tcpSocket->close();
-    emit sigGameQuit();
+    emit sigNetClientEnd();
 }
 
 void NetClient::receiveUdp()
@@ -277,11 +289,15 @@ void NetClient::handleTcpMsg(QDataStream &in)
         emit mapPreviewReceived(mapPreview);
         break;
     case msg_map_random:
+    {
+        bool rand;
+        in >> rand;
         qDebug("NetClient random map");
         delete mapPreview;
         mapPreview = NULL;
-        emit sigMapRandom();
+        emit sigMapRandom(rand);
         break;
+    }
 	case msg_udp_stat:
 	{
 	    quint16 nbErrors;
@@ -304,9 +320,15 @@ void NetClient::handleTcpMsg(QDataStream &in)
         emit sigMaxPlayersChanged((int)maxPl);
 	    break;
 	}
-
+    case msg_max_wins:
+    {
+        quint16 maxWin;
+        in >> maxWin;
+        emit sigMaxWinsChanged((int)maxWin);
+        break;
+    }
     case msg_update_player_data: {
-            qint32 playerId;
+            qint8 playerId;
             QString playerName;
 
             in >> playerId;
@@ -316,22 +338,32 @@ void NetClient::handleTcpMsg(QDataStream &in)
                         << " instead of " << MAX_PLAYER_NAME_LENGTH;
                 playerName.clear();
             }
-            //qDebug() << "Id: " << playerId << ", name: " << playerName;
+            qDebug() << "Id: " << playerId << ", name: " << playerName;
             emit sigUpdatePlayerData(playerId, playerName);
             break;
         }
     case msg_client_disconnected :
     {
-        qint32 playerId;
+        qint8 playerId;
         in >> playerId;
         qDebug() << "Client #" << playerId << "left";
         emit sigPlayerLeft(playerId);
+        break;
     }
     case msg_map_winner: {
-            qint8 playerId;
+            qint8 playerId, listSize;
+            bool theEnd;
             in >> playerId;
-
-            emit sigMapWinner(playerId);
+            in >> listSize;
+            for(qint8 i = 0; i < listSize; i++)
+            {
+                qint8 id;
+                qint16 score;
+                in >> id >> score;
+                emit sigScoreUpdate(id,score);
+            }
+            in >> theEnd;
+            emit sigMapWinner(playerId, theEnd);
             break;
         }
     case msg_start_game:
@@ -381,6 +413,18 @@ void NetClient::setMaxPlayers(int value)
     out.setVersion(QDataStream::Qt_4_0);
     out << (quint16)0;
     out << (quint16)msg_max_players;
+    out << (qint16)value;
+    setBlockSize(block, out);
+    tcpSocket->write(block);
+}
+
+void NetClient::setMaxWins(int value)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_max_wins;
     out << (qint16)value;
     setBlockSize(block, out);
     tcpSocket->write(block);

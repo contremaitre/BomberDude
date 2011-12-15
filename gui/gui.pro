@@ -25,18 +25,39 @@ HEADERS += QGraphicsSquareItem.h \
     GamePlay.h \
     PixmapsItems.h \
     Settings.h \
+    IpStats.h \
+    MenuTabFrame.h \
+    GameFrame.h \
+    InterGameFrame.h \
+    PlayerListWidget.h \
+    KeySettingsWidget.h \
     startUi.h \
     qbomb.h \
     QFlame.h \
     QAnimateditem.h \
     QPlayer.h
-FORMS += ui/main_window.ui
+    
+FORMS += ui/MainWindow.ui \
+    ui/MainMenuWidget.ui \
+    ui/GameFrame.ui \
+    ui/MenuTabFrame.ui \
+    ui/InterGameFrame.ui \
+    ui/PlayerListWidget.ui \
+    ui/KeySettingsWidget.ui \
+    ui/IpStats.ui
+
 SOURCES += QGraphicsSquareItem.cpp \
     GameArena.cpp \
     GamePlay.cpp \
     main.cpp \
     PixmapsItems.cpp \
     Settings.cpp \
+    IpStats.cpp \
+    MenuTabFrame.cpp \
+    GameFrame.cpp \
+    InterGameFrame.cpp \
+    PlayerListWidget.cpp \
+    KeySettingsWidget.cpp \
     startUi.cpp \
     qbomb.cpp \
     QFlame.cpp \

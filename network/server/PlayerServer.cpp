@@ -3,7 +3,7 @@
 
 #include <QDebug>
 
-PlayerServer::PlayerServer(int playerId) :
+PlayerServer::PlayerServer(qint8 playerId) :
     Player(playerId),
     layingBomb(false),
     oilBonus(false),

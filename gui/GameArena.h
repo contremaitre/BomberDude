@@ -21,8 +21,6 @@
 
 #include <QObject>
 #include <QList>
-#include <QGraphicsView>
-#include <QMainWindow>
 #include "qbomb.h"
 #include "QFlame.h"
 
@@ -30,6 +28,8 @@
 #include "MapClient.h"
 #include "PixmapsItems.h"
 #include "QPlayer.h"
+
+class QGraphicsView;
 
 // necessary to use QPoint in a QMap
 bool operator<(const QPoint&, const QPoint&);
@@ -47,7 +47,6 @@ class GameArena : public QObject
 private:
     QGraphicsView *graphicView;
     QGraphicsScene *scene;
-    QMainWindow *mainWindow;
     MapClient* map;
     PixmapsItems pixmaps;
     QGraphicsSquareItem **squaresItem;
@@ -71,10 +70,11 @@ private:
     int timeInSeconds;
 
 public:
-    GameArena(QMainWindow *, QGraphicsView *, int blockSize);
+    GameArena(int blockSize);
     ~GameArena();
     //QGraphicsSquareItem *getPlayer(int);
     void createGraphics();
+    void setGraphicView(QGraphicsView *);
     void getEventFilter(QObject *obj);
     int getWidth();
     int getHeight();
@@ -108,11 +108,11 @@ private slots:
     void slotRemoveFlame(int id);
 
 public slots:
-    void slotMapWinner(qint8 playerId);
+    void slotMapWinner(qint8 playerId, bool end);
 
 signals:
     void sigTimeUpdated(int valueInSeconds);
-    void sigNewPlayerGraphic(int,const QPixmap &);
+    void sigNewPlayerGraphic(qint8,const QPixmap &);
 };
 
 

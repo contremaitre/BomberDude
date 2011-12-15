@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Sébastien Escudier
+    Copyright (C) 2010,2011 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,128 +18,80 @@
 #include <QMessageBox>
 
 #include "startUi.h"
-#include "constant.h"
+#include "Settings.h"
+#include "GamePlay.h"
+#include "GameFrame.h"
+#include "MenuTabFrame.h"
+#include "InterGameFrame.h"
 
 StartUi::StartUi(QApplication *a)
 {
     gamePlay = NULL;
     server = NULL;
+    menuTabFrame = NULL;
+    gameFrame = NULL;
+    interGameFrame = NULL;
+    styleIndex = -1;
     qapp = a;
     settings = new Settings;
     setupUi(this);
-
-    playerName->setMaxLength(MAX_PLAYER_NAME_LENGTH);
-    loadPixmaps();
-    loadNetWidget();
-    loadSound();
-    loadIpStats();
-    loadPlayerData();
-    connect(serverButton,SIGNAL(clicked()),this,SLOT(startServer()));
-    connect(isServer, SIGNAL(stateChanged(int)), this, SLOT(isServerChanged(int)));
-    connect(sound, SIGNAL(stateChanged(int)), this, SLOT(soundChanged(int)));
-    connect(stats_check, SIGNAL(stateChanged(int)), this, SLOT(statsCheckedChanged(int)));
-    connect(randomMapCheck, SIGNAL(stateChanged(int)), this, SLOT(randomMapCheckedChanged(int)));
-    connect(startGameButton,SIGNAL(clicked()),this,SLOT(slotStartGame()));
-    connect(cancelGameButton,SIGNAL(clicked()),this,SLOT(slotStopGame()));
-    connect(mapRightButton, SIGNAL(clicked()), this, SLOT(slotMapRightButton()));
-    connect(mapLeftButton, SIGNAL(clicked()), this, SLOT(slotMapLeftButton()));
-    connect(stopGame, SIGNAL(clicked()), this, SLOT(closeGame()));
-}
-
-void StartUi::loadIpStats()
-{
-    Qt::CheckState checked = settings->getShowIpStats() ? Qt::Checked : Qt::Unchecked;
-    stats_check->setCheckState(checked);
-    ping_pic->setPixmap(statusGrey);
-    pack_loss_pic->setPixmap(statusGrey);
-}
-
-void StartUi::loadPixmaps()
-{
-    QSize size(ping_pic->width(),ping_pic->height());
-    QPixmap grey = QPixmap("pictures/status_grey.png");
-    statusGrey = grey.scaled(size);
-
-    QPixmap yellow = QPixmap("pictures/status_yellow.png");
-    statusYellow = yellow.scaled(size);
-
-    QPixmap green = QPixmap("pictures/status_green.png");
-    statusGreen = green.scaled(size);
-
-    QPixmap red = QPixmap("pictures/status_red.png");
-    statusRed = red.scaled(size);
-
-    QSize size2(serverStatus->width(),serverStatus->height());
-    QPixmap load = QPixmap("pictures/loading.png");
-    loading = load.scaled(size2);
-}
-
-void StartUi::loadSound()
-{
+    loadMenuTabFrame();
+    //music = new QSound("sounds/music.wav",this);
     music = NULL;
-    if(!QSound::isAvailable())
-    {
-        qDebug() << "No Sound available";
-        sound->setEnabled(false);
-        sound->setCheckState(Qt::Unchecked);
+}
+
+void StartUi::loadMenuTabFrame()
+{
+    if( menuTabFrame )
+        delete menuTabFrame;
+    menuTabFrame = new MenuTabFrame(settings, &ipStats, &playerListWidget, music);
+    connect(menuTabFrame->MainUi.maxPlayersBox, SIGNAL(valueChanged(int)), this, SLOT(slotMaxPlayersValueChanged(int)));
+    connect(menuTabFrame->MainUi.maxWinsBox, SIGNAL(valueChanged(int)), this, SLOT(slotMaxWinsValueChanged(int)));
+    connect(menuTabFrame->MainUi.serverButton,SIGNAL(clicked()),this,SLOT(slotStartServer()));
+    connect(menuTabFrame->MainUi.mapRightButton, SIGNAL(clicked()), this, SLOT(slotMapRightButton()));
+    connect(menuTabFrame->MainUi.mapLeftButton, SIGNAL(clicked()), this, SLOT(slotMapLeftButton()));
+    connect(menuTabFrame->MainUi.randomMapCheck, SIGNAL(stateChanged(int)), this, SLOT(randomMapCheckedChanged(int)));
+    connect(menuTabFrame->MainUi.addLocalPlayerButton, SIGNAL(clicked()), this, SLOT(slotAddLocalPlayer()));
+    connect(menuTabFrame, SIGNAL(sigStart(int)),this,SLOT(slotStartGame(int)));
+    connect(menuTabFrame, SIGNAL(sigDisconnect()),this,SLOT(slotDisconnectGame()));
+    connect(menuTabFrame, SIGNAL(sigKickPlayer(qint8)), this, SLOT(slotKickPlayer(qint8)));
+    gridLayout->addWidget(menuTabFrame);
+}
+
+void StartUi::loagInterGameFrame()
+{
+    delete interGameFrame;
+    interGameFrame = new InterGameFrame( &playerListWidget, gamePlay->getNetClient()->getIsAdmin() );
+    connect(interGameFrame->ui.nextRoundButton,SIGNAL(clicked()),this,SLOT(slotNextRound()));
+    gridLayout->addWidget(interGameFrame);
+}
+
+void StartUi::loadGameFrame()
+{
+    if( gameFrame )
         return;
-    }
-    Qt::CheckState checked = settings->isSound() ? Qt::Checked : Qt::Unchecked;
-    sound->setCheckState(checked);
-    toggleMusic(settings->isSound());
+    gameFrame = new GameFrame( &ipStats, &playerListWidget );
+    connect( gamePlay, SIGNAL(sigTimeUpdated(int)), gameFrame->ui.gameClock, SLOT(display(int)));
+    connect( gameFrame->ui.disconnectGameButton, SIGNAL(clicked()), this, SLOT(slotDisconnectGame()));
+    gridLayout->addWidget(gameFrame);
 }
 
-void StartUi::loadNetWidget()
+void StartUi::slotLoadInterGame()
 {
-    Qt::CheckState checked = settings->isServer() ? Qt::Checked : Qt::Unchecked;
-
-    isServer->setCheckState(checked);
-    serverIp->setPlainText(settings->getServerAddress());
-    QString port;
-    port.setNum(settings->getServerPort());
-    serverPort->setPlainText(QString(port));
-    updateNetWidgetState(checked == 0);
-    //serverStatus->setPixmap(loading);
-    serverStatus->setPixmap(NULL);
-    maxPlayersBox->setValue(0);
-    adminWidget->setEnabled(false);
-    randomMapCheck->setCheckState(Qt::Unchecked);
-    mapRightButton->setEnabled(true);
-    mapLeftButton->setEnabled(true);
-    checkDebugMode->setChecked(settings->isDebugMode());
+    delete menuTabFrame;
+    menuTabFrame = NULL;
+    delete gameFrame;
+    gameFrame = NULL;
+    loagInterGameFrame();
 }
 
-void StartUi::loadPlayerData() {
-    playerName->setText(settings->getPlayerName());
-}
-
-bool StartUi::setSettings()
+void StartUi::slotStartServer()
 {
-    bool ok, checked;
-    int port = serverPort->toPlainText().toInt(&ok);
-    if(!ok)
-        return false;
-    checked = isServer->checkState() == 0 ? false : true;
-    settings->setServer(checked);
-    settings->setServerPort(port);
-    checked = stats_check->checkState() == 0 ? false : true;
-    settings->setShowIpStats(checked);
-    settings->setServerAddress(serverIp->toPlainText());
-    checked = sound->checkState() == 0 ? false : true;
-    settings->setSound(checked);
-    settings->setPlayerName(playerName->text());
-    settings->setDebugMode(checkDebugMode->isChecked());
-    return true;
-}
-
-void StartUi::startServer()
-{
-    if(!setSettings())
-        return;
-    network_pref->setEnabled(false);
-    sound_pref->setEnabled(false);
+    /* todo GameFrame
     if(!settings->getShowIpStats())
         ip_stats->hide();
+*/
+    menuTabFrame->setSettings();
 
     if(settings->isServer())
     {
@@ -159,9 +111,9 @@ void StartUi::startServer()
 
 		QString serverCmdLine("./Serverd");
 		serverCmdLine += " --port ";
-		serverCmdLine += serverPort->toPlainText();
+		serverCmdLine += settings->getServerPort();
 		serverCmdLine += " --admin-password " + adminPassword;
-        if(checkDebugMode->isChecked())
+        if(settings->isDebugMode())
             serverCmdLine += " --debug-mode";
         serverCmdLine += " --started-from-gui";
 
@@ -169,27 +121,38 @@ void StartUi::startServer()
     }
     else
     {
-        adminPassword = password->toPlainText();
+        adminPassword = menuTabFrame->getAdminPassword();
     }
-    gamePlay = new GamePlay(this, settings, previewGraphicsView);
+    gamePlay = new GamePlay(settings, menuTabFrame->getGraphicPreview(), menuTabFrame->getPlayerName());
     NetClient *netclient = gamePlay->getNetClient();
 
     connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );
-    connect( gamePlay, SIGNAL(sigTimeUpdated(int)), gameClock, SLOT(display(int)));
-    connect( gamePlay, SIGNAL(sigNewPlayerGraphic(int,const QPixmap &)), this, SLOT(slotNewPlayerGraphic(int,const QPixmap &)));
-    connect( netclient, SIGNAL(sigConnected()), this, SLOT(slotConnectedToServer()));
-    connect( netclient, SIGNAL(sigConnectionError()), this, SLOT(slotConnectionError()), Qt::QueuedConnection);
-    connect( netclient, SIGNAL(sigStatPing(int)), this, SLOT(statPing(int)));
-    connect( netclient, SIGNAL(sigStatPacketLoss(double)), this, SLOT(statPacketLoss(double)));
-    connect( netclient, SIGNAL(sigIsServerAdmin()), this, SLOT(slotIsServerAdmin()));
-    connect( netclient, SIGNAL(sigMaxPlayersChanged(int)), this, SLOT(slotMaxPlayersChanged(int)));
-    connect( netclient, SIGNAL(sigUpdatePlayerData(qint32,QString)), this, SLOT(slotUpdatePlayerData(qint32,QString)));
-    connect( netclient, SIGNAL(sigPlayerLeft(qint32)), this, SLOT(slotPlayerLeft(qint32)));
-    connect( netclient, SIGNAL(sigMapRandom()), this, SLOT(slotMapRandom()));
-    connect( netclient, SIGNAL(sigGameStarted()), this, SLOT(slotGameStarted()));
-    connect( netclient, SIGNAL(mapPreviewReceived(MapClient*)),this,SLOT(slotMapPreviewReceived(MapClient*)));
-    //connect( netclient, SIGNAL(sigGameQuit()), this, SLOT(slotGameQuit()));
 
+    /* Connect some signals to the ourselves */
+    connect( netclient, SIGNAL(sigConnectionError()), this, SLOT(slotConnectionError()), Qt::QueuedConnection);
+    connect( netclient, SIGNAL(sigGameStarted()), this, SLOT(slotGameStarted()));
+    connect( netclient, SIGNAL(sigNetClientEnd()), this, SLOT(closeGame()));
+    connect( netclient, SIGNAL(sigMapWinner(qint8,bool)), this, SLOT(slotEndRound(qint8,bool)));
+
+    /* Connect some signals to the IP stats widget */
+    connect( netclient, SIGNAL(sigStatPing(int)), &ipStats, SLOT(slotStatPing(int)));
+    connect( netclient, SIGNAL(sigStatPacketLoss(double)), &ipStats, SLOT(slotStatPacketLoss(double)));
+
+    /* Connect some signals to the frame menu */
+    connect( netclient, SIGNAL(sigConnected()), menuTabFrame, SLOT(slotConnectedToServer()));
+    connect( netclient, SIGNAL(sigIsServerAdmin()), menuTabFrame, SLOT(slotIsServerAdmin()));
+    connect( netclient, SIGNAL(sigUpdatePlayerData(qint8,QString)), menuTabFrame, SLOT(slotUpdatePlayerData(qint8,QString)));
+    connect( netclient, SIGNAL(sigMaxPlayersChanged(int)), menuTabFrame, SLOT(slotMaxPlayersValueChanged(int)));
+    connect( netclient, SIGNAL(sigMaxWinsChanged(int)), menuTabFrame, SLOT(slotMaxWinsValueChanged(int)));
+    connect( netclient, SIGNAL(sigMapRandom(bool)), menuTabFrame, SLOT(slotMapRandom(bool)));
+    connect( netclient, SIGNAL(mapPreviewReceived(MapClient*)), menuTabFrame,SLOT(slotMapPreviewReceived(MapClient*)));
+    connect( netclient, SIGNAL(sigPlayerLeft(qint8)), menuTabFrame, SLOT(slotPlayerLeft(qint8)));
+
+    /* Connect some signals to the player list */
+    connect( netclient, SIGNAL(sigUpdatePlayerData(qint8, QString)), &playerListWidget, SLOT(slotAddPlayer(qint8, QString)));
+    connect( gamePlay, SIGNAL(sigNewPlayerGraphic(qint8,const QPixmap &)), &playerListWidget, SLOT(slotNewPlayerGraphic(qint8,const QPixmap &)));
+    connect( netclient, SIGNAL(sigPlayerLeft(qint8)), &playerListWidget, SLOT(slotRemovePlayer(qint8)));
+    connect( netclient, SIGNAL(sigScoreUpdate(qint8, qint16)), &playerListWidget, SLOT(slotUpdatePlayerScore(qint8, qint16)));
     // must be queued otherwise NetClient instance is deleted before finishing its processing
     connect( netclient, SIGNAL(sigServerStopped()), this, SLOT(slotServerStopped()), Qt::QueuedConnection);
 
@@ -198,89 +161,17 @@ void StartUi::startServer()
         gamePlay->cliConnect(adminPassword);
 }
 
-void StartUi::updateNetWidgetState(bool en)
+void StartUi::slotMaxPlayersValueChanged(int value)
 {
-    serverIp->setEnabled(en);
-    ipLabel->setEnabled(en);
-    passwordLabel->setEnabled(en);
-    password->setEnabled(en);
-    if(en)
-    {
-        serverButton->setText("Connect");
-    }
-    else
-    {
-        serverButton->setText("Launch");
-    }
-}
-
-void StartUi::isServerChanged(int state)
-{
-    updateNetWidgetState(state == 0);
-}
-
-void StartUi::statsCheckedChanged(int state)
-{
-    qDebug("statsCheckedChanged");
-}
-
-void StartUi::soundChanged(int state)
-{
-    toggleMusic(state != 0);
-}
-
-void StartUi::maxPlayersValueChanged(int value)
-{
-    qDebug() << "maxPlayersValueChanged" << value;
     if(gamePlay)
         gamePlay->getNetClient()->setMaxPlayers(value);
 }
 
-void StartUi::toggleMusic(bool on)
+void StartUi::slotMaxWinsValueChanged(int value)
 {
-    delete music;
-    music = NULL;
-    qDebug() << "music" << on;
-    if(on)
-    {
-        music = new QSound("sounds/music.wav",this);
-        music->setLoops(-1);
-        music->play();
-    }
-}
-
-void StartUi::statPacketLoss(double packet_loss)
-{
-    if(settings->getShowIpStats())
-    {
-        if(packet_loss == 0)
-            pack_loss_pic->setPixmap(statusGreen);
-        else if(packet_loss <= 0.01)
-            pack_loss_pic->setPixmap(statusYellow);
-        else
-            pack_loss_pic->setPixmap(statusRed);
-    }
-}
-
-void StartUi::statPing(int ping)
-{
-    if(settings->getShowIpStats())
-    {
-        if(ping < 60)
-            ping_pic->setPixmap(statusGreen);
-        else if(ping < 100)
-            ping_pic->setPixmap(statusYellow);
-        else
-            ping_pic->setPixmap(statusRed);
-    }
-}
-
-void StartUi::slotConnectedToServer()
-{
-    qDebug("StartUi::slotConnected");
-    serverStatus->setPixmap(loading);
+    qDebug() << "StartUi::slotMaxWinsValueChanged" << value;
     if(gamePlay)
-        gamePlay->getNetClient()->sendPlayerData(playerName->text());
+        gamePlay->getNetClient()->setMaxWins(value);
 }
 
 void StartUi::closeGame()
@@ -300,20 +191,12 @@ void StartUi::closeGame()
         delete gamePlay;
         gamePlay = NULL;
     }
-    while(!labelsPlayerList.empty())
-        delete labelsPlayerList.takeFirst();
-    loadIpStats();
-    loadNetWidget();
-    playersList->clear();
-    network_pref->show();
-    sound_pref->show();
-    ip_stats->show();
-    adminWidget->show();
-    player_data->show();
-    previewGraphicsView->show();
-    network_pref->setEnabled(true);
-    sound_pref->setEnabled(true);
-    stopGame->setEnabled(false);
+    playerListWidget.clear();
+    delete gameFrame;
+    gameFrame = NULL;
+    delete interGameFrame;
+    interGameFrame = NULL;
+    loadMenuTabFrame();
 }
 
 void StartUi::slotServerLaunched()
@@ -331,48 +214,43 @@ void StartUi::slotConnectionError()
     closeGame();
 }
 
-void StartUi::slotMapRandom()
+void StartUi::slotStartGame(int style)
 {
-    randomMapCheck->setCheckState(Qt::Checked);
-}
-
-void StartUi::slotStartGame()
-{
-    int styleIndex = mapOptionCBox->currentIndex();
     //qDebug() << "startui start game, style =" << styleIndex;
+    styleIndex = style;
     if(gamePlay)
         gamePlay->getNetClient()->startGame(styleIndex-1);
 }
 
-void StartUi::slotStopGame()
+void StartUi::slotNextRound()
 {
-    //qDebug() << "startui stop game";
+    gamePlay->getNetClient()->startGame(styleIndex-1);
+}
+
+void StartUi::slotKickPlayer(qint8 playerId)
+{
+    gamePlay->getNetClient()->kickPlayer(playerId);
+}
+
+void StartUi::slotDisconnectGame()
+{
     if(gamePlay) {
         if(gamePlay->getNetClient()->getIsAdmin())
             gamePlay->getNetClient()->stopServer();
         else
-            gamePlay->getNetClient()->quitGame();
+            gamePlay->getNetClient()->disconnectFromServer();
     }
 }
 
 void StartUi::slotGameStarted()
 {
     qDebug() << "StartUi game started";
-    network_pref->hide();
-    sound_pref->hide();
-    adminWidget->hide();
-    player_data->hide();
-    previewGraphicsView->hide();
-    stopGame->setEnabled(true);
-}
-
-void StartUi::slotMapPreviewReceived(MapClient *map)
-{
-    const QList<mapStyle> *styles = map->getStyles();
-    mapOptionCBox->clear();
-    mapOptionCBox->addItem ( "no style" );
-    foreach(mapStyle s, *styles)
-        mapOptionCBox->addItem ( s.name );
+    delete menuTabFrame;
+    menuTabFrame = NULL;
+    delete interGameFrame;
+    interGameFrame = NULL;
+    loadGameFrame();
+    gamePlay->gameStarted(gameFrame->ui.gameGraphicView);
 }
 
 void StartUi::randomMapCheckedChanged(int state)
@@ -380,19 +258,9 @@ void StartUi::randomMapCheckedChanged(int state)
     if(!gamePlay || !gamePlay->getNetClient())
         return;
     if(state == 0)
-    {
-        //non random map
-        mapRightButton->setEnabled(true);
-        mapLeftButton->setEnabled(true);
         gamePlay->getNetClient()->selectMap(2);
-    }
     else
-    {
-        //random map
-        mapRightButton->setEnabled(false);
-        mapLeftButton->setEnabled(false);
         gamePlay->getNetClient()->selectMap(0);
-    }
 }
 
 void StartUi::slotMapLeftButton()
@@ -405,42 +273,9 @@ void StartUi::slotMapRightButton()
     gamePlay->getNetClient()->selectMap(1);
 }
 
-void StartUi::slotIsServerAdmin()
+void StartUi::slotAddLocalPlayer()
 {
-    maxPlayersBox->setMinimum(1);
-    adminWidget->setEnabled(true);
-    connect(maxPlayersBox, SIGNAL(valueChanged(int)), this, SLOT(maxPlayersValueChanged(int)));
-}
-
-void StartUi::slotMaxPlayersChanged(int maxPlayers)
-{
-    maxPlayersBox->setValue(maxPlayers);
-}
-
-void StartUi::slotUpdatePlayerData(qint32 playerId, QString playerName) {
-    QTableWidgetItem *newItem = new QTableWidgetItem(tr("%1").arg(playerId));
-    playersList->setItem(playerId, 0, newItem);
-    newItem = new QTableWidgetItem(playerName);
-    playersList->setItem(playerId, 1, newItem);
-}
-
-void StartUi::slotPlayerLeft(qint32 playerId)
-{
-    delete playersList->takeItem(playerId,0);
-    delete playersList->takeItem(playerId,1);
-}
-
-void StartUi::slotNewPlayerGraphic(int player, const QPixmap &pix)
-{
-    qDebug() << "Startui new player graphic" << player;
-    QLabel *label = new QLabel;
-    label->setPixmap(pix);
-    playerListLayout->addWidget(label,player,0);
-
-    QLabel *label2 = new QLabel(playersList->item(player,1)->text());
-    playerListLayout->addWidget(label2,player,1);
-    labelsPlayerList.push_back(label);
-    labelsPlayerList.push_back(label2);
+    gamePlay->addPlayer(menuTabFrame->getPlayerName());
 }
 
 void StartUi::slotReadServerDebug()
@@ -465,9 +300,15 @@ void StartUi::slotServerStopped()
     QMessageBox::warning(this, QString("Server stopped"),QString("The server was shut down, either by admin command or because the connection with the admin GUI was lost"));
 }
 
+void StartUi::slotEndRound(qint8, bool end)
+{
+    if(!end)
+        QTimer::singleShot(1000*5, this, SLOT(slotLoadInterGame()));
+}
+
 StartUi::~StartUi()
 {
-    setSettings();
+    //setSettings(); TODO
     if(server)
     {
         if(gamePlay)
@@ -482,4 +323,7 @@ StartUi::~StartUi()
     delete gamePlay;
     delete settings;
     delete music;
+    delete gameFrame;
+    delete menuTabFrame;
+    delete interGameFrame;
 }

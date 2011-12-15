@@ -41,19 +41,30 @@ class GamePlay : public QObject
   Q_OBJECT
 
 public:
-    GamePlay(QMainWindow *, Settings *, QGraphicsView *);
+    GamePlay(Settings *, QGraphicsView *, QString);
     ~GamePlay();
+    /* control keys are set in this function */
     void cliConnect(const QString &pass);
     NetClient *getNetClient();
+    void gameStarted(QGraphicsView *);
+    void addPlayer(const QString &);
 
 private:
     GameArena *gameArena;
     GameArena *gameArenaPreview; //todo : create a light class for the preview
     QGraphicsView *mapGraphicPreview;
     NetClient *client;
+    NetClient *clientPlayer2;
+    QString player1name;
+    QString player2name;
+
     Settings *settings;
 
-    bool leftK, rightK, upK, downK;
+    /* remember which key is pressed */
+    bool leftK1, rightK1, upK1, downK1;
+    bool leftK2, rightK2, upK2, downK2;
+    key_set_t player1Keys;
+    key_set_t player2Keys;
     QTimer timer;
     QTimer timerPing;
     
@@ -68,25 +79,24 @@ private:
 
 private slots:
     void slotMoveTimer();
-    void dropBomb();
     void slotPingTimer();
     void mapReceived(MapClient*);
 //	void updateMap(QByteArray updateBlock);
     void mapPreviewReceived(MapClient*);
-    void slotMapRandom();
+    void slotMapRandom(bool);
     void slotTimeUpdated(int timeInSeconds);
-    void gameStarted();
-    void slotNewPlayerGraphic(int,const QPixmap &);
+    void slotNewPlayerGraphic(qint8,const QPixmap &);
+    void slotConnectedToServer();
+    void slotPlayer2Disconnected();
 
 signals:
-    void connectedToServer();
     void connectionError();
     void quitGame();
     void sigStatPing(int);
     void sigStatPacketLoss(double);
     void sigIsServerAdmin(int);
     void sigTimeUpdated(int timeInSeconds);
-    void sigNewPlayerGraphic(int, const QPixmap &);
+    void sigNewPlayerGraphic(qint8, const QPixmap &);
 };
 
 

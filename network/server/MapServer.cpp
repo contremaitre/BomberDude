@@ -394,8 +394,10 @@ bool MapServer::moveFlyingBomb(BombServer* b)
         {
             if(b->getHasOil())
             {
-                /* direction aleatoire (entre 0 et 3) */
-                int randomDraw = qrand()%4;
+                /* random direction (between 0 et 2 to exclude the previous position */
+                int randomDraw = qrand()%3;
+                if(b->getDirection() % 2 == randomDraw % 2 && randomDraw != b->getDirection()) //opposite direction
+                    randomDraw = 3;
                 throwBomb(b, static_cast<globalDirection>(randomDraw), 1);
             }
             else

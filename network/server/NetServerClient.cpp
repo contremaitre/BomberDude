@@ -20,7 +20,7 @@
 #include "../NetMessage.h"
 
 
-NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, bool admin, int maxPl, NetServer *s)
+NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, bool admin, int maxPl, int maxWins, NetServer *s)
 {
     tcpSocket = t;
     udpSocket = u;
@@ -32,13 +32,14 @@ NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, bool admi
     peerAddress = tcpSocket->peerAddress();
     peerUdpPort = tcpSocket->peerPort();
     playerId = id;
-    playerNumber = -1;
+    score = 0;
     blockSize = 0;
     udpCpt = 0;
     packetErrors = 0;
     lastReceivedPckt = 0;
     server = s;
     sendMaxPlayers(maxPl);
+    sendMaxWins(maxWins);
     if(admin)
         sendIsAdmin();
     qDebug() << "new NetServerClient " << id << peerAddress;
@@ -94,6 +95,14 @@ void NetServerClient::handleMsg(QDataStream &in)
             server->setMaxPlayers(value);
         break;
     }
+    case msg_max_wins:
+    {
+        quint16 value;
+        in >> value;
+        if(isAdmin)
+            server->setMaxWins(value);
+        break;
+    }
     case msg_start_game:
     {
         qint8 styleIndex;
@@ -108,6 +117,14 @@ void NetServerClient::handleMsg(QDataStream &in)
         in >> direction;
         if(isAdmin)
             server->selectMap(direction);
+        break;
+    }
+    case msg_kick_player :
+    {
+        qint8 playerId;
+        in >> playerId;
+        if(isAdmin)
+            server->kickPlayer(playerId);
         break;
     }
     case msg_player_data: {
@@ -131,8 +148,8 @@ void NetServerClient::handleMsg(QDataStream &in)
     }
     case msg_shutdown_server:
         qDebug() << "NetServerClient msg_shutdown_server" << isAdmin;
-        if(isAdmin)
-            server->shutdown();
+        if(isAdmin) //just disconnect, the server will shutdown by itself
+            clientDisconected();
         break;
     default:
         //trash the message
@@ -162,13 +179,27 @@ void NetServerClient::sendMaxPlayers(int value)
     tcpSocket->write(block);
 }
 
-void NetServerClient::sendMapRandom()
+void NetServerClient::sendMaxWins(int value)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << (quint16)msg_max_wins;
+    out << (quint16)value;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    tcpSocket->write(block);
+}
+
+void NetServerClient::sendMapRandom(bool rand)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
     out << (quint16)0;
     out << (quint16)msg_map_random;
+    out << rand;
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
     tcpSocket->write(block);
@@ -227,9 +258,19 @@ void NetServerClient::sendUdpStats()
     tcpSocket->write(block);
 }
 
-int NetServerClient::getId() const
+qint8 NetServerClient::getId() const
 {
     return playerId;
+}
+
+qint16 NetServerClient::getScore() const
+{
+    return score;
+}
+
+void NetServerClient::setScore(qint16 s)
+{
+    score = s;
 }
 
 QHostAddress NetServerClient::getAddress() const

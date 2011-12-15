@@ -40,7 +40,8 @@ NetServer::NetServer(int port, QString adminPasswd, bool debugMode, bool started
     mapList = mapDirectory.entryInfoList(QStringList("*.xml"));
     currentMapInList = 0;
     gameStarted = false;
-    maxNbPlayers = 2; //1
+    maxNbPlayers = MAX_PLAYERS;
+    maxWins = MAX_WINS;
     adminConnected = false;
     randomMap = false;
     this->debugMode = debugMode;
@@ -120,9 +121,9 @@ void NetServer::incomingClient()
         Q_ASSERT(freeIndex < maxNbPlayers);
 
         //if freeIndex == 0 && !adminPasswd, this client will be the admin of the server
-        NetServerClient *client = new NetServerClient(clientConnection,udpSocket,freeIndex, freeIndex == 0 && adminPasswd.isEmpty(), maxNbPlayers, this);
+        NetServerClient *client = new NetServerClient(clientConnection,udpSocket,freeIndex, freeIndex == 0 && adminPasswd.isEmpty(), maxNbPlayers, maxWins, this);
         connect(client, SIGNAL(disconected(NetServerClient*)), this, SLOT(clientDisconected(NetServerClient*)));
-        connect(client, SIGNAL(sigUpdatePlayerData(int,QString)), this, SLOT(slotUpdatePlayerData(int,QString)));
+        connect(client, SIGNAL(sigUpdatePlayerData(qint8,QString)), this, SLOT(slotUpdatePlayerData(qint8,QString)));
 
         clients.insert(freeIndex,client);
         if(gameStarted) //we allow clients to join a game already started
@@ -136,7 +137,7 @@ void NetServer::incomingClient()
             out.setVersion(QDataStream::Qt_4_0);
             out << static_cast<quint16>(0);
             out << static_cast<quint16>(msg_update_player_data);
-            out << static_cast<qint32>(Nclient->getId());
+            out << static_cast<qint8>(Nclient->getId());
             out << Nclient->getPlayerName();
             setBlockSize(block, out);
             client->sendTcpBlock(block);
@@ -222,7 +223,7 @@ void NetServer::selectMap(qint8 direction)
         randomMap = true;
         return;
     }
-
+    bool randomMapOldValue = randomMap;
     if(direction == 2)
     {
         //switch to non random map and select the first available map
@@ -290,8 +291,13 @@ void NetServer::selectMap(qint8 direction)
         foreach(NetServerClient *client, clients)
         {
             client->sendMapPreview(mapPreview); //only usefull to send the map style list. Could be improved
-            client->sendMapRandom();
+            client->sendMapRandom(true);
         }
+    }
+    else if(randomMapOldValue)
+    {
+        foreach(NetServerClient *client, clients)
+                client->sendMapRandom(false);
     }
 }
 
@@ -304,13 +310,31 @@ void NetServer::setMaxPlayers(int value)
         qDebug() << "setMaxPlayers, too many players, disconnecting one";
         NetServerClient *last = clients.takeLast();
         delete last;
-
     }
 
     foreach(NetServerClient *client, clients)
         client->sendMaxPlayers(maxNbPlayers);
     if(!randomMap)
         selectMap(2); //check if the current map is ok with this number of player
+}
+
+void NetServer::setMaxWins(int value)
+{
+    maxWins = value;
+
+    foreach(NetServerClient *client, clients)
+        client->sendMaxWins(maxWins);
+}
+
+void NetServer::kickPlayer(qint8 id)
+{
+    for (QList<NetServerClient*>::iterator i = clients.begin(); i != clients.end(); ++i) {
+        if((*i)->getId() == id)
+        {
+            clientDisconected(*i);
+            break;
+        }
+    }
 }
 
 void NetServer::clientDisconected(NetServerClient *client)
@@ -412,13 +436,13 @@ void NetServer::receiveUdp()
     }
 }
 
-void NetServer::slotUpdatePlayerData(int playerId, QString playerName) {
+void NetServer::slotUpdatePlayerData(qint8 playerId, QString playerName) {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
     out << static_cast<quint16>(0);
     out << static_cast<quint16>(msg_update_player_data);
-    out << static_cast<qint32>(playerId);
+    out << static_cast<qint8>(playerId);
     out << playerName;
     setBlockSize(block, out);
 
@@ -431,14 +455,14 @@ void NetServer::slotNoAdmin() {
         shutdown();
 }
 
-void NetServer::sendCLientDisconnected(int playerId)
+void NetServer::sendCLientDisconnected(qint8 playerId)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
     out << static_cast<quint16>(0);
     out << static_cast<quint16>(msg_client_disconnected);
-    out << static_cast<qint32>(playerId);
+    out << static_cast<qint8>(playerId);
     setBlockSize(block, out);
 
     foreach(NetServerClient* Nclient, clients)
@@ -544,13 +568,26 @@ void NetServer::updateMap(QByteArray updateData) {
 }
 
 void NetServer::slotWinner(qint8 playerId) {
+    bool theEnd = false;
+    gameStarted = false;
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
     out << static_cast<quint16>(0);
     out << static_cast<quint16>(msg_map_winner);
     out << playerId;
-    // TODO send statistics (score, kills) so that the client is up-to-date
+    out << static_cast<qint8>(clients.size());
+    foreach(NetServerClient *client, clients)
+    {
+        if( client->getId() == playerId )
+        {
+            client->setScore(client->getScore()+1);
+            if(maxWins > 0 && client->getScore() >= maxWins)
+                theEnd = true;
+        }
+        out << static_cast<qint8>(client->getId()) << static_cast<qint16>(client->getScore());
+    }
+    out << theEnd;
     setBlockSize(block, out);
 
     foreach(NetServerClient *client, clients)

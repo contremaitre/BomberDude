@@ -48,13 +48,15 @@ public:
     void sendBomb();
     void sendOptKey();
     void setMaxPlayers(int);
+    void setMaxWins(int);
+    void kickPlayer(qint8);
     void startGame(int);
     void sendPlayerData(const QString& playerName);
     void setAdminPasswd(const QString &);
     void stopServer();
     void selectMap(int direction);
     bool getIsAdmin()                   { return isAdmin; }
-    void quitGame();
+    void disconnectFromServer();
 
 private:
     QTcpSocket *tcpSocket;
@@ -92,20 +94,22 @@ private slots:
 signals:
     void mapReceived(MapClient*);
     void mapPreviewReceived(MapClient*);
-    void sigUpdatePlayerData(qint32 playerId, QString playerName);
-    void sigPlayerLeft(qint32 playerId);
+    void sigUpdatePlayerData(qint8, QString);
+    void sigPlayerLeft(qint8);
 
-    void sigMapRandom();
+    void sigMapRandom(bool);
     void sigConnected();
     void sigConnectionError();
     void sigStatPing(int);
     void sigStatPacketLoss(double);
     void sigIsServerAdmin();
     void sigMaxPlayersChanged(int);
-    void sigMapWinner(qint8 playerId);
+    void sigMaxWinsChanged(int);
+    void sigMapWinner(qint8 , bool);
+    void sigScoreUpdate(qint8, qint16);
     void sigGameStarted();
     void sigServerStopped();
-    void sigGameQuit();
+    void sigNetClientEnd();
 };
 
 
