@@ -31,6 +31,8 @@ public:
     bool getIsSick() const              { return isSick; }
     void setIsSick(bool sick)           { isSick = sick; }
 
+    void setMove( bool m )              { move = m; }
+    bool getMove() const                { return move; }
 protected:
 	qint8 id;
 
@@ -42,6 +44,7 @@ protected:
 
     bool isAlive;
     bool isSick;
+    bool move; //the player moved, or tried to move, during the current heartbeat. Needed for the animation
 
 	// allows easier serialization, avoids exposing all internal variables for writing
 	friend QDataStream& operator>>(QDataStream& in, Player& f);

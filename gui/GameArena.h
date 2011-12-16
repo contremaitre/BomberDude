@@ -89,7 +89,7 @@ public:
     void clear();
 
 private slots:
-    void movePlayer(int player, int x, int y);
+    void movePlayer(int player, int x, int y, int heading);
     void slotPlayerSickChanged(int player, bool sick);
     void blockChanged(int);
 	void blockChanged(int x, int y);

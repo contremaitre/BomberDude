@@ -1279,6 +1279,7 @@ void MapServer::newHeartBeat() {
             {
                 bool againstWall = false;
                 globalDirection move = movePlayer(playerN->getId(), playerN->getDirection(), playerN->getMoveDistance(), againstWall);
+                playerN->setMove(true);
                 playerN->setDirection(-1);
                 /* if the player couldn't move because of a block there is no need to apply the walkway because :
                  * - the walkway does not apply if its direction is orthogonal to the player direction
@@ -1314,6 +1315,7 @@ void MapServer::newHeartBeat() {
 		updateOut << *playerN;
 		//update Player infos
 		playerN->decreaseDuration();
+		playerN->setMove(false);
 	}
 
 	// serialize the new bombs

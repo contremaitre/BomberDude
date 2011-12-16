@@ -39,7 +39,7 @@ signals:
 	void sigBlockChanged(int i, int j);
     void sigHeartbeatUpdated(qint32 value);
 
-    void sigMovePlayer(int player, int x, int y);
+    void sigMovePlayer(int player, int x, int y, int heading);
     void sigPlayerSickChanged(int player, bool sick);
     void sigKillPlayer(int);
     void sigAddBonus(Bonus::Bonus_t type, qint16 x, qint16 y);

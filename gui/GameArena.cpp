@@ -175,6 +175,8 @@ void GameArena::setMap(MapClient *newMap)
         playersItem[i].sick = false;
         playersItem[i].item.setPos(x-squareSize/2,y-squareSize/2,squareSize);
         playersItem[i].item.setItem(pixmaps.getPixmap(i));
+        scene->addItem(playersItem[i].item.getItem());
+
         emit sigNewPlayerGraphic(i,pixmaps.getPixmap(i));
     }
 
@@ -182,7 +184,7 @@ void GameArena::setMap(MapClient *newMap)
     connect(map, SIGNAL(sigBlockChanged(int,int)), this, SLOT(blockChanged(int,int)));
     connect(map, SIGNAL(sigHeartbeatUpdated(qint32)), this, SLOT(slotHearbeatUpdated(qint32)));
 
-    connect(map, SIGNAL(sigMovePlayer(int, int, int)), this, SLOT(movePlayer(int, int, int)));
+    connect(map, SIGNAL(sigMovePlayer(int, int, int, int)), this, SLOT(movePlayer(int, int, int, int)));
     connect(map, SIGNAL(sigPlayerSickChanged(int, bool)), this, SLOT(slotPlayerSickChanged(int, bool)));
     connect(map, SIGNAL(sigKillPlayer(int)), this, SLOT(killPlayer(int)));
     connect(map, SIGNAL(sigAddBonus(Bonus::Bonus_t,qint16,qint16)), this, SLOT(slotAddBonus(Bonus::Bonus_t,qint16,qint16)));
@@ -197,13 +199,11 @@ void GameArena::setMap(MapClient *newMap)
     createGraphics();
 }
 
-void GameArena::movePlayer(int player, int x, int y)
+void GameArena::movePlayer(int player, int x, int y, int heading)
 {
     Q_ASSERT(player < map->getNbPlayers()); //Player really exists
-
-    if(playersItem[player].item.getItem()->scene() == 0)
-        scene->addItem(playersItem[player].item.getItem());
-
+    //Q_ASSERT(playersItem[player].item.getItem()->scene() != 0); the player is added to the scene when the map is created (setMap)
+    //qDebug() << "GameArena player moved, heading = " << heading;
     playersItem[player].item.setPos(x-squareSize/2,y-squareSize/2,squareSize);
     if(playersItem[player].sick)
     {

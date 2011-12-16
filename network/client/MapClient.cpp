@@ -47,7 +47,9 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 		int id = playerN.getId();
         if(playerN.getIsAlive()){
         	setPlayerPosition(id, playerN.getX(), playerN.getY());
-        	emit sigMovePlayer(id, playerN.getX(), playerN.getY());
+        	players[id]->setHeading(playerN.getHeading());
+        	if(playerN.getMove())
+        	    emit sigMovePlayer(id, playerN.getX(), playerN.getY(), playerN.getHeading());
         	if(setPlayerSickness(id, playerN.getIsSick()))
         	    emit sigPlayerSickChanged(id, playerN.getIsSick());
         }
