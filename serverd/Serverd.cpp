@@ -26,21 +26,13 @@ Serverd::Serverd(int port,
                  bool debugMode,
                  bool startedFromGui)
 {
-    init(port, adminPasswd, debugMode, startedFromGui);
-}
-
-void Serverd::init(int port, const char *adminPasswd, bool debugMode, bool startedFromGui)
-{
     server = new NetServer(port, adminPasswd, debugMode, startedFromGui);
     connect(server,SIGNAL(sigQuit()), this, SLOT(slotQuit()), Qt::QueuedConnection);
+    connect(server,SIGNAL(allPlayersLeft()), this, SLOT(allPlayersLeft()));
 }
 
 void Serverd::launch()
 {
-    //We start the game as soon as a player is connecter to the server
-    //others players can join later
-    //the way the game is launched will be changed later.
-    connect(server, SIGNAL(allPlayersLeft()), this, SLOT(allPlayersLeft()));
     server->start();
 }
 
@@ -58,8 +50,6 @@ void Serverd::slotQuit()
 
 Serverd::~Serverd()
 {
-    server->quit();
-    server->wait();
     delete server;
 }
 

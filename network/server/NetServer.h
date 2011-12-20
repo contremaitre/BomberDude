@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Sébastien Escudier
+    Copyright (C) 2010,2011 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,13 +40,13 @@
 
 class MapServer;
 
-class NetServer : public QThread
+class NetServer : public QObject
 {
     Q_OBJECT
 public:
     NetServer(int port, QString adminPasswd, bool debugMode, bool startedFromGui);
     ~NetServer();
-    void run();
+    void start();
     void close();
     void restart(); //ends the game, remove all players and wait for new players
     //call this function when the game is launched
@@ -101,10 +101,7 @@ private slots:
     void slotWinner(qint8 playerId);
 
 signals:
-    void newPlayer();
     void allPlayersLeft();
-    void serverReady();
-    void sigStartHeartBeat();
     void sigQuit();
 };
 

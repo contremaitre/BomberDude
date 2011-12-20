@@ -25,9 +25,7 @@ NetServerClient::NetServerClient(QTcpSocket *t, QUdpSocket *u, int id, bool admi
     tcpSocket = t;
     udpSocket = u;
     isAdmin = admin;
-    //Had to add DirectConnection, to avoid a Qobject / qthread parenting error.
-    //need to check this (cf http://forum.qtfr.org/viewtopic.php?id=10104)
-    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(incomingTcpData()), Qt::DirectConnection);
+    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(incomingTcpData()));
     connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(clientDisconected()));
     peerAddress = tcpSocket->peerAddress();
     peerUdpPort = tcpSocket->peerPort();
