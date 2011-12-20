@@ -48,7 +48,6 @@ public:
     void launch();
 
 private:
-    void init(int port, const char *adminPasswd, bool debugMode, bool startedFromGui);
     NetServer *server;
 
 private slots:

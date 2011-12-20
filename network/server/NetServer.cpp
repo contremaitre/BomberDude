@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Sébastien Escudier
+    Copyright (C) 2010,2011 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include "../NetMessage.h"
 #include "MapParser.h"
 
-NetServer::NetServer(int port, QString adminPasswd, bool debugMode, bool startedFromGui) : QThread()
+NetServer::NetServer(int port, QString adminPasswd, bool debugMode, bool startedFromGui)
 {
     map = NULL;
     mapPreview = NULL;
@@ -47,7 +47,6 @@ NetServer::NetServer(int port, QString adminPasswd, bool debugMode, bool started
     this->debugMode = debugMode;
     this->startedFromGui = startedFromGui;
     selectMap(2);
-    connect(this,SIGNAL(sigStartHeartBeat()), this, SLOT(startHeartBeat()), Qt::QueuedConnection);
 
     if(startedFromGui) {
         QTimer::singleShot(2000, this, SLOT(slotNoAdmin()));
@@ -67,9 +66,9 @@ void NetServer::restart()
     selectMap(2);
 }
 
-void NetServer::run()
+void NetServer::start()
 {
-    //qDebug() << "NetServer run, admin passord : " << adminPasswd;
+    //qDebug() << "NetServer start, admin passord : " << adminPasswd;
     tcpServer = new QTcpServer();
     if (!tcpServer->listen(QHostAddress::Any, port)) {
         qDebug() << "server tcp error :" << tcpServer->errorString();
@@ -79,15 +78,12 @@ void NetServer::run()
     udpSocket = new QUdpSocket();
     udpSocket->bind(QHostAddress::Any, port);
 
-    //hack ? cf NetServerClient::NetServerClient()
-    connect(udpSocket, SIGNAL(readyRead()), this, SLOT(receiveUdp()), Qt::DirectConnection);
-    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(incomingClient()), Qt::DirectConnection);
-    emit serverReady();
+    connect(udpSocket, SIGNAL(readyRead()), this, SLOT(receiveUdp()));
+    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(incomingClient()));
 
     if(startedFromGui)
         qDebug() << SIGNAL_SERVER_LISTENING;
 
-    exec();
 }
 
 void NetServer::startHeartBeat() {
@@ -148,8 +144,6 @@ void NetServer::incomingClient()
             foreach(NetServerClient *client, clients)
                 client->sendMapPreview(mapPreview);
         }
-
-        emit newPlayer();
     }
     else
     {
@@ -206,7 +200,7 @@ void NetServer::startGame(int styleIndex)
         foreach(NetServerClient *client, clients)
             client->sendGameStarted();
         gameStarted = true;
-        emit sigStartHeartBeat();
+        startHeartBeat();
     }
 }
 
