@@ -82,9 +82,11 @@ class NetServerClient : public QObject
 
   quint16 blockSize; //size of the current message
 
+public slots:
+  void clientDisconected();
+
 private slots:
   void incomingTcpData();
-  void clientDisconected();
 
 signals:
     void disconected(NetServerClient*);
