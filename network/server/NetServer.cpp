@@ -118,7 +118,7 @@ void NetServer::incomingClient()
 
         //if freeIndex == 0 && !adminPasswd, this client will be the admin of the server
         NetServerClient *client = new NetServerClient(clientConnection,udpSocket,freeIndex, freeIndex == 0 && adminPasswd.isEmpty(), maxNbPlayers, maxWins, this);
-        connect(client, SIGNAL(disconected(NetServerClient*)), this, SLOT(clientDisconected(NetServerClient*)));
+        connect(client, SIGNAL(disconected(NetServerClient*)), this, SLOT(clientDisconected(NetServerClient*)), Qt::QueuedConnection);
         connect(client, SIGNAL(sigUpdatePlayerData(qint8,QString)), this, SLOT(slotUpdatePlayerData(qint8,QString)));
 
         clients.insert(freeIndex,client);
@@ -325,7 +325,7 @@ void NetServer::kickPlayer(qint8 id)
     for (QList<NetServerClient*>::iterator i = clients.begin(); i != clients.end(); ++i) {
         if((*i)->getId() == id)
         {
-            clientDisconected(*i);
+            (*i)->clientDisconected(); //force the deconnection of this client
             break;
         }
     }

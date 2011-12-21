@@ -321,6 +321,6 @@ void NetServerClient::sendTcpBlock(const QByteArray& block) {
 
 NetServerClient::~NetServerClient()
 {
-    tcpSocket->deleteLater();
+    delete tcpSocket;
 }
 
