@@ -40,7 +40,7 @@ public:
         QAnimatedItem();
         void setPos(int,int,int);
         void nextFrame();
-        static void appendNewFrame(QList<QPixmap*>* anim, char const* path);
+        static void appendNewFrame(QList<QPixmap*>* anim, const QString &path);
 };
 
 #endif // QANIMATEDITEM_H

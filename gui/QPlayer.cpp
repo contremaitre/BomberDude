@@ -1,19 +1,12 @@
 #include "QPlayer.h"
-#include <cstdlib>
-#include <iostream>
-#include <sstream>
 using namespace std;
 QList<QList<QPixmap*>**> QPlayer::allPix=QList<QList<QPixmap*>**>();
-
-
-QPlayer::QPlayer(){
-}
 
 QPlayer::QPlayer(int numero) {
 
     if (allPix.size()==0)
         initPixList();
-
+    id = numero;
     walkingN=QPlayer::allPix.at(numero)[actionWalkingN];
     walkingS=allPix.at(numero)[actionWalkingS];
     walkingE=allPix.at(numero)[actionWalkingE];
@@ -24,6 +17,10 @@ QPlayer::QPlayer(int numero) {
     stayingStillW=allPix.at(numero)[actionStayingStillW];
     burning=allPix.at(numero)[actionBurning];
 
+    currentDirection = dirLeft;
+    currentPix = 0;
+    stayStillCount = 0;
+    stayStill(currentDirection);
 }
 
 
@@ -32,66 +29,38 @@ void QPlayer::initPixList() {
     //todo number of players available shouldn't be hardcoded
     for (int i =0; i<6 ; i++)
     {
-        stringstream ss (stringstream::in | stringstream::out);
-        string s;
+        QString baseName = "pictures/tux";
+        QString s_i = QString::number(i);
         QList<QPixmap*>** animTable= new QList<QPixmap*>*[actionBurning+1];
         allPix.append(animTable);
 
         animTable[actionWalkingN]=new QList<QPixmap*>();
-        //QAnimatedItem::appendNewFrame(animTable[PlayerAction.walkingN], "pictures/tux"+i+"0_up.png");
-        ss<<"pictures/tux"<<i<<"1_up.png";
-        ss>>s;
-        QAnimatedItem::appendNewFrame(animTable[actionWalkingN], s.c_str());
-        ss<<"pictures/tux"<<i<<"2_up.png";
-        ss>>s;
-        QAnimatedItem::appendNewFrame(animTable[actionWalkingN], s.c_str());
+        QAnimatedItem::appendNewFrame(animTable[actionWalkingN], baseName + s_i + "1_up.png");
+        QAnimatedItem::appendNewFrame(animTable[actionWalkingN], baseName + s_i + "2_up.png");
 
         animTable[actionWalkingS]=new QList<QPixmap*>();
-        //QAnimatedItem::appendNewFrame(animTable[PlayerAction.walkingS], "pictures/tux"+i+"0_down.png");
-        ss<<"pictures/tux"<<i<<"1_down.png";
-        ss>>s;
-        QAnimatedItem::appendNewFrame(animTable[actionWalkingS], s.c_str());
-        ss<<"pictures/tux"<<i<<"2_down.png";
-        ss>>s;
-        QAnimatedItem::appendNewFrame(animTable[actionWalkingS], s.c_str());
+        QAnimatedItem::appendNewFrame(animTable[actionWalkingS], baseName + s_i + "1_down.png");
+        QAnimatedItem::appendNewFrame(animTable[actionWalkingS], baseName + s_i + "2_down.png");
 
         animTable[actionWalkingE]=new QList<QPixmap*>();
-        //QAnimatedItem::appendNewFrame(animTable[PlayerAction.walkingE], "pictures/tux"+i+"0_left.png");
-        ss<<"pictures/tux"<<i<<"1_left.png";
-        ss>>s;
-        QAnimatedItem::appendNewFrame(animTable[actionWalkingE], s.c_str());
-        ss<<"pictures/tux"<<i<<"2_left.png";
-        ss>>s;
-        QAnimatedItem::appendNewFrame(animTable[actionWalkingE], s.c_str());
+        QAnimatedItem::appendNewFrame(animTable[actionWalkingE], baseName + s_i + "1_left.png");
+        QAnimatedItem::appendNewFrame(animTable[actionWalkingE], baseName + s_i + "2_left.png");
 
         animTable[actionWalkingW]=new QList<QPixmap*>();
-        //QAnimatedItem::appendNewFrame(animTable[PlayerAction.walkingW], "pictures/tux"+i+"0_right.png");
-        ss<<"pictures/tux"<<i<<"1_right.png";
-        ss>>s;
-        QAnimatedItem::appendNewFrame(animTable[actionWalkingW], s.c_str());
-        ss<<"pictures/tux"<<i<<"2_right.png";
-        ss>>s;
-        QAnimatedItem::appendNewFrame(animTable[actionWalkingW], s.c_str());
+        QAnimatedItem::appendNewFrame(animTable[actionWalkingW], baseName + s_i + "1_right.png");
+        QAnimatedItem::appendNewFrame(animTable[actionWalkingW], baseName + s_i + "2_right.png");
 
         animTable[actionStayingStillN]=new QList<QPixmap*>();
-        ss<<"pictures/tux"<<i<<"0_up.png";
-        ss>>s;
-        QAnimatedItem::appendNewFrame(animTable[actionStayingStillN], s.c_str());
+        QAnimatedItem::appendNewFrame(animTable[actionStayingStillN], baseName + s_i + "0_up.png");
 
         animTable[actionStayingStillS]=new QList<QPixmap*>();
-        ss<<"pictures/tux"<<i<<"0_down.png";
-        ss>>s;
-        QAnimatedItem::appendNewFrame(animTable[actionStayingStillS], s.c_str());
+        QAnimatedItem::appendNewFrame(animTable[actionStayingStillS], baseName + s_i + "0_down.png");
 
         animTable[actionStayingStillE]=new QList<QPixmap*>();
-        ss<<"pictures/tux"<<i<<"0_right.png";
-        ss>>s;
-        QAnimatedItem::appendNewFrame(animTable[actionStayingStillE], s.c_str());
+        QAnimatedItem::appendNewFrame(animTable[actionStayingStillE], baseName + s_i + "0_left.png");
 
         animTable[actionStayingStillW]=new QList<QPixmap*>();
-        ss<<"pictures/tux"<<i<<"0_left.png";
-        ss>>s;
-        QAnimatedItem::appendNewFrame(animTable[actionStayingStillW], s.c_str());
+        QAnimatedItem::appendNewFrame(animTable[actionStayingStillW], baseName + s_i + "0_right.png");
 
         animTable[actionBurning]=new QList<QPixmap*>();
         QAnimatedItem::appendNewFrame(animTable[actionBurning], "pictures/tux_burn.png");
@@ -99,6 +68,7 @@ void QPlayer::initPixList() {
     }
 }
 void QPlayer::walk(const globalDirection dir) {
+    currentDirection = dir;
     switch (dir) {
     case dirUp :
         currentAnim=walkingN;
@@ -114,7 +84,20 @@ void QPlayer::walk(const globalDirection dir) {
         break;
 
     }
-    currentPix=0;
+    stayStillCount = 0;
+    if(bStayStill)
+    {
+        bStayStill = false;
+        currentPix = 0;
+    }
+}
+
+void QPlayer::nextFrame()
+{
+    if(!bStayStill && ++stayStillCount > 3)
+        stayStill(currentDirection);
+
+    QAnimatedItem::nextFrame();
 }
 
 void QPlayer::stayStill(const globalDirection dir){
@@ -133,12 +116,19 @@ void QPlayer::stayStill(const globalDirection dir){
         break;
 
     }
+    bStayStill = true;
     currentPix=0;
 }
+
 
 void QPlayer::burn(){
     currentAnim=burning;
     currentPix=0;
+
+}
+const QPixmap *QPlayer::getPlayerPixmap()
+{
+    return stayingStillS->first();
 
 }
 

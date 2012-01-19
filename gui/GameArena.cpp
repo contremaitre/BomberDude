@@ -33,7 +33,6 @@ GameArena::GameArena(int s) :
 	maxNbPlayers = 0;
 	squareSize = s;
 	squaresItem = NULL;
-	playersItem = NULL;
     scene = new QGraphicsScene;
     pixmaps.init(squareSize, squareSize);
 }
@@ -97,8 +96,10 @@ void GameArena::clear()
         delete[] squaresItem;
         squaresItem = NULL;
     }
-    delete []playersItem;
-    playersItem = NULL;
+
+    /* remove players */
+    while(!playersItem.empty())
+        delete playersItem.takeFirst();
 
     /* remove bombs */
     QMap<int, QBomb*>::iterator itb;
@@ -150,7 +151,6 @@ void GameArena::setMap(MapClient *newMap)
     height = map->getHeight();
     maxNbPlayers = map->getMaxNbPlayers();
     squaresItem = new QGraphicsSquareItem*[width * height];
-    playersItem = new playersItem_t[maxNbPlayers];
     for(int i = 0; i < width; i++)
     {
         for(int j = 0; j < height; j++)
@@ -171,13 +171,12 @@ void GameArena::setMap(MapClient *newMap)
     for(int i = 0; i < map->getNbPlayers(); i++)
     {
         map->getPlayerPosition(i,x,y);
-        playersItem[i].itemSick = false;
-        playersItem[i].sick = false;
-        playersItem[i].item.setPos(x-squareSize/2,y-squareSize/2,squareSize);
-        playersItem[i].item.setItem(pixmaps.getPixmap(i));
-        scene->addItem(playersItem[i].item.getItem());
+        QPlayer *p = new QPlayer(i);
+        playersItem.append(p);
+        p->setPos(x-squareSize/2,y-squareSize/2,squareSize);
+        scene->addItem(p);
 
-        emit sigNewPlayerGraphic(i,pixmaps.getPixmap(i));
+        emit sigNewPlayerGraphic(i,*p->getPlayerPixmap());
     }
 
     connect(map, SIGNAL(sigBlockChanged(int)), this, SLOT(blockChanged(int)));
@@ -202,30 +201,17 @@ void GameArena::setMap(MapClient *newMap)
 void GameArena::movePlayer(int player, int x, int y, int heading)
 {
     Q_ASSERT(player < map->getNbPlayers()); //Player really exists
-    //Q_ASSERT(playersItem[player].item.getItem()->scene() != 0); the player is added to the scene when the map is created (setMap)
     //qDebug() << "GameArena player moved, heading = " << heading;
-    playersItem[player].item.setPos(x-squareSize/2,y-squareSize/2,squareSize);
-    if(playersItem[player].sick)
-    {
-        //switch sickness graphic
-        if(playersItem[player].itemSick)
-            playersItem[player].item.setItem(pixmaps.getPixmap(player));
-        else
-            playersItem[player].item.setItem(pixmaps.getPixmapSick());
-        playersItem[player].itemSick = !playersItem[player].itemSick;
-    }
+    //playersItem[player].item.setPos(x-squareSize/2,y-squareSize/2,squareSize);
+    playersItem[player]->setPos(x-squareSize/2,y-squareSize/2,squareSize);
+    playersItem[player]->walk(static_cast<globalDirection>(heading));
 }
 
 void GameArena::slotPlayerSickChanged(int player, bool sick)
 {
     Q_ASSERT(player < map->getNbPlayers()); //Player really exists
-    playersItem[player].sick = sick;
+    playersItem[player]->setSick(sick);
     //qDebug() <<"slotPlayerSickChanged" ;
-    if(!sick && playersItem[player].itemSick)
-    {
-        playersItem[player].item.setItem(pixmaps.getPixmap(player));//remove sickness graphic
-        playersItem[player].itemSick = false;
-    }
 }
 
 int GameArena::getCaseSize() const
@@ -327,6 +313,10 @@ void GameArena::slotHearbeatUpdated(qint32 value) {
         itf.value()->nextFrame();
     }
 
+    for(int i = 0; i < playersItem.size(); i++)
+    {
+        playersItem[i]->nextFrame();
+    }
 
 }
 
@@ -351,7 +341,7 @@ void GameArena::killPlayer(int id)
 {
 	qint16 px, py;
 	map->getPlayerPosition(id, px, py);
-	scene->removeItem(playersItem[id].item.getItem());
+	scene->removeItem(playersItem[id]);
 	QGraphicsSquareItem* burnt = new QGraphicsSquareItem(px-squareSize/2, py-squareSize/2, squareSize);
 	burnt->setItem(pixmaps.getPixmapBurnt());
 	scene->addItem(burnt);

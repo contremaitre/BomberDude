@@ -34,13 +34,6 @@ class QGraphicsView;
 // necessary to use QPoint in a QMap
 bool operator<(const QPoint&, const QPoint&);
 
-struct playersItem_t
-{
-    QGraphicsSquareItem item;
-    bool sick;
-    bool itemSick;
-};
-
 class GameArena : public QObject
 {
   Q_OBJECT
@@ -50,7 +43,7 @@ private:
     MapClient* map;
     PixmapsItems pixmaps;
     QGraphicsSquareItem **squaresItem;
-    playersItem_t *playersItem;
+    QList<QPlayer*> playersItem;
     QList<QGraphicsSquareItem*> burntPlayers;
     QList<QGraphicsSquareItem*> optionsItems;
     QMap<QPoint, QGraphicsItem*> bonus;

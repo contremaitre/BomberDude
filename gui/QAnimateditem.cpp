@@ -38,6 +38,7 @@ QRectF QAnimatedItem::boundingRect() const
 
 void QAnimatedItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    Q_ASSERT(!currentAnim->empty() && currentPix < currentAnim->size() );
     painter->drawPixmap(0,0,size,size,*(currentAnim->at(currentPix)));
 }
 
@@ -52,7 +53,7 @@ void QAnimatedItem::nextFrame()
     update();
 }
 
-void QAnimatedItem::appendNewFrame(QList<QPixmap*>* anim, char const* path)
+void QAnimatedItem::appendNewFrame(QList<QPixmap*>* anim, const QString &path)
 {
     QPixmap * tmpPix= new QPixmap(path);
     anim->append(tmpPix);

@@ -32,10 +32,13 @@ private:
     QList<QPixmap*>* burning;
     void initPixList();
     bool sick;
+    int id;
+    globalDirection currentDirection;
+    int stayStillCount;
+    bool bStayStill;
 
 public:
 
-    QPlayer();
     QPlayer(int);
 
     static QList< QList<QPixmap*>**> allPix ;
@@ -43,8 +46,8 @@ public:
     void stayStill(const globalDirection);
     void burn();
     void setSick(const bool);
-
-
+    void nextFrame();
+    const QPixmap *getPlayerPixmap();
 };
 
 

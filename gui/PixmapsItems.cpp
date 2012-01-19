@@ -36,11 +36,6 @@ void PixmapsItems::init(int w, int h)
 
 void PixmapsItems::loadAll()
 {
-    for(int i = 0; i < 10; i++) {
-        QString pixPath = "pictures/tux_0" + QString::number(i) + ".png";
-        bomberman[i] = QPixmap(pixPath).scaled(QSizeF(width,height).toSize());
-    }
-
     addBonusPixMap(Bonus::BONUS_FLAME,"pictures/bonus_flame.png");
     addBonusPixMap(Bonus::BONUS_BOMB,"pictures/bonus_bomb.png");
     addBonusPixMap(Bonus::BONUS_OIL,"pictures/bonus_oil.png");
@@ -153,11 +148,3 @@ const QPixmap& PixmapsItems::getPixmap(Bonus::Bonus_t type)
     qDebug() << "*** Warning *** unknown option" << type << "server version newer than client version ?";
     return option_unknown;
 }
-
-const QPixmap& PixmapsItems::getPixmap(int player)
-{
-    //for now, the max number of differents player graphic is 10
-    Q_ASSERT(player < 10);
-    return bomberman[player];
-}
-
