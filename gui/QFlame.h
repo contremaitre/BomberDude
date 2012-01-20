@@ -29,6 +29,7 @@ private:
 public:
     QFlame();
     QFlame(int,int,int);
+    ~QFlame();
     static QList<QPixmap*> explosionPix;
 };
 

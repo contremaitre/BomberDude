@@ -40,6 +40,7 @@ private:
 public:
 
     QPlayer(int);
+    ~QPlayer();
 
     static QList< QList<QPixmap*>**> allPix ;
     void walk(const globalDirection);

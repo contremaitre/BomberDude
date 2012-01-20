@@ -135,3 +135,25 @@ const QPixmap *QPlayer::getPlayerPixmap()
 void QPlayer::setSick(const bool sick){
     this->sick=sick;
 }
+
+QPlayer::~QPlayer()
+{
+    while(!walkingN->empty())
+        delete walkingN->takeFirst();
+    while(!walkingS->empty())
+        delete walkingS->takeFirst();
+    while(!walkingE->empty())
+        delete walkingE->takeFirst();
+    while(!walkingW->empty())
+        delete walkingW->takeFirst();
+    while(!stayingStillN->empty())
+        delete stayingStillN->takeFirst();
+    while(!stayingStillS->empty())
+        delete stayingStillS->takeFirst();
+    while(!stayingStillE->empty())
+        delete stayingStillE->takeFirst();
+    while(!stayingStillW->empty())
+        delete stayingStillW->takeFirst();
+    while(!burning->empty())
+        delete burning->takeFirst();
+}

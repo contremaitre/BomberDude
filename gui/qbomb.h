@@ -30,6 +30,8 @@ private:
 public:
     QBomb();
     QBomb(int,int,int);
+    ~QBomb();
+
     static QList<QPixmap*> normalPix;
     static QList<QPixmap*> rcPix;
     static QList<QPixmap*> dudPix;

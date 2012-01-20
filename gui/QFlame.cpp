@@ -40,3 +40,9 @@ QFlame::QFlame(int x, int y , int size)
     setPos(x,y,size);
 
 }
+
+QFlame::~QFlame()
+{
+    while(!explosionPix.empty())
+        delete explosionPix.takeFirst();
+}

@@ -70,7 +70,12 @@ void QBomb::setRC()
     currentAnim=&QBomb::rcPix;
 }
 
-
-
-
-
+QBomb::~QBomb()
+{
+    while(!normalPix.empty())
+        delete normalPix.takeFirst();
+    while(!rcPix.empty())
+        delete rcPix.takeFirst();
+    while(!dudPix.empty())
+        delete dudPix.takeFirst();
+}
