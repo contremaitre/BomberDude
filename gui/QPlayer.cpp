@@ -3,9 +3,7 @@ using namespace std;
 QList<QList<QPixmap*>**> QPlayer::allPix=QList<QList<QPixmap*>**>();
 
 QPlayer::QPlayer(int numero) {
-
-    if (allPix.size()==0)
-        initPixList();
+    Q_ASSERT(!allPix.empty());
     id = numero;
     walkingN=QPlayer::allPix.at(numero)[actionWalkingN];
     walkingS=allPix.at(numero)[actionWalkingS];
@@ -23,9 +21,10 @@ QPlayer::QPlayer(int numero) {
     stayStill(currentDirection);
 }
 
-
-void QPlayer::initPixList() {
-
+void QPlayer::loadPixs()
+{
+    if(!allPix.empty())
+        return;
     //todo number of players available shouldn't be hardcoded
     for (int i =0; i<6 ; i++)
     {
@@ -67,6 +66,20 @@ void QPlayer::initPixList() {
 
     }
 }
+
+void QPlayer::unloadPixs()
+{
+    while(!allPix.empty())
+    {
+        QList<QPixmap*> *first = *allPix.first();
+        while(!first->empty())
+        {
+            delete first->takeFirst();
+        }
+        allPix.removeFirst();
+    }
+}
+
 void QPlayer::walk(const globalDirection dir) {
     currentDirection = dir;
     switch (dir) {
@@ -138,22 +151,4 @@ void QPlayer::setSick(const bool sick){
 
 QPlayer::~QPlayer()
 {
-    while(!walkingN->empty())
-        delete walkingN->takeFirst();
-    while(!walkingS->empty())
-        delete walkingS->takeFirst();
-    while(!walkingE->empty())
-        delete walkingE->takeFirst();
-    while(!walkingW->empty())
-        delete walkingW->takeFirst();
-    while(!stayingStillN->empty())
-        delete stayingStillN->takeFirst();
-    while(!stayingStillS->empty())
-        delete stayingStillS->takeFirst();
-    while(!stayingStillE->empty())
-        delete stayingStillE->takeFirst();
-    while(!stayingStillW->empty())
-        delete stayingStillW->takeFirst();
-    while(!burning->empty())
-        delete burning->takeFirst();
 }

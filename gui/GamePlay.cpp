@@ -31,6 +31,11 @@ GamePlay::GamePlay(Settings *set, QGraphicsView *mapGraphicPreview, QString play
     leftK1 = rightK1 = upK1 = downK1 = false;
     leftK2 = rightK2 = upK2 = downK2 = false;
 
+    /* Load pixmaps */
+    QFlame::loadPixs();
+    QBomb::loadPixs();
+    QPlayer::loadPixs();
+
     gameArena = new GameArena(BLOCK_SIZE);
     gameArenaPreview = new GameArena(BLOCK_SIZE/2);  //todo : create a light class for the preview
     gameArenaPreview->setGraphicView(mapGraphicPreview);
@@ -300,4 +305,9 @@ GamePlay::~GamePlay()
     delete gameArenaPreview;
     delete client;
     delete clientPlayer2;
+
+    /* Unload pixmaps */
+    QFlame::unloadPixs();
+    QBomb::unloadPixs();
+    QPlayer::unloadPixs();
 }

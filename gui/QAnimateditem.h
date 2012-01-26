@@ -28,7 +28,6 @@ class QAnimatedItem : public QGraphicsItem
 private:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
         QRectF boundingRect() const;
-        virtual void initPixList()=0;
 
 public:
         /** size of the item (it is supposed to be a square*/

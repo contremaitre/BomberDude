@@ -24,12 +24,13 @@
 class QFlame : public QAnimatedItem
 {
 private:
-     void initPixList();
 
 public:
     QFlame();
     QFlame(int,int,int);
     ~QFlame();
+    static void loadPixs();
+    static void unloadPixs();
     static QList<QPixmap*> explosionPix;
 };
 

@@ -18,9 +18,16 @@
 
 QList<QPixmap*> QFlame::explosionPix= QList<QPixmap*>();
 
+QFlame::QFlame(int x, int y , int size)
+{
+    Q_ASSERT(!explosionPix.empty());
+    currentPix=0;
+    currentAnim=&QFlame::explosionPix;
+    setPos(x,y,size);
 
+}
 
-void QFlame::initPixList()
+void QFlame::loadPixs()
 {
     if (QFlame::explosionPix.isEmpty())
     {
@@ -32,17 +39,12 @@ void QFlame::initPixList()
     }
 }
 
-QFlame::QFlame(int x, int y , int size)
+void QFlame::unloadPixs()
 {
-    initPixList();
-    currentPix=0;
-    currentAnim=&QFlame::explosionPix;
-    setPos(x,y,size);
-
+    while(!explosionPix.empty())
+        delete explosionPix.takeFirst();
 }
 
 QFlame::~QFlame()
 {
-    while(!explosionPix.empty())
-        delete explosionPix.takeFirst();
 }

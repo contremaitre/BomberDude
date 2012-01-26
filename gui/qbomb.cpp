@@ -23,32 +23,14 @@ QList<QPixmap*> QBomb::dudPix= QList<QPixmap*>();
 
 QBomb::QBomb()
 {
-    initPixList();
+    Q_ASSERT(!normalPix.empty());
     size=0;
     currentPix=0;
-}
-void QBomb::initPixList()
-{
-    if (QBomb::normalPix.isEmpty())
-    {
-        QAnimatedItem::appendNewFrame(&QBomb::normalPix, "pictures/bomb.png");
-        QAnimatedItem::appendNewFrame(&QBomb::normalPix, "pictures/bomb2.png");
-    }
-    if (QBomb::rcPix.isEmpty())
-    {
-        QAnimatedItem::appendNewFrame(&QBomb::rcPix, "pictures/bomb_rc.png");
-        QAnimatedItem::appendNewFrame(&QBomb::rcPix, "pictures/bomb_rc2.png");
-    }
-    if (QBomb::dudPix.isEmpty())
-    {
-        QAnimatedItem::appendNewFrame(&QBomb::dudPix, "pictures/bomb_dud.png");
-        QAnimatedItem::appendNewFrame(&QBomb::dudPix, "pictures/bomb2.png");
-    }
 }
 
 QBomb::QBomb(int x, int y , int size)
 {
-    initPixList();
+    Q_ASSERT(!normalPix.empty());
     currentPix=0;
     currentAnim=&QBomb::normalPix;
     setPos(x,y,size);
@@ -70,7 +52,26 @@ void QBomb::setRC()
     currentAnim=&QBomb::rcPix;
 }
 
-QBomb::~QBomb()
+void QBomb::loadPixs()
+{
+    if (QBomb::normalPix.isEmpty())
+    {
+        QAnimatedItem::appendNewFrame(&QBomb::normalPix, "pictures/bomb.png");
+        QAnimatedItem::appendNewFrame(&QBomb::normalPix, "pictures/bomb2.png");
+    }
+    if (QBomb::rcPix.isEmpty())
+    {
+        QAnimatedItem::appendNewFrame(&QBomb::rcPix, "pictures/bomb_rc.png");
+        QAnimatedItem::appendNewFrame(&QBomb::rcPix, "pictures/bomb_rc2.png");
+    }
+    if (QBomb::dudPix.isEmpty())
+    {
+        QAnimatedItem::appendNewFrame(&QBomb::dudPix, "pictures/bomb_dud.png");
+        QAnimatedItem::appendNewFrame(&QBomb::dudPix, "pictures/bomb2.png");
+    }
+}
+
+void QBomb::unloadPixs()
 {
     while(!normalPix.empty())
         delete normalPix.takeFirst();
@@ -78,4 +79,8 @@ QBomb::~QBomb()
         delete rcPix.takeFirst();
     while(!dudPix.empty())
         delete dudPix.takeFirst();
+}
+
+QBomb::~QBomb()
+{
 }

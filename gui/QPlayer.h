@@ -30,7 +30,6 @@ private:
     QList<QPixmap*>* stayingStillE;
     QList<QPixmap*>* stayingStillW;
     QList<QPixmap*>* burning;
-    void initPixList();
     bool sick;
     int id;
     globalDirection currentDirection;
@@ -42,6 +41,8 @@ public:
     QPlayer(int);
     ~QPlayer();
 
+    static void loadPixs();
+    static void unloadPixs();
     static QList< QList<QPixmap*>**> allPix ;
     void walk(const globalDirection);
     void stayStill(const globalDirection);

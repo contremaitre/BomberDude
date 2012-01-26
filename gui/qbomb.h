@@ -25,7 +25,6 @@
 class QBomb : public QAnimatedItem
 {
 private:
-    void initPixList();
 
 public:
     QBomb();
@@ -35,6 +34,8 @@ public:
     static QList<QPixmap*> normalPix;
     static QList<QPixmap*> rcPix;
     static QList<QPixmap*> dudPix;
+    static void loadPixs();
+    static void unloadPixs();
     void setRC();
     void setNormalBomb();
     void setDudBomb();
