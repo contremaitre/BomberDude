@@ -238,7 +238,7 @@ void NetClient::receiveUdp()
 		case msg_update_map: {
 				QByteArray updateBlock;
 				in >> updateBlock;
-				if (map!=0)
+				if (map!=NULL)
 					map->updateMap(updateBlock);
 			}
 			break;
@@ -277,6 +277,7 @@ void NetClient::handleTcpMsg(QDataStream &in)
 	{
 	case msg_map:
 		qDebug("NetClient map received");
+		delete map;
 		map = new MapClient();
 		in >> *map;
 		emit mapReceived(map);
