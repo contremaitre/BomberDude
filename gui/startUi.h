@@ -89,7 +89,6 @@ private slots:
     void slotServerStopped();
     void closeGame();
     void slotKickPlayer(qint8);
-    void slotEndRound(qint8, bool);
     void slotLoadInterGame();
     void slotAddLocalPlayer();
 };

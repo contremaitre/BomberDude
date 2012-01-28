@@ -78,6 +78,8 @@ void StartUi::loadGameFrame()
 
 void StartUi::slotLoadInterGame()
 {
+    if(!gamePlay)
+        return;//the game has been stopped
     delete menuTabFrame;
     menuTabFrame = NULL;
     delete gameFrame;
@@ -127,12 +129,12 @@ void StartUi::slotStartServer()
     NetClient *netclient = gamePlay->getNetClient();
 
     connect( gamePlay, SIGNAL(quitGame()), this, SLOT(closeGame()), Qt::QueuedConnection );
+    connect( gamePlay, SIGNAL(sigLoadInterGame()), this, SLOT(slotLoadInterGame()) );
 
     /* Connect some signals to the ourselves */
     connect( netclient, SIGNAL(sigConnectionError()), this, SLOT(slotConnectionError()), Qt::QueuedConnection);
     connect( netclient, SIGNAL(sigGameStarted()), this, SLOT(slotGameStarted()));
     connect( netclient, SIGNAL(sigNetClientEnd()), this, SLOT(closeGame()));
-    connect( netclient, SIGNAL(sigMapWinner(qint8,bool)), this, SLOT(slotEndRound(qint8,bool)));
 
     /* Connect some signals to the IP stats widget */
     connect( netclient, SIGNAL(sigStatPing(int)), &ipStats, SLOT(slotStatPing(int)));
@@ -298,12 +300,6 @@ void StartUi::slotReadServerDebug()
 void StartUi::slotServerStopped()
 {
     QMessageBox::warning(this, QString("Server stopped"),QString("The server was shut down, either by admin command or because the connection with the admin GUI was lost"));
-}
-
-void StartUi::slotEndRound(qint8, bool end)
-{
-    if(!end)
-        QTimer::singleShot(1000*5, this, SLOT(slotLoadInterGame()));
 }
 
 StartUi::~StartUi()

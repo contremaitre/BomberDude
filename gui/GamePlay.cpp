@@ -24,6 +24,7 @@
 GamePlay::GamePlay(Settings *set, QGraphicsView *mapGraphicPreview, QString player1name)
                     : player1name(player1name)
 {
+    //qDebug() << "new Gameplay";
     connect(&timer, SIGNAL(timeout()),this,SLOT(slotMoveTimer()));
     connect(&timerPing, SIGNAL(timeout()),this,SLOT(slotPingTimer()));
     timerPing.start(2000); // Ping every 2s
@@ -49,6 +50,8 @@ GamePlay::GamePlay(Settings *set, QGraphicsView *mapGraphicPreview, QString play
     connect(client,SIGNAL(mapPreviewReceived(MapClient*)),this,SLOT(mapPreviewReceived(MapClient*)));
     connect(client,SIGNAL(sigMapRandom(bool)),this,SLOT(slotMapRandom(bool)));
     connect(client, SIGNAL(sigMapWinner(qint8,bool)), gameArena, SLOT(slotMapWinner(qint8,bool)));
+    connect(client, SIGNAL(sigMapWinner(qint8,bool)), this, SLOT(slotEndRound(qint8,bool)));
+
     connect(client, SIGNAL(sigConnected()), this, SLOT(slotConnectedToServer()));
 
     settings = set;
@@ -128,6 +131,17 @@ void GamePlay::slotPlayer2Disconnected()
 {
     delete clientPlayer2;
     clientPlayer2 = NULL;
+}
+
+void GamePlay::slotEndRound(qint8, bool end)
+{
+    if(!end)
+        QTimer::singleShot(1000*5, this, SLOT(slotLoadInterGame()));
+}
+
+void GamePlay::slotLoadInterGame()
+{
+    emit sigLoadInterGame();
 }
 
 void GamePlay::move(int direction)
@@ -301,6 +315,7 @@ NetClient *GamePlay::getNetClient()
 
 GamePlay::~GamePlay()
 {
+    //qDebug() << "Gameplay destructor";
     delete gameArena;
     delete gameArenaPreview;
     delete client;

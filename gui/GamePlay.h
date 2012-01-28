@@ -88,6 +88,8 @@ private slots:
     void slotNewPlayerGraphic(qint8,const QPixmap &);
     void slotConnectedToServer();
     void slotPlayer2Disconnected();
+    void slotEndRound(qint8, bool end);
+    void slotLoadInterGame();
 
 signals:
     void connectionError();
@@ -97,6 +99,8 @@ signals:
     void sigIsServerAdmin(int);
     void sigTimeUpdated(int timeInSeconds);
     void sigNewPlayerGraphic(qint8, const QPixmap &);
+    void sigLoadInterGame();
+
 };
 
 
