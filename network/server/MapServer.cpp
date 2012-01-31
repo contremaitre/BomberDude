@@ -927,7 +927,7 @@ void MapServer::doPlayerDeath(PlayerServer* playerN, int killedBy)
         bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_REMOTE;
     if(playerN->getKickBonus())
         bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_KICK;
-    capacity = playerN->getFlameLength() - DEFAULT_BOMB_RANGE;
+    capacity = playerN->getFlameLength() - DEFAULT_FLAME_LENGTH;
     while(capacity-- > 0)
         bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_FLAME;
     capacity = playerN->getMaxNumberOfBombs() - DEFAULT_BOMB_CAPACITY;

@@ -34,7 +34,7 @@ PlayerServer::PlayerServer(qint8 playerId) :
     maxNumberOfBombs(DEFAULT_BOMB_CAPACITY),
     bombsAvailable(maxNumberOfBombs),
     nbRemoteControl(0),
-    flameLength(DEFAULT_BOMB_RANGE),
+    flameLength(DEFAULT_FLAME_LENGTH),
     currentSickness(SICK_NONE),
     SicknessDuration(0),
     moveDistance(MOVE_STEP)
@@ -95,8 +95,27 @@ void PlayerServer::setRemoteBonus(bool set)
         nbRemoteControl = 0;
 }
 
+void PlayerServer::setFasterBonus()
+{
+    if(moveDistance - (MOVE_STEP) < BONUS_MAX_SKATE)
+        moveDistance++;
+}
+
+qint8 PlayerServer::getFlameLength() const
+{
+    return flameLength;
+}
+
+void PlayerServer::incFlameLength()
+{
+    if(flameLength - DEFAULT_FLAME_LENGTH < BONUS_MAX_FLAME_LENGTH)
+        flameLength++;
+}
+
 void PlayerServer::incMaxNumberOfBombs()
 {
+    if(maxNumberOfBombs >= BONUS_MAX_BOMBS )
+        return;
     maxNumberOfBombs++;
     bombsAvailable++;
     if(remoteBonus)

@@ -51,12 +51,12 @@ public:
     qint8 getMaxNumberOfBombs() const   { return maxNumberOfBombs; }
     void incMaxNumberOfBombs();
 
+    qint8 getFlameLength() const;
+    void incFlameLength();
+
     bool getIsBombAvailable() const;
     void decBombsAvailable()            { bombsAvailable--; }
     void incBombsAvailable()            { bombsAvailable++; }
-
-    qint8 getFlameLength() const        { return flameLength; }
-    void incFlameLength()               { flameLength++; }
 
     void setOilBonus(bool set)          { oilBonus = set; }
     bool getOilBonus() const            { return oilBonus; }
@@ -73,8 +73,6 @@ public:
     void setBoxingGloveBonus(bool set)  { boxingGloveBonus = set; }
     bool getBoxingGloveBonus() const    { return boxingGloveBonus; }
 
-    void setFasterBonus()               { moveDistance++; }
-
     void setRemoteBonus(bool);
     bool hasRemoteBonus() const         { return remoteBonus; }
     bool getRemoteBonus();
@@ -86,6 +84,7 @@ public:
     sickness getSickness()              {return currentSickness;}
 
     qint16 getMoveDistance() const;
+    void setFasterBonus();
 
     void decreaseDuration(); //only used for sickness for the moment
     QList<Bonus*> heldBonus;
