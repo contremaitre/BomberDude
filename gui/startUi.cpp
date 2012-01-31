@@ -113,7 +113,7 @@ void StartUi::slotStartServer()
 
 		QString serverCmdLine("./Serverd");
 		serverCmdLine += " --port ";
-		serverCmdLine += settings->getServerPort();
+		serverCmdLine += QString::number(settings->getServerPort());
 		serverCmdLine += " --admin-password " + adminPassword;
         if(settings->isDebugMode())
             serverCmdLine += " --debug-mode";
