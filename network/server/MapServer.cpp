@@ -392,7 +392,7 @@ bool MapServer::moveFlyingBomb(BombServer* b)
         }
         else
         {
-            if(b->getHasOil())
+            if( b->getHasOil() && (qrand() % OIL_BOMB_RANDOM_DIR) == 0 )
             {
                 /* random direction (between 0 et 2 to exclude the previous position */
                 int randomDraw = qrand()%3;

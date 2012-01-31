@@ -61,7 +61,7 @@ enum globalDirection {
 #define MOVE_STEP (int)(BLOCK_SIZE/6)
 #define WALKWAY_SPEED 2
 const int ROLLING_BOMB_SPEED = MOVE_STEP * 2;
-
+#define OIL_BOMB_RANDOM_DIR 3 //chances for a jelly bomb to change direction (1 = 100%)
 const int MAX_PLAYER_NAME_LENGTH = 16;
 
 const char SIGNAL_SERVER_LISTENING[] = "Server is listening";
