@@ -74,7 +74,6 @@ public:
 
     virtual ~Map();
     
-    void Init();
     void setDim(qint16 w, qint16 h, qint16 block_size = BLOCK_SIZE);
     virtual void addStyle(const SL &style)=0;
 
@@ -146,6 +145,7 @@ private:
     // callback method for when a brick wall is removed, only useful for the server
     virtual void brokenBlockRemoved(int, int)                       {}
 
+    void Init();
 
     qint16 blockSize;                       //There are "blockSize" pixels in one block
 

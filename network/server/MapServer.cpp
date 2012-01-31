@@ -34,33 +34,7 @@ MapServer::MapServer()
             shrink(-1,0),
             shrinkDirection(planeDirRight)
 {
-    int index = 0;
-    for(int i = 0; i < 16; i++, index++)
-        bonusTable[index] = Bonus::BONUS_BOMB;
-    for(int i = 0; i < 16; i++, index++)
-        bonusTable[index] = Bonus::BONUS_FLAME;
-    for(int i = 0; i < 16; i++, index++)
-        bonusTable[index] = Bonus::BONUS_DISEASE;
-    for(int i = 0; i < 16; i++, index++)
-        bonusTable[index] = Bonus::BONUS_OIL;
-    for(int i = 0; i < 16; i++, index++)
-        bonusTable[index] = Bonus::BONUS_KICK;
-    for(int i = 0; i < 16; i++, index++)
-        bonusTable[index] = Bonus::BONUS_FASTER;
-    for(int i = 0; i < 16; i++, index++)
-        bonusTable[index] = Bonus::BONUS_REMOTE;
-    for(int i = 0; i < 16; i++, index++)
-        bonusTable[index] = Bonus::BONUS_MULTIBOMB;
-    for(int i = 0; i < 16; i++, index++)
-        bonusTable[index] = Bonus::BONUS_THROW_GLOVE;
-    for(int i = 0; i < 16; i++, index++)
-        bonusTable[index] = Bonus::BONUS_BOXING_GLOVE;
-    for(int i = 0; i < 16; i++, index++)
-        bonusTable[index] = Bonus::BONUS_RANDOM;
-
-    Q_ASSERT(index < BONUS_TABLE_LENGTH);
-    while(index < BONUS_TABLE_LENGTH)
-        bonusTable[index++] = Bonus::BONUS_NONE;
+    hiddenBonus = NULL;
 
     mapStyle randomSpawning;
     randomSpawning.name = "random spawning";
@@ -68,13 +42,87 @@ MapServer::MapServer()
     addStyle(randomSpawning);
 }
 
-MapServer::~MapServer() {
+MapServer::~MapServer()
+{
+    delete [] hiddenBonus;
 }
 
+double MapServer::zeroToOneRandomNumber()
+{
+    return static_cast<double>(qrand()) / RAND_MAX;
+}
 void MapServer::addStyle(const mapStyle &style)
 {
     styles << style;
     //qDebug() << "MapServer, style added, size = " << styles.size() << ", positions = " << style.coordList.size();
+}
+
+void MapServer::addBonus(int nb, Bonus::Bonus_t type, QList<Bonus::Bonus_t> &bonusList)
+{
+    if( nb < 0 )
+    {
+        for(int i = 0; i > nb; i--)
+        {
+            if(qrand() % 10 == 0)
+                bonusList << type;
+        }
+    }
+    else if( nb > 0 )
+    {
+        for(int i = 0; i < nb; i++)
+            bonusList << type;
+    }
+}
+
+void MapServer::setBonuses()
+{
+    delete []hiddenBonus;
+    hiddenBonus = new Bonus::Bonus_t[width*height];
+    memset(hiddenBonus, 0, width*height*sizeof(*hiddenBonus));
+
+    int nb_blocks = 0;
+    /* count the number of blocks available to receive an option */
+    for(int i = 0; i < width*height; i++)
+    {
+        if(getType(i) == BlockMapProperty::brick)
+            nb_blocks++;
+    }
+
+    //create a list of bonuses to add
+    QList<Bonus::Bonus_t> bonusList;
+    do
+    {
+        addBonus(BONUS_NB_BOMBS, Bonus::BONUS_BOMB, bonusList);
+        addBonus(BONUS_NB_FLAMES, Bonus::BONUS_FLAME, bonusList);
+        addBonus(BONUS_NB_DISEASES, Bonus::BONUS_DISEASE, bonusList);
+        addBonus(BONUS_NB_KICKERS, Bonus::BONUS_KICK, bonusList);
+        addBonus(BONUS_NB_SKATES, Bonus::BONUS_FASTER, bonusList);
+        addBonus(BONUS_NB_PUNCH, Bonus::BONUS_BOXING_GLOVE, bonusList);
+        addBonus(BONUS_NB_GRAB, Bonus::BONUS_THROW_GLOVE, bonusList);
+        addBonus(BONUS_NB_MULTIBOMB, Bonus::BONUS_MULTIBOMB, bonusList);
+        //addBonus(BONUS_NB_GOLDFLAME, Bonus::BONUS_KICK, bonusList); TODO
+        addBonus(BONUS_NB_TRIGGER, Bonus::BONUS_REMOTE, bonusList);
+        addBonus(BONUS_NB_OIL, Bonus::BONUS_OIL, bonusList);
+        //addBonus(BONUS_NB_SUPERDISEASES, Bonus::BONUS_KICK, bonusList); TODO
+        addBonus(BONUS_NB_RANDOM, Bonus::BONUS_RANDOM, bonusList);
+    } while(debugMode && nb_blocks > bonusList.size()); //in debug mode, every block receive a bonus
+
+
+    qDebug() << "setBonuses : " << bonusList.size() << "to add," << nb_blocks << "bricks available";
+    for(int i = 0; i < width*height && !bonusList.empty() && nb_blocks > 0; i++)
+    {
+        if(getType(i) != BlockMapProperty::brick)
+            continue;
+        // if there are less blocks than options, we put one here randomly.
+        if( nb_blocks <= bonusList.size() ||
+                ( zeroToOneRandomNumber() <= static_cast<double>(bonusList.size()) / nb_blocks) )
+        {
+            //we pick one option in the list
+            Bonus::Bonus_t bonus = bonusList.takeAt(qrand() % bonusList.size());
+            hiddenBonus[i] = bonus;
+        }
+        nb_blocks--;
+    }
 }
 
 void MapServer::selectStyle(int style)
@@ -120,7 +168,7 @@ void MapServer::loadRandom()
         for (int h = 1; h < height - 1; h++)
         {
             //randomly add wall or bricks or nothing
-            double d = (double) qrand() / RAND_MAX;
+            double d = zeroToOneRandomNumber();
             if (d < 0.05)
                 block_list[h * width + w].setType(BlockMapProperty::wall);
             else if (d < 0.1)
@@ -661,7 +709,7 @@ bool MapServer::getRandomEmptyPosition(qint16 &x, qint16 &y)
     //pick one
     if(empty.empty())
         return false;
-    int rand = static_cast<int>((static_cast<double>(qrand()) / RAND_MAX) * empty.size());
+    int rand = static_cast<int>(zeroToOneRandomNumber() * empty.size());
     x = empty[rand].x();
     y = empty[rand].y();
     return true;
@@ -967,7 +1015,7 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
         // TODO does the code belong to MapServer or to PlayerServer?
         if(pickedUpBonus->getType() == Bonus::BONUS_RANDOM)
         {
-            int randomDraw = static_cast<int>((static_cast<double>(qrand()) / RAND_MAX) * (NB_BONUS-2));
+            int randomDraw = static_cast<int>(zeroToOneRandomNumber() * (NB_BONUS-2));
             Q_ASSERT(randomDraw != Bonus::BONUS_RANDOM && randomDraw != Bonus::BONUS_NONE);
             //qDebug() << "random bonus" << randomDraw;
             pickedUpBonus->setType(static_cast<Bonus::Bonus_t>(randomDraw));
@@ -1087,14 +1135,9 @@ Bonus* MapServer::removeBonus(qint8 x, qint8 y) {
 }
 
 void MapServer::brokenBlockRemoved(int x, int y) {
-    int randomDraw = static_cast<int>((static_cast<double>(qrand()) / RAND_MAX) * BONUS_TABLE_LENGTH);
 
-    if(debugMode)
-        randomDraw = randomDraw % ( (NB_BONUS-1)*16 - 1);
-
-    Bonus::Bonus_t result = bonusTable[randomDraw];
-    if(result != Bonus::BONUS_NONE) {
-        Bonus* newBonus = new Bonus(result, x, y);
+    if(hiddenBonus[x+y*width] != Bonus::BONUS_NONE) {
+        Bonus* newBonus = new Bonus(hiddenBonus[x+y*width], x, y);
         setTileBonus(x, y, newBonus);
         createdBonus.append(newBonus);
     }

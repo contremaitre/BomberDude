@@ -532,6 +532,7 @@ bool NetServer::loadMap(int styleIndex)
     }
     if(styleIndex >=0)
         map->selectStyle(styleIndex);
+    map->setBonuses();
     return true;
 }
 

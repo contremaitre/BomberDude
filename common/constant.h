@@ -64,6 +64,22 @@ const int ROLLING_BOMB_SPEED = MOVE_STEP * 2;
 #define OIL_BOMB_RANDOM_DIR 3 //chances for a jelly bomb to change direction (1 = 100%)
 const int MAX_PLAYER_NAME_LENGTH = 16;
 
+//BONUS. A negative number here indicates how many times we'll do a 1-in-10 chance
+// of putting the powerup down.
+#define BONUS_NB_BOMBS 10
+#define BONUS_NB_FLAMES 10
+#define BONUS_NB_DISEASES 3
+#define BONUS_NB_KICKERS 4
+#define BONUS_NB_SKATES 8
+#define BONUS_NB_PUNCH 2
+#define BONUS_NB_GRAB 2
+#define BONUS_NB_MULTIBOMB 1
+#define BONUS_NB_GOLDFLAME -2
+#define BONUS_NB_TRIGGER 4
+#define BONUS_NB_OIL 4
+#define BONUS_NB_SUPERDISEASES -4
+#define BONUS_NB_RANDOM -2
+
 const char SIGNAL_SERVER_LISTENING[] = "Server is listening";
 
 #endif // CONSTANT_H_

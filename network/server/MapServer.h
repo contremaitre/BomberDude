@@ -88,7 +88,12 @@ private:
     void exchangePlayersPositions();
     void exchangePlayersPositions(PlayerServer *p1, PlayerServer *p2);
     bool shrinkMap();
+    double zeroToOneRandomNumber();
     Bonus* removeBonus(qint8 x, qint8 y);
+    /**
+     * only used at map initialisation
+     */
+    void addBonus(int nb, Bonus::Bonus_t type, QList<Bonus::Bonus_t> &bonusList);
 
     static globalDirection reverseDirection(globalDirection initialDir);
 
@@ -96,8 +101,7 @@ private:
     bool debugMode;
     bool spawningBlocks;
 
-    static const int BONUS_TABLE_LENGTH = NB_BONUS*16*2;    ///< todo
-    Bonus::Bonus_t bonusTable[BONUS_TABLE_LENGTH];          ///< table to determine which bonus to add
+    Bonus::Bonus_t *hiddenBonus;
     QList<const Bonus*> createdBonus;                       ///< list of bonus created during the heartbeat
     QList<Point<qint8> > removedBonus;                      ///< list of bonus picked up or destroyed during the heartbeat
     QList<QPoint> teleports;                                ///< We need a list of teleports to know where is the next teleport
@@ -127,6 +131,7 @@ public:
 
     virtual void addStyle(const mapStyle &style);
     void selectStyle(int);
+    void setBonuses();
 	void loadRandom();
 	void addPlayerSlot(int, int);
 	bool assignPlayer(int id);
