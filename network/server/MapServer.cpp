@@ -416,7 +416,7 @@ void MapServer::throwBomb(BombServer *bomb, globalDirection direction, int dista
         bomb->setFlying(true);
     bomb->setDirection(direction);
     bomb->setDestination(bombPoint);
-    bomb->setFlHeartbeat(heartBeat - 20); //todo remove this value
+    bomb->setFlHeartbeat(heartBeat - FLYINGBOMB_MOVE_SPEED);
     //qDebug() << "throwing a bomb" << (int)direction << bombPoint.x() << bombPoint.y();
 }
 

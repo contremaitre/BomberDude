@@ -63,7 +63,7 @@ enum globalDirection {
 const int ROLLING_BOMB_SPEED = MOVE_STEP * 2;
 #define OIL_BOMB_RANDOM_DIR 3 //chances for a jelly bomb to change direction (1 = 100%)
 const int MAX_PLAYER_NAME_LENGTH = 16;
-
+#define FLYINGBOMB_MOVE_SPEED 10 //number of heartbeat for a flying bomb to go to the next block
 //BONUS. A negative number here indicates how many times we'll do a 1-in-10 chance
 // of putting the powerup down.
 #define BONUS_NB_BOMBS 10
