@@ -100,10 +100,10 @@ void MapServer::setBonuses()
         addBonus(BONUS_NB_PUNCH, Bonus::BONUS_BOXING_GLOVE, bonusList);
         addBonus(BONUS_NB_GRAB, Bonus::BONUS_THROW_GLOVE, bonusList);
         addBonus(BONUS_NB_MULTIBOMB, Bonus::BONUS_MULTIBOMB, bonusList);
-        //addBonus(BONUS_NB_GOLDFLAME, Bonus::BONUS_KICK, bonusList); TODO
+        addBonus(BONUS_NB_GOLDFLAME, Bonus::BONUS_GOLD_FLAME, bonusList);
         addBonus(BONUS_NB_TRIGGER, Bonus::BONUS_REMOTE, bonusList);
         addBonus(BONUS_NB_OIL, Bonus::BONUS_OIL, bonusList);
-        //addBonus(BONUS_NB_SUPERDISEASES, Bonus::BONUS_KICK, bonusList); TODO
+        addBonus(BONUS_NB_SUPERDISEASES, Bonus::BONUS_SUPER_BAD_DISEASE, bonusList);
         addBonus(BONUS_NB_RANDOM, Bonus::BONUS_RANDOM, bonusList);
     } while(debugMode && nb_blocks > bonusList.size()); //in debug mode, every block receive a bonus
 
@@ -927,9 +927,11 @@ void MapServer::doPlayerDeath(PlayerServer* playerN, int killedBy)
         bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_REMOTE;
     if(playerN->getKickBonus())
         bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_KICK;
-    capacity = playerN->getFlameLength() - DEFAULT_FLAME_LENGTH;
+    capacity = playerN->getNbFlameBonus();
     while(capacity-- > 0)
         bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_FLAME;
+    if(playerN->getGoldFlame())
+        bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_GOLD_FLAME;
     capacity = playerN->getMaxNumberOfBombs() - DEFAULT_BOMB_CAPACITY;
     while(capacity-- > 0)
         bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_BOMB;
@@ -1027,6 +1029,9 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
             case Bonus::BONUS_FLAME:
                 playerN->incFlameLength();
                 break;
+            case Bonus::BONUS_GOLD_FLAME:
+                playerN->setGoldFlame();
+                break;
             case Bonus::BONUS_OIL:
                 playerN->setOilBonus(true);
                 if(playerN->hasRemoteBonus())
@@ -1036,16 +1041,28 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
                 }
                 break;
             case Bonus::BONUS_DISEASE:
+            case Bonus::BONUS_SUPER_BAD_DISEASE:
             {
-                int random = ( qrand() % (SICK_LAST-1) ) + 1;
-                sickness sick = static_cast<sickness> (random);
-                if(sick == SICK_SHUFFLE)
+                int nb = 1;
+                if(pickedUpBonus->getType() == Bonus::BONUS_SUPER_BAD_DISEASE)
+                    nb = 3;
+                /**
+                 * In case of super disease, we randomly pick 3 normal disease.
+                 * Note that :
+                 *   - We can cumulate SICK_NO_BOMB and SICK_DIARRHEA (the diarrhea will have no effect)
+                 *   - We can cumulate SICK_SLOW and SICK_FAST (only the last one count)
+                 *   - We can pick a disease twice (the second time -> no effect)
+                 */
+                do
                 {
-                    //qDebug() << "sick shuffle";
-                    exchangePlayersPositions();
-                }
-                else
-                    playerN->setSickness(sick);
+                    int random = qrand() % (PlayerServer::SICK_LAST-2);
+                    random = 1 << random;
+                    PlayerServer::sickness sick = static_cast<PlayerServer::sickness> (random);
+                    if(sick == PlayerServer::SICK_SHUFFLE)
+                        exchangePlayersPositions();
+                    else
+                        playerN->setSickness(sick);
+                }while(--nb > 0);
                 break;
             }
             case Bonus::BONUS_KICK:
@@ -1296,7 +1313,7 @@ void MapServer::newHeartBeat() {
     {
         if(playerN->getIsAlive())
         {
-            if(playerN->getLayingBomb() || playerN->getSickness() == SICK_DIARRHEA)
+            if(playerN->getLayingBomb() || playerN->getSickness() == PlayerServer::SICK_DIARRHEA)
             {
                 QPoint plBlock = getBlockPosition(playerN->getX(),playerN->getY());
                 BombServer *currentBomb = getTileBomb(plBlock.x(), plBlock.y());

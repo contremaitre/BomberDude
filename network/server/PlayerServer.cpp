@@ -30,6 +30,7 @@ PlayerServer::PlayerServer(qint8 playerId) :
     boxingGloveBonus(false),
     remoteBonus(false),
     optKeyClicked(false),
+    goldFlame(false),
     onTeleport(false),
     maxNumberOfBombs(DEFAULT_BOMB_CAPACITY),
     bombsAvailable(maxNumberOfBombs),
@@ -43,8 +44,9 @@ PlayerServer::PlayerServer(qint8 playerId) :
 
 void PlayerServer::setSickness(sickness s)
 {
-    currentSickness = s;
-    Q_ASSERT(s >= SICK_NONE && s < SICK_LAST );
+    int OR =  s | currentSickness;
+    currentSickness = static_cast<sickness>(OR);
+    Q_ASSERT(s >= SICK_NONE && s < (1 << (SICK_LAST - 2)) );
     qDebug() << "sickness :";
     switch(s)
     {
@@ -53,15 +55,23 @@ void PlayerServer::setSickness(sickness s)
         break;
     case SICK_FAST:
         qDebug() << "fast";
+        if(currentSickness & SICK_SLOW )
+            currentSickness &= ~SICK_SLOW;
         break;
     case SICK_SLOW:
         qDebug() << "slow";
+        if(currentSickness & SICK_FAST )
+            currentSickness &= ~SICK_FAST;
         break;
     case SICK_NO_BOMB:
         qDebug() << "no bomb";
         break;
+    case SICK_SMALL_FLAME:
+        qDebug() << "small flame";
+        break;
     case SICK_NONE:
         qDebug() << "none";
+        currentSickness = SICK_NONE;
         break;
     default:
         qDebug() << "unknown disease ??";
@@ -103,7 +113,16 @@ void PlayerServer::setFasterBonus()
 
 qint8 PlayerServer::getFlameLength() const
 {
+    if( currentSickness & SICK_SMALL_FLAME)
+        return 1;
+    if( goldFlame )
+        return BONUS_MAX_FLAME_LENGTH;
     return flameLength;
+}
+
+qint8 PlayerServer::getNbFlameBonus() const
+{
+    return flameLength - DEFAULT_FLAME_LENGTH;
 }
 
 void PlayerServer::incFlameLength()
@@ -125,16 +144,16 @@ void PlayerServer::incMaxNumberOfBombs()
 
 bool PlayerServer::getIsBombAvailable() const
 {
-    if(currentSickness == SICK_NO_BOMB)
+    if(currentSickness & SICK_NO_BOMB)
         return false;
     return bombsAvailable != 0;
 }
 
 qint16 PlayerServer::getMoveDistance() const
 {
-    if(currentSickness == SICK_SLOW)
+    if(currentSickness & SICK_SLOW)
         return moveDistance / 2;
-    else if(currentSickness == SICK_FAST)
+    else if(currentSickness & SICK_FAST)
         return moveDistance * 3;
     return moveDistance;
 }

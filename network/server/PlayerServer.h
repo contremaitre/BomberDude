@@ -22,18 +22,20 @@
 #include "Player.h"
 #include "Bonus.h"
 
-enum sickness { SICK_NONE=0,
-                SICK_FAST,
-                SICK_SLOW,
-                SICK_NO_BOMB,
-                SICK_DIARRHEA,
-                SICK_SHUFFLE, //players exchange positions
-                SICK_LAST,
-            };
-
 class PlayerServer: public Player
 {
 public:
+
+    typedef int sickness;
+    static const sickness SICK_NONE = 0;
+    static const sickness SICK_FAST = 0x1;
+    static const sickness SICK_SLOW = 0x2;
+    static const sickness SICK_NO_BOMB = 0x4;
+    static const sickness SICK_DIARRHEA = 0x8;
+    static const sickness SICK_SMALL_FLAME = 0x10;
+    static const sickness SICK_SHUFFLE = 0x20;
+    static const sickness SICK_LAST = 7; //total number
+
     PlayerServer(qint8 playerId);
     ~PlayerServer();
 
@@ -53,6 +55,7 @@ public:
 
     qint8 getFlameLength() const;
     void incFlameLength();
+    qint8 getNbFlameBonus() const;
 
     bool getIsBombAvailable() const;
     void decBombsAvailable()            { bombsAvailable--; }
@@ -77,6 +80,9 @@ public:
     bool hasRemoteBonus() const         { return remoteBonus; }
     bool getRemoteBonus();
 
+    void setGoldFlame()                 { goldFlame = true; }
+    bool getGoldFlame() const           { return goldFlame; }
+
     bool getOnTeleport() const          { return onTeleport; }
     void setOnTeleport(bool on)         { onTeleport = on; }
 
@@ -98,6 +104,7 @@ private:
     bool boxingGloveBonus;
     bool remoteBonus;
     bool optKeyClicked;
+    bool goldFlame;
 
     bool onTeleport; //set if the player was on a teleport on his previous position
 
