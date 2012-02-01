@@ -31,6 +31,7 @@ enum PlayerAction{
     actionStayingStillS,
     actionStayingStillE,
     actionStayingStillW,
+    actionSick,
     actionBurning //warning, when adding an action burning should stay the last action as it is used to reference the size of PlayerAction
 };
 
@@ -47,7 +48,17 @@ private:
     QList<QPixmap*>* stayingStillE;
     QList<QPixmap*>* stayingStillW;
     QList<QPixmap*>* burning;
+
+    /**
+     * The sick anim will only be one pix (actualy a fake pix), and we will switch between
+     * this pix and the normal anim.
+     *  /!\ Warning TODO : The sick pix animation is complicated and should be improved /!\
+     */
+    QList<QPixmap*>* sickPixs;
     bool sick;
+    int sickPreviousCurrentPix; //used when we swith between the sick anim and normal anim
+    QList<QPixmap*>* sickPreviousCurrentAnim; //used when we swith between the sick anim and normal anim
+
     int id;
     globalDirection currentDirection;
     int stayStillCount;

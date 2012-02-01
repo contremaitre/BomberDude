@@ -31,12 +31,17 @@ QPlayer::QPlayer(int numero) {
     stayingStillE=allPix.at(numero)[actionStayingStillE];
     stayingStillW=allPix.at(numero)[actionStayingStillW];
     burning=allPix.at(numero)[actionBurning];
+    sickPixs=allPix.at(numero)[actionSick];
 
     currentDirection = dirLeft;
-    currentPix = 0;
     stayStillCount = 0;
+
+    sick = false;
+    sickPreviousCurrentPix = -1;
     stayStill(currentDirection);
+    sickPreviousCurrentAnim = currentAnim;
 }
+
 
 void QPlayer::loadPixs()
 {
@@ -81,6 +86,9 @@ void QPlayer::loadPixs()
         animTable[actionBurning]=new QList<QPixmap*>();
         QAnimatedItem::appendNewFrame(animTable[actionBurning], "pictures/tux_burn.png");
 
+        animTable[actionSick] = new QList<QPixmap*>();
+        QAnimatedItem::appendNewFrame(animTable[actionSick], "");
+
     }
 }
 
@@ -99,20 +107,12 @@ void QPlayer::unloadPixs()
 
 void QPlayer::walk(const globalDirection dir) {
     currentDirection = dir;
-    switch (dir) {
-    case dirUp :
-        currentAnim=walkingN;
-        break;
-    case dirDown :
-        currentAnim=walkingS;
-        break;
-    case dirLeft :
-        currentAnim=walkingW;
-        break;
-    case dirRight :
-        currentAnim=walkingE;
-        break;
-
+    QList<QPixmap*> **animToSet = &currentAnim;
+    if(sick && sickPreviousCurrentPix != -1)
+    {
+        if(bStayStill)
+            sickPreviousCurrentPix = 0;
+        animToSet = &sickPreviousCurrentAnim;
     }
     stayStillCount = 0;
     if(bStayStill)
@@ -120,29 +120,44 @@ void QPlayer::walk(const globalDirection dir) {
         bStayStill = false;
         currentPix = 0;
     }
-}
 
-void QPlayer::nextFrame()
-{
-    if(!bStayStill && ++stayStillCount > 3)
-        stayStill(currentDirection);
-
-    QAnimatedItem::nextFrame();
+    switch (dir) {
+    case dirUp :
+        *animToSet=walkingN;
+        break;
+    case dirDown :
+        *animToSet=walkingS;
+        break;
+    case dirLeft :
+        *animToSet=walkingW;
+        break;
+    case dirRight :
+        *animToSet=walkingE;
+        break;
+    }
 }
 
 void QPlayer::stayStill(const globalDirection dir){
+
+    QList<QPixmap*> **animToSet = &currentAnim;
+    if(sick && sickPreviousCurrentPix != -1)
+    {
+        animToSet = &sickPreviousCurrentAnim;
+        sickPreviousCurrentPix = 0;
+    }
+
     switch (dir) {
     case dirUp :
-        currentAnim=stayingStillN;
+        *animToSet=stayingStillN;
         break;
     case dirDown :
-        currentAnim=stayingStillS;
+        *animToSet=stayingStillS;
         break;
     case dirLeft :
-        currentAnim=stayingStillW;
+        *animToSet=stayingStillW;
         break;
     case dirRight :
-        currentAnim=stayingStillE;
+        *animToSet=stayingStillE;
         break;
 
     }
@@ -150,6 +165,29 @@ void QPlayer::stayStill(const globalDirection dir){
     currentPix=0;
 }
 
+void QPlayer::nextFrame()
+{
+    if(!bStayStill && ++stayStillCount > 3)
+        stayStill(currentDirection);
+    if(sick)
+    {
+        if(sickPreviousCurrentPix == -1)
+        {
+            //switch to the sick anim
+            sickPreviousCurrentAnim = currentAnim;
+            sickPreviousCurrentPix = currentPix;
+            currentAnim = sickPixs;
+            currentPix = 0;
+        }
+        else
+        {
+            currentPix = sickPreviousCurrentPix;
+            sickPreviousCurrentPix = -1;
+            currentAnim = sickPreviousCurrentAnim;
+        }
+    }
+    QAnimatedItem::nextFrame();
+}
 
 void QPlayer::burn(){
     currentAnim=burning;
@@ -163,6 +201,12 @@ const QPixmap *QPlayer::getPlayerPixmap()
 }
 
 void QPlayer::setSick(const bool sick){
+    if(!sick && this->sick && sickPreviousCurrentPix != -1)
+    {
+        currentPix = sickPreviousCurrentPix;
+        sickPreviousCurrentPix = -1;
+        currentAnim = sickPreviousCurrentAnim;
+    }
     this->sick=sick;
 }
 
