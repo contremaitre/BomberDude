@@ -43,6 +43,7 @@
 //Disease
 #define DISEASE_DURATION 200 //number of heartbeat
 #define DISEASE_MIN_TIME_TO_PASS 20//number of heartbeat
+#define DISEASE_CURED_BY_BONUS 10//1 in N chance to be cured when picking a bonus
 
 enum globalDirection {
     dirNone = -1,

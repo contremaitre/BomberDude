@@ -1031,6 +1031,10 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
     Bonus* pickedUpBonus = removeBonus(actPoint.x(), actPoint.y());
     if(pickedUpBonus) {
         // TODO does the code belong to MapServer or to PlayerServer?
+        if(playerN->getIsSick() && (qrand() % DISEASE_CURED_BY_BONUS) == 0)
+        {
+            playerN->setSickness(PlayerServer::SICK_NONE);
+        }
         if(pickedUpBonus->getType() == Bonus::BONUS_RANDOM)
         {
             int randomDraw = static_cast<int>(zeroToOneRandomNumber() * (NB_BONUS-2));
@@ -1329,7 +1333,7 @@ void MapServer::newHeartBeat() {
     {
         if(playerN->getIsAlive())
         {
-            if(playerN->getLayingBomb() || playerN->getSickness() == PlayerServer::SICK_DIARRHEA)
+            if(playerN->getLayingBomb() || playerN->getSickness() & PlayerServer::SICK_DIARRHEA)
             {
                 QPoint plBlock = getBlockPosition(playerN->getX(),playerN->getY());
                 BombServer *currentBomb = getTileBomb(plBlock.x(), plBlock.y());
