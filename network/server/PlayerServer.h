@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010,2011 Sébastien Escudier
+    Copyright (C) 2010,2011,2012 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -87,12 +87,13 @@ public:
     void setOnTeleport(bool on)         { onTeleport = on; }
 
     void setSickness(sickness s);
-    sickness getSickness()              {return currentSickness;}
+    sickness getSickness() const        { return currentSickness; }
 
     qint16 getMoveDistance() const;
     void setFasterBonus();
 
     void decreaseDuration(); //only used for sickness for the moment
+    qint16 getSicknessDuration() const  { return SicknessDuration; }
     QList<Bonus*> heldBonus;
 
 private:

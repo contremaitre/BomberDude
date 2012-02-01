@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010,2011 Sébastien Escudier
+    Copyright (C) 2010,2011,2012 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ void PlayerServer::setSickness(sickness s)
         currentSickness = SICK_NONE;
         break;
     default:
-        qDebug() << "unknown disease ??";
+        qDebug() << "unknown or multiple disease";
         break;
     }
     if(currentSickness == SICK_NONE)
@@ -82,7 +82,7 @@ void PlayerServer::setSickness(sickness s)
     else
     {
         isSick = true;
-        SicknessDuration = DEFAULT_DISEASE_DURATION;
+        SicknessDuration = DISEASE_DURATION;
     }
 }
 

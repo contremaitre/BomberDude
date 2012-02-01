@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010,2011 Sébastien Escudier
+    Copyright (C) 2010,2011,2012 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1010,7 +1010,23 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
     if(checkPlayerInFlames(playerN, actPoint))
         return;
 
-    // TODO check for other player close by for disease
+    // check for other player close by for disease
+    if(playerN->getIsSick() && playerN->getSicknessDuration() < DISEASE_DURATION - DISEASE_MIN_TIME_TO_PASS)
+    {
+        for (int i=0;i<getNbPlayers();i++)
+        {
+            if(i == playerN->getId())
+                continue;
+            qint16 p_x, p_y;
+            getPlayerPosition(i, p_x, p_y);
+            QPoint block = getBlockPosition(p_x, p_y);
+            if ( actPoint.x() == block.x() && actPoint.y() == block.y())
+            {
+                qDebug()<<"player on same block !!";
+                players[i]->setSickness(playerN->getSickness());
+            }
+        }
+    }
 
     Bonus* pickedUpBonus = removeBonus(actPoint.x(), actPoint.y());
     if(pickedUpBonus) {
