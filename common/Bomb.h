@@ -84,7 +84,7 @@ private:
 protected:
     bool dud_bomb;
     bool flying;                            /// When a player use a glove, the bomb is flying above the blocks
-    QPoint fl_destination;                  /// If a bomb if flying indicate its destination
+    QPoint fl_destination;                  /// If a bomb is flying indicate its destination
     qint32 fl_Heartbeat;                       /// Indicate at which heartbeat the bomb will arrive
 
 public:

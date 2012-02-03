@@ -147,31 +147,52 @@ void Map<P,B,SL>::getNextBlock(int x, int y, int &xdest, int &ydest, globalDirec
 {
     xdest = x;
     ydest = y;
+    /* The loop is used by flying bombs, and they go outsite the field (1 block) before coming to the other side */
     switch(direction)
     {
         case dirLeft:
-            if(xdest > 0)
+            if( xdest > 0)
                 xdest--;
             else if(loop)
-                xdest = width - 1;
+            {
+                if(xdest == 0)
+                    xdest--;
+                else
+                    xdest = width;
+            }
             break;
         case dirRight:
             if(xdest < width - 1)
                 xdest++;
             else if(loop)
-                xdest = 0;
+            {
+                if(xdest == width - 1)
+                    xdest++;
+                else
+                    xdest = -1;
+            }
             break;
         case dirDown:
             if(ydest > 0)
                 ydest--;
             else if(loop)
-                ydest = height - 1;
+            {
+                if(ydest == 0)
+                    ydest = -1;
+                else
+                    ydest = height;
+            }
             break;
         case dirUp:
             if(ydest < height - 1)
                 ydest++;
             else if(loop)
-                ydest = 0;
+            {
+                if(ydest == height - 1)
+                    ydest++;
+                else
+                    ydest = -1;
+            }
             break;
         default:
             break;

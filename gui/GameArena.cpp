@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010,2011 Sébastien Escudier
+    Copyright (C) 2010,2011,2012 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -189,8 +189,11 @@ void GameArena::setMap(MapClient *newMap)
     connect(map, SIGNAL(sigAddBonus(Bonus::Bonus_t,qint16,qint16)), this, SLOT(slotAddBonus(Bonus::Bonus_t,qint16,qint16)));
     connect(map, SIGNAL(sigRemoveBonus(qint16,qint16)), this, SLOT(slotRemoveBonus(qint16,qint16)));
     connect(map, SIGNAL(sigAddBomb(int)), this, SLOT(slotAddBomb(int)), Qt::DirectConnection);
-    connect(map, SIGNAL(sigMovedBomb(int)), this, SLOT(slotMovedBomb(int)), Qt::DirectConnection);
-    connect(map, SIGNAL(sigFlyingBomb(int)), this, SLOT(slotFlyingBomb(int)), Qt::DirectConnection);
+    /* move and flying bomb slots must be queued connection because the value of
+     * bomb->flying can change between a sigMovedBomb and a sigFlyingBomb
+     * */
+    connect(map, SIGNAL(sigMovedBomb(int)), this, SLOT(slotMovedBomb(int)), Qt::QueuedConnection);
+    connect(map, SIGNAL(sigFlyingBomb(int,qint32)), this, SLOT(slotFlyingBomb(int,qint32)), Qt::QueuedConnection);
     connect(map, SIGNAL(sigRemoveBomb(int)), this, SLOT(slotRemoveBomb(int)), Qt::DirectConnection);
     connect(map, SIGNAL(sigRemoveBombRC(int)), this, SLOT(slotRemoveBombRC(int)), Qt::DirectConnection);
     connect(map, SIGNAL(sigAddFlame(int,qint16,qint16)), this, SLOT(slotAddFlame(int,qint16,qint16)));
@@ -305,7 +308,8 @@ void GameArena::slotHearbeatUpdated(qint32 value) {
     QMap<int, QBomb*>::iterator itb;
     for (itb = bombs.begin();itb!=bombs.end();++itb)
     {
-        itb.value()->nextFrame();
+        itb.value()->nextFrame(value);
+
     }
     QMap<int, QFlame*>::iterator itf;
     for (itf = flames.begin();itf!=flames.end();++itf)
@@ -393,14 +397,36 @@ void GameArena::slotAddBomb(int id)
 void GameArena::slotMovedBomb(int id)
 {
     const BombClient& bomb = map->getRefBomb(id);
-    bombs[id]->setPos(bomb.getX() - squareSize/2, bomb.getY() - squareSize/2, squareSize);
+    QBomb *qb = bombs[id];
+    // A bomb is considered non flying when it moves and the flying flag is false
+    if(!bomb.getFlying())
+        qb->setNonFlying();
+    qb->setPos(bomb.getX() - squareSize/2, bomb.getY() - squareSize/2);
 }
 
-void GameArena::slotFlyingBomb(int id)
+void GameArena::slotFlyingBomb(int id, qint32 heartBeat)
 {
+    //We received a new flying bomb, or one already flying has moved and is still flying.
     const BombClient& bomb = map->getRefBomb(id);
-    //qDebug() << "GameArena : new flying bomb";
-    /* Todo : animate the flying bomb */
+    Q_ASSERT(bomb.getFlying());
+
+    QMap<int, QBomb*>::iterator itb = bombs.find(id);
+    Q_ASSERT(itb != bombs.end());
+
+    QPoint Destination = bomb.getDestination();
+    QPoint centreDest = map->getCenterCoordForBlock(Destination.x(), Destination.y());
+    int HB_left = heartBeat - bomb.getFlHeartbeat();
+    int xDistance = bomb.getX() - centreDest.x();
+    int yDistance = bomb.getY() - centreDest.y();
+    /**
+     * There is no animation when the bomb is going from one side to the other side of the game field.
+     * And the minus 2 is for the case where the player throw the bomb directly to the other side
+     */
+
+    if( HB_left > 0 && qAbs(xDistance) < ( map->getWidth() - 2 ) * map->getBlockSize() && qAbs(yDistance) < ( map->getHeight() - 2 ) * map->getBlockSize() )
+    {
+        itb.value()->setFlying(HB_left, xDistance, yDistance );
+    }
 }
 
 //todo vérifier s'il existe pas un moyen moins chelou pour supprimer un couple

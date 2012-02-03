@@ -63,7 +63,7 @@ signals:
     void sigRemoveBonus(qint16 x, qint16 y);
     void sigAddBomb(int);
     void sigMovedBomb(int);
-    void sigFlyingBomb(int);
+    void sigFlyingBomb(int,qint32);
     void sigRemoveBomb(int);
     void sigRemoveBombRC(int);
     void sigAddFlame(int id, qint16 x, qint16 y);

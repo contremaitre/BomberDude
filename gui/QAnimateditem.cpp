@@ -30,6 +30,12 @@ void QAnimatedItem::setPos(int x, int y, int size)
     this->size=size;
 }
 
+void QAnimatedItem::setPos(int x, int y)
+{
+    setX(x);
+    setY(y);
+}
+
 QRectF QAnimatedItem::boundingRect() const
 {
     return QRectF(0,0,size,size);

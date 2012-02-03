@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010,2011 Sébastien Escudier
+    Copyright (C) 2010,2011,2012 Sébastien Escudier
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -87,10 +87,10 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 		qint16 bombId, nx, ny;
 		updateIn >> bombId >> nx >> ny;
         BombClient* b = getBomb(bombId);
-        if(b != 0) {
+        if(b != NULL) {
             b->setX(nx);
             b->setY(ny);
-            b->setFlying(false);
+            b->setFlying(false); //if the bomb is still flying, it will be set back right after.
         }
 		emit sigMovedBomb(bombId);
 	}
@@ -102,13 +102,13 @@ void MapClient::updateMap(QByteArray& updateBlock) {
         qint32 hb;
         updateIn >> bombId >> nx >> ny >> hb;
         BombClient* b = getBomb(bombId);
-        if(b != 0) {
+        if(b != NULL) {
             QPoint dest(nx,ny);
             b->setFlying(true);
             b->setDestination(dest);
             b->setFlHeartbeat(hb);
         }
-        emit sigFlyingBomb(bombId);
+        emit sigFlyingBomb(bombId, heartBeat);
     }
 
 	qint8 nbExplosions;

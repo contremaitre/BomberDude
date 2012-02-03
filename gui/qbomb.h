@@ -25,7 +25,14 @@
 class QBomb : public QAnimatedItem
 {
 private:
-
+    /**
+     * Flying parameters
+     */
+    bool flying;
+    int xStep; //number of pixel to move at each frame
+    int yStep;
+    int nbStep; //number of frame
+    int normalSize;
 public:
     QBomb();
     QBomb(int,int,int);
@@ -39,6 +46,9 @@ public:
     void setRC();
     void setNormalBomb();
     void setDudBomb();
+    void setFlying(int nb, int x, int y);
+    void setNonFlying();
+    void nextFrame(int hb);
 };
 
 #endif // QBOMB_H

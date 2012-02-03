@@ -417,7 +417,6 @@ void MapServer::throwBomb(BombServer *bomb, globalDirection direction, int dista
     bomb->setDirection(direction);
     bomb->setDestination(bombPoint);
     bomb->setFlHeartbeat(heartBeat - FLYINGBOMB_MOVE_SPEED);
-    //qDebug() << "throwing a bomb" << (int)direction << bombPoint.x() << bombPoint.y();
 }
 
 bool MapServer::moveFlyingBomb(BombServer* b)
@@ -426,7 +425,8 @@ bool MapServer::moveFlyingBomb(BombServer* b)
     if(b->getFlHeartbeat() == heartBeat)
     {
         QPoint dest = b->getDestination();
-        bool bEmply = getType(dest.x(),dest.y()) == BlockMapProperty::empty
+        bool bEmply = dest.x() >= 0 && dest.y() >= 0 && dest.x() < width && dest.y() < height
+                      && getType(dest.x(),dest.y()) == BlockMapProperty::empty
                       && !blockContainsPlayer(dest.x(), dest.y()) && !getTileBomb(dest.x(), dest.y());
         QPoint centre = getCenterCoordForBlock(dest.x(), dest.y());
         b->setX(centre.x());
@@ -1414,7 +1414,7 @@ void MapServer::newHeartBeat() {
             if(bombN->getFlying())
             {
                 hasMoved = moveFlyingBomb(bombN);
-                if(hasMoved &&  bombN->getFlying())
+                if(hasMoved && bombN->getFlying())
                     flyingBombs << bombN;
             }
             else
@@ -1438,7 +1438,9 @@ void MapServer::newHeartBeat() {
 
         if(hasMoved) {
             QPoint neighBlock = getOverlappingBlockPosition(bombN->getX(), bombN->getY());
-            delete removeBonus(neighBlock.x(), neighBlock.y());
+            //flying bombs can go outside the field
+            if(neighBlock.x() >= 0 && neighBlock.y() >= 0 && neighBlock.x() < width && neighBlock.y() < height )
+                delete removeBonus(neighBlock.x(), neighBlock.y());
             movingBombs.append(bombN);
         }
     }
@@ -1446,10 +1448,10 @@ void MapServer::newHeartBeat() {
     // serialize the moving bombs
 	updateOut << static_cast<qint8>(movingBombs.size());
 	foreach(BombServer* bombN, movingBombs) {
-		updateOut << bombN->getBombId() << bombN->getX() << bombN->getY();
+		updateOut << bombN->getBombId() << bombN->getX() << bombN->getY();;
 	}
 
-	// serialize the new flying bombs
+	// serialize the new (or moved) flying bombs
 	updateOut << static_cast<qint8>(flyingBombs.size());
 	foreach(BombServer* bombN, flyingBombs) {
 	    QPoint p = bombN->getDestination();
@@ -1471,9 +1473,9 @@ void MapServer::newHeartBeat() {
 	QMap<BombServer::bombId_t, BombServer*>::const_iterator itBomb = getBombList().begin();
 	while(itBomb != getBombList().end()) {
         BombServer* b = *itBomb;
-		if( b->mustExplode() ||
+		if( !b->getFlying() && ( b->mustExplode() ||
             ( b->getIsRC() && players[b->getPlayerId()]->getOptKey() ) ||
-            getTileFlames(b->getTileX(), b->getTileY()).size() > 0
+            getTileFlames(b->getTileX(), b->getTileY()).size() > 0 )
           )
         {
 			explodeList.append(explosion(*itBomb));

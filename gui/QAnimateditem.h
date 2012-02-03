@@ -38,6 +38,7 @@ public:
         QList<QPixmap*>* currentAnim;
         QAnimatedItem();
         void setPos(int,int,int);
+        void setPos(int,int);
         void nextFrame();
         static void appendNewFrame(QList<QPixmap*>* anim, const QString &path);
 };

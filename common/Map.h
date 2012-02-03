@@ -43,6 +43,8 @@ public:
     {}
 
     qint8 operator()(qint16 val) {
+        if(val < 0)
+            return (val / blockSize) - 1;
         return val / blockSize;
     }
 

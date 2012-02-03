@@ -21,17 +21,16 @@ QList<QPixmap*> QBomb::rcPix= QList<QPixmap*>();
 QList<QPixmap*> QBomb::dudPix= QList<QPixmap*>();
 
 
-QBomb::QBomb()
+QBomb::QBomb() :
+        flying(false), xStep(0), yStep(0), nbStep(0), normalSize(0)
 {
     Q_ASSERT(!normalPix.empty());
-    size=0;
-    currentPix=0;
 }
 
-QBomb::QBomb(int x, int y , int size)
+QBomb::QBomb(int x, int y, int size) :
+        flying(false), xStep(0), yStep(0), nbStep(0), normalSize(0)
 {
     Q_ASSERT(!normalPix.empty());
-    currentPix=0;
     currentAnim=&QBomb::normalPix;
     setPos(x,y,size);
 
@@ -46,11 +45,45 @@ void QBomb::setDudBomb()
     currentPix=0;
     currentAnim=&QBomb::dudPix;
 }
+
 void QBomb::setRC()
 {
     currentPix=0;
     currentAnim=&QBomb::rcPix;
 }
+
+void QBomb::setFlying(int nb, int x, int y)
+{
+    if(!flying)
+        normalSize = size;
+    flying = true;
+    nbStep = nb;
+    xStep = x/nb;
+    yStep = y/nb;
+}
+
+void QBomb::setNonFlying()
+{
+    if(flying)
+    {
+        flying = false;
+        setPos(x(), y(), normalSize);
+    }
+}
+
+void QBomb::nextFrame(int hb)
+{
+    if(flying && --nbStep > 0)
+    {
+        //setPos(x() - xStep, y() - yStep, normalSize);
+        int newSize = size;
+        if( hb % 5 == 0 )
+            newSize = size > normalSize ? normalSize : normalSize + 10;
+        setPos(x() - xStep, y() - yStep, newSize);
+    }
+    QAnimatedItem::nextFrame();
+}
+
 
 void QBomb::loadPixs()
 {
