@@ -189,11 +189,8 @@ void GameArena::setMap(MapClient *newMap)
     connect(map, SIGNAL(sigAddBonus(Bonus::Bonus_t,qint16,qint16)), this, SLOT(slotAddBonus(Bonus::Bonus_t,qint16,qint16)));
     connect(map, SIGNAL(sigRemoveBonus(qint16,qint16)), this, SLOT(slotRemoveBonus(qint16,qint16)));
     connect(map, SIGNAL(sigAddBomb(int)), this, SLOT(slotAddBomb(int)), Qt::DirectConnection);
-    /* move and flying bomb slots must be queued connection because the value of
-     * bomb->flying can change between a sigMovedBomb and a sigFlyingBomb
-     * */
-    connect(map, SIGNAL(sigMovedBomb(int)), this, SLOT(slotMovedBomb(int)), Qt::QueuedConnection);
-    connect(map, SIGNAL(sigFlyingBomb(int,qint32)), this, SLOT(slotFlyingBomb(int,qint32)), Qt::QueuedConnection);
+    connect(map, SIGNAL(sigMovedBomb(int)), this, SLOT(slotMovedBomb(int)), Qt::DirectConnection);
+    connect(map, SIGNAL(sigFlyingBomb(int,qint32)), this, SLOT(slotFlyingBomb(int,qint32)), Qt::DirectConnection);
     connect(map, SIGNAL(sigRemoveBomb(int)), this, SLOT(slotRemoveBomb(int)), Qt::DirectConnection);
     connect(map, SIGNAL(sigRemoveBombRC(int)), this, SLOT(slotRemoveBombRC(int)), Qt::DirectConnection);
     connect(map, SIGNAL(sigAddFlame(int,qint16,qint16)), this, SLOT(slotAddFlame(int,qint16,qint16)));

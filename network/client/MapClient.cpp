@@ -83,6 +83,9 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 
     qint8 nbMovingBombs;
     updateIn >> nbMovingBombs;
+    /* We need to store the moving bombs in a list to check if they are still flying
+     * before emiting the signal */
+    QList<int> movingBombs;
 	for(qint8 i = 0; i < nbMovingBombs; i++) {
 		qint16 bombId, nx, ny;
 		updateIn >> bombId >> nx >> ny;
@@ -92,7 +95,7 @@ void MapClient::updateMap(QByteArray& updateBlock) {
             b->setY(ny);
             b->setFlying(false); //if the bomb is still flying, it will be set back right after.
         }
-		emit sigMovedBomb(bombId);
+        movingBombs << bombId;
 	}
 
     qint8 nbFlyingBombs;
@@ -110,7 +113,8 @@ void MapClient::updateMap(QByteArray& updateBlock) {
         }
         emit sigFlyingBomb(bombId, heartBeat);
     }
-
+    while(!movingBombs.empty())
+        emit sigMovedBomb(movingBombs.takeFirst());
 	qint8 nbExplosions;
 	updateIn >> nbExplosions;
 	for(qint8 i = 0; i < nbExplosions; i++) {
