@@ -440,7 +440,9 @@ bool MapServer::moveFlyingBomb(BombServer* b)
         }
         else
         {
-            if( b->getHasOil() && (qrand() % OIL_BOMB_RANDOM_DIR) == 0 )
+            if( b->getHasOil() && (qrand() % OIL_BOMB_RANDOM_DIR) == 0
+                    /* Dont change the direction if we are outside the field (ie : going from one side to the other side) */
+                    && b->getTileX() > 0 && b->getTileX() < width && b->getTileY() > 0 && b->getTileY() < height )
             {
                 /* random direction (between 0 et 2 to exclude the previous position */
                 int randomDraw = qrand()%3;
