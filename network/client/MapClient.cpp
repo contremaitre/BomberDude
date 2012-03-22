@@ -35,7 +35,7 @@ void MapClient::updateMap(QByteArray& updateBlock) {
 	qint32 heartBeat;
 	updateIn >> heartBeat;
 	setHeartBeat(heartBeat);
-	if(heartBeat % 100 == 0)
+	if(heartBeat % 500 == 0)
 	    qDebug() << "Received heartbeat " << heartBeat;
 
 	//new block

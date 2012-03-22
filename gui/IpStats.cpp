@@ -26,7 +26,7 @@ IpStats::IpStats(QWidget *parent)
     loadPixmaps();
     ui.ping_pic->setPixmap(statusGrey);
     ui.pack_loss_pic->setPixmap(statusGrey);
-
+    ui.ping_value->setText(QString::number(0));
 }
 
 void IpStats::loadPixmaps()
@@ -58,6 +58,7 @@ void IpStats::slotStatPacketLoss(double packet_loss)
 
 void IpStats::slotStatPing(int ping)
 {
+    ui.ping_value->setText(QString::number(ping));
     if (ping < 60)
         ui.ping_pic->setPixmap(statusGreen);
     else if (ping < 100)

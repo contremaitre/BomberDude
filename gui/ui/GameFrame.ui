@@ -22,10 +22,10 @@
   <widget class="QWidget" name="IpStatHolder" native="true">
    <property name="geometry">
     <rect>
-     <x>710</x>
+     <x>680</x>
      <y>10</y>
-     <width>120</width>
-     <height>80</height>
+     <width>150</width>
+     <height>90</height>
     </rect>
    </property>
   </widget>
@@ -36,7 +36,7 @@
    <property name="geometry">
     <rect>
      <x>720</x>
-     <y>100</y>
+     <y>110</y>
      <width>111</width>
      <height>41</height>
     </rect>

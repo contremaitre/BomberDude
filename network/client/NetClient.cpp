@@ -226,7 +226,6 @@ void NetClient::receiveUdp()
 			if(lastPingAck == cptPing)
 			{
 				int e = timePing->elapsed();
-				qDebug() << "Ping :" << e;
 	            emit sigStatPing(e);
 			}
 			else

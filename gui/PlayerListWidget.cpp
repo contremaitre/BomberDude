@@ -15,7 +15,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QDebug>
 #include <QLabel>
 #include "PlayerListWidget.h"
 
@@ -26,7 +25,6 @@ PlayerListWidget::PlayerListWidget(QWidget *parent) : QWidget(parent)
 
 void PlayerListWidget::slotAddPlayer(qint8 playerId, QString name)
 {
-    qDebug() << "PlayerListWidget new player" << playerId << name;
     QLayoutItem * old = ui.playerListLayout->itemAtPosition ( playerId, 1 );
     if(old && old->widget())
     {
@@ -50,7 +48,6 @@ void PlayerListWidget::slotAddPlayer(qint8 playerId, QString name)
 
 void PlayerListWidget::slotNewPlayerGraphic(qint8 playerId, const QPixmap &pix)
 {
-    qDebug() << "PlayerListWidget new graphic" << playerId;
     QLayoutItem * old = ui.playerListLayout->itemAtPosition ( playerId, 0 );
     if(old)
     {
@@ -74,7 +71,6 @@ void PlayerListWidget::slotNewPlayerGraphic(qint8 playerId, const QPixmap &pix)
 
 void PlayerListWidget::slotUpdatePlayerScore(qint8 playerId, qint16 score)
 {
-    qDebug() << "PlayerListWidget new score" << playerId << score;
     QLayoutItem * old = ui.playerListLayout->itemAtPosition ( playerId, 2 );
     if(old)
     {
