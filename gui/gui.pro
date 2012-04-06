@@ -6,7 +6,7 @@ QT += network \
     xml
 CONFIG += DEBUG
 TEMPLATE = app
-TARGET = ../QtBomberman
+TARGET = ../BomberDude
 DEPENDPATH += . \
     ui \
     $${ROOT_PWD}common \

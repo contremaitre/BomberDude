@@ -7,7 +7,7 @@ core*
 ui_*
 
 #binaries
-QtBomberman
+BomberDude
 Serverd
 src/libsrc.a
 

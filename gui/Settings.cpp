@@ -35,7 +35,7 @@
 
 Settings::Settings()
 {
-    qsettings = new QSettings("QtBomberman", "QtBomberman");
+    qsettings = new QSettings("BomberDude", "BomberDude");
     qsettings->beginGroup("Network");
     b_isServer = qsettings->value("isServer",false).toBool();
     serverAddress = qsettings->value("serverAddress",SERVER_ADDRESS).toString();
