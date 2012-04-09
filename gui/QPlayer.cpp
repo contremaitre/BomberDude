@@ -196,7 +196,7 @@ void QPlayer::burn(){
 }
 const QPixmap *QPlayer::getPlayerPixmap()
 {
-    return stayingStillS->first();
+    return stayingStillN->first();
 
 }
 
