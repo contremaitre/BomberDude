@@ -56,12 +56,12 @@ void QPlayer::loadPixs()
         allPix.append(animTable);
 
         animTable[actionWalkingN]=new QList<QPixmap*>();
-        QAnimatedItem::appendNewFrame(animTable[actionWalkingN], baseName + s_i + "1_up.png");
-        QAnimatedItem::appendNewFrame(animTable[actionWalkingN], baseName + s_i + "2_up.png");
+        QAnimatedItem::appendNewFrame(animTable[actionWalkingN], baseName + s_i + "1_down.png");
+        QAnimatedItem::appendNewFrame(animTable[actionWalkingN], baseName + s_i + "2_down.png");
 
         animTable[actionWalkingS]=new QList<QPixmap*>();
-        QAnimatedItem::appendNewFrame(animTable[actionWalkingS], baseName + s_i + "1_down.png");
-        QAnimatedItem::appendNewFrame(animTable[actionWalkingS], baseName + s_i + "2_down.png");
+        QAnimatedItem::appendNewFrame(animTable[actionWalkingS], baseName + s_i + "1_up.png");
+        QAnimatedItem::appendNewFrame(animTable[actionWalkingS], baseName + s_i + "2_up.png");
 
         animTable[actionWalkingE]=new QList<QPixmap*>();
         QAnimatedItem::appendNewFrame(animTable[actionWalkingE], baseName + s_i + "1_left.png");
@@ -72,10 +72,10 @@ void QPlayer::loadPixs()
         QAnimatedItem::appendNewFrame(animTable[actionWalkingW], baseName + s_i + "2_right.png");
 
         animTable[actionStayingStillN]=new QList<QPixmap*>();
-        QAnimatedItem::appendNewFrame(animTable[actionStayingStillN], baseName + s_i + "0_up.png");
+        QAnimatedItem::appendNewFrame(animTable[actionStayingStillN], baseName + s_i + "0_down.png");
 
         animTable[actionStayingStillS]=new QList<QPixmap*>();
-        QAnimatedItem::appendNewFrame(animTable[actionStayingStillS], baseName + s_i + "0_down.png");
+        QAnimatedItem::appendNewFrame(animTable[actionStayingStillS], baseName + s_i + "0_up.png");
 
         animTable[actionStayingStillE]=new QList<QPixmap*>();
         QAnimatedItem::appendNewFrame(animTable[actionStayingStillE], baseName + s_i + "0_left.png");
