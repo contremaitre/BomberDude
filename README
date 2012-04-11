@@ -21,7 +21,7 @@ install mingw
 patch a win32-x-g++ qmake.conf according to http://silmor.de/qtstuff.cross.php
 /!\ remove the debug_and_release flag, otherwise the compilation won't work because of debug/ and release/ subdirectories path
 run qmake -spec win32-x-g++
-To create a qtb package, copy QtBomberman.exe, pictures folder, maps folder and the following dll's :
+To create a qtb package, copy BomberDude.exe, pictures folder, maps folder and the following dll's :
 QtCore4.dll
 QtGui4.dll
 QtNetwork4.dll
