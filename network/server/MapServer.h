@@ -74,6 +74,7 @@ private:
     void throwBomb(BombServer *, globalDirection, int);
 
     int keyToDirection(int direction);
+    void removeRemoteBomb(PlayerServer*);
     BombServer* addBomb(int id, int x, int y);
     QList<BombServer*> addBombMultiple(int playerId);
     bool getRandomEmptyPosition(qint16 &x, qint16 &y);
@@ -104,6 +105,7 @@ private:
     Bonus::Bonus_t *hiddenBonus;
     QList<const Bonus*> createdBonus;                       ///< list of bonus created during the heartbeat
     QList<Point<qint8> > removedBonus;                      ///< list of bonus picked up or destroyed during the heartbeat
+    QList<qint16> removedRC;                                ///< list of ID of removed remote control bombs
     QList<QPoint> teleports;                                ///< We need a list of teleports to know where is the next teleport
 
     QPoint shrink; //current block to add when playtime expired

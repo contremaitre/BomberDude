@@ -150,15 +150,6 @@ void MapClient::updateMap(QByteArray& updateBlock) {
     foreach(MapClient::killedPlayer frag, killedPlayers) {
         int plId = frag.first;
         sigKillPlayer(plId);
-        //replace detonators bombs of this player with standard bombs
-        foreach (BombClient *b, getBombList())
-        {
-            if(b->getPlayerId() == plId && b->getIsRC())
-            {
-                b->unsetRC();
-                emit sigRemoveBombRC(b->getBombId());
-            }
-        }
     }
 
     quint8 nbCreatedBonus;
@@ -175,6 +166,16 @@ void MapClient::updateMap(QByteArray& updateBlock) {
         qint8 x, y;
         updateIn >> x >> y;
         emit sigRemoveBonus(x, y);
+    }
+
+    quint8 nbRemovedRC;
+    updateIn >> nbRemovedRC;
+    for(quint8 i = 0; i < nbRemovedRC; i++) {
+        qint16 id;
+        updateIn >> id;
+        qDebug() << "client removed RC" << id;
+        getBomb(id)->unsetRC();
+        emit sigRemoveBombRC(id);
     }
 }
 

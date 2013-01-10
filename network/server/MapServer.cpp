@@ -743,6 +743,18 @@ int MapServer::coordinatePositionInBlock(int coord)
 	//return 1;
 }
 
+void MapServer::removeRemoteBomb(PlayerServer* playerN)
+{
+    qint8 plId = playerN->getId();
+    foreach(BombServer* bombN, getBombList()) {
+        if( bombN->getPlayerId() == plId ) {
+            bombN->unsetRC();
+            removedRC << bombN->getBombId();
+        }
+            
+    }
+}
+
 QList<BombServer*> MapServer::addBombMultiple(int playerId)
 {
     QList<BombServer*> newBombs;
@@ -909,9 +921,10 @@ void MapServer::doPlayerDeath(PlayerServer* playerN, int killedBy)
     {
         if (b->getPlayerId() == playerN->getId())
         {
-            //qDebug("dead player has a detonator bomb");
+            qDebug("dead player has a detonator bomb");
             b->unsetRC();
             b->setDuration(DEFAULT_BOMB_DURATION);
+            removedRC << b->getBombId();
         }
     }
 
@@ -1125,6 +1138,7 @@ void MapServer::checkPlayerSurroundings(PlayerServer* playerN) {
             case Bonus::BONUS_BOXING_GLOVE:
                 if(playerN->hasRemoteBonus())
                 {
+                    removeRemoteBomb(playerN);
                     playerN->setRemoteBonus(false);
                     bonusToSpawn << (Bonus::Bonus_t)Bonus::BONUS_REMOTE;
                 }
@@ -1290,6 +1304,7 @@ void MapServer::newHeartBeat() {
     killedPlayers.clear();
     createdBonus.clear();
     removedBonus.clear();
+    removedRC.clear();
 
 	QByteArray updateArray;
 	QDataStream updateOut(&updateArray,QIODevice::WriteOnly | QIODevice::Truncate);
@@ -1537,8 +1552,13 @@ void MapServer::newHeartBeat() {
         updateOut << p.y();
     }
 
-	// send the update to the clients
-	emit updatedMap(updateArray);
+    //send the list of bombs which lost their RC
+    updateOut << static_cast<quint8>(removedRC.size());
+    foreach(qint16 n, removedRC) {
+        updateOut << n;
+    }
+    // send the update to the clients
+    emit updatedMap(updateArray);
 
     // count how many players are still alive
     QList<qint8> playersAlive;

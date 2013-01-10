@@ -336,6 +336,7 @@ void Map<P,B,SL>::addBomb(B* b)
 template<typename P, typename B, typename SL>
 B* Map<P,B,SL>::getBomb(qint16 bombId) const
 {
+    Q_ASSERT(bombId > 0);
     typename QMap<typename B::bombId_t, B*>::const_iterator it = bombs.find(bombId);
     if(it != bombs.end())
         return it.value();
